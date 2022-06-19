@@ -1,0 +1,13 @@
+a {
+  text-decoration: none;
+}
+
+#login {
+  min-height: 100vh;
+  background-color: #f4f4f4;
+}
+
+#login .card-wrapper {
+  max-width: 100%;
+  width: 500px;
+}
