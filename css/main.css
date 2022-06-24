@@ -2,6 +2,25 @@
 	font-family: 'Fira Sans', sans-serif;
 }
 
+#install {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	height: 100vh;
+	width: 100vw;
+	padding: 40px 0;
+}
+
+#install .content {
+	width: 500px;
+	max-width: 100%;
+	border: 1px solid #dedede;
+	background-color: white;
+	padding: 20px;
+	height: 100%;
+	overflow-y: auto;
+}
+
 #header {
 	border-bottom: 1px solid var(--bs-border-color-translucent);
 }
@@ -85,4 +104,21 @@
 .card {
 	--bs-card-border-color: var(--bs-primary);
 	--bs-card-cap-bg: rgba(var(--bs-primary-rgba));
+}
+
+.form-container label {
+	margin-top: 7px;
+}
+
+.form-container .row {
+	margin-top: 20px;
+}
+
+.form-container .row:first-child {
+	margin-top: 0;
+}
+
+.form-container .form-button {
+	margin-top: 40px;
+	text-align: right;
 }

@@ -14,7 +14,8 @@
           </select>
 
           <select name="states" multiple>
-            <option value="SMA Cibinong">Cibinong</option>
+            <option value="Cibinong">Cibinong</option>
+            <option value="Bogor">Bogor</option>
           </select>
 
           <select name="gender" class="form-select">

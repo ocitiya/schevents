@@ -109,6 +109,10 @@ a:focus {
 	transition: all 0.2s;
 }
 
+#sidebar ul li a.dropdown-toggle {
+	cursor: pointer;
+}
+
 #sidebar ul li:hover a {
   color: var(--bs-primary);
 }
@@ -218,6 +222,17 @@ a.article:hover {
 
 #content-navbar .data-container {
 	margin-top: 40px;
+	border: 1px solid #dedede;
+	padding: 20px 20px;
+	background-color: rgba(var(--bs-light-rgb),var(--bs-bg-opacity))!important;
+}
+
+.data-header {
+	margin-bottom: 50px;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	flex-wrap: wrap;
 }
 
 .data-center .data-list {
@@ -228,7 +243,7 @@ a.article:hover {
 }
 
 .data-center .data-list .card {
-	max-width: 300px;
+	max-width: 250px;
 	width: 100%;
 }
 
@@ -247,6 +262,14 @@ a.article:hover {
 	margin-bottom: 10px;
 }
 
+.data-center .data-list .card .card-text .card-description {
+	margin-top: 10px;
+}
+
+.data-center .data-list .card .card-text .card-description:first-child {
+	margin-top: 0;
+}
+
 .data-center .data-list .card .card-text small {
 	color: #6e6e6e;
 	text-transform: uppercase;
@@ -255,4 +278,50 @@ a.article:hover {
 
 .data-center .data-list .card .card-footer {
 	text-align: right;
+}
+
+.data-footer {
+	margin-top: 50px;
+}
+
+#content-navbar .title-container .breadcrumb li > a {
+	color: var(--bs-primary);
+}
+
+.form-container label {
+	margin-top: 7px;
+}
+
+.form-container .row {
+	margin-top: 20px;
+}
+
+.form-container .row:first-child {
+	margin-top: 0;
+}
+
+.form-container .form-button {
+	margin-top: 40px;
+	text-align: right;
+}
+
+#sidebar .dropdown-group {
+	padding: 5px 0 5px 20px;
+	font-size: 1.1em;
+	display: block;
+	transition: all 0.2s;
+}
+
+#sidebar .dropdown-group:hover {
+	background-color: #d86800;
+}
+
+#sidebar .dropdown-group > .dropdown-toggle {
+	display: block;
+	position: relative;
+	cursor: pointer;
+}
+
+#sidebar .dropdown-group > ul li:first-child {
+	margin-top: 15px;
 }

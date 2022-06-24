@@ -12,10 +12,18 @@
       </nav>
     </div>
 
-
     <div class="data-container">
       <div class="data-header">
+        <a href="{{ route('admin.location.countries.create') }}" class="btn btn-primary btn-sm unrounded">
+          Create New&nbsp;
+          <i class="fa-solid fa-plus"></i>
+        </a>
 
+        <div>
+          <form action="" autocomplete="off" method="POST">
+            <input class="form-control" placeholder="Search" type="text" name="search">
+          </form>
+        </div>
       </div>
 
       <div class="data-center">
@@ -29,10 +37,13 @@
               </div>
             </div>
             <div class="card-footer text-muted">
-              <div class="btn btn-primary btn-sm">
+              <a
+                href="{{ route('admin.location.countries.update', ['id' => 1]) }}"
+                class="btn btn-primary btn-sm"
+              >
                 Edit&nbsp;
                 <i class="fa-solid fa-pen-to-square"></i>
-              </div>
+              </a>
             </div>
           </div>
 
@@ -40,8 +51,10 @@
             <div class="card-body">
               <h5 class="card-title">Japan</h5>
               <div class="card-text">
-                <small>Code</small>
-                <div>JP</div>
+                <div class="card-description">
+                  <small>Code</small>
+                  <div>JP</div>
+                </div>
               </div>
             </div>
             <div class="card-footer text-muted">
@@ -51,6 +64,7 @@
               </div>
             </div>
           </div>
+          
 
           <div class="card text-center shadow-sm">
             <div class="card-body">
@@ -71,7 +85,23 @@
       </div>
 
       <div class="data-footer">
-
+        <nav aria-label="Page navigation example">
+          <ul class="pagination d-flex align-items-center justify-content-end">
+            <li class="page-item">
+              <a class="page-link" href="#" aria-label="Previous">
+                <span aria-hidden="true">&laquo;</span>
+              </a>
+            </li>
+            <li class="page-item active"><a class="page-link" href="#">1</a></li>
+            <li class="page-item"><a class="page-link" href="#">2</a></li>
+            <li class="page-item"><a class="page-link" href="#">3</a></li>
+            <li class="page-item">
+              <a class="page-link" href="#" aria-label="Next">
+                <span aria-hidden="true">&raquo;</span>
+              </a>
+            </li>
+          </ul>
+        </nav>
       </div>
     </div>
   </div>
