@@ -19,23 +19,43 @@
           <img src="{{ asset('images/computer.png') }}" style="max-width: 180px" />
           <h5><strong>Welcome to Web Sports App</strong></h5>
         </div>
+
+        @if ($errors->any())
+          <div class="alert alert-danger">
+            <ul>
+              @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+              @endforeach
+            </ul>
+          </div>
+        @endif
+
         <label>Please add app information below for first time use:</label>
-        <form autocomplete="off" method="POST" class="form-container mt-3">
+
+        <form
+          action="{{ route('install.store.step1') }}"
+          method="POST"
+          enctype="multipart/form-data"
+          class="form-container mt-3"
+          autocomplete="off"
+        >
+          {{ csrf_field() }}
           <div class="row">
             <div class="col-4">
-              <label for="name">App Name</label>
+              <label for="name">App Name *</label>
             </div>
             <div class="col-8">
-              <input type="text" name="name" id="name" class="form-control">
+              <input type="text" name="name" id="name" class="form-control" value="{{ old('name') }}">
             </div>
           </div>
 
           <div class="row">
             <div class="col-4">
-              <label for="name">App Logo</label>
+              <label for="name">App Logo *</label>
             </div>
             <div class="col-8">
               <input type="file" name="logo" id="logo" class="form-control" accept=".png, .jpg">
+              <small>File type: .jpg, .png</small>
             </div>
           </div>
 

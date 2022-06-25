@@ -18,29 +18,48 @@
         <div class="text-primary mb-5 text-center">
           <img src="{{ asset('images/register.png') }}" style="max-width: 180px" />
         </div>
+        
+        @if ($errors->any())
+          <div class="alert alert-danger">
+            <ul>
+              @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+              @endforeach
+            </ul>
+          </div>
+        @endif
+
         <label>Next, add system admin information below:</label>
-        <form autocomplete="off" method="POST" class="form-container mt-3">
+
+        <form
+          action="{{ route('install.store.step2') }}"
+          method="POST"
+          autocomplete="off"
+          class="form-container mt-3"
+        >
+          {{ csrf_field() }}
+          
           <div class="row">
             <div class="col-4">
-              <label for="name">Name</label>
+              <label for="name">Name *</label>
             </div>
             <div class="col-8">
-              <input type="text" name="name" id="name" class="form-control">
+              <input type="text" name="name" id="name" class="form-control" value="{{ old('name') }}">
             </div>
           </div>
 
           <div class="row">
             <div class="col-4">
-              <label for="email">Email</label>
+              <label for="email">Email *</label>
             </div>
             <div class="col-8">
-              <input type="email" name="email" id="email" class="form-control">
+              <input type="email" name="email" id="email" class="form-control" value="{{ old('email') }}">
             </div>
           </div>
 
           <div class="row">
             <div class="col-4">
-              <label for="password">Password</label>
+              <label for="password">Password *</label>
             </div>
             <div class="col-8">
               <input type="password" name="password" id="password" class="form-control">
@@ -49,35 +68,23 @@
 
           <div class="row">
             <div class="col-4">
-              <label for="c_password">Password Confirmation</label>
+              <label for="password_confirmation">Password Confirmation *</label>
             </div>
             <div class="col-8">
-              <input type="c_password" name="c_password" id="c_password" class="form-control">
+              <input type="password" name="password_confirmation" id="password_confirmation" class="form-control">
             </div>
           </div>
 
           <div class="row">
             <div class="col-4">
-              <label for="country">Country</label>
+              <label for="country">Gender *</label>
             </div>
             <div class="col-8">
-              <select name="country" id="country" class="form-select">
-                {{-- Dynamic Data --}}
+              <select name="gender" id="gender" class="form-select">
+                <option disabled selected value>Please select ...</option>
+                <option value="male">Male</option>
+                <option value="female">Female</option>
               </select>
-            </div>
-          </div>
-
-          <div class="row">
-            <div class="col-4">
-              <label for="telephone">Telephone</label>
-            </div>
-            <div class="col-8">
-              <div class="input-group mb-3">
-                <span class="input-group-text" id="telephone-addon">
-                  {{-- Dynamic Data --}}
-                </span>
-                <input type="text" name="telephone" id="telephone" class="form-control" aria-describedby="telephone-addon">
-              </div>
             </div>
           </div>
 
@@ -97,37 +104,6 @@
     {{-- <script src="https://cdn.jsdelivr.net/npm/vanillajs-datepicker@1.2.0/dist/js/datepicker-full.min.js"></script> --}}
     <script src="{{ asset('js/select2.min.js') }}"></script>
     <script src="{{ asset('js/fontawesome-free-6.1.1-web.all.min.js') }}"></script>
-    <script src="{{ asset('js/daterangepicker.js') }}"></script>
-    <script>
-      countries = []
-
-      document.addEventListener('DOMContentLoaded', async () => {
-        $('#country').empty()
-
-        const _countries = await getCountries()
-        countries = _countries.slice()
-        _countries.map(item => {
-          if (item.name === '') {
-            $('#country').append(`<option disabled selected value>Please select ....</option>`)
-          } else {
-            $('#country').append(`<option value="${item.name}">${item.name}</option>`)
-          }
-        })
-
-        $('#country').on('change', function () {
-          const country = countries.find(item => item.name === $(this).val())
-          $('#telephone-addon').text(country.dial_code)
-        })
-      })
-
-      const getCountries = () => {
-        const url = "<?php echo asset('dataset/countries.json') ?>"
-        
-        return new Promise(resolve => {
-          fetch(url).then(res => res.json()).then(data => resolve(data))
-        })
-      }
-    </script>
-  
+    <script src="{{ asset('js/daterangepicker.js') }}"></script>  
   </body>
 </html>
