@@ -40,13 +40,14 @@ class InstallController extends Controller {
 
 		$filename = $filename.'_'.time().'.'.$extension;
 		$path = storage_path('app/public/app/image/').$filename;
+		$file->storeAs('public/app/image', $filename);
 
 		// Resize image
-		$img = Image::make($file->getRealPath())
-			->resize(512, 512, function ($constraint) {
-				$constraint->aspectRatio();
-			})
-			->save($path, 80);
+		// $img = Image::make($file->getRealPath())
+		// 	->resize(512, 512, function ($constraint) {
+		// 		$constraint->aspectRatio();
+		// 	})
+		// 	->save($path, 80);
 
 		try {
 			$model = new App;
