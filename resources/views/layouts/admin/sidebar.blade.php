@@ -51,11 +51,20 @@
 						</a>
 					</li>
 
-					<li>
-						<a href="#">Provinces</a>
+					<li
+						class="{{ str_contains(Request::route()->getName(), 'admin.location.provinces') ? 'active' : null }}"
+					>
+						<a href="{{ route('admin.location.provinces.index') }}">
+							Provinces
+						</a>
 					</li>
-					<li>
-						<a href="#">County</a>
+
+					<li
+						class="{{ str_contains(Request::route()->getName(), 'admin.location.counties') ? 'active' : null }}"
+					>
+						<a href="{{ route('admin.location.counties.index') }}">
+							Counties
+						</a>
 					</li>
 					<li>
 						<a href="#">Municipality</a>

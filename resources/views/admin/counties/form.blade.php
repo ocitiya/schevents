@@ -1,14 +1,14 @@
 @extends('layouts.admin.master')
 
 @section('content')
-  <div id="countries" class="content">
+  <div id="counties" class="content">
     <div class="title-container">
-      <h4 class="text-primary">Countries</h4>
+      <h4 class="text-primary">Counties</h4>
 
       <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
           <li class="breadcrumb-item" aria-current="page">
-            <a href="{{ route('admin.location.countries.index') }}">Index</a>
+            <a href="{{ route('admin.location.counties.index') }}">Index</a>
           </li>
           <li class="breadcrumb-item active" aria-current="page">Form</li>
         </ol>
@@ -19,9 +19,9 @@
       <div class="data-header">
         <h5 class="text-primary">
           @if(!isset($data))
-            <span>Create New Country</span>
+            <span>Create New County</span>
           @else
-            <span>Update Country</span>
+            <span>Update County</span>
           @endisset
         </h5>
       </div>
@@ -38,7 +38,7 @@
         @endif
 
         <form
-          action="{{ route('admin.location.countries.store') }}"
+          action="{{ route('admin.location.counties.store') }}"
           method="POST"
           autocomplete="off"
           class="form-container row"
@@ -50,41 +50,26 @@
           <div class="col-6">
             <div class="row">
               <div class="col-5">
-                <label for="name">Country Name *</label>
+                <label for="name">Province *</label>
               </div>
               <div class="col-7">
-                <input type="text" id="name" name="name" class="form-control"
+                <select name="province_id" class="form-select" id="province_id">
+                  <option disabled selected value>Please select ...</option>
+                  @foreach ($provinces as $item)
+                    <option value="{{ $item->id }}">{{ $item->name }}</option>
+                  @endforeach
+                </select>
+              </div>
+            </div>
+            
+            <div class="row">
+              <div class="col-5">
+                <label for="name">County Name *</label>
+              </div>
+              <div class="col-7">
+                <input type="text" id="name" name="name" class="form-control capitalize"
                   value="{{ old('name', isset($data) ? $data->name : null) }}"
                 >
-              </div>
-            </div>
-
-            <div class="row">
-              <div class="col-5">
-                <label for="alpha2_code">Country Code *</label>
-              </div>
-              <div class="col-7">
-                <input type="text" id="alpha2_code" name="alpha2_code" class="form-control"
-                  value="{{ old('alpha2_code', isset($data) ? $data->alpha2_code : null) }}"
-                >
-                <div class="text-secondary">
-                  <small>Use two-letter country code.</small><br/>
-                  <small>ISO 3166-1 alpha-2</small>
-                </div>
-              </div>
-            </div>
-
-            <div class="row">
-              <div class="col-5">
-                <label for="dial_code">Dial Code *</label>
-              </div>
-              <div class="col-7">
-                <input type="text" id="dial_code" name="dial_code" class="form-control"
-                  value="{{ old('dial_code', isset($data) ? $data->dial_code : null) }}"
-                >
-                <div class="text-secondary">
-                  <small>Ex. +62</small><br/>
-                </div>
               </div>
             </div>
 
@@ -99,4 +84,14 @@
       </div>
     </div>
   </div>
+@endsection
+
+@section('script')
+  <script>
+    const provinceSelected = "<?php echo old('province_id', isset($data) ? $data->province_id : null) ?>";
+
+    document.addEventListener('DOMContentLoaded', function() {
+      $('#province_id').val(provinceSelected).change()
+    })
+  </script>
 @endsection

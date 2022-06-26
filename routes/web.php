@@ -8,6 +8,8 @@ use App\Http\Controllers\InstallController;
 use App\Http\Controllers\Admin\LoginController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\CountriesController;
+use App\Http\Controllers\Admin\ProvincesController;
+use App\Http\Controllers\Admin\CountiesController;
 
 /*
 |--------------------------------------------------------------------------
@@ -30,17 +32,43 @@ Route::middleware(['haveInstalled'])->group(function () {
 	Route::get('/', [DashboardController::class, 'index'])->name('index');
 
 	// Admin Route
-	Route::prefix('admin')->as('admin.')->middleware('auth')->group(function () {
+	Route::prefix('admin')->as('admin.')->group(function () {
 		Route::get('login', [LoginController::class, 'login'])->name('login');
 		Route::get('forgot-password', [LoginController::class, 'forgotPassword'])->name('forgot-password');
+		Route::get('logout', [LoginController::class, 'logout'])->name('logout');
 
-		Route::get('/', [AdminDashboardController::class, 'index'])->name('dashboard');
+		Route::post('login-auth', [LoginController::class, 'loginAuth'])->name('login.auth');
 
-		Route::group(['prefix' => 'location', 'as' => 'location.'], function () {
-			Route::group(['prefix' => 'countries', 'as' => 'countries.'], function () {
-				Route::get('/', [CountriesController::class, 'index'])->name('index');
-				Route::get('/create', [CountriesController::class, 'create'])->name('create');
-				Route::get('/update/{id}', [CountriesController::class, 'update'])->name('update');
+		Route::middleware('auth')->group(function () {
+			Route::get('/', [AdminDashboardController::class, 'index'])->name('dashboard');
+
+			Route::group(['prefix' => 'location', 'as' => 'location.'], function () {
+				Route::group(['prefix' => 'countries', 'as' => 'countries.'], function () {
+					Route::get('/', [CountriesController::class, 'index'])->name('index');
+					Route::get('/create', [CountriesController::class, 'create'])->name('create');
+					Route::get('/update/{id}', [CountriesController::class, 'update'])->name('update');
+					Route::get('/detail/{id}', [CountriesController::class, 'detail'])->name('detail');
+
+					Route::post('/store', [CountriesController::class, 'store'])->name('store');
+				});
+
+				Route::group(['prefix' => 'provinces', 'as' => 'provinces.'], function () {
+					Route::get('/', [ProvincesController::class, 'index'])->name('index');
+					Route::get('/create', [ProvincesController::class, 'create'])->name('create');
+					Route::get('/update/{id}', [ProvincesController::class, 'update'])->name('update');
+					Route::get('/detail/{id}', [ProvincesController::class, 'detail'])->name('detail');
+
+					Route::post('/store', [ProvincesController::class, 'store'])->name('store');
+				});
+
+				Route::group(['prefix' => 'counties', 'as' => 'counties.'], function () {
+					Route::get('/', [CountiesController::class, 'index'])->name('index');
+					Route::get('/create', [CountiesController::class, 'create'])->name('create');
+					Route::get('/update/{id}', [CountiesController::class, 'update'])->name('update');
+					Route::get('/detail/{id}', [CountiesController::class, 'detail'])->name('detail');
+
+					Route::post('/store', [CountiesController::class, 'store'])->name('store');
+				});
 			});
 		});
 	});

@@ -72,7 +72,6 @@ class InstallController extends Controller {
 			'gender' => 'required|in:male,female'
 		]);
 
-
 		try {
 			$userId = Str::uuid();
 

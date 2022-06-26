@@ -1,3 +1,8 @@
+@php
+  use App\Models\App;
+  $app = App::first();
+@endphp
+
 <html>
   <head>
     <title>Dashboard</title>
@@ -22,13 +27,17 @@
             </button>
 
             <div>
+              {{ $app->name }}
+            </div>
+
+            <div>
               <div class="btn btn-light text-black-75">
                 <i class="fa-solid fa-user"></i>
               </div>
 
-              <div class="btn btn-danger">
+              <a href="{{ route('admin.logout') }}" class="btn btn-danger">
                 <i class="fa-solid fa-right-from-bracket"></i>
-              </div>
+              </a>
             </div>
           </div>
         </nav>
@@ -44,6 +53,21 @@
     <script src="{{ asset('js/fontawesome-free-6.1.1-web.all.min.js') }}"></script>
     <script src="{{ asset('js/daterangepicker.js') }}"></script>
     <script>
+      const setParams = (key, value) => {
+        if ('URLSearchParams' in window) {
+          const searchParams = new URLSearchParams(window.location.search);
+          searchParams.set(key, value);
+          window.location.search = searchParams.toString();
+        }
+      }
+
+      const getParams = (key) => {
+        if ('URLSearchParams' in window) {
+          const searchParams = new URLSearchParams(window.location.search);
+          return searchParams.get(key);
+        }
+      }
+
       document.addEventListener('DOMContentLoaded', function () {
         const sidebarCollapse = document.querySelector('#sidebarCollapse')
         const sidebar = document.querySelector('#sidebar')
@@ -53,5 +77,6 @@
         })
       })
     </script>
+    @yield('script')
   </body>
 </html>

@@ -8,6 +8,7 @@
   <title>Admin Dashboard - Login</title>
 
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
+  <link href="{{ asset('css/theme.css') }}" rel="stylesheet">
   <link href="{{ asset('css/admin/main.css') }}" rel="stylesheet">
 </head>
 <body>
@@ -20,7 +21,11 @@
             Forgot Password
           </div>
 
-          <form method="POST" class="my-login-validation" novalidate="">
+          <form
+            action="{{ route('admin.login.auth') }}"
+            method="POST"
+            class="my-login-validation"
+          >
             <div class="mb-3">
               <label for="email" class="form-label">Email address</label>
               <input id="email" type="email" class="form-control" name="email" value="" required autofocus>

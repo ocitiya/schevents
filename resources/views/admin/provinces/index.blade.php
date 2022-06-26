@@ -1,9 +1,9 @@
 @extends('layouts.admin.master')
 
 @section('content')
-  <div id="countries" class="content">
+  <div id="provinces" class="content">
     <div class="title-container">
-      <h4 class="text-primary">Countries</h4>
+      <h4 class="text-primary">Provinces</h4>
 
       <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
@@ -14,7 +14,7 @@
 
     <div class="data-container">
       <div class="data-header">
-        <a href="{{ route('admin.location.countries.create') }}" class="btn btn-primary btn-sm unrounded">
+        <a href="{{ route('admin.location.provinces.create') }}" class="btn btn-primary btn-sm unrounded">
           Create New&nbsp;
           <i class="fa-solid fa-plus"></i>
         </a>
@@ -28,18 +28,18 @@
 
       <div class="data-center">
         <div class="data-list">
-          @forelse ($countries as $item)
+          @forelse ($provinces as $item)
             <div class="card text-center shadow-sm">
               <div class="card-body">
                 <h5 class="card-title">{{ $item->name }}</h5>
                 <div class="card-text">
-                  <small>Code</small>
-                  <div>{{ $item->alpha2_code }}</div>
+                  <small>Country</small>
+                  <div>{{ $item->country->name }}</div>
                 </div>
               </div>
               <div class="card-footer text-muted">
                 <a
-                  href="{{ route('admin.location.countries.detail', ['id' => $item->id]) }}"
+                  href="{{ route('admin.location.provinces.detail', ['id' => $item->id]) }}"
                   class="btn btn-primary btn-sm"
                 >
                   View&nbsp;
@@ -47,7 +47,7 @@
                 </a>
                 
                 <a
-                  href="{{ route('admin.location.countries.update', ['id' => $item->id]) }}"
+                  href="{{ route('admin.location.provinces.update', ['id' => $item->id]) }}"
                   class="btn btn-primary btn-sm"
                 >
                   Edit&nbsp;

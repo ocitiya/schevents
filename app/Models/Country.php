@@ -5,11 +5,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class App extends Model {
+class Country extends Model {
 	use HasFactory;
 
-	protected $table = "app";
+	protected $table = "countries";
 	protected $primaryKey = "id";
+
 	protected $casts = [
 		'id' => 'string'
 	];

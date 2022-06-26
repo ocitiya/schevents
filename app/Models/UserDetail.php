@@ -10,4 +10,8 @@ class UserDetail extends Model {
 
 	protected $table = "users_detail";
 	protected $primaryKey = "id";
+
+	protected $casts = [
+		'id' => 'string'
+	];
 }

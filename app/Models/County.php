@@ -5,12 +5,17 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class App extends Model {
+class County extends Model {
 	use HasFactory;
 
-	protected $table = "app";
+	protected $table = "counties";
 	protected $primaryKey = "id";
+
 	protected $casts = [
 		'id' => 'string'
 	];
+
+	public function province () {
+		return $this->belongsTo(Province::class);
+	}
 }

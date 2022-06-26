@@ -11,11 +11,10 @@ return new class extends Migration {
 	 * @return void
 	 */
 	public function up () {
-		Schema::create('countries', function (Blueprint $table) {
+		Schema::create('counties', function (Blueprint $table) {
 			$table->uuid('id')->primary();
+			$table->foreignUuid('province_id')->references('id')->on('provinces');
 			$table->string('name');
-			$table->string('alpha2_code', 2);
-			$table->string('dial_code', 5);
 			$table->timestamps();
 		});
 	}
@@ -26,8 +25,6 @@ return new class extends Migration {
 	 * @return void
 	 */
 	public function down () {
-		DB::statement('SET FOREIGN_KEY_CHECKS = 0');
-		Schema::dropIfExists('countries');
-		DB::statement('SET FOREIGN_KEY_CHECKS = 1');
+		Schema::dropIfExists('counties');
 	}
 };

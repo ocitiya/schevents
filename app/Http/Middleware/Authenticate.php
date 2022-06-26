@@ -20,12 +20,10 @@ class Authenticate extends Middleware {
 	}
 
 	public function handle($request, Closure $next, ...$guards) {
-		//check here if the user is authenticated
-
 		if (Auth::check()) {
 			return $next($request);
 		}
 
-		return redirect()->route('index');
+		return redirect()->route('admin.login');
 	}
 }
