@@ -55,7 +55,10 @@
             </div>
             <div class="col-8">
               <input type="file" name="logo" id="logo" class="form-control" accept=".png, .jpg">
-              <small>File type: .jpg, .png</small>
+              <div class="">
+                <small>File type: .jpg, .png</small>
+                <small>Max: 512 KB</small>
+              </div>
             </div>
           </div>
 

@@ -26,7 +26,7 @@ class InstallController extends Controller {
 	public function storeStep1 (Request $request) {
 		$validated = $request->validate([
 			'name' => 'required|max:255',
-			'logo' => 'required|mimes:jpg,png',
+			'logo' => 'required|mimes:jpg,png|max:512',
 		]);
 
 		// Upload Image
