@@ -59,6 +59,15 @@
 
           <div class="row">
             <div class="col-4">
+              <label for="username">Username *</label>
+            </div>
+            <div class="col-8">
+              <input type="text" name="username" id="username" class="form-control" value="{{ old('username') }}">
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-4">
               <label for="password">Password *</label>
             </div>
             <div class="col-8">

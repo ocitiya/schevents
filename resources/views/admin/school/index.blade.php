@@ -1,9 +1,9 @@
 @extends('layouts.admin.master')
 
 @section('content')
-  <div id="countries" class="content">
+  <div id="schools" class="content">
     <div class="title-container">
-      <h4 class="text-primary">Countries</h4>
+      <h4 class="text-primary">Schools</h4>
 
       <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
@@ -14,7 +14,7 @@
 
     <div class="data-container">
       <div class="data-header">
-        <a href="{{ route('admin.location.countries.create') }}" class="btn btn-primary btn-sm unrounded">
+        <a href="{{ route('admin.school.create') }}" class="btn btn-primary btn-sm unrounded">
           Create New&nbsp;
           <i class="fa-solid fa-plus"></i>
         </a>
@@ -27,7 +27,7 @@
       </div>
 
       <div class="data-center">
-        <div class="data-list" id="country-items">
+        <div class="data-list" id="school-items">
           {{-- Dynamic Data --}}
         </div>
       </div>
@@ -74,6 +74,7 @@
 
 @section('script')
   <script>
+    const deleteURL = "<?php echo route('admin.school.delete') ?>"
     let searchTimeout = null;
     let pageTimeout = null;
 
@@ -85,17 +86,28 @@
       total_page: 0
     }
 
-    const createCountryItem = (data) => {
-      const detailRoute = `/admin/location/countries/detail/${data.id}`
-      const updateRoute = `/admin/location/countries/update/${data.id}`
+    const createSchoolItem = (data) => {
+      const detailRoute = `/admin/school/detail/${data.id}`
+      const updateRoute = `/admin/school/update/${data.id}`
 
-      $('#country-items').append(`
+      $('#school-items').append(`
         <div class="card text-center shadow-sm">
+          <div class="card-header text-end">
+            <button
+              data-id="${data.id}"
+              data-name="${data.name}"
+              class="btn btn-outline-danger btn-sm unrounded delete-item"
+            >
+              Delete&nbsp;
+              <i class="fa-solid fa-trash"></i>
+            </button>
+          </div>
+          
           <div class="card-body">
             <h5 class="card-title">${data.name}</h5>
             <div class="card-text">
-              <small>Code</small>
-              <div>${data.alpha2_code}</div>
+              <small>Level of Education</small>
+              <div class="capitalize">${data.level_of_education}</div>
             </div>
           </div>
           <div class="card-footer text-muted">
@@ -123,7 +135,7 @@
       const data = await new Promise((resolve, reject) => {
         search = search === null ? '' : `&search=${search}`
 
-        let endpoint = '/api/country/list'
+        let endpoint = '/api/school/list'
         endpoint = `${endpoint}?page=${page}&limit=${limit}`
         endpoint = endpoint+search
 
@@ -137,12 +149,12 @@
         })
       })
 
-      $('#country-items').empty()
+      $('#school-items').empty()
 
       if (data.list.length > 0) {
-        data.list.map(item => createCountryItem(item))
+        data.list.map(item => createSchoolItem(item))
       } else {
-        $('#country-items').text('No Data')
+        $('#school-items').text('No Data')
       }
 
       pagination = { ...data.pagination }
@@ -178,7 +190,6 @@
 
         searchTimeout = setTimeout(() => {
           getList({ page: val })
-          console.log('asd')
         }, 500)
       })
 
@@ -189,6 +200,42 @@
         searchTimeout = setTimeout(() => {
           getList({ search: val })
         }, 500);
+      })
+
+      $('#schools').on('click', '.delete-item', function(e) {
+        const id = $(this).attr('data-id')
+        const name = $(this).attr('data-name')
+
+        const formData = new FormData()
+        formData.append('id', id)
+        formData.append('_token', csrfToken)
+        
+        swal({
+          text: `Are you want to delete ${name}?`,
+          icon: "warning",
+          buttons: true,
+          dangerMode: true,
+        })
+        .then((willDelete) => {
+          if (willDelete) {
+            fetch(deleteURL, {
+              method: 'POST',
+              body: formData
+            }).then(res => res.json()).then(data => {
+              if (data.status) {
+                getList()
+                Swal.fire(
+                  'Deleted!',
+                  `Data ${name} succesfully deleted`,
+                  'success'
+                )
+              } else {
+                console.log(data.message)
+                swal(data.message, { icon: 'error' });
+              }
+            })
+          }
+        });
       })
     })
   </script>

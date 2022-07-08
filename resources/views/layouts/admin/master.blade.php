@@ -14,6 +14,8 @@
     <link href="{{ asset('css/select2-bootstrap-5-theme.min.css') }}" rel="stylesheet">
     <link href="{{ asset('css/theme.css') }}" rel="stylesheet">
     <link href="{{ asset('css/admin/main.css') }}" rel="stylesheet">
+  
+    <meta name="csrf-token" content="{{ csrf_token() }}">
   </head>
   <body>
     <div class="wrapper">
@@ -52,7 +54,10 @@
     <script src="{{ asset('js/select2.min.js') }}"></script>
     <script src="{{ asset('js/fontawesome-free-6.1.1-web.all.min.js') }}"></script>
     <script src="{{ asset('js/daterangepicker.js') }}"></script>
+    <script src="{{ asset('js/sweetalert.min.js') }}"></script>
     <script>
+      const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
       const setParams = (key, value) => {
         if ('URLSearchParams' in window) {
           const searchParams = new URLSearchParams(window.location.search);

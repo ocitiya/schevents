@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
+use App\Models\User;
+
 class LoginController extends Controller {
 	public function login () {
 		return view('admin.login');
@@ -17,16 +19,26 @@ class LoginController extends Controller {
 
 	public function loginAuth (Request $request) {
 		$validated = $request->validate([
-			'email' => 'required|email',
+			'username' => 'required',
 			'password' => 'required',
 		]);
 
-		$credentials = $request->only('email', 'password');
-		if (Auth::attempt($credentials)) {
-			return redirect()->route('admin.dashboard');
+		$user = User::where("username", $request->username)
+			->get("email")
+			->first();
+
+		if (!$user) {
+			return redirect()->back()->withErrors('username or password incorrect');
 		}
 
-		return redirect()->back()->withErrors('email or password incorrect');
+		$credentials = ["email" => $user->email, "password" => $request->password];
+		if (!Auth::attempt($credentials)) {
+			return redirect()->back()->withErrors('username or password incorrect');
+		}
+		
+		return redirect()->route('admin.dashboard')->withInput(
+			$request->except("password")
+		);
 	}
 
 	public function logout (Request $request) {

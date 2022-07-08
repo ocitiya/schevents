@@ -43,17 +43,18 @@ class InstallController extends Controller {
 		$file->storeAs('public/app/image', $filename);
 
 		// Resize image
-		// $img = Image::make($file->getRealPath())
-		// 	->resize(512, 512, function ($constraint) {
-		// 		$constraint->aspectRatio();
-		// 	})
-		// 	->save($path, 80);
+		$img = Image::make($file->getRealPath())
+			->resize(512, 512, function ($constraint) {
+				$constraint->aspectRatio();
+			})
+			->fit(512, 512, null, 'center')
+			->save($path, 80);
 
 		try {
 			$model = new App;
 			$model->id = Str::uuid();
 			$model->name = $request->name;
-			$model->logo = "public/app/image/{$filename}";
+			$model->logo = $filename;
 			$model->save();
 
 			return redirect()->route('install.step2');
@@ -68,6 +69,7 @@ class InstallController extends Controller {
 		$validated = $request->validate([
 			'name' => 'required|max:255',
 			'email' => 'required|email',
+			'username' => 'required|max:255',
 			'password' => 'required|min:6',
 			'password_confirmation' => 'required|same:password',
 			'gender' => 'required|in:male,female'
@@ -80,6 +82,7 @@ class InstallController extends Controller {
 			$users->id = $userId;
 			$users->name = $request->name;
 			$users->email = $request->email;
+			$users->username = $request->username;
 			$users->password = $request->password;
 			$users->save();
 		} catch (QueryException $exception) {

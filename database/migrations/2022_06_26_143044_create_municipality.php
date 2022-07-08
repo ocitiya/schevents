@@ -11,9 +11,9 @@ return new class extends Migration {
 	 * @return void
 	 */
 	public function up () {
-		Schema::create('counties', function (Blueprint $table) {
+		Schema::create('municipalities', function (Blueprint $table) {
 			$table->uuid('id')->primary();
-			$table->foreignUuid('province_id')->references('id')->on('provinces');
+			$table->foreignUuid('county_id')->references('id')->on('counties');
 			$table->string('name');
 			$table->timestamps();
 		});
@@ -26,7 +26,7 @@ return new class extends Migration {
 	 */
 	public function down () {
 		DB::statement('SET FOREIGN_KEY_CHECKS = 0');
-		Schema::dropIfExists('counties');
+		Schema::dropIfExists('municipalities');
 		DB::statement('SET FOREIGN_KEY_CHECKS = 1');
 	}
 };

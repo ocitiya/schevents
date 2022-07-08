@@ -66,17 +66,49 @@
 							Counties
 						</a>
 					</li>
-					<li>
-						<a href="#">Municipality</a>
+					
+					<li
+						class="{{ str_contains(Request::route()->getName(), 'admin.location.municipalities') ? 'active' : null }}"
+					>
+						<a href="{{ route('admin.location.municipalities.index') }}">
+							Municipalities
+						</a>
 					</li>
-					<li>
-						<a href="#">Locality</a>
+					{{-- <li
+						class="{{ str_contains(Request::route()->getName(), 'admin.location.localities') ? 'active' : null }}"
+					>
+						<a href="{{ route('admin.location.localities.index') }}">
+							Counties
+						</a>
+					</li> --}}
+				</ul>
+			</div>
+
+			<div class="dropdown-group">
+				<a data-bs-target="#sportSubMenu" data-bs-toggle="collapse"
+					aria-expanded="{{ str_contains(Request::route()->getName(), 'admin.sport') ? 'true' : 'false' }}"
+					class="dropdown-toggle">
+					Sport
+				</a>
+				<ul
+					class="collapse list-unstyled {{ str_contains(Request::route()->getName(), 'admin.sport') ? 'show' : null }}"
+					id="sportSubMenu"
+				>
+					<li
+						class="{{ str_contains(Request::route()->getName(), 'admin.sport.type') ? 'active' : null }}"
+					>
+						<a href="{{ route('admin.sport.type.index') }}">
+							Type
+						</a>
 					</li>
 				</ul>
 			</div>
 
 			<li>
-				<a href="#">School</a>
+				<a
+					href="{{ route('admin.school.index') }}"
+					class="{{ str_contains(Request::route()->getName(), 'admin.school.index') ? 'active' : null }}"
+				>School</a>
 			</li>
 		</div>
 

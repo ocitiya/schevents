@@ -44,8 +44,8 @@
           >
             {{ csrf_field() }}
             <div class="mb-3">
-              <label for="email" class="form-label">Email address</label>
-              <input id="email" type="email" class="form-control" name="email" value="" required autofocus>
+              <label for="username" class="form-label">Username</label>
+              <input id="username" type="text" class="form-control" name="username" value="{{ old('username') }}" required autofocus>
             </div>
 
             <div class="mb-3">

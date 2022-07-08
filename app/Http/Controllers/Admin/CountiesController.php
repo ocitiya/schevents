@@ -11,32 +11,7 @@ use App\Models\County;
 
 class CountiesController extends Controller {
 	public function index (Request $request) {
-		$page = $request->has('page') ? $request->page : 1;
-		if (empty($page)) $page = 1; 
-		$search = $request->has('search') ? $request->search : null;
-		$limit = 10;
-
-		$counties = County::with(['province'])
-      ->when($search != null, function ($query) use ($search) {
-        $query->where('name', 'LIKE', '%'.$search.'%');
-      })
-      ->take($limit)
-			->skip($page - 1)
-			->get();
-
-		$total = County::when($search != null, function ($query) use ($search) {
-			$query->where('name', 'LIKE', '%'.$search.'%');
-		})->count();
-
-		$data = [
-			"counties" => $counties,
-			"total" => $total,
-			"page" => $page,
-			"search" => $search,
-			"total_page" => ceil($total / $limit)
-		];
-
-		return view('admin.counties.index', $data);
+		return view('admin.counties.index');
 	}
 
 	public function create () {
@@ -88,6 +63,47 @@ class CountiesController extends Controller {
 		} catch (QueryException $exception) {
 			return redirect()->back()
 				->withErrors($exception->getMessage());
+		}
+	}
+
+	public function list (Request $request) {
+		try {
+			$page = $request->has('page') ? $request->page : 1;
+			if (empty($page)) $page = 1; 
+			$search = $request->has('search') ? $request->search : null;
+			$limit = 10;
+
+			$counties = County::with(['province'])
+				->when($search != null, function ($query) use ($search) {
+					$query->where('name', 'LIKE', '%'.$search.'%');
+				})
+				->take($limit)
+				->skip($page - 1)
+				->get();
+
+			$total = County::when($search != null, function ($query) use ($search) {
+				$query->where('name', 'LIKE', '%'.$search.'%');
+			})->count();
+
+			return response()->json([
+				"status" => true,
+				"message" => null,
+				"data" => [
+					"list" => $counties,
+					"pagination" => [
+						"total" => $total,
+						"page" => (int) $page,
+						"search" => $search,
+						"limit" => $limit,
+						"total_page" => ceil($total / $limit)
+					]
+				]
+			]);
+		} catch (QueryException $exception) {
+			return response()->json([
+				"status" => false,
+				"message" => $exception->getMessage()
+			]);
 		}
 	}
 }

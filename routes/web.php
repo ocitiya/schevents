@@ -10,6 +10,9 @@ use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\CountriesController;
 use App\Http\Controllers\Admin\ProvincesController;
 use App\Http\Controllers\Admin\CountiesController;
+use App\Http\Controllers\Admin\MunicipalitiesController;
+use App\Http\Controllers\Admin\SportTypeController;
+use App\Http\Controllers\Admin\SchoolController;
 
 /*
 |--------------------------------------------------------------------------
@@ -69,7 +72,38 @@ Route::middleware(['haveInstalled'])->group(function () {
 
 					Route::post('/store', [CountiesController::class, 'store'])->name('store');
 				});
+
+				Route::group(['prefix' => 'municipalities', 'as' => 'municipalities.'], function () {
+					Route::get('/', [MunicipalitiesController::class, 'index'])->name('index');
+					Route::get('/create', [MunicipalitiesController::class, 'create'])->name('create');
+					Route::get('/update/{id}', [MunicipalitiesController::class, 'update'])->name('update');
+					Route::get('/detail/{id}', [MunicipalitiesController::class, 'detail'])->name('detail');
+
+					Route::post('/store', [MunicipalitiesController::class, 'store'])->name('store');
+				});
 			});
+
+			Route::group(['prefix' => 'sport', 'as' => 'sport.'], function () {
+				Route::group(['prefix' => 'type', 'as' => 'type.'], function () {
+					Route::get('/', [SportTypeController::class, 'index'])->name('index');
+					Route::get('/create', [SportTypeController::class, 'create'])->name('create');
+					Route::get('/update/{id}', [SportTypeController::class, 'update'])->name('update');
+					Route::get('/detail/{id}', [SportTypeController::class, 'detail'])->name('detail');
+
+					Route::post('/store', [SportTypeController::class, 'store'])->name('store');
+					Route::post('/delete', [SportTypeController::class, 'delete'])->name('delete');
+				});
+			});
+		});
+
+		Route::group(['prefix' => 'school', 'as' => 'school.'], function () {
+			Route::get('/', [SchoolController::class, 'index'])->name('index');
+			Route::get('/create', [SchoolController::class, 'create'])->name('create');
+			Route::get('/update/{id}', [SchoolController::class, 'update'])->name('update');
+			Route::get('/detail/{id}', [SchoolController::class, 'detail'])->name('detail');
+
+			Route::post('/store', [SchoolController::class, 'store'])->name('store');
+			Route::post('/delete', [SchoolController::class, 'delete'])->name('delete');
 		});
 	});
 });

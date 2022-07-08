@@ -1,9 +1,9 @@
 @extends('layouts.admin.master')
 
 @section('content')
-  <div id="countries" class="content">
+  <div id="municipalities" class="content">
     <div class="title-container">
-      <h4 class="text-primary">Countries</h4>
+      <h4 class="text-primary">Municipalities</h4>
 
       <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
@@ -14,7 +14,7 @@
 
     <div class="data-container">
       <div class="data-header">
-        <a href="{{ route('admin.location.countries.create') }}" class="btn btn-primary btn-sm unrounded">
+        <a href="{{ route('admin.location.municipalities.create') }}" class="btn btn-primary btn-sm unrounded">
           Create New&nbsp;
           <i class="fa-solid fa-plus"></i>
         </a>
@@ -27,7 +27,7 @@
       </div>
 
       <div class="data-center">
-        <div class="data-list" id="country-items">
+        <div class="data-list" id="municipality-items">
           {{-- Dynamic Data --}}
         </div>
       </div>
@@ -85,17 +85,17 @@
       total_page: 0
     }
 
-    const createCountryItem = (data) => {
-      const detailRoute = `/admin/location/countries/detail/${data.id}`
-      const updateRoute = `/admin/location/countries/update/${data.id}`
+    const createMunicipalityItem = (data) => {
+      const detailRoute = `/admin/location/municipalities/detail/${data.id}`
+      const updateRoute = `/admin/location/municipalities/update/${data.id}`
 
-      $('#country-items').append(`
+      $('#municipality-items').append(`
         <div class="card text-center shadow-sm">
           <div class="card-body">
             <h5 class="card-title">${data.name}</h5>
             <div class="card-text">
-              <small>Code</small>
-              <div>${data.alpha2_code}</div>
+              <small>County</small>
+              <div>${data.county.name}</div>
             </div>
           </div>
           <div class="card-footer text-muted">
@@ -123,7 +123,7 @@
       const data = await new Promise((resolve, reject) => {
         search = search === null ? '' : `&search=${search}`
 
-        let endpoint = '/api/country/list'
+        let endpoint = '/api/municipality/list'
         endpoint = `${endpoint}?page=${page}&limit=${limit}`
         endpoint = endpoint+search
 
@@ -137,12 +137,12 @@
         })
       })
 
-      $('#country-items').empty()
+      $('#municipality-items').empty()
 
       if (data.list.length > 0) {
-        data.list.map(item => createCountryItem(item))
+        data.list.map(item => createMunicipalityItem(item))
       } else {
-        $('#country-items').text('No Data')
+        $('#municipality-items').text('No Data')
       }
 
       pagination = { ...data.pagination }

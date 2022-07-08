@@ -10,31 +10,7 @@ use App\Models\Country;
 
 class CountriesController extends Controller {
 	public function index (Request $request) {
-		$page = $request->has('page') ? $request->page : 1;
-		if (empty($page)) $page = 1; 
-		$search = $request->has('search') ? $request->search : null;
-		$limit = 10;
-
-		$countries = Country::when($search != null, function ($query) use ($search) {
-			$query->where('name', 'LIKE', '%'.$search.'%');
-		})
-			->take($limit)
-			->skip($page - 1)
-			->get();
-
-		$total = Country::when($search != null, function ($query) use ($search) {
-			$query->where('name', 'LIKE', '%'.$search.'%');
-		})->count();
-
-		$data = [
-			"countries" => $countries,
-			"total" => $total,
-			"page" => $page,
-			"search" => $search,
-			"total_page" => ceil($total / $limit)
-		];
-
-		return view('admin.countries.index', $data);
+		return view('admin.countries.index');
 	}
 
 	public function create () {
@@ -84,6 +60,46 @@ class CountriesController extends Controller {
 		} catch (QueryException $exception) {
 			return redirect()->back()
 				->withErrors($exception->getMessage());
+		}
+	}
+
+	public function list (Request $request) {
+		try {
+			$page = $request->has('page') ? $request->page : 1;
+			if (empty($page)) $page = 1; 
+			$search = $request->has('search') ? $request->search : null;
+			$limit = $request->has('limit') ? $request->limit : 10;
+
+			$countries = Country::when($search != null, function ($query) use ($search) {
+				$query->where('name', 'LIKE', '%'.$search.'%');
+			})
+				->take($limit)
+				->skip(($page - 1) * $limit)
+				->get();
+
+			$total = Country::when($search != null, function ($query) use ($search) {
+				$query->where('name', 'LIKE', '%'.$search.'%');
+			})->count();
+
+			return response()->json([
+				"status" => true,
+				"message" => null,
+				"data" => [
+					"list" => $countries,
+					"pagination" => [
+						"total" => $total,
+						"page" => (int) $page,
+						"search" => $search,
+						"limit" => $limit,
+						"total_page" => ceil($total / $limit)
+					]
+				]
+			]);
+		} catch (QueryException $exception) {
+			return response()->json([
+				"status" => false,
+				"message" => $exception->getMessage()
+			]);
 		}
 	}
 }
