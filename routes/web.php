@@ -13,6 +13,7 @@ use App\Http\Controllers\Admin\CountiesController;
 use App\Http\Controllers\Admin\MunicipalitiesController;
 use App\Http\Controllers\Admin\SportTypeController;
 use App\Http\Controllers\Admin\SchoolController;
+use App\Http\Controllers\Admin\MatchScheduleController;
 
 /*
 |--------------------------------------------------------------------------
@@ -104,6 +105,16 @@ Route::middleware(['haveInstalled'])->group(function () {
 
 			Route::post('/store', [SchoolController::class, 'store'])->name('store');
 			Route::post('/delete', [SchoolController::class, 'delete'])->name('delete');
+		});
+
+		Route::group(['prefix' => 'match-schedule', 'as' => 'match-schedule.'], function () {
+			Route::get('/', [MatchScheduleController::class, 'index'])->name('index');
+			Route::get('/create', [MatchScheduleController::class, 'create'])->name('create');
+			Route::get('/update/{id}', [MatchScheduleController::class, 'update'])->name('update');
+			Route::get('/detail/{id}', [MatchScheduleController::class, 'detail'])->name('detail');
+
+			Route::post('/store', [MatchScheduleController::class, 'store'])->name('store');
+			Route::post('/delete', [MatchScheduleController::class, 'delete'])->name('delete');
 		});
 	});
 });

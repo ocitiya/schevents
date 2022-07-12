@@ -7,7 +7,10 @@
 		<div class="menu-group">
 			<div class="title">MATCH</div>
 			<li>
-				<a href="#">Match Schedule</a>
+				<a
+					href="{{ route('admin.match-schedule.index') }}"
+					class="{{ str_contains(Request::route()->getName(), 'admin.match-schedule.index') ? 'active' : null }}"
+				>Match Schedule</a>
 			</li>
 		</div>
 		

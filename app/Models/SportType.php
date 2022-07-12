@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class SportType extends Model {
 	use HasFactory;
 
-	protected $table = "sport_type";
+	protected $table = "sport_types";
 	protected $primaryKey = "id";
 
 	protected $casts = [

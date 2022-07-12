@@ -1497,8 +1497,8 @@
             this.updateFormInputs();
 
             //re-render the time pickers because changing one selection can affect what's enabled in another
-            this.renderTimePicker('left');
-            this.renderTimePicker('right');
+            // this.renderTimePicker('left');
+            // this.renderTimePicker('right');
 
         },
 

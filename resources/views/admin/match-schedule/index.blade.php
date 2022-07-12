@@ -1,9 +1,15 @@
 @extends('layouts.admin.master')
 
 @section('content')
-  <div id="schools" class="content">
+  <div id="match-schedule" class="content">
+    @if (Session::has("success"))
+      <div class="alert alert-success">
+        {{ Session::get("success") }}
+      </div>
+    @endif
+
     <div class="title-container">
-      <h4 class="text-primary">Schools</h4>
+      <h4 class="text-primary">Match Schedule</h4>
 
       <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
@@ -14,7 +20,7 @@
 
     <div class="data-container">
       <div class="data-header">
-        <a href="{{ route('admin.school.create') }}" class="btn btn-primary btn-sm unrounded">
+        <a href="{{ route('admin.match-schedule.create') }}" class="btn btn-primary btn-sm unrounded">
           Create New&nbsp;
           <i class="fa-solid fa-plus"></i>
         </a>
@@ -27,7 +33,7 @@
       </div>
 
       <div class="data-center">
-        <div class="data-list" id="school-items">
+        <div class="data-list" id="schedule-items">
           {{-- Dynamic Data --}}
         </div>
       </div>
@@ -74,7 +80,7 @@
 
 @section('script')
   <script>
-    const deleteURL = "<?php echo route('admin.school.delete') ?>"
+    const deleteURL = "<?php echo route('admin.match-schedule.delete') ?>"
     let searchTimeout = null;
     let pageTimeout = null;
 
@@ -86,16 +92,19 @@
       total_page: 0
     }
 
-    const createSchoolItem = (data) => {
-      const detailRoute = `/admin/school/detail/${data.id}`
-      const updateRoute = `/admin/school/update/${data.id}`
+    const createScheduleItem = (data) => {
+      const detailRoute = `/admin/match-schedule/detail/${data.id}`
+      const updateRoute = `/admin/match-schedule/update/${data.id}`
 
-      $('#school-items').append(`
+      const date = moment.utc(data.datetime).local().format('DD MMMM YYYY hh:mm')
+      const zone_name =  moment.tz.guess()
+      const timezone = moment.tz(zone_name).zoneAbbr() 
+
+      $('#schedule-items').append(`
         <div class="card text-center shadow-sm">
           <div class="card-header text-end">
             <button
               data-id="${data.id}"
-              data-name="${data.name}"
               class="btn btn-outline-danger btn-sm unrounded delete-item"
             >
               Delete&nbsp;
@@ -104,11 +113,12 @@
           </div>
           
           <div class="card-body">
-            <h5 class="card-title">${data.name}</h5>
-            <div class="card-text">
-              <small>Level of Education</small>
-              <div class="capitalize">${data.level_of_education}</div>
+            <div class="card-text text-end mt-0 mb-3">
+              <small>${date} ${timezone}</small>
             </div>
+            <h5 class="card-title">${data.school1.name}</h5>
+            <h6>VS</h6>
+            <h5 class="card-title">${data.school2.name}</h5>
           </div>
           <div class="card-footer text-muted">
             <a
@@ -135,7 +145,7 @@
       const data = await new Promise((resolve, reject) => {
         search = search === null ? '' : `&search=${search}`
 
-        let endpoint = '/api/school/list'
+        let endpoint = '/api/match-schedule/list'
         endpoint = `${endpoint}?page=${page}&limit=${limit}`
         endpoint = endpoint+search
 
@@ -149,12 +159,12 @@
         })
       })
 
-      $('#school-items').empty()
+      $('#schedule-items').empty()
 
       if (data.list.length > 0) {
-        data.list.map(item => createSchoolItem(item))
+        data.list.map(item => createScheduleItem(item))
       } else {
-        $('#school-items').text('No Data')
+        $('#schedule-items').text('No Data')
       }
 
       pagination = { ...data.pagination }
@@ -202,16 +212,15 @@
         }, 500);
       })
 
-      $('#schools').on('click', '.delete-item', function(e) {
+      $('#match-schedule').on('click', '.delete-item', function(e) {
         const id = $(this).attr('data-id')
-        const name = $(this).attr('data-name')
 
         const formData = new FormData()
         formData.append('id', id)
         formData.append('_token', csrfToken)
         
         swal({
-          text: `Are you want to delete ${name}?`,
+          text: `Are you want to delete this schedule?`,
           icon: "warning",
           buttons: true,
           dangerMode: true,

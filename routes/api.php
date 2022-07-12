@@ -8,6 +8,8 @@ use App\Http\Controllers\Admin\ProvincesController;
 use App\Http\Controllers\Admin\CountiesController;
 use App\Http\Controllers\Admin\MunicipalitiesController;
 use App\Http\Controllers\Admin\SchoolController;
+use App\Http\Controllers\Admin\MatchScheduleController;
+use App\Http\Controllers\Admin\SportTypeController;
 
 /*
 |--------------------------------------------------------------------------
@@ -29,3 +31,5 @@ Route::get('/province/list/{country_id?}', [ProvincesController::class, 'list'])
 Route::get('/county/list/{province_id?}', [CountiesController::class, 'list']);
 Route::get('/municipality/list/{county_id?}', [MunicipalitiesController::class, 'list']);
 Route::get('/school/list/{school_id?}', [SchoolController::class, 'list']);
+Route::get('/match-schedule/list', [MatchScheduleController::class, 'list']);
+Route::get('/sport-type/list', [SportTypeController::class, 'list']);

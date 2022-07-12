@@ -50,6 +50,7 @@
 
     <script src="{{ asset('js/jquery.min.js') }}"></script>
     <script src="{{ asset('js/moment.min.js') }}"></script>
+    <script src="{{ asset('js/moment-timezone-with-data.js') }}"></script>
     <script src="{{ asset('js/bootstrap.bundle.min.js') }}"></script>
     <script src="{{ asset('js/select2.min.js') }}"></script>
     <script src="{{ asset('js/fontawesome-free-6.1.1-web.all.min.js') }}"></script>

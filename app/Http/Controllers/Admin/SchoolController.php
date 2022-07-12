@@ -12,38 +12,8 @@ use Illuminate\Database\QueryException;
 use App\Models\School;
 
 class SchoolController extends Controller {
-	public function attributes() {
-		return [
-			'municipality_id' => 'Municipality'
-		];
-	}
-
 	public function index (Request $request) {
-		$page = $request->has('page') ? $request->page : 1;
-		if (empty($page)) $page = 1; 
-		$search = $request->has('search') ? $request->search : null;
-		$limit = 10;
-
-		$schools = School::when($search != null, function ($query) use ($search) {
-        $query->where('name', 'LIKE', '%'.$search.'%');
-      })
-      ->take($limit)
-			->skip($page - 1)
-			->get();
-
-		$total = School::when($search != null, function ($query) use ($search) {
-			$query->where('name', 'LIKE', '%'.$search.'%');
-		})->count();
-
-		$data = [
-			"schools" => $schools,
-			"total" => $total,
-			"page" => $page,
-			"search" => $search,
-			"total_page" => ceil($total / $limit)
-		];
-
-		return view('admin.school.index', $data);
+		return view('admin.school.index');
 	}
 
 	public function create () {

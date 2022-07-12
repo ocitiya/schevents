@@ -10,31 +10,7 @@ use App\Models\SportType;
 
 class SportTypeController extends Controller {
 	public function index (Request $request) {
-		$page = $request->has('page') ? $request->page : 1;
-		if (empty($page)) $page = 1; 
-		$search = $request->has('search') ? $request->search : null;
-		$limit = 10;
-
-		$types = SportType::when($search != null, function ($query) use ($search) {
-        $query->where('name', 'LIKE', '%'.$search.'%');
-      })
-      ->take($limit)
-			->skip($page - 1)
-			->get();
-
-		$total = SportType::when($search != null, function ($query) use ($search) {
-			$query->where('name', 'LIKE', '%'.$search.'%');
-		})->count();
-
-		$data = [
-			"types" => $types,
-			"total" => $total,
-			"page" => $page,
-			"search" => $search,
-			"total_page" => ceil($total / $limit)
-		];
-
-		return view('admin.sport_type.index', $data);
+		return view('admin.sport_type.index');
 	}
 
 	public function create () {
@@ -103,5 +79,38 @@ class SportTypeController extends Controller {
 				"message" => $exception->getMessage()
 			]);
 		}
+	}
+
+	public function list (Request $request) {
+		$page = $request->has('page') ? $request->page : 1;
+		if (empty($page)) $page = 1; 
+		$search = $request->has('search') ? $request->search : null;
+		$limit = 10;
+
+		$types = SportType::when($search != null, function ($query) use ($search) {
+        $query->where('name', 'LIKE', '%'.$search.'%');
+      })
+      ->take($limit)
+			->skip($page - 1)
+			->get();
+
+		$total = SportType::when($search != null, function ($query) use ($search) {
+			$query->where('name', 'LIKE', '%'.$search.'%');
+		})->count();
+
+		return response()->json([
+			"status" => true,
+			"message" => null,
+			"data" => [
+				"list" => $types,
+				"pagination" => [
+					"total" => $total,
+					"page" => (int) $page,
+					"search" => $search,
+					"limit" => $limit,
+					"total_page" => ceil($total / $limit)
+				]
+			]
+		]);
 	}
 }
