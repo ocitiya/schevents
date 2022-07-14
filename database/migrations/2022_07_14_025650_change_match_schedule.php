@@ -27,7 +27,7 @@ return new class extends Migration
     {
         DB::statement('SET FOREIGN_KEY_CHECKS = 0');
 
-        Schema::table('stadium', function($table) {
+        Schema::table('match_schedule', function($table) {
             $table->dropForeign(['stadium_id']);
             $table->dropColumn('stadium_id');
         });

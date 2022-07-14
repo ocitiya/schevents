@@ -1,5 +1,6 @@
 {
     "/resources/views/app.blade.php": "/resources/views/app.blade.php",
+    "/css/262.0e1f4f4c.css": "/css/262.0e1f4f4c.css",
     "/css/298.476737f0.css": "/css/298.476737f0.css",
     "/css/326.7b30a77c.css": "/css/326.7b30a77c.css",
     "/css/656.1277a398.css": "/css/656.1277a398.css",
@@ -32,6 +33,7 @@
     "/images/register.png": "/images/register.png",
     "/index.html": "/index.html",
     "/index.php": "/index.php",
+    "/js/262.c7f67b8c.js": "/js/262.c7f67b8c.js",
     "/js/298.bf251170.js": "/js/298.bf251170.js",
     "/js/326.ea131e36.js": "/js/326.ea131e36.js",
     "/js/564.3aa6b847.js": "/js/564.3aa6b847.js",
@@ -45,6 +47,7 @@
     "/js/app.7694e354.js": "/js/app.7694e354.js",
     "/js/app.7dd5733f.js": "/js/app.7dd5733f.js",
     "/js/app.885238ad.js": "/js/app.885238ad.js",
+    "/js/app.b3c240d1.js": "/js/app.b3c240d1.js",
     "/js/app.dad28644.js": "/js/app.dad28644.js",
     "/js/bootstrap.bundle.min.js": "/js/bootstrap.bundle.min.js",
     "/js/daterangepicker.js": "/js/daterangepicker.js",
