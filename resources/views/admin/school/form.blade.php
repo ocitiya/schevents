@@ -3,7 +3,7 @@
 @section('content')
   <div id="sport_type" class="content">
     <div class="title-container">
-      <h4 class="text-primary">School</h4>
+      <h4 class="text-primary">Sekolah</h4>
 
       <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
@@ -19,9 +19,9 @@
       <div class="data-header">
         <h5 class="text-primary">
           @if(!isset($data))
-            <span>Create New School</span>
+            <span>Tambah Sekolah Baru</span>
           @else
-            <span>Update School</span>
+            <span>Ubah Sekolah {{ $data->name }}</span>
           @endisset
         </h5>
       </div>
@@ -51,7 +51,7 @@
           <div class="col-7">
             <div class="row">
               <div class="col-5">
-                <label for="name">School Name *</label>
+                <label for="name">Nama Sekolah *</label>
               </div>
               <div class="col-7">
                 <input type="text" id="name" name="name" class="form-control capitalize"
@@ -62,43 +62,10 @@
 
             <div class="row">
               <div class="col-5">
-                <label for="name">Country *</label>
-              </div>
-              <div class="col-7">
-                <select name="country_id" class="form-select" id="country_id">
-                  {{-- Dynamic Data --}}
-                </select>
-              </div>
-            </div>
-
-            <div class="row">
-              <div class="col-5">
-                <label for="name">Province *</label>
-              </div>
-              <div class="col-7">
-                <select name="province_id" class="form-select" id="province_id">
-                  {{-- Dynamic Data --}}
-                </select>
-              </div>
-            </div>
-
-            <div class="row">
-              <div class="col-5">
-                <label for="name">County *</label>
+                <label for="name">Kota *</label>
               </div>
               <div class="col-7">
                 <select name="county_id" class="form-select" id="county_id">
-                  {{-- Dynamic Data --}}
-                </select>
-              </div>
-            </div>
-
-            <div class="row">
-              <div class="col-5">
-                <label for="name">Municipality *</label>
-              </div>
-              <div class="col-7">
-                <select name="municipality_id" class="form-select" id="municipality_id">
                   {{-- Dynamic Data --}}
                 </select>
               </div>
@@ -131,7 +98,7 @@
 
             <div class="row">
               <div class="col-5">
-                <label for="name">Level of Education</label>
+                <label for="name">Tingkat Sekolah *</label>
               </div>
               <div class="col-7">
                 <select name="level_of_education" class="form-select" id="level_of_education">
@@ -149,7 +116,7 @@
 
             <div class="form-button">
               <button type="submit" class="btn btn-primary btn-sm unrounded">
-                Submit&nbsp;
+                Kirim&nbsp;
                 <i class="fa-solid fa-paper-plane"></i>
               </button>
             </div>
@@ -162,10 +129,7 @@
 
 @section('script')
   <script>
-    const countrySelected = "<?php echo old('country_id', isset($data) ? $data->country_id : null) ?>";
-    const provinceSelected = "<?php echo old('province_id', isset($data) ? $data->province_id : null) ?>";
-    const countySelected = "<?php echo old('county_id', isset($data) ? $data->county_id : null) ?>";
-    const municipalitySelected = "<?php echo old('municipality_id', isset($data) ? $data->municipality_id : null) ?>";
+    const countySelected = "<?php echo old('county_id', isset($data) ? $data->county_id : $default_city) ?>";
     const levelOfEducationSelected = "<?php echo old('level_of_education', isset($data) ? $data->level_of_education : null) ?>";
 
     const getList = (endpoint) => {
@@ -193,36 +157,12 @@
     }
 
     document.addEventListener('DOMContentLoaded', async function () {
-      $('#country_id').on('change', async function () {
-        const val = $(this).val()
-        if (val !== null) {
-          const provinces = await getList(`/api/province/list/${val}`)
-          generateSelect('#province_id', provinces)
-          $('#province_id').val(provinceSelected).change()
-        }
-      })
-
-      $('#province_id').on('change', async function () {
-        const val = $(this).val()
-        if (val !== null) {
-          const counties = await getList(`/api/county/list/${val}`)
-          generateSelect('#county_id', counties)
-          $('#county_id').val(countySelected).change()
-        }
-      })
-
-      $('#county_id').on('change', async function () {
-        const val = $(this).val()
-        if (val !== null) {
-          const municipalities = await getList(`/api/municipality/list/${val}`)
-          generateSelect('#municipality_id', municipalities)
-          $('#municipality_id').val(municipalitySelected).change()
-        }
-      })
-
       const countries = await getList('/api/country/list')
-      generateSelect('#country_id', countries)
-      $('#country_id').val(countrySelected).change()
+      const country = countries[0]
+
+      const cities = await getList(`/api/county/list?country_id=${country.id}`)
+      generateSelect('#county_id', cities)
+      $('#county_id').val(countySelected).change()
 
       $('#level_of_education').val(levelOfEducationSelected).change()
     })

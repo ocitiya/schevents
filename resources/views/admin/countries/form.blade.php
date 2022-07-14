@@ -3,7 +3,7 @@
 @section('content')
   <div id="countries" class="content">
     <div class="title-container">
-      <h4 class="text-primary">Countries</h4>
+      <h4 class="text-primary">Negara</h4>
 
       <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
@@ -19,9 +19,9 @@
       <div class="data-header">
         <h5 class="text-primary">
           @if(!isset($data))
-            <span>Create New Country</span>
+            <span>Tambah Negara Baru</span>
           @else
-            <span>Update Country</span>
+            <span>Ubah Negara {{ $data->name }}</span>
           @endisset
         </h5>
       </div>
@@ -50,7 +50,7 @@
           <div class="col-6">
             <div class="row">
               <div class="col-5">
-                <label for="name">Country Name *</label>
+                <label for="name">Nama Negara *</label>
               </div>
               <div class="col-7">
                 <input type="text" id="name" name="name" class="form-control"
@@ -61,14 +61,14 @@
 
             <div class="row">
               <div class="col-5">
-                <label for="alpha2_code">Country Code *</label>
+                <label for="alpha2_code">Kode Negara *</label>
               </div>
               <div class="col-7">
                 <input type="text" id="alpha2_code" name="alpha2_code" class="form-control"
                   value="{{ old('alpha2_code', isset($data) ? $data->alpha2_code : null) }}"
                 >
                 <div class="text-secondary">
-                  <small>Use two-letter country code.</small><br/>
+                  <small>Gunakan dua karakter kode negara.</small><br/>
                   <small>ISO 3166-1 alpha-2</small>
                 </div>
               </div>
@@ -76,7 +76,7 @@
 
             <div class="row">
               <div class="col-5">
-                <label for="dial_code">Dial Code *</label>
+                <label for="dial_code">Kode Telepon *</label>
               </div>
               <div class="col-7">
                 <input type="text" id="dial_code" name="dial_code" class="form-control"
@@ -90,7 +90,7 @@
 
             <div class="form-button">
               <button type="submit" class="btn btn-primary btn-sm unrounded">
-                Submit&nbsp;
+                Kirim&nbsp;
                 <i class="fa-solid fa-paper-plane"></i>
               </button>
             </div>

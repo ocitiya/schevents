@@ -3,7 +3,7 @@
 @section('content')
   <div id="counties" class="content">
     <div class="title-container">
-      <h4 class="text-primary">Counties</h4>
+      <h4 class="text-primary">Kota</h4>
 
       <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
@@ -19,9 +19,9 @@
       <div class="data-header">
         <h5 class="text-primary">
           @if(!isset($data))
-            <span>Create New County</span>
+            <span>Tambah Kota Baru</span>
           @else
-            <span>Update County</span>
+            <span>Ubah Kota {{ $data->name }}</span>
           @endisset
         </h5>
       </div>
@@ -50,21 +50,7 @@
           <div class="col-6">
             <div class="row">
               <div class="col-5">
-                <label for="name">Province *</label>
-              </div>
-              <div class="col-7">
-                <select name="province_id" class="form-select" id="province_id">
-                  <option disabled selected value>Please select ...</option>
-                  @foreach ($provinces as $item)
-                    <option value="{{ $item->id }}">{{ $item->name }}</option>
-                  @endforeach
-                </select>
-              </div>
-            </div>
-            
-            <div class="row">
-              <div class="col-5">
-                <label for="name">County Name *</label>
+                <label for="name">Nama Kota *</label>
               </div>
               <div class="col-7">
                 <input type="text" id="name" name="name" class="form-control capitalize"
@@ -73,9 +59,20 @@
               </div>
             </div>
 
+            <div class="row">
+              <div class="col-5">
+                <label for="abbreviation">Singkatan</label>
+              </div>
+              <div class="col-7">
+                <input type="text" id="abbreviation" name="abbreviation" class="form-control capitalize"
+                  value="{{ old('abbreviation', isset($data) ? $data->abbreviation : null) }}"
+                >
+              </div>
+            </div>
+
             <div class="form-button">
               <button type="submit" class="btn btn-primary btn-sm unrounded">
-                Submit&nbsp;
+                Kirim&nbsp;
                 <i class="fa-solid fa-paper-plane"></i>
               </button>
             </div>
@@ -84,14 +81,4 @@
       </div>
     </div>
   </div>
-@endsection
-
-@section('script')
-  <script>
-    const provinceSelected = "<?php echo old('province_id', isset($data) ? $data->province_id : null) ?>";
-
-    document.addEventListener('DOMContentLoaded', function() {
-      $('#province_id').val(provinceSelected).change()
-    })
-  </script>
 @endsection

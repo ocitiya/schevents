@@ -3,7 +3,7 @@
 @section('content')
   <div id="school" class="content">
     <div class="title-container">
-      <h4 class="text-primary">School</h4>
+      <h4 class="text-primary">Sekolah</h4>
 
       <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
@@ -18,7 +18,7 @@
     <div class="data-container">
       <div class="data-header">
         <h5 class="text-primary">
-          School Detail
+          Detail Sekolah
         </h5>
       </div>
 
@@ -40,37 +40,10 @@
 
             <div class="row mb-3">
               <div class="col-5 text-secondary">
-                <label for="name">Country</label>
-              </div>
-              <div class="col-7">
-                <label class="">{{ $data->country->name }}</label> 
-              </div>
-            </div>
-
-            <div class="row mb-3">
-              <div class="col-5 text-secondary">
-                <label for="name">Province</label>
-              </div>
-              <div class="col-7">
-                <label class="">{{ $data->province->name }}</label> 
-              </div>
-            </div>
-
-            <div class="row mb-3">
-              <div class="col-5 text-secondary">
-                <label for="name">County</label>
+                <label for="name">Kota</label>
               </div>
               <div class="col-7">
                 <label class="">{{ $data->county->name }}</label> 
-              </div>
-            </div>
-
-            <div class="row mb-3">
-              <div class="col-5 text-secondary">
-                <label for="name">Municipality</label>
-              </div>
-              <div class="col-7">
-                <label class="">{{ $data->municipality->name }}</label> 
               </div>
             </div>
 

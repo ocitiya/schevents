@@ -3,7 +3,7 @@
 @section('content')
   <div id="countries" class="content">
     <div class="title-container">
-      <h4 class="text-primary">Countries</h4>
+      <h4 class="text-primary">Negara</h4>
 
       <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
@@ -14,8 +14,8 @@
 
     <div class="data-container">
       <div class="data-header">
-        <a href="{{ route('admin.location.countries.create') }}" class="btn btn-primary btn-sm unrounded">
-          Create New&nbsp;
+        <a id="create_button" href="{{ route('admin.location.countries.create') }}" class="btn btn-primary btn-sm unrounded">
+          Tambah Negara&nbsp;
           <i class="fa-solid fa-plus"></i>
         </a>
 
@@ -94,8 +94,13 @@
           <div class="card-body">
             <h5 class="card-title">${data.name}</h5>
             <div class="card-text">
-              <small>Code</small>
+              <small>Kode Negara</small>
               <div>${data.alpha2_code}</div>
+            </div>
+
+            <div class="card-text mt-0">
+              <small>Kode Telepon</small>
+              <div>${data.dial_code}</div>
             </div>
           </div>
           <div class="card-footer text-muted">
@@ -141,6 +146,7 @@
 
       if (data.list.length > 0) {
         data.list.map(item => createCountryItem(item))
+        $('#create_button').addClass('disabled')
       } else {
         $('#country-items').text('No Data')
       }

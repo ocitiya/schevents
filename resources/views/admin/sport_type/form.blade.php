@@ -3,7 +3,7 @@
 @section('content')
   <div id="sport_type" class="content">
     <div class="title-container">
-      <h4 class="text-primary">Sport Types</h4>
+      <h4 class="text-primary">Cabang Olahraga</h4>
 
       <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
@@ -19,9 +19,9 @@
       <div class="data-header">
         <h5 class="text-primary">
           @if(!isset($data))
-            <span>Create New Sport Type</span>
+            <span>Tambah Cabang Olaharaga Baru</span>
           @else
-            <span>Update Sport Type</span>
+            <span>Ubah Cabang Olahraga {{ $data->name }}</span>
           @endisset
         </h5>
       </div>
@@ -50,7 +50,7 @@
           <div class="col-6">
             <div class="row">
               <div class="col-5">
-                <label for="name">Type Name *</label>
+                <label for="name">Nama Cabang Olahraga *</label>
               </div>
               <div class="col-7">
                 <input type="text" id="name" name="name" class="form-control capitalize"
@@ -61,7 +61,7 @@
 
             <div class="form-button">
               <button type="submit" class="btn btn-primary btn-sm unrounded">
-                Submit&nbsp;
+                Kirim&nbsp;
                 <i class="fa-solid fa-paper-plane"></i>
               </button>
             </div>
@@ -70,14 +70,4 @@
       </div>
     </div>
   </div>
-@endsection
-
-@section('script')
-  <script>
-    const provinceSelected = "<?php echo old('county_id', isset($data) ? $data->county_id : null) ?>";
-
-    document.addEventListener('DOMContentLoaded', function() {
-      $('#county_id').val(provinceSelected).change()
-    })
-  </script>
 @endsection

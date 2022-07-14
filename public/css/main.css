@@ -122,3 +122,9 @@
 	margin-top: 40px;
 	text-align: right;
 }
+
+#home .filter-component {
+	border-right: 1px solid #dedede;
+	width: 300px;
+	max-width: 100%;
+}

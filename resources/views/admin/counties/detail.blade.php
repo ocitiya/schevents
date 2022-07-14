@@ -27,19 +27,19 @@
           <div class="col-7">
             <div class="row mb-3">
               <div class="col-5 text-secondary">
-                <label for="name">Province</label>
+                <label for="name">Nama Kota</label>
               </div>
               <div class="col-7">
-                <label class="">{{ $data->province->name }}</label> 
+                <label class="">{{ $data->name }}</label> 
               </div>
             </div>
 
             <div class="row mb-3">
               <div class="col-5 text-secondary">
-                <label for="name">County Name</label>
+                <label for="name">Singkatan</label>
               </div>
               <div class="col-7">
-                <label class="">{{ $data->name }}</label> 
+                <label class="">{{ $data->abbreviation }}</label> 
               </div>
             </div>
           </div>

@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
 use App\Models\Province;
+use App\Models\Country;
 use App\Models\County;
 
 class CountiesController extends Controller {
@@ -15,10 +16,7 @@ class CountiesController extends Controller {
 	}
 
 	public function create () {
-    $provinces = Province::get();
-    
-    $data = [ "provinces" => $provinces ];
-		return view('admin.counties.form', $data);
+		return view('admin.counties.form');
 	}
 
 	public function update ($id) {
@@ -38,8 +36,8 @@ class CountiesController extends Controller {
 
 	public function store (Request $request) {
 		$validated = $request->validate([
-      'province_id' => 'required|uuid',
-			'name' => 'required|max:255'
+			'name' => 'required|max:255',
+			'abbreviation' => 'required|max:255',
 		]);
 
 		$isCreate = $request->id == null ? true : false;
@@ -53,7 +51,8 @@ class CountiesController extends Controller {
 		}
 		
 		try {
-			$counties->province_id = $request->province_id;
+			$counties->country_id = Country::first()->id;
+			$counties->abbreviation = $request->abbreviation;
 			$counties->name = ucwords($request->name);
 			$counties->save();
 
@@ -73,9 +72,15 @@ class CountiesController extends Controller {
 			$search = $request->has('search') ? $request->search : null;
 			$limit = 10;
 
+			$country_id = $request->has('country_id') ? $request->country_id : null;
+
 			$counties = County::with(['province'])
+				->withCount('schools')
 				->when($search != null, function ($query) use ($search) {
 					$query->where('name', 'LIKE', '%'.$search.'%');
+				})
+				->when($country_id != null, function ($query) use ($country_id) {
+					$query->where('country_id', $country_id);
 				})
 				->take($limit)
 				->skip($page - 1)
@@ -83,6 +88,8 @@ class CountiesController extends Controller {
 
 			$total = County::when($search != null, function ($query) use ($search) {
 				$query->where('name', 'LIKE', '%'.$search.'%');
+			})->when($country_id != null, function ($query) use ($country_id) {
+				$query->where('country_id', $country_id);
 			})->count();
 
 			return response()->json([

@@ -10,10 +10,12 @@ use Intervention\Image\Facades\Image;
 use Illuminate\Database\QueryException;
 
 use DateTime;
+use Carbon\Carbon;
 
 use App\Models\MatchSchedule;
 use App\Models\School;
 use App\Models\SportType;
+use App\Models\Stadium;
 
 class MatchScheduleController extends Controller {
 	public function index (Request $request) {
@@ -23,10 +25,12 @@ class MatchScheduleController extends Controller {
 	public function create () {
 		$schools = School::get();
 		$types = SportType::get();
+		$stadium = Stadium::get();
 
 		$data = [
 			"schools" => $schools,
-			"types" => $types
+			"types" => $types,
+			"stadium" => $stadium
 		];
 
 		return view('admin.match-schedule.form', $data);
@@ -62,6 +66,7 @@ class MatchScheduleController extends Controller {
       'sport_type_id' => 'required|uuid',
       'school1_id' => 'required|uuid',
       'school2_id' => 'required|uuid',
+      'stadium_id' => 'required|uuid',
 			'team_gender' => 'required|in:all,male,female',
 			'link' => 'required|url',
 			'date' => 'required|date',
@@ -105,6 +110,7 @@ class MatchScheduleController extends Controller {
 			$schedule->sport_type_id = $request->sport_type_id;
 			$schedule->school1_id = $request->school1_id;
 			$schedule->school2_id = $request->school2_id;
+			$schedule->stadium_id = $request->stadium_id;
 			$schedule->team_gender = $request->team_gender;
 			$schedule->datetime = $datetime;
 			$schedule->link = $request->link;
@@ -148,14 +154,40 @@ class MatchScheduleController extends Controller {
 		$search = $request->has('search') ? $request->search : null;
 		$limit = 10;
 
+		$type = $request->has('type') ? $request->type : "all";
+
 		$schedule = MatchSchedule::take($limit)
 			->skip($page - 1)
-			->with(["school1", "school2"])
-			->orderBy('datetime')
-			->get();
+			->with([
+				"school1",
+				"school2",
+				"sport_type",
+				"stadium" => function ($subQuery) {
+					$subQuery->with(["county"]);
+				}
+			])
+			->orderBy('datetime');
 
-		$total = MatchSchedule::orderBy('datetime')
-			->count();
+		$total = MatchSchedule::orderBy('datetime');
+
+		switch ($type) {
+			case "all":
+				break;
+
+			case "ongoing":
+				$datetime = Carbon::now()->toDateTimeString();
+
+				$schedule->where('datetime', '>=', $datetime);
+				$total->where('datetime', '>=', $datetime);
+
+				break;
+
+			default:
+				break;
+		}
+
+		$schedule = $schedule->get();
+		$total = $total->count();
 
 		return response()->json([
 			"status" => true,

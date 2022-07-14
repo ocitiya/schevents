@@ -3,7 +3,7 @@
 @section('content')
   <div id="countries" class="content">
     <div class="title-container">
-      <h4 class="text-primary">Countries</h4>
+      <h4 class="text-primary">Negara</h4>
 
       <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
@@ -18,7 +18,7 @@
     <div class="data-container">
       <div class="data-header">
         <h5 class="text-primary">
-          Country Detail
+          Detail Negara
         </h5>
       </div>
 
@@ -27,7 +27,7 @@
           <div class="col-7">
             <div class="row mb-3">
               <div class="col-5 text-secondary">
-                <label for="name">Country Name</label>
+                <label for="name">Nama Negara</label>
               </div>
               <div class="col-7">
                 <label class="">{{ $data->name }}</label> 
@@ -36,7 +36,7 @@
 
             <div class="row mb-3">
               <div class="col-5 text-secondary">
-                <label>Country Code</label>
+                <label>Kode Negara</label>
               </div>
               <div class="col-7">
                 <label class="">{{ $data->alpha2_code }}</label> 
@@ -45,7 +45,7 @@
 
             <div class="row">
               <div class="col-5 text-secondary">
-                <label for="dial_code">Dial Code</label>
+                <label for="dial_code">Kode Telepon</label>
               </div>
               <div class="col-7">
                 <label class="">{{ $data->dial_code }}</label> 

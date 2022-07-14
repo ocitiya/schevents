@@ -18,7 +18,7 @@ class MatchSchedule extends Model {
 	];
 
 	public function sport_type () {
-		return $this->belongsTo(SportType::class);
+		return $this->belongsTo(SportType::class, 'sport_type_id');
 	}
 
 	public function school1 () {
@@ -27,5 +27,9 @@ class MatchSchedule extends Model {
 
 	public function school2 () {
 		return $this->belongsTo(School::class, 'school2_id')->withTrashed();
+	}
+
+	public function stadium () {
+		return $this->belongsTo(Stadium::class)->withTrashed();
 	}
 }

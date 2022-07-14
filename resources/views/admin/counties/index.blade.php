@@ -3,7 +3,7 @@
 @section('content')
   <div id="counties" class="content">
     <div class="title-container">
-      <h4 class="text-primary">Counties</h4>
+      <h4 class="text-primary">Kota</h4>
 
       <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
@@ -15,7 +15,7 @@
     <div class="data-container">
       <div class="data-header">
         <a href="{{ route('admin.location.counties.create') }}" class="btn btn-primary btn-sm unrounded">
-          Create New&nbsp;
+          Tambah Kota&nbsp;
           <i class="fa-solid fa-plus"></i>
         </a>
 
@@ -90,12 +90,23 @@
       const updateRoute = `/admin/location/counties/update/${data.id}`
 
       $('#county-items').append(`
-        <div class="card text-center shadow-sm">
+        <div class="card text-center shadow-sm" style="max-width: 280px">
           <div class="card-body">
             <h5 class="card-title">${data.name}</h5>
             <div class="card-text">
-              <small>Province</small>
-              <div>${data.province.name}</div>
+              <small>Singkatan</small>
+              <div>${data.abbreviation}</div>
+            </div>
+
+            <div class="d-flex justify-content-between align-items-center">
+              <div class="card-text mt-0">
+                <small>Jumlah Sekolah</small>
+                <div>${data.schools_count}</div>
+              </div>
+
+              <a href="/admin/school/create?city_id=${data.id}" class="btn btn-sm unrounded btn-primary">
+                <small>Tambah Sekolah</small>
+              </a>
             </div>
           </div>
           <div class="card-footer text-muted">
@@ -103,7 +114,7 @@
               href="${detailRoute}"
               class="btn btn-primary btn-sm"
             >
-              View&nbsp;
+              Lihat&nbsp;
               <i class="fa-solid fa-eye"></i>
             </a>
             
@@ -111,7 +122,7 @@
               href="${updateRoute}"
               class="btn btn-primary btn-sm"
             >
-              Edit&nbsp;
+              Ubah&nbsp;
               <i class="fa-solid fa-pen-to-square"></i>
             </a>
           </div>

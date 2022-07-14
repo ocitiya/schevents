@@ -14,6 +14,7 @@ use App\Http\Controllers\Admin\MunicipalitiesController;
 use App\Http\Controllers\Admin\SportTypeController;
 use App\Http\Controllers\Admin\SchoolController;
 use App\Http\Controllers\Admin\MatchScheduleController;
+use App\Http\Controllers\Admin\StadiumController;
 
 /*
 |--------------------------------------------------------------------------
@@ -33,7 +34,7 @@ Route::post('store/step1', [InstallController::class, 'storeStep1'])->name('inst
 Route::post('store/step2', [InstallController::class, 'storeStep2'])->name('install.store.step2');
 
 Route::middleware(['haveInstalled'])->group(function () {
-	Route::get('/', [DashboardController::class, 'index'])->name('index');
+	// Route::get('/', [DashboardController::class, 'index'])->name('index');
 
 	// Admin Route
 	Route::prefix('admin')->as('admin.')->group(function () {
@@ -116,7 +117,21 @@ Route::middleware(['haveInstalled'])->group(function () {
 			Route::post('/store', [MatchScheduleController::class, 'store'])->name('store');
 			Route::post('/delete', [MatchScheduleController::class, 'delete'])->name('delete');
 		});
+
+		Route::group(['prefix' => 'stadium', 'as' => 'stadium.'], function () {
+			Route::get('/', [StadiumController::class, 'index'])->name('index');
+			Route::get('/create', [StadiumController::class, 'create'])->name('create');
+			Route::get('/update/{id}', [StadiumController::class, 'update'])->name('update');
+			Route::get('/detail/{id}', [StadiumController::class, 'detail'])->name('detail');
+
+			Route::post('/store', [StadiumController::class, 'store'])->name('store');
+			Route::post('/delete', [StadiumController::class, 'delete'])->name('delete');
+		});
 	});
+
+	Route::get('{any}', function () {
+		return view('app');
+	})->where('any','.*');
 });
 // Route::get('/', function () {
 //     return view('welcome');

@@ -89,6 +89,20 @@
                 </select>
               </div>
             </div>
+
+            <div class="row">
+              <div class="col-5">
+                <label for="name">Stadium *</label>
+              </div>
+              <div class="col-7">
+                <select required name="stadium_id" class="form-select" id="stadium_id">
+                  <option disabled selected value>Please select ...</option>
+                  @foreach ($stadium as $item)
+                    <option value="{{ $item->id }}">{{ $item->name }}</option>
+                  @endforeach
+                </select>
+              </div>
+            </div>
           
             <div class="row">
               <div class="col-5">
@@ -168,6 +182,7 @@
     const typeSelected = "<?php echo old('sport_type_id', isset($data) ? $data->sport_type_id : null) ?>";
     const school1Selected = "<?php echo old('school1_id', isset($data) ? $data->school1_id : null) ?>";
     const school2Selected = "<?php echo old('school2_id', isset($data) ? $data->school2_id : null) ?>";
+    const stadiumSelected = "<?php echo old('stadium', isset($data) ? $data->stadium : null) ?>";
     const teamGenderSelected = "<?php echo old('team_gender', isset($data) ? $data->team_gender : null) ?>";
     // const datetimeFill = "<?php echo old('datetime', isset($data) ? $data->datetime : null) ?>"
     const timeHourSelected = "<?php echo old('time_hour', isset($data) ? $data->time_hour : null) ?>";
@@ -177,6 +192,7 @@
       $('#sport_type_id').val(typeSelected).change()
       $('#school1_id').val(school1Selected).change()
       $('#school2_id').val(school2Selected).change()
+      $('#stadium_id').val(stadiumSelected).change()
       $('#team_gender').val(teamGenderSelected).change()
       $('#time_hour').val(timeHourSelected).change()
       $('#time_minute').val(timeMinuteSelected).change()

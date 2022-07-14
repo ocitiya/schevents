@@ -3,7 +3,7 @@
 @section('content')
   <div id="schools" class="content">
     <div class="title-container">
-      <h4 class="text-primary">Schools</h4>
+      <h4 class="text-primary">Sekolah</h4>
 
       <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
@@ -15,7 +15,7 @@
     <div class="data-container">
       <div class="data-header">
         <a href="{{ route('admin.school.create') }}" class="btn btn-primary btn-sm unrounded">
-          Create New&nbsp;
+          Tambah Sekolah&nbsp;
           <i class="fa-solid fa-plus"></i>
         </a>
 
@@ -98,16 +98,23 @@
               data-name="${data.name}"
               class="btn btn-outline-danger btn-sm unrounded delete-item"
             >
-              Delete&nbsp;
+              Hapus&nbsp;
               <i class="fa-solid fa-trash"></i>
             </button>
           </div>
           
           <div class="card-body">
+            <img src="/storage/school/logo/${data.logo}" style="width: 75px" class="mb-3">
+            
             <h5 class="card-title">${data.name}</h5>
             <div class="card-text">
-              <small>Level of Education</small>
+              <small>Tingkat Sekolah</small>
               <div class="capitalize">${data.level_of_education}</div>
+            </div>
+
+            <div class="card-text mt-0">
+              <small>Kota</small>
+              <div class="capitalize">${data.county.name}</div>
             </div>
           </div>
           <div class="card-footer text-muted">
@@ -115,7 +122,7 @@
               href="${detailRoute}"
               class="btn btn-primary btn-sm"
             >
-              View&nbsp;
+              Lihat&nbsp;
               <i class="fa-solid fa-eye"></i>
             </a>
             
@@ -123,7 +130,7 @@
               href="${updateRoute}"
               class="btn btn-primary btn-sm"
             >
-              Edit&nbsp;
+              Ubah&nbsp;
               <i class="fa-solid fa-pen-to-square"></i>
             </a>
           </div>
@@ -211,7 +218,7 @@
         formData.append('_token', csrfToken)
         
         swal({
-          text: `Are you want to delete ${name}?`,
+          text: `Ingin menghapus ${name}?`,
           icon: "warning",
           buttons: true,
           dangerMode: true,
@@ -227,7 +234,7 @@
                 swal({
                   title: 'Deleted',
                   icon: 'success',
-                  text: 'Schedule succesfully deleted'
+                  text: `Sekolah ${name} berhasil dihapus`
                 })
               } else {
                 console.log(data.message)

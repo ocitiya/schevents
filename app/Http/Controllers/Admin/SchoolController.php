@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Storage;
 use Intervention\Image\Facades\Image;
 use Illuminate\Database\QueryException;
 
+use App\Models\Country;
 use App\Models\School;
 
 class SchoolController extends Controller {
@@ -16,8 +17,12 @@ class SchoolController extends Controller {
 		return view('admin.school.index');
 	}
 
-	public function create () {
-		return view('admin.school.form');
+	public function create (Request $request) {
+		$data = [
+			"default_city" => $request->has("city_id") ? $request->city_id : null
+		];
+
+		return view('admin.school.form', $data);
 	}
 
 	public function update ($id) {
@@ -37,10 +42,7 @@ class SchoolController extends Controller {
 	public function store (Request $request) {
 		$validated = $request->validate([
 			'name' => 'required|max:255',
-			'country_id' => 'required|uuid',
-			'province_id' => 'required|uuid',
 			'county_id' => 'required|uuid',
-			'municipality_id' => 'required|uuid',
 			'logo' => 'required|mimes:jpg,png',
 			'level_of_education' => 'required|in:kindergarden,elementary school,junior high school,senior high school,vocational school,university,college',
 		]);
@@ -80,10 +82,8 @@ class SchoolController extends Controller {
 
 		try {
 			$school->name = $request->name;
-			$school->country_id = $request->country_id;
-			$school->province_id = $request->province_id;
+			$school->country_id = Country::first()->id;
 			$school->county_id = $request->county_id;
-			$school->municipality_id = $request->municipality_id;
 			$school->level_of_education = $request->level_of_education;
 			$school->logo = $filename;
 			$school->save();
@@ -91,34 +91,6 @@ class SchoolController extends Controller {
 			return redirect()->route('admin.school.index');
 		} catch (QueryException $exception) {
 			unlink($path);
-			return redirect()->back()
-				->withErrors($exception->getMessage());
-		}
-	}
-
-	public function storeOld (Request $request) {
-		$validated = $request->validate([
-			'name' => 'required|max:255'
-		]);
-
-		$isCreate = $request->id == null ? true : false;
-
-		$types = null;
-		if ($isCreate) {
-			$types = new School;
-			$types->id = Str::uuid();
-		} else {
-			$types = School::find($request->id);
-		}
-		
-		try {
-			$types->name = ucwords($request->name);
-			$types->save();
-
-			return redirect()
-				->route("admin.school.index")
-				->with('success', 'Data successfully saved');
-		} catch (QueryException $exception) {
 			return redirect()->back()
 				->withErrors($exception->getMessage());
 		}
@@ -152,7 +124,8 @@ class SchoolController extends Controller {
 		$search = $request->has('search') ? $request->search : null;
 		$limit = 10;
 
-		$schools = School::when($search != null, function ($query) use ($search) {
+		$schools = School::with(['county'])
+			->when($search != null, function ($query) use ($search) {
         $query->where('name', 'LIKE', '%'.$search.'%');
       })
       ->take($limit)

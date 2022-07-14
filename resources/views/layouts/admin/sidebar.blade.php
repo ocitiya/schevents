@@ -1,16 +1,16 @@
 <nav id="sidebar" class="bg-primary">
   <div class="sidebar-header bg-black">
-		<h3>Admin Dashboard</h3>
+		<h3>Dashboard Admin</h3>
   </div>
 
   <ul class="list-unstyled components">
 		<div class="menu-group">
-			<div class="title">MATCH</div>
+			<div class="title">PERTANDINGAN</div>
 			<li>
 				<a
 					href="{{ route('admin.match-schedule.index') }}"
 					class="{{ str_contains(Request::route()->getName(), 'admin.match-schedule.index') ? 'active' : null }}"
-				>Match Schedule</a>
+				>Jadwal Pertandingan</a>
 			</li>
 		</div>
 		
@@ -40,7 +40,7 @@
 				<a data-bs-target="#locationSubmenu" data-bs-toggle="collapse"
 					aria-expanded="{{ str_contains(Request::route()->getName(), 'admin.location') ? 'true' : 'false' }}"
 					class="dropdown-toggle">
-					Location
+					Lokasi
 				</a>
 				<ul
 					class="collapse list-unstyled {{ str_contains(Request::route()->getName(), 'admin.location') ? 'show' : null }}"
@@ -50,15 +50,7 @@
 						class="{{ str_contains(Request::route()->getName(), 'admin.location.countries') ? 'active' : null }}"
 					>
 						<a href="{{ route('admin.location.countries.index') }}">
-							Countries
-						</a>
-					</li>
-
-					<li
-						class="{{ str_contains(Request::route()->getName(), 'admin.location.provinces') ? 'active' : null }}"
-					>
-						<a href="{{ route('admin.location.provinces.index') }}">
-							Provinces
+							Negara
 						</a>
 					</li>
 
@@ -66,24 +58,9 @@
 						class="{{ str_contains(Request::route()->getName(), 'admin.location.counties') ? 'active' : null }}"
 					>
 						<a href="{{ route('admin.location.counties.index') }}">
-							Counties
+							Kota
 						</a>
 					</li>
-					
-					<li
-						class="{{ str_contains(Request::route()->getName(), 'admin.location.municipalities') ? 'active' : null }}"
-					>
-						<a href="{{ route('admin.location.municipalities.index') }}">
-							Municipalities
-						</a>
-					</li>
-					{{-- <li
-						class="{{ str_contains(Request::route()->getName(), 'admin.location.localities') ? 'active' : null }}"
-					>
-						<a href="{{ route('admin.location.localities.index') }}">
-							Counties
-						</a>
-					</li> --}}
 				</ul>
 			</div>
 
@@ -91,7 +68,7 @@
 				<a data-bs-target="#sportSubMenu" data-bs-toggle="collapse"
 					aria-expanded="{{ str_contains(Request::route()->getName(), 'admin.sport') ? 'true' : 'false' }}"
 					class="dropdown-toggle">
-					Sport
+					Olahraga
 				</a>
 				<ul
 					class="collapse list-unstyled {{ str_contains(Request::route()->getName(), 'admin.sport') ? 'show' : null }}"
@@ -101,7 +78,7 @@
 						class="{{ str_contains(Request::route()->getName(), 'admin.sport.type') ? 'active' : null }}"
 					>
 						<a href="{{ route('admin.sport.type.index') }}">
-							Type
+							Cabang Olahraga
 						</a>
 					</li>
 				</ul>
@@ -111,7 +88,13 @@
 				<a
 					href="{{ route('admin.school.index') }}"
 					class="{{ str_contains(Request::route()->getName(), 'admin.school.index') ? 'active' : null }}"
-				>School</a>
+				>Sekolah</a>
+			</li>
+			<li>
+				<a
+					href="{{ route('admin.stadium.index') }}"
+					class="{{ str_contains(Request::route()->getName(), 'admin.stadium.index') ? 'active' : null }}"
+				>Stadion</a>
 			</li>
 		</div>
 

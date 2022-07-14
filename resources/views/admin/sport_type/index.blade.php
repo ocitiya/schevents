@@ -3,7 +3,7 @@
 @section('content')
   <div id="sport_types" class="content">
     <div class="title-container">
-      <h4 class="text-primary">Sport Types</h4>
+      <h4 class="text-primary">Cabang Olahraga</h4>
 
       <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
@@ -15,7 +15,7 @@
     <div class="data-container">
       <div class="data-header">
         <a href="{{ route('admin.sport.type.create') }}" class="btn btn-primary btn-sm unrounded">
-          Create New&nbsp;
+          Tambah Baru&nbsp;
           <i class="fa-solid fa-plus"></i>
         </a>
 
@@ -99,7 +99,7 @@
               href="${detailRoute}"
               class="btn btn-primary btn-sm"
             >
-              View&nbsp;
+              Lihat&nbsp;
               <i class="fa-solid fa-eye"></i>
             </a>
             
@@ -107,12 +107,12 @@
               href="${updateRoute}"
               class="btn btn-primary btn-sm"
             >
-              Edit&nbsp;
+              Ubah&nbsp;
               <i class="fa-solid fa-pen-to-square"></i>
             </a>
           </div>
         </div>
-    `)
+      `)
     }
     
     const getList = async ({ page = pagination.page, limit = pagination.limit, search = pagination.search } = {}) => {
