@@ -8,12 +8,13 @@ import axios from 'axios'
 // "export default () => {}" function below (which runs individually
 // for each client)
 
-const host = process.env.NODE_ENV === 'development' ? 'http://localhost:8000' : window.location.origin
+const host = process.env.NODE_ENV === 'development' ? 'http://localhost:8000' : 'https://schedule.schsports.com'
 const api = axios.create({ baseURL: `${host}/api` })
 
 export default boot(({ app }) => {
   // for use inside Vue files (Options API) through this.$axios and this.$api
 
+  app.config.globalProperties.$host = host
   app.config.globalProperties.$axios = axios
   // ^ ^ ^ this will allow you to use this.$axios (for Vue Options API form)
   //       so you won't necessarily have to import axios in each vue file

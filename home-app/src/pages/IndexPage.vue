@@ -24,7 +24,7 @@
                 <div class="flex items-center justify-around">
                   <div class="flex flex-center">
                     <q-img class="logo"
-                      :src="`${host}/storage/school/logo/${item.school1.logo}`"
+                      :src="`${$host}/storage/school/logo/${item.school1.logo}`"
                       :ratio="1"
                     />
 
@@ -39,7 +39,7 @@
 
                   <div class="flex flex-center">
                     <q-img class="logo"
-                      :src="`${host}/storage/school/logo/${item.school2.logo}`"
+                      :src="`${$host}/storage/school/logo/${item.school2.logo}`"
                       :ratio="1"
                     />
 
@@ -85,7 +85,6 @@ export default defineComponent({
   data: function () {
     return {
       schedules: [],
-      host: process.env.NODE_ENV === 'development' ? 'http://localhost:8000' : window.location.origin
     }
   },
 
