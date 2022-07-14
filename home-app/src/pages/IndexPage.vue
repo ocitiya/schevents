@@ -34,7 +34,7 @@
 
               <q-card-section class="q-py-lg">
                 <div class="vs-section">
-                  <div class="flex flex-center">
+                  <div class="text-center q-mr-md">
                     <q-img class="logo"
                       :src="`${$host}/storage/school/logo/${item.school1.logo}`"
                       :ratio="1"
@@ -49,7 +49,7 @@
                     VS
                   </div>
 
-                  <div class="flex flex-center">
+                  <div class="text-center q-ml-md">
                     <q-img class="logo"
                       :src="`${$host}/storage/school/logo/${item.school2.logo}`"
                       :ratio="1"
