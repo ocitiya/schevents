@@ -3,7 +3,7 @@
 @section('content')
   <div id="sport_types" class="content">
     <div class="title-container">
-      <h4 class="text-primary">Cabang Olahraga</h4>
+      <h4 class="text-primary">Olahraga</h4>
 
       <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
@@ -28,45 +28,8 @@
 
       <div class="data-center">
         <div class="data-list" id="type-items">
-          {{-- Dynamic Data --}}
+          <table id="datatable" class="table table-bordered"></table>
         </div>
-      </div>
-
-      <div class="data-footer">
-        <nav aria-label="Page navigation example">
-          <ul class="pagination d-flex align-items-center justify-content-end">
-            <li class="page-item">
-              <button
-                class="page-link"
-                id="previous"
-                aria-label="Previous"
-              >
-                <span aria-hidden="true">&laquo;</span>
-              </button>
-            </li>
-            <li>
-              <div class="input-group">
-                <input type="text" class="form-control" id="pagination_page">
-                <div class="input-group-append">
-                  <div class="input-group-text">&nbsp;/&nbsp;
-                    <span id="pagination_total_page">
-                      {{-- Dynamic Data --}}
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </li>
-            <li class="page-item">
-              <button
-                id="next"
-                class="page-link"
-                aria-label="Next"
-              >
-                <span aria-hidden="true">&raquo;</span>
-              </button>
-            </li>
-          </ul>
-        </nav>
       </div>
     </div>
   </div>
@@ -74,118 +37,82 @@
 
 @section('script')
   <script>
-    let searchTimeout = null;
-    let pageTimeout = null;
+    $('#datatable').on('click', '.delete', function () {
+      const id = $(this).attr('data-id')
+      const name = $(this).attr('data-name')
 
-    let pagination = {
-      limit: 10,
-      page: 1,
-      search: null,
-      total: 0,
-      total_page: 0
-    }
+      const deleteURL = `/admin/sport/type/delete`
+      const formData = new FormData()
+      formData.append('id', id)
+      formData.append('_token', csrfToken)
 
-    const createTypeItem = (data) => {
-      const detailRoute = `/admin/sport/type/detail/${data.id}`
-      const updateRoute = `/admin/sport/type/update/${data.id}`
-
-      $('#type-items').append(`
-        <div class="card text-center shadow-sm">
-          <div class="card-body d-flex justify-content-center align-items-center">
-            <h5 class="card-title">${data.name}</h5>
-          </div>
-          <div class="card-footer text-muted">
-            <a
-              href="${detailRoute}"
-              class="btn btn-primary btn-sm"
-            >
-              Lihat&nbsp;
-              <i class="fa-solid fa-eye"></i>
-            </a>
-            
-            <a
-              href="${updateRoute}"
-              class="btn btn-primary btn-sm"
-            >
-              Ubah&nbsp;
-              <i class="fa-solid fa-pen-to-square"></i>
-            </a>
-          </div>
-        </div>
-      `)
-    }
-    
-    const getList = async ({ page = pagination.page, limit = pagination.limit, search = pagination.search } = {}) => {
-      const data = await new Promise((resolve, reject) => {
-        search = search === null ? '' : `&search=${search}`
-
-        let endpoint = '/api/sport-type/list'
-        endpoint = `${endpoint}?page=${page}&limit=${limit}`
-        endpoint = endpoint+search
-
-        fetch(endpoint).then(res => res.json()).then(data => {
-          if (data.status) {
-            resolve(data.data)
-          } else {
-            alert(data.message)
-            reject()
-          }
-        })
+      swal({
+        text: `Ingin menghapus olahraga ${name}?`,
+        icon: "warning",
+        buttons: true,
+        dangerMode: true,
       })
+      .then((willDelete) => {
+        if (willDelete) {
+          fetch(deleteURL, {
+            method: 'POST',
+            body: formData
+          }).then(res => res.json()).then(data => {
+            if (data.status) {
+              table.ajax.reload()
+              swal({
+                title: 'Deleted',
+                icon: 'success',
+                text: `Olahraga ${name} berhasil dihapus`
+              })
+            } else {
+              console.log(data.message)
+              swal(data.message, { icon: 'error' });
+            }
+          })
+        }
+      });
+    })
 
-      $('#type-items').empty()
-
-      if (data.list.length > 0) {
-        data.list.map(item => createTypeItem(item))
-      } else {
-        $('#type-items').text('No Data')
-      }
-
-      pagination = { ...data.pagination }
-      
-      $('#pagination_page').val(pagination.page)
-      $('#pagination_total_page').text(`${pagination.total_page}`)
-
-      if (pagination.page === 1) {
-        $('#previous').addClass('disabled')
-      } else {
-        $('#previous').removeClass('disabled')
-      }
-
-      if (pagination.page >= pagination.total_page) {
-        $('#next').addClass('disabled')
-      } else {
-        $('#next').removeClass('disabled')
-      }
-    }
-    
     document.addEventListener('DOMContentLoaded', async function () {
-      getList()
-      $('#next').on('click', function() {
-        getList({ page: parseInt(page) + 1 })
-      })
+      $(function () {
+        table = $('#datatable').DataTable({
+            processing: true,
+            serverSide: true,
+            ajax: {
+              url: "/api/sport-type/listDatatable",
+            },
+            columns: [
+              {data: 'name', title: 'Name', name: 'name'},
+              {data: 'image', title: 'Gambar', name: 'image',
+                "render": function ( data, type, row, meta ) {
+                  return `
+                    <img src="/storage/sport/image/${data}" style="width: 75px" class="mb-3">
+                  `
+                }
+              },
+              {data: 'id', title: 'Aksi', orderable: false, searchable: false,
+                "render": function ( data, type, row, meta ) {
+                  const updateRoute = `/admin/sport/type/update/${data}`
 
-      $('#previous').on('click', function() {
-        getList({ page: parseInt(page) - 1 })
-      })
+                  return `
+                    <a href="${updateRoute}" class="btn btn-sm unrounded btn-primary">
+                      <small>Edit Olahraga</small>
+                    </a>
 
-      $('#pagination_page').on('keyup', function() {
-        const val = $(this).val()
-
-        searchTimeout = setTimeout(() => {
-          getList({ page: val })
-          console.log('asd')
-        }, 500)
-      })
-
-      $('#search').on('keyup', function () {
-        const val = $(this).val()
-
-        if (searchTimeout !== null) clearTimeout(searchTimeout)
-        searchTimeout = setTimeout(() => {
-          getList({ search: val })
-        }, 500);
-      })
+                    <button
+                      data-id="${data}"
+                      data-name="${row.name}"
+                      class="btn btn-sm btn-danger unrounded delete"
+                    >
+                      <small>Hapus Olahraga</small>
+                    </button>
+                  `;
+                }
+              },
+            ]
+        });
+      });
     })
   </script>
 @endsection

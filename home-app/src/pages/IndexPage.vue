@@ -20,13 +20,22 @@
 
         <div v-if="schedules.length > 0" class="row q-col-gutter-lg q-mt-md">
           <div v-for="item in schedules" :key="item.id" class="col-12 col-sm-6">
-            <q-card v-ripple class="event-card">
+            <q-card v-ripple class="event-card" @click="() => redirect(item.sport_type.stream_url)">
               <q-card-section class="flex justify-between items-center">
-                <span class="text-h6 text-primary">{{ item.sport_type.name }}</span>
+                <span class="text-primary">
+                  {{ item.team_type.name }},
+                  <span class="capitalize">{{ item.team_gender }},</span>
+                  {{ item.sport_type.name }}
+                </span>
 
                 <div class="flex items-center text-primary">
                   <q-icon name="pin_drop" />&nbsp;
-                  {{ `${item.stadium.county.abbreviation}, ${item.stadium.name}` }}
+                  <span v-if="item.stadium !== null">
+                    {{ `${item.stadium}, ${item.county.abbreviation}` }}
+                  </span>
+                  <span v-else>
+                    {{ `${item.county.abbreviation}` }}
+                  </span>
                 </div>
                 
               </q-card-section>
@@ -105,6 +114,11 @@ export default defineComponent({
   },
 
   methods: {
+    redirect (url) {
+      console.log('url', url)
+      window.open(url)
+    },
+
     async refresh (done) {
       await this.getSchedule()
       done()

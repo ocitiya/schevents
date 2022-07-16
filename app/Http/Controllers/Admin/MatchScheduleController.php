@@ -9,36 +9,50 @@ use Illuminate\Support\Facades\Storage;
 use Intervention\Image\Facades\Image;
 use Illuminate\Database\QueryException;
 
+use Auth;
+use DataTables;
 use DateTime;
+
 use Carbon\Carbon;
 
 use App\Models\MatchSchedule;
 use App\Models\School;
 use App\Models\SportType;
 use App\Models\Stadium;
+use App\Models\County;
+use App\Models\TeamType;
 
 class MatchScheduleController extends Controller {
 	public function index (Request $request) {
 		return view('admin.match-schedule.index');
 	}
 
+	public function city (Request $request, $city_id) {
+		$data = ["city" => County::find($city_id)];
+		return view('admin.match-schedule.city', $data);
+	}
+
 	public function create () {
 		$schools = School::get();
 		$types = SportType::get();
-		$stadium = Stadium::get();
+		$cities = County::get();
+		$team_types = TeamType::get();
 
 		$data = [
 			"schools" => $schools,
 			"types" => $types,
-			"stadium" => $stadium
+			"cities" => $cities,
+			"team_types" => $team_types
 		];
 
 		return view('admin.match-schedule.form', $data);
 	}
 
 	public function update ($id) {
-    $schools = School::get();
+		$schools = School::get();
 		$types = SportType::get();
+		$cities = County::get();
+		$team_types = TeamType::get();
 
 		$schedule = MatchSchedule::find($id);
 		$dt = new DateTime($schedule->datetime);
@@ -49,7 +63,9 @@ class MatchScheduleController extends Controller {
 		$data = [
 			"data" => $schedule,
 			"schools" => $schools,
-			"types" => $types
+			"types" => $types,
+			"cities" => $cities,
+			"team_types" => $team_types
 		];
 		return view('admin.match-schedule.form', $data);
 	}
@@ -64,11 +80,12 @@ class MatchScheduleController extends Controller {
 	public function store (Request $request) {
 		$validated = $request->validate([
       'sport_type_id' => 'required|uuid',
+      'county_id' => 'required|uuid',
       'school1_id' => 'required|uuid',
       'school2_id' => 'required|uuid',
-      'stadium_id' => 'required|uuid',
-			'team_gender' => 'required|in:all,male,female',
-			'link' => 'required|url',
+      'stadium' => 'max:255',
+			'team_type_id' => 'required|uuid',
+			'team_gender' => 'required|in:boy,girl',
 			'date' => 'required|date',
 			'time_hour' => 'required|min:0|max:59',
 			'time_minute' => 'required|min:0|max:23'
@@ -108,17 +125,19 @@ class MatchScheduleController extends Controller {
 
 		try {
 			$schedule->sport_type_id = $request->sport_type_id;
+			$schedule->county_id = $request->county_id;
 			$schedule->school1_id = $request->school1_id;
 			$schedule->school2_id = $request->school2_id;
-			$schedule->stadium_id = $request->stadium_id;
+			$schedule->stadium = $request->stadium;
+			$schedule->team_type_id = $request->team_type_id;
 			$schedule->team_gender = $request->team_gender;
 			$schedule->datetime = $datetime;
-			$schedule->link = $request->link;
 			$schedule->keywords = $keywords;
+			$schedule->created_by = Auth::id();
 			$schedule->save();
 
 			return redirect()
-				->route("admin.match-schedule.index")
+				->route("admin.match-schedule.city", ["id" => $request->county_id])
 				->with('success', 'Schedule successfully saved');
 		} catch (QueryException $exception) {
 			return redirect()->back()
@@ -158,14 +177,7 @@ class MatchScheduleController extends Controller {
 
 		$schedule = MatchSchedule::take($limit)
 			->skip($page - 1)
-			->with([
-				"school1",
-				"school2",
-				"sport_type",
-				"stadium" => function ($subQuery) {
-					$subQuery->with(["county"]);
-				}
-			])
+			->with(["county", "school1", "school2", "team_type", "sport_type"])
 			->orderBy('datetime');
 
 		$total = MatchSchedule::orderBy('datetime');
@@ -203,5 +215,21 @@ class MatchScheduleController extends Controller {
 				]
 			]
 		]);
+	}
+
+	function cityMatchDatatable () {
+		$data = County::withCount('match')->get();
+		return Datatables::of($data)->make(true);
+	}
+
+	function listDatatable () {
+		$cityId = isset($request->city_id) ? $request->city_id : null;
+
+		$data = MatchSchedule::with(["county", "school1", "school2", "team_type", "sport_type"])
+			->when($cityId != null, function ($subQuery) use ($cityId) {
+				$subQuery->where('county_id', $cityId);
+			})
+			->get();
+		return Datatables::of($data)->make(true);
 	}
 }

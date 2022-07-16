@@ -56,6 +56,9 @@
     <script src="{{ asset('js/fontawesome-free-6.1.1-web.all.min.js') }}"></script>
     <script src="{{ asset('js/daterangepicker.js') }}"></script>
     <script src="{{ asset('js/sweetalert.min.js') }}"></script>
+    <script src="{{ asset('js/jquery.dataTables.min.js') }}"></script>
+    <script src="{{ asset('js/dataTables.bootstrap4.min.js') }}"></script>
+
     <script>
       const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 

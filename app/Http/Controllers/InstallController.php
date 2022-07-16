@@ -12,6 +12,7 @@ use Intervention\Image\Facades\Image;
 use App\Models\App;
 use App\Models\User;
 use App\Models\UserDetail;
+use App\Models\Country;
 
 class InstallController extends Controller {
 	public function index () {
@@ -56,6 +57,13 @@ class InstallController extends Controller {
 			$model->name = $request->name;
 			$model->logo = $filename;
 			$model->save();
+
+			$countries = new Country;
+			$countries->id = Str::uuid();
+			$countries->name = "America";
+			$countries->alpha2_code = "US";
+			$countries->dial_code = "+1";
+			$countries->save();
 
 			return redirect()->route('install.step2');
 		} catch (QueryException $exception) {

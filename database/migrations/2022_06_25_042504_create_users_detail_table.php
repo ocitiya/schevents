@@ -14,7 +14,6 @@ return new class extends Migration {
 			Schema::create('users_detail', function (Blueprint $table) {
 				$table->uuid('id')->primary();
 				$table->enum('level', ['sysadmin', 'admin']);
-				$table->foreignUuid('country_id')->nullable()->references('id')->on('countries');
 				$table->string('telephone')->nullable();
 				$table->enum('gender', ['male', 'female']);
 				$table->string('avatar')->nullable();

@@ -9,12 +9,22 @@ use Illuminate\Support\Facades\Storage;
 use Intervention\Image\Facades\Image;
 use Illuminate\Database\QueryException;
 
+use DataTables;
+
 use App\Models\Country;
 use App\Models\School;
+use App\Models\County;
 
 class SchoolController extends Controller {
 	public function index (Request $request) {
-		return view('admin.school.index');
+		$defaultCity = $request->has("city_id") ? $request->city_id : null;
+
+		$data = [
+			"default_city" => $defaultCity,
+			"city_name" => ($defaultCity != null) ? County::find($defaultCity)->name : null
+		];
+
+		return view('admin.school.index', $data);
 	}
 
 	public function create (Request $request) {
@@ -40,35 +50,36 @@ class SchoolController extends Controller {
 	}
 
 	public function store (Request $request) {
-		$validated = $request->validate([
+		$validation = [
 			'name' => 'required|max:255',
 			'county_id' => 'required|uuid',
-			'logo' => 'required|mimes:jpg,png',
-			'level_of_education' => 'required|in:kindergarden,elementary school,junior high school,senior high school,vocational school,university,college',
-		]);
+			'logo' => 'mimes:jpg,png'
+		];
 
 		$isCreate = $request->id == null ? true : false;
-
+		$validated = $request->validate($validation);
+		
 		// Upload Image
-		if(!Storage::exists("/public/school/logo")) Storage::makeDirectory("/public/school/logo");
+		if ($request->hasFile('logo')) {
+			if(!Storage::exists("/public/school/logo")) Storage::makeDirectory("/public/school/logo");
+			$file = $request->file('logo');
 
-		$file = $request->file('logo');
+			$filenameWithExt = $request->file('logo')->getClientOriginalName();
+			$filename = pathinfo($filenameWithExt, PATHINFO_FILENAME);
+			$extension = $request->file('logo')->getClientOriginalExtension();
 
-		$filenameWithExt = $request->file('logo')->getClientOriginalName();
-		$filename = pathinfo($filenameWithExt, PATHINFO_FILENAME);
-		$extension = $request->file('logo')->getClientOriginalExtension();
+			$filename = $filename.'_'.time().'.'.$extension;
+			$path = storage_path('app/public/school/logo/').$filename;
+			$file->storeAs('public/school/logo', $filename);
 
-		$filename = $filename.'_'.time().'.'.$extension;
-		$path = storage_path('app/public/school/logo/').$filename;
-		$file->storeAs('public/school/logo', $filename);
-
-		// Resize image
-		$img = Image::make($file->getRealPath())
-			->resize(512, 512, function ($constraint) {
-				$constraint->aspectRatio();
-			})
-			->fit(512, 512, null, 'center')
-			->save($path, 80);
+			// Resize image
+			$img = Image::make($file->getRealPath())
+				->resize(512, 512, function ($constraint) {
+					$constraint->aspectRatio();
+				})
+				->fit(512, 512, null, 'center')
+				->save($path, 80);
+		}
 
 		$school = null;
 		if ($isCreate) {
@@ -76,19 +87,26 @@ class SchoolController extends Controller {
 			$school->id = Str::uuid();
 		} else {
 			$school = School::find($request->id);
-			$oldPath = storage_path('app/public/school/logo/').$school->logo;
-			unlink($oldPath);
+			if ($request->hasFile('logo')) {
+				$oldPath = storage_path('app/public/school/logo/').$school->logo;
+				unlink($oldPath);
+			}
 		}
 
 		try {
 			$school->name = $request->name;
 			$school->country_id = Country::first()->id;
 			$school->county_id = $request->county_id;
-			$school->level_of_education = $request->level_of_education;
-			$school->logo = $filename;
+			if ($request->hasFile('logo')) $school->logo = $filename;
 			$school->save();
 
-			return redirect()->route('admin.school.index');
+			if ($request->redirect_city == 1) {
+				$city_id = $request->county_id;
+				return redirect()->route('admin.school.index', ["city_id" => $city_id]);
+			} else {
+				return redirect()->route('admin.school.index');
+			}
+
 		} catch (QueryException $exception) {
 			unlink($path);
 			return redirect()->back()
@@ -116,6 +134,17 @@ class SchoolController extends Controller {
 				"message" => $exception->getMessage()
 			]);
 		}
+	}
+
+	public function listDatatable(Request $request) {
+		$cityId = isset($request->city_id) ? $request->city_id : null;
+
+		$data = School::with(["county"])
+			->when($cityId != null, function ($subQuery) use ($cityId) {
+				$subQuery->where('county_id', $cityId);
+			})
+			->get();
+		return Datatables::of($data)->make(true);
 	}
 
 	public function list (Request $request) {

@@ -13,10 +13,12 @@ return new class extends Migration
      */
     public function up()
     {
-      DB::statement('SET FOREIGN_KEY_CHECKS = 0');
-      DB::statement('ALTER TABLE `schools` MODIFY `province_id` CHAR(36) NULL;');
-      DB::statement('ALTER TABLE `schools` MODIFY `municipality_id` CHAR(36) NULL;');
-      DB::statement('SET FOREIGN_KEY_CHECKS = 1');
+        Schema::create('team_type', function (Blueprint $table) {
+			$table->uuid('id')->primary();
+			$table->string('name');
+			$table->timestamps();
+			$table->softDeletes();
+		});
     }
 
     /**
@@ -26,6 +28,6 @@ return new class extends Migration
      */
     public function down()
     {
-      // 
+        Schema::dropIfExists('team_type');
     }
 };

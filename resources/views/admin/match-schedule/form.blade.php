@@ -64,6 +64,20 @@
 
             <div class="row">
               <div class="col-5">
+                <label for="name">Kota *</label>
+              </div>
+              <div class="col-7">
+                <select required name="county_id" class="form-select" id="county_id">
+                  <option disabled selected value>Please select ...</option>
+                  @foreach ($cities as $item)
+                    <option value="{{ $item->id }}">{{ $item->name }} - {{ $item->abbreviation }}</option>
+                  @endforeach
+                </select>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-5">
                 <label for="name">School *</label>
               </div>
               <div class="col-7">
@@ -75,10 +89,19 @@
                 </select>
               </div>
             </div>
-
+            
             <div class="row">
               <div class="col-5">
-                <label for="name">VS School *</label>
+                <label for="name"></label>
+              </div>
+              <div class="col-7">
+                VS
+              </div>
+            </div>
+            
+            <div class="row">
+              <div class="col-5">
+                <label for="name">School *</label>
               </div>
               <div class="col-7">
                 <select required name="school2_id" class="form-select" id="school2_id">
@@ -92,15 +115,24 @@
 
             <div class="row">
               <div class="col-5">
-                <label for="name">Stadium *</label>
+                <label for="name">Tipe Tim *</label>
               </div>
               <div class="col-7">
-                <select required name="stadium_id" class="form-select" id="stadium_id">
+                <select required name="team_type_id" class="form-select" id="team_type_id">
                   <option disabled selected value>Please select ...</option>
-                  @foreach ($stadium as $item)
+                  @foreach ($team_types as $item)
                     <option value="{{ $item->id }}">{{ $item->name }}</option>
                   @endforeach
                 </select>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-5">
+                <label for="name">Stadium</label>
+              </div>
+              <div class="col-7">
+                <input type="text" name="stadium" class="form-control" value="{{ old('stadium', isset($data) ? $data->stadium : null) }}">
               </div>
             </div>
           
@@ -111,19 +143,9 @@
               <div class="col-7">
                 <select required name="team_gender" class="form-select" id="team_gender">
                   <option disabled selected value>Please select ...</option>
-                  <option value="all">All</option>
-                  <option value="male">Male</option>
-                  <option value="female">Female</option>
+                  <option value="boy">Boy</option>
+                  <option value="girl">Girl</option>
                 </select>
-              </div>
-            </div>
-
-            <div class="row">
-              <div class="col-5">
-                <label for="link">Stream URL *</label>
-              </div>
-              <div class="col-7">
-                <input type="url" name="link" id="link" class="form-control" required value="{{ old('link', isset($data) ? $data->link : null) }}">
               </div>
             </div>
 
@@ -180,9 +202,10 @@
 @section('script')
   <script>
     const typeSelected = "<?php echo old('sport_type_id', isset($data) ? $data->sport_type_id : null) ?>";
+    const countySelected = "<?php echo old('county_id', isset($data) ? $data->county_id : null) ?>";
     const school1Selected = "<?php echo old('school1_id', isset($data) ? $data->school1_id : null) ?>";
     const school2Selected = "<?php echo old('school2_id', isset($data) ? $data->school2_id : null) ?>";
-    const stadiumSelected = "<?php echo old('stadium', isset($data) ? $data->stadium : null) ?>";
+    const teamTypeSelected = "<?php echo old('team_type_id', isset($data) ? $data->team_type_id : null) ?>";
     const teamGenderSelected = "<?php echo old('team_gender', isset($data) ? $data->team_gender : null) ?>";
     // const datetimeFill = "<?php echo old('datetime', isset($data) ? $data->datetime : null) ?>"
     const timeHourSelected = "<?php echo old('time_hour', isset($data) ? $data->time_hour : null) ?>";
@@ -190,12 +213,13 @@
     
     document.addEventListener('DOMContentLoaded', function() {
       $('#sport_type_id').val(typeSelected).change()
+      $('#county_id').val(countySelected).change()
       $('#school1_id').val(school1Selected).change()
       $('#school2_id').val(school2Selected).change()
-      $('#stadium_id').val(stadiumSelected).change()
       $('#team_gender').val(teamGenderSelected).change()
       $('#time_hour').val(timeHourSelected).change()
       $('#time_minute').val(timeMinuteSelected).change()
+      $('#team_type_id').val(teamTypeSelected).change()
 
       const datetime = $('#datetimeHidden').daterangepicker({
         autoUpdateInput: false,

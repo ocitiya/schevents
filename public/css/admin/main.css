@@ -353,3 +353,7 @@ a.article:hover {
 	border-bottom: 1px solid #dedede;
 	padding: 20px 0;
 }
+
+.text-red {
+	color: #dc3545;
+}

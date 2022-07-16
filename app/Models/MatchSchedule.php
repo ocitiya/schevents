@@ -29,7 +29,11 @@ class MatchSchedule extends Model {
 		return $this->belongsTo(School::class, 'school2_id')->withTrashed();
 	}
 
-	public function stadium () {
-		return $this->belongsTo(Stadium::class)->withTrashed();
+	public function county () {
+		return $this->belongsTo(County::class);
+	}
+
+	public function team_type () {
+		return $this->belongsTo(TeamType::class);
 	}
 }

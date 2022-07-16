@@ -22,4 +22,8 @@ class County extends Model {
 	public function schools () {
 		return $this->hasMany(School::class);
 	}
+
+	public function match () {
+		return $this->hasMany(MatchSchedule::class, 'county_id');
+	}
 }

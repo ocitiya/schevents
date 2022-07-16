@@ -61,7 +61,7 @@
 
             <div class="row">
               <div class="col-5">
-                <label for="abbreviation">Singkatan</label>
+                <label for="abbreviation">Singkatan *</label>
               </div>
               <div class="col-7">
                 <input type="text" id="abbreviation" name="abbreviation" class="form-control capitalize"
@@ -78,6 +78,8 @@
             </div>
           </div>
         </form>
+
+        <small class="text-red">*) Harus diisi</small>
       </div>
     </div>
   </div>

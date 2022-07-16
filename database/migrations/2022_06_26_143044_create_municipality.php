@@ -13,7 +13,7 @@ return new class extends Migration {
 	public function up () {
 		Schema::create('municipalities', function (Blueprint $table) {
 			$table->uuid('id')->primary();
-			$table->foreignUuid('county_id')->references('id')->on('counties');
+			$table->uuid('county_id');
 			$table->string('name');
 			$table->timestamps();
 		});
@@ -25,8 +25,6 @@ return new class extends Migration {
 	 * @return void
 	 */
 	public function down () {
-		DB::statement('SET FOREIGN_KEY_CHECKS = 0');
 		Schema::dropIfExists('municipalities');
-		DB::statement('SET FOREIGN_KEY_CHECKS = 1');
 	}
 };

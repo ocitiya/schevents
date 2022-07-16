@@ -16,10 +16,10 @@ return new class extends Migration
         Schema::create('stadium', function (Blueprint $table) {
             $table->uuid('id')->primary();
 			$table->string('name');
-			$table->foreignUuid('country_id')->references('id')->on('countries');
-			$table->foreignUuid('province_id')->nullable()->references('id')->on('provinces');
-			$table->foreignUuid('county_id')->references('id')->on('counties');
-			$table->foreignUuid('municipality_id')->nullable()->references('id')->on('municipalities');
+			$table->string('country_id');
+			$table->string('province_id')->nullable();
+			$table->string('county_id');
+			$table->string('municipality_id')->nullable();
 			$table->timestamps();
             $table->softDeletes();
         });

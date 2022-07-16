@@ -47,6 +47,7 @@
           {{ csrf_field() }}
 
           <input type="hidden" name="id" value="{{ isset($data) ? $data->id : null }}">
+          <input type="hidden" name="redirect_city" value="{{ $default_city ? 1 : 0 }}">
 
           <div class="col-7">
             <div class="row">
@@ -82,7 +83,7 @@
 
             <div class="row">
               <div class="col-5">
-                <label for="logo">Logo *</label>
+                <label for="logo">Logo</label>
               </div>
               <div class="col-7">
                 <input type="file" name="logo" id="logo" class="form-control" accept=".png, .jpg">
@@ -96,24 +97,6 @@
               </div>
             </div>
 
-            <div class="row">
-              <div class="col-5">
-                <label for="name">Tingkat Sekolah *</label>
-              </div>
-              <div class="col-7">
-                <select name="level_of_education" class="form-select" id="level_of_education">
-                  <option disabled selected value>Please select ...</option>
-                  <option value="kindergarden">Kindergarden</option>
-                  <option value="elementary school">Elementary School</option>
-                  <option value="junior high school">Junior High School</option>
-                  <option value="senior high school">Senior High School</option>
-                  <option value="vocational school">Vocational School</option>
-                  <option value="university">University</option>
-                  <option value="college">College</option>
-                </select>
-              </div>
-            </div>
-
             <div class="form-button">
               <button type="submit" class="btn btn-primary btn-sm unrounded">
                 Kirim&nbsp;
@@ -122,6 +105,8 @@
             </div>
           </div>
         </form>
+
+        <small class="text-red">*) Harus diisi</small>
       </div>
     </div>
   </div>
@@ -130,7 +115,7 @@
 @section('script')
   <script>
     const countySelected = "<?php echo old('county_id', isset($data) ? $data->county_id : $default_city) ?>";
-    const levelOfEducationSelected = "<?php echo old('level_of_education', isset($data) ? $data->level_of_education : null) ?>";
+    const cityDefault = "<?php echo $default_city ? 1 : 0 ?>"
 
     const getList = (endpoint) => {
       return new Promise((resolve, reject) => {
@@ -152,7 +137,7 @@
 
       $(elemId).append('<option disabled selected value>Please select ...</option')
       data.map(item => {
-        $(elemId).append(`<option value="${item.id}">${item.name}</option>`)
+        $(elemId).append(`<option value="${item.id}">${item.name} - ${item.abbreviation}</option>`)
       })
     }
 
@@ -163,8 +148,7 @@
       const cities = await getList(`/api/county/list?country_id=${country.id}`)
       generateSelect('#county_id', cities)
       $('#county_id').val(countySelected).change()
-
-      $('#level_of_education').val(levelOfEducationSelected).change()
+      if (cityDefault == 1) $('#county_id').prop('disabled', true)
     })
   </script>
 @endsection

@@ -10,94 +10,55 @@ use Intervention\Image\Facades\Image;
 
 use DataTables;
 
-use App\Models\SportType;
+use App\Models\TeamType;
 
-class SportTypeController extends Controller {
+class TeamTypeController extends Controller {
 	public function index (Request $request) {
-		return view('admin.sport_type.index');
+		return view('admin.team_type.index');
 	}
 
 	public function create () {
-		return view('admin.sport_type.form');
+		return view('admin.team_type.form');
 	}
 
 	public function update ($id) {
-		$types = SportType::find($id);
+		$types = TeamType::find($id);
 
 		$data = [ "data" => $types ];
-		return view('admin.sport_type.form', $data);
+		return view('admin.team_type.form', $data);
 	}
 
 	public function detail ($id) {
-		$types = SportType::find($id);
+		$types = TeamType::find($id);
 		$data = [ "data" => $types ];
 
-		return view('admin.sport_type.detail', $data);
+		return view('admin.team_type.detail', $data);
 	}
 
 	public function store (Request $request) {
 		$isCreate = $request->id == null ? true : false;
 		$validation = [
-			'name' => 'required|max:255',
-			'stream_url' => 'required|url'
+			'name' => 'required|max:255'
 		];
 		
-		if ($isCreate) {
-			array_push($validation, [
-				'image' => 'required|mimes:jpg,png'
-			]);
-		} else {
-			array_push($validation, [
-				'image' => 'mimes:jpg,png'
-			]);
-		}
-			
 		$validated = $request->validate($validation);
-
-		// Upload Image
-		if ($request->hasFile('image')) {
-			if(!Storage::exists("/public/sport/image")) Storage::makeDirectory("/public/sport/image");
-			$file = $request->file('image');
-
-			$filenameWithExt = $request->file('image')->getClientOriginalName();
-			$filename = pathinfo($filenameWithExt, PATHINFO_FILENAME);
-			$extension = $request->file('image')->getClientOriginalExtension();
-
-			$filename = $filename.'_'.time().'.'.$extension;
-			$path = storage_path('app/public/sport/image/').$filename;
-			$file->storeAs('public/sport/image', $filename);
-
-			// Resize image
-			$img = Image::make($file->getRealPath())
-				->resize(1024, 1024, function ($constraint) {
-					$constraint->aspectRatio();
-				})
-				->save($path, 80);
-		}
 
 		$types = null;
 		if ($isCreate) {
-			$types = new SportType;
+			$types = new TeamType;
 			$types->id = Str::uuid();
 		} else {
-			$types = SportType::find($request->id);
-			if ($request->hasFile('image')) {
-				$oldPath = storage_path('app/public/sport/image/').$school->logo;
-				unlink($oldPath);
-			}
+			$types = TeamType::find($request->id);
 		}
 		
 		try {
 			$types->name = ucwords($request->name);
-			if ($request->hasFile('image')) $types->image = $filename;
-			$types->stream_url = $request->stream_url;
 			$types->save();
 
 			return redirect()
-				->route("admin.sport.type.index")
+				->route("admin.masterdata.team_type.index")
 				->with('success', 'Data successfully saved');
 		} catch (QueryException $exception) {
-			unlink($path);
 			return redirect()->back()
 				->withErrors($exception->getMessage());
 		}
@@ -109,7 +70,7 @@ class SportTypeController extends Controller {
 		]);
 
 		try {
-			$type = SportType::find($request->id);
+			$type = TeamType::find($request->id);
 			$type->delete();
 
 			$request->session()->flash('message', "{$type->name} successfully deleted");
@@ -131,14 +92,14 @@ class SportTypeController extends Controller {
 		$search = $request->has('search') ? $request->search : null;
 		$limit = 10;
 
-		$types = SportType::when($search != null, function ($query) use ($search) {
-        $query->where('name', 'LIKE', '%'.$search.'%');
-      })
-      ->take($limit)
-			->skip($page - 1)
-			->get();
+		$types = TeamType::when($search != null, function ($query) use ($search) {
+            $query->where('name', 'LIKE', '%'.$search.'%');
+        })
+        ->take($limit)
+        ->skip($page - 1)
+        ->get();
 
-		$total = SportType::when($search != null, function ($query) use ($search) {
+		$total = TeamType::when($search != null, function ($query) use ($search) {
 			$query->where('name', 'LIKE', '%'.$search.'%');
 		})->count();
 
@@ -159,7 +120,7 @@ class SportTypeController extends Controller {
 	}
 
 	public function listDatatable(Request $request) {
-		$data = SportType::get();
+		$data = TeamType::get();
 		return Datatables::of($data)->make(true);
 	}
 }

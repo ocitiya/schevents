@@ -16,7 +16,10 @@ return new class extends Migration
         Schema::create('sport_types', function (Blueprint $table) {
             $table->uuid('id')->primary();
 			$table->string('name');
+            $table->text('image');
+            $table->text('stream_url');
 			$table->timestamps();
+            $table->softDeletes();
         });
     }
 

@@ -16,12 +16,11 @@ return new class extends Migration
         Schema::create('schools', function (Blueprint $table) {
             $table->uuid('id')->primary();
 			$table->string('name');
-			$table->foreignUuid('country_id')->references('id')->on('countries');
-			$table->foreignUuid('province_id')->references('id')->on('provinces');
-			$table->foreignUuid('county_id')->references('id')->on('counties');
-			$table->foreignUuid('municipality_id')->references('id')->on('municipalities');
-			$table->string('logo');
-			$table->enum('level_of_education', ['kindergarden', 'elementary school', 'junior high school', 'senior high school', 'vocational school', 'university', 'college']);
+            $table->uuid('country_id');
+            $table->uuid('province_id')->nullable();
+            $table->uuid('county_id');
+            $table->uuid('municipality_id')->nullable();
+            $table->string('logo')->nullable();
 			$table->timestamps();
             $table->softDeletes();
         });

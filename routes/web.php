@@ -15,6 +15,7 @@ use App\Http\Controllers\Admin\SportTypeController;
 use App\Http\Controllers\Admin\SchoolController;
 use App\Http\Controllers\Admin\MatchScheduleController;
 use App\Http\Controllers\Admin\StadiumController;
+use App\Http\Controllers\Admin\TeamTypeController;
 
 /*
 |--------------------------------------------------------------------------
@@ -113,6 +114,7 @@ Route::middleware(['haveInstalled'])->group(function () {
 			Route::get('/create', [MatchScheduleController::class, 'create'])->name('create');
 			Route::get('/update/{id}', [MatchScheduleController::class, 'update'])->name('update');
 			Route::get('/detail/{id}', [MatchScheduleController::class, 'detail'])->name('detail');
+			Route::get('/city/{id}', [MatchScheduleController::class, 'city'])->name('city');
 
 			Route::post('/store', [MatchScheduleController::class, 'store'])->name('store');
 			Route::post('/delete', [MatchScheduleController::class, 'delete'])->name('delete');
@@ -126,6 +128,18 @@ Route::middleware(['haveInstalled'])->group(function () {
 
 			Route::post('/store', [StadiumController::class, 'store'])->name('store');
 			Route::post('/delete', [StadiumController::class, 'delete'])->name('delete');
+		});
+
+		Route::group(['prefix' => 'masterdata', 'as' => 'masterdata.'], function () {
+			Route::group(['prefix' => 'team_type', 'as' => 'team_type.'], function () {
+				Route::get('/', [TeamTypeController::class, 'index'])->name('index');
+				Route::get('/create', [TeamTypeController::class, 'create'])->name('create');
+				Route::get('/update/{id}', [TeamTypeController::class, 'update'])->name('update');
+				Route::get('/detail/{id}', [TeamTypeController::class, 'detail'])->name('detail');
+
+				Route::post('/store', [TeamTypeController::class, 'store'])->name('store');
+				Route::post('/delete', [TeamTypeController::class, 'delete'])->name('delete');
+			});
 		});
 	});
 

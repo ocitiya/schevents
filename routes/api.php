@@ -13,6 +13,7 @@ use App\Http\Controllers\Admin\SchoolController;
 use App\Http\Controllers\Admin\MatchScheduleController;
 use App\Http\Controllers\Admin\SportTypeController;
 use App\Http\Controllers\Admin\StadiumController;
+use App\Http\Controllers\Admin\TeamTypeController;
 
 /*
 |--------------------------------------------------------------------------
@@ -38,3 +39,12 @@ Route::get('/school/list/{school_id?}', [SchoolController::class, 'list']);
 Route::get('/match-schedule/list', [MatchScheduleController::class, 'list']);
 Route::get('/sport-type/list', [SportTypeController::class, 'list']);
 Route::get('/stadium/list', [StadiumController::class, 'list']);
+
+Route::get('/city/listDatatable', [CountiesController::class, 'listDatatable']);
+Route::post('/school/listDatatable', [SchoolController::class, 'listDatatable']);
+Route::get('/sport-type/listDatatable', [SportTypeController::class, 'listDatatable']);
+Route::get('/team_type/listDatatable', [TeamTypeController::class, 'listDatatable']);
+
+Route::post('/match-schedule/listDatatable', [MatchScheduleController::class, 'listDatatable']);
+Route::get('/match-schedule/cityMatchDatatable', [MatchScheduleController::class, 'cityMatchDatatable']);
+

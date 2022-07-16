@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
+use DataTables;
+
 use App\Models\Province;
 use App\Models\Country;
 use App\Models\County;
@@ -63,6 +65,11 @@ class CountiesController extends Controller {
 			return redirect()->back()
 				->withErrors($exception->getMessage());
 		}
+	}
+
+	public function listDatatable(Request $request) {
+		$data = County::withCount(["schools"])->get();
+		return Datatables::of($data)->make(true);
 	}
 
 	public function list (Request $request) {

@@ -15,15 +15,20 @@ return new class extends Migration
     {
         Schema::create('match_schedule', function (Blueprint $table) {
             $table->uuid('id')->primary();
-			$table->foreignUuid('sport_type_id')->references('id')->on('sport_types');
-			$table->foreignUuid('school1_id')->references('id')->on('schools');
-			$table->foreignUuid('school2_id')->references('id')->on('schools');
-			$table->enum('team_gender', ['all', 'male', 'female']);
+            $table->uuid('sport_type_id');
+            $table->uuid('school1_id');
+            $table->uuid('school2_id');
+            $table->uuid('county_id');
+			$table->enum('team_gender', ['boy', 'girl']);
+            $table->text('stadium')->nullable();
+            $table->uuid('team_type_id');
             $table->dateTime('datetime', $precision = 0)->comment('UTC Timezone');
-            $table->text('link');
             $table->text('keywords');
+            $table->text('description')->nullable();
             $table->boolean('is_expire')->default(0);
 			$table->timestamps();
+            $table->uuid('created_by');
+            $table->uuid('updated_by')->nullable();
             $table->softDeletes();
         });
     }
