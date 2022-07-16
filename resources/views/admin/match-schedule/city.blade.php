@@ -29,7 +29,7 @@
       </div>
 
       <div class="data-center">
-        <div id="schedule-items">
+        <div id="schedule-items" style="width: 100%">
           <table id="datatable" class="table table-bordered"></table>
         </div>
       </div>
@@ -120,7 +120,7 @@
                 return formatDate
               }
             },
-            {data: 'datetime', title: 'Tanggal', name: 'datetime',
+            {data: 'datetime', title: 'Waktu', name: 'datetime',
               "render": function ( data, type, row, meta ) {
                 const timezone = moment().tz(moment.tz.guess()).format('z')
                 const formatDate = moment.utc(data).local().format('hh:mm')
