@@ -27,7 +27,7 @@
       </div>
 
       <div class="data-center">
-        <div class="data-list" id="type-items">
+        <div id="type-items">
           <table id="datatable" class="table table-bordered"></table>
         </div>
       </div>

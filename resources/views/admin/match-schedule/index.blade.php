@@ -33,7 +33,7 @@
       </div>
 
       <div class="data-center">
-        <div class="data-list" id="schedule-items">
+        <div id="schedule-items">
           <table id="datatable" class="table table-bordered"></table>
         </div>
       </div>
