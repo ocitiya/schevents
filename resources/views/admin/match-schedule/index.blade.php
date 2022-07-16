@@ -19,23 +19,8 @@
     </div>
 
     <div class="data-container">
-      <div class="data-header">
-        <a href="{{ route('admin.match-schedule.create') }}" class="btn btn-primary btn-sm unrounded">
-          Create New&nbsp;
-          <i class="fa-solid fa-plus"></i>
-        </a>
-
-        <div>
-          <form action="" autocomplete="off" method="POST">
-            <input class="form-control" placeholder="Search" type="text" id="search">
-          </form>
-        </div>
-      </div>
-
       <div class="data-center">
-        <div id="schedule-items">
-          <table id="datatable" class="table table-bordered"></table>
-        </div>
+        <table id="datatable" class="table table-bordered"></table>
       </div>
     </div>
   </div>
