@@ -8,6 +8,7 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
 use Intervention\Image\Facades\Image;
 use Illuminate\Database\QueryException;
+use Illuminate\Support\Facades\DB;
 
 use Auth;
 use DataTables;
@@ -175,22 +176,15 @@ class MatchScheduleController extends Controller {
 
 		$type = $request->has('type') ? $request->type : "all";
 
-		$schedule = MatchSchedule::take($limit)
-			->skip($page - 1)
-			->with(["county", "school1", "school2", "team_type", "sport_type"])
-			->orderBy('datetime');
-
-		$total = MatchSchedule::orderBy('datetime');
+		$schedule = MatchSchedule::with(["county", "school1", "school2", "team_type", "sport_type"]);
 
 		switch ($type) {
 			case "all":
 				break;
 
 			case "ongoing":
-				$datetime = Carbon::now()->toDateTimeString();
 
-				$schedule->where('datetime', '>=', $datetime);
-				$total->where('datetime', '>=', $datetime);
+				$schedule->where('datetime', '>=', DB::raw('NOW()'));
 
 				break;
 
@@ -198,8 +192,11 @@ class MatchScheduleController extends Controller {
 				break;
 		}
 
-		$schedule = $schedule->get();
-		$total = $total->count();
+		$schedule = $schedule->orderBy('datetime')
+			->take($limit)
+			->skip(($page - 1) * $limit)
+			->get();
+		$total = MatchSchedule::count();
 
 		return response()->json([
 			"status" => true,

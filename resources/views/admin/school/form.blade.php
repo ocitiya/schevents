@@ -47,7 +47,7 @@
           {{ csrf_field() }}
 
           <input type="hidden" name="id" value="{{ isset($data) ? $data->id : null }}">
-          <input type="hidden" name="redirect_city" value="{{ $default_city ? 1 : 0 }}">
+          <input type="hidden" name="redirect_city" value="{{ $default_city != null ? 1 : 0 }}">
 
           <div class="col-7">
             <div class="row">
@@ -66,9 +66,16 @@
                 <label for="name">Kota *</label>
               </div>
               <div class="col-7">
-                <select name="county_id" class="form-select" id="county_id">
-                  {{-- Dynamic Data --}}
-                </select>
+                @if ($default_city != null)
+                    <input type="hidden" name="county_id" />
+                    <select class="form-select" id="county_id" value="{{ $default_city }}">
+                      {{-- Dynamic Data --}}
+                    </select>
+                @else
+                    <select name="county_id" class="form-select" id="county_id">
+                      {{-- Dynamic Data --}}
+                    </select>
+                @endif
               </div>
             </div>
 

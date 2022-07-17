@@ -18,74 +18,93 @@
           Upcoming Match
         </div>
 
-        <div v-if="schedules.length > 0" class="row q-col-gutter-lg q-mt-md">
-          <div v-for="item in schedules" :key="item.id" class="col-12 col-sm-6">
-            <q-card v-ripple class="event-card" @click="() => redirect(item.sport_type.stream_url)">
-              <q-card-section class="flex justify-between items-center">
-                <span class="text-primary">
-                  {{ item.team_type.name }},
-                  <span class="capitalize">{{ item.team_gender }},</span>
-                  {{ item.sport_type.name }}
-                </span>
+        <div v-if="schedules.length > 0">
+          <q-infinite-scroll @load="loadMore">
+            <div class="row q-col-gutter-lg q-mt-md">
+              <div v-for="item in schedules" :key="item.id" class="col-12 col-sm-6">
+                <q-card v-ripple class="event-card" @click="() => redirect(item.sport_type.stream_url)">
+                  <q-card-section class="flex justify-between items-center">
+                    <span class="text-primary">
+                      {{ item.team_type.name }},
+                      <span class="capitalize">{{ item.team_gender }},</span>
+                      {{ item.sport_type.name }}
+                    </span>
 
-                <div class="flex items-center text-primary">
-                  <q-icon name="pin_drop" />&nbsp;
-                  <span v-if="item.stadium !== null">
-                    {{ `${item.stadium}, ${item.county.abbreviation}` }}
-                  </span>
-                  <span v-else>
-                    {{ `${item.county.abbreviation}` }}
-                  </span>
-                </div>
-                
-              </q-card-section>
-              <q-separator />
-
-              <q-card-section class="q-py-lg">
-                <div class="vs-section">
-                  <div class="text-center q-mr-md">
-                    <q-img class="logo"
-                      :src="`${$host}/storage/school/logo/${item.school1.logo}`"
-                      :ratio="1"
-                    />
-
-                    <div class="text-bold text-primary q-mt-md">
-                      {{ item.school1.name }}
+                    <div class="flex items-center text-primary">
+                      <q-icon name="pin_drop" />&nbsp;
+                      <span v-if="item.stadium !== null">
+                        {{ `${item.stadium}, ${item.county.abbreviation}` }}
+                      </span>
+                      <span v-else>
+                        {{ `${item.county.abbreviation}` }}
+                      </span>
                     </div>
-                  </div>
+                    
+                  </q-card-section>
+    
+                  <q-separator />
 
-                  <div class="text-body1 text-grey-7 flex flex-center">
-                    VS
-                  </div>
+                  <q-card-section class="q-py-lg">
+                    <div class="vs-section">
+                      <div v-if="item.school1 !== null" class="text-center q-mr-md">
+                        <q-img class="logo"
+                          :src="`${$host}/storage/school/logo/${item.school1.logo}`"
+                          :ratio="1"
+                        />
 
-                  <div class="text-center q-ml-md">
-                    <q-img class="logo"
-                      :src="`${$host}/storage/school/logo/${item.school2.logo}`"
-                      :ratio="1"
-                    />
+                        <div class="text-bold text-primary q-mt-md">
+                          {{ item.school1.name }}
+                        </div>
+                      </div>
 
-                    <div class="text-bold text-primary q-mt-md">
-                      {{ item.school2.name }}
+                      <div v-else class="q-ml-md flex flex-center">
+                        <div class="text-red text-bold">Unknown School</div>
+                      </div>
+
+                      <div class="text-body1 text-grey-7 flex flex-center">
+                        VS
+                      </div>
+
+                      <div v-if="item.school2 !== null" class="text-center q-ml-md">
+                        <q-img class="logo"
+                          :src="`${$host}/storage/school/logo/${item.school2.logo}`"
+                          :ratio="1"
+                        />
+
+                        <div class="text-bold text-primary q-mt-md">
+                          {{ item.school2.name }}
+                        </div>
+                      </div>
+
+                      <div v-else class="q-ml-md flex flex-center">
+                        <div class="text-red text-bold">Unknown School</div>
+                      </div>
                     </div>
-                  </div>
-                </div>
-              </q-card-section>
+                  </q-card-section>
 
-              <q-separator />
+                  <q-separator />
 
-              <q-card-section class="flex items-center justify-between q-px-md bg-primary text-white">
-                <div class="flex flex-center">
-                  <q-icon name="calendar_month" />
-                  <span class="q-ml-sm">{{ scheduleDate(item.datetime) }}</span>
-                </div>
+                  <q-card-section class="flex items-center justify-between q-px-md bg-primary text-white">
+                    <div class="flex flex-center">
+                      <q-icon name="calendar_month" />
+                      <span class="q-ml-sm">{{ scheduleDate(item.datetime) }}</span>
+                    </div>
 
-                <div class="flex flex-center">
-                  <q-icon name="schedule" />
-                  <span class="q-ml-sm">{{ scheduleTime(item.datetime) }}</span>
-                </div>
-              </q-card-section>
-            </q-card>
-          </div>
+                    <div class="flex flex-center">
+                      <q-icon name="schedule" />
+                      <span class="q-ml-sm">{{ scheduleTime(item.datetime) }}</span>
+                    </div>
+                  </q-card-section>
+                </q-card>
+              </div>
+            </div>
+
+            <template v-slot:loading>
+              <div class="flex flex-center q-my-md">
+                <q-spinner-dots color="primary" size="40px" />
+              </div>
+            </template>
+          </q-infinite-scroll>
         </div>
 
         <div v-else class="text-primary text-h6 text-bold flex flex-center q-mt-lg">
@@ -106,6 +125,10 @@ export default defineComponent({
   data: function () {
     return {
       schedules: [],
+      pagination: {
+        page: 1,
+        total_page: 1
+      }
     }
   },
 
@@ -114,12 +137,23 @@ export default defineComponent({
   },
 
   methods: {
+    async loadMore (index, done) {
+      const currentPage = this.pagination.page
+
+      if (currentPage < this.pagination.total_page) {
+        this.pagination.page = parseInt(currentPage) + 1
+        await this.getSchedule()
+      }
+
+      done()
+    },
+
     redirect (url) {
-      console.log('url', url)
       window.open(url)
     },
 
     async refresh (done) {
+      this.pagination.page = 1
       await this.getSchedule()
       done()
     },
@@ -140,11 +174,26 @@ export default defineComponent({
 
     getSchedule: function () {
       return new Promise((resolve, reject) => {
-        this.$api.get('match-schedule/list').then((response) => {
+        const page = this.pagination.page
+
+        let endpoint = 'match-schedule/list'
+        endpoint += `?page=${page}` 
+
+        this.$api.get(endpoint).then((response) => {
           const { data, message, status } = response.data
 
           if (status) {
-            this.schedules = data.list
+            if (this.pagination.page === 1) {
+              this.schedules = [...data.list]
+            } else {
+              this.schedules = this.schedules.concat(data.list)
+            }
+
+            this.pagination = {
+              ...this.pagination,
+              page: data.pagination.page,
+              total_page: data.pagination.total_page
+            }
             resolve()
           } else {
             reject()

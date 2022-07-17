@@ -18,12 +18,6 @@
           Tambah Kota&nbsp;
           <i class="fa-solid fa-plus"></i>
         </a>
-
-        <div>
-          <form action="" autocomplete="off" method="POST">
-            <input class="form-control" placeholder="Search" type="text" id="search">
-          </form>
-        </div>
       </div>
 
       <div class="data-center">

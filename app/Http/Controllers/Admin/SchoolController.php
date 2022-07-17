@@ -35,10 +35,13 @@ class SchoolController extends Controller {
 		return view('admin.school.form', $data);
 	}
 
-	public function update ($id) {
+	public function update (Request $request, $id) {
 		$types = School::find($id);
 
-		$data = [ "data" => $types ];
+		$data = [
+		    "data" => $types,
+		    "default_city" => $request->has("city_id") ? $request->city_id : null
+		];
 		return view('admin.school.form', $data);
 	}
 
