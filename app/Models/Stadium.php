@@ -7,10 +7,9 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 use BinaryCabin\LaravelUUID\Traits\HasUUID;
-use BinaryCabin\LaravelUUID\Traits\UUIDIsPrimaryKey;
 
 class Stadium extends Model {
-	use HasFactory, SoftDeletes, HasUUID, UUIDIsPrimaryKey;
+	use HasFactory, SoftDeletes, HasUUID;
  
 	protected $table = "stadium";
 	protected $primaryKey = "id";
@@ -18,6 +17,9 @@ class Stadium extends Model {
 	protected $casts = [
 		'id' => 'string'
 	];
+
+	public $incrementing = false;
+	protected $keyType = 'string';
 
 	public function country () {
 		return $this->belongsTo(Country::class);

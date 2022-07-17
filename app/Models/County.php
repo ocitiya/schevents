@@ -6,10 +6,9 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 use BinaryCabin\LaravelUUID\Traits\HasUUID;
-use BinaryCabin\LaravelUUID\Traits\UUIDIsPrimaryKey;
 
 class County extends Model {
-	use HasFactory, HasUUID, UUIDIsPrimaryKey;
+	use HasFactory, HasUUID;
 
 	protected $table = "counties";
 	protected $primaryKey = "id";
@@ -17,6 +16,9 @@ class County extends Model {
 	protected $casts = [
 		'id' => 'string'
 	];
+
+	public $incrementing = false;
+	protected $keyType = 'string';
 
 	public function province () {
 		return $this->belongsTo(Province::class);

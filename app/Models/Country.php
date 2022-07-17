@@ -6,10 +6,9 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 use BinaryCabin\LaravelUUID\Traits\HasUUID;
-use BinaryCabin\LaravelUUID\Traits\UUIDIsPrimaryKey;
 
 class Country extends Model {
-	use HasFactory, HasUUID, UUIDIsPrimaryKey;
+	use HasFactory, HasUUID;
 
 	protected $table = "countries";
 	protected $primaryKey = "id";
@@ -17,4 +16,7 @@ class Country extends Model {
 	protected $casts = [
 		'id' => 'string'
 	];
+
+	public $incrementing = false;
+	protected $keyType = 'string';
 }
