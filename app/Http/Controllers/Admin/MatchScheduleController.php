@@ -193,6 +193,7 @@ class MatchScheduleController extends Controller {
 		}
 
 		$schedule = $schedule->orderBy('datetime')
+			->orderBy('created_at')
 			->take($limit)
 			->skip(($page - 1) * $limit)
 			->get();

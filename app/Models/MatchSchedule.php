@@ -6,11 +6,14 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class MatchSchedule extends Model {
-    use HasFactory;
-    use SoftDeletes;
+use BinaryCabin\LaravelUUID\Traits\HasUUID;
+use BinaryCabin\LaravelUUID\Traits\UUIDIsPrimaryKey;
 
-    protected $table = "match_schedule";
+
+class MatchSchedule extends Model {
+	use HasFactory, SoftDeletes, HasUUID, UUIDIsPrimaryKey;
+
+	protected $table = "match_schedule";
 	protected $primaryKey = "id";
 
 	protected $casts = [

@@ -101,12 +101,20 @@
             },
             {data: 'school1', title: 'Club 1', name: 'school1',
               "render": function ( data, type, row, meta ) {
-                return data.name
+                if (data !== null) {
+                  return data.name
+                } else {
+                  return 'Unknown School'
+                }
               }
             },
             {data: 'school2', title: 'Club 2', name: 'school2',
               "render": function ( data, type, row, meta ) {
-                return data.name
+                if (data !== null) {
+                  return data.name
+                } else {
+                  return 'Unknown School'
+                }
               }
             },
             {data: 'team_type', title: 'Tipe Tim', name: 'team_type',
