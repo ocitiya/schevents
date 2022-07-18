@@ -33,24 +33,22 @@ class MatchScheduleController extends Controller {
 		return view('admin.match-schedule.city', $data);
 	}
 
-	public function create () {
-		$schools = School::get();
+	public function create (Request $request) {
 		$types = SportType::get();
 		$cities = County::get();
 		$team_types = TeamType::get();
 
 		$data = [
-			"schools" => $schools,
 			"types" => $types,
 			"cities" => $cities,
-			"team_types" => $team_types
+			"team_types" => $team_types,
+			"default_city" => $request->has("city_id") ? $request->city_id : null
 		];
 
 		return view('admin.match-schedule.form', $data);
 	}
 
-	public function update ($id) {
-		$schools = School::get();
+	public function update (Request $request, $id) {
 		$types = SportType::get();
 		$cities = County::get();
 		$team_types = TeamType::get();
@@ -63,11 +61,12 @@ class MatchScheduleController extends Controller {
 
 		$data = [
 			"data" => $schedule,
-			"schools" => $schools,
 			"types" => $types,
 			"cities" => $cities,
-			"team_types" => $team_types
+			"team_types" => $team_types,
+			"default_city" => $request->has("city_id") ? $request->city_id : null
 		];
+
 		return view('admin.match-schedule.form', $data);
 	}
 
@@ -183,7 +182,6 @@ class MatchScheduleController extends Controller {
 				break;
 
 			case "ongoing":
-
 				$schedule->where('datetime', '>=', DB::raw('NOW()'));
 
 				break;
@@ -220,7 +218,7 @@ class MatchScheduleController extends Controller {
 		return Datatables::of($data)->make(true);
 	}
 
-	function listDatatable () {
+	function listDatatable (Request $request) {
 		$cityId = isset($request->city_id) ? $request->city_id : null;
 
 		$data = MatchSchedule::with(["county", "school1", "school2", "team_type", "sport_type"])

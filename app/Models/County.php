@@ -5,10 +5,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-use BinaryCabin\LaravelUUID\Traits\HasUUID;
-
 class County extends Model {
-	use HasFactory, HasUUID;
+	use HasFactory;
 
 	protected $table = "counties";
 	protected $primaryKey = "id";

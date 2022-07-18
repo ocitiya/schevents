@@ -27,7 +27,7 @@
 		<div class="menu-group">
 			<div class="dropdown-group">
 				<a data-bs-target="#masterDataMenu" data-bs-toggle="collapse"
-					aria-expanded="{{ str_contains(Request::route()->getName(), 'admin.location') ? 'true' : 'false' }}"
+					aria-expanded="{{ str_contains(Request::route()->getName(), 'admin.masterdata') ? 'true' : 'false' }}"
 					class="dropdown-toggle">
 					Master Data
 				</a>
@@ -55,10 +55,9 @@
 							class="{{ str_contains(Request::route()->getName(), 'admin.school.index') ? 'active' : null }}"
 						>Sekolah</a>
 					</li>
-					<li>
+					<li class="{{ str_contains(Request::route()->getName(), 'admin.masterdata.team_type.index') ? 'active' : null }}">
 						<a
 							href="{{ route('admin.masterdata.team_type.index') }}"
-							class="{{ str_contains(Request::route()->getName(), 'admin.masterdata.team_type.index') ? 'active' : null }}"
 						>Tipe Tim</a>
 					</li>
 					<li>

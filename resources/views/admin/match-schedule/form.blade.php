@@ -67,12 +67,22 @@
                 <label for="name">Kota *</label>
               </div>
               <div class="col-7">
-                <select required name="county_id" class="form-select" id="county_id">
-                  <option disabled selected value>Please select ...</option>
-                  @foreach ($cities as $item)
-                    <option value="{{ $item->id }}">{{ $item->name }} - {{ $item->abbreviation }}</option>
-                  @endforeach
-                </select>
+                @if ($default_city != null)
+                  <input type="hidden" name="county_id" value="{{ $default_city }}">
+                  <select required class="form-select" id="county_id" disabled>
+                    <option disabled selected value>Please select ...</option>
+                    @foreach ($cities as $item)
+                      <option value="{{ $item->id }}">{{ $item->name }} - {{ $item->abbreviation }}</option>
+                    @endforeach
+                  </select>
+                @else
+                  <select required name="county_id" class="form-select" id="county_id">
+                    <option disabled selected value>Please select ...</option>
+                    @foreach ($cities as $item)
+                      <option value="{{ $item->id }}">{{ $item->name }} - {{ $item->abbreviation }}</option>
+                    @endforeach
+                  </select>
+                @endif
               </div>
             </div>
 
@@ -82,10 +92,7 @@
               </div>
               <div class="col-7">
                 <select required name="school1_id" class="form-select" id="school1_id">
-                  <option disabled selected value>Please select ...</option>
-                  @foreach ($schools as $item)
-                    <option value="{{ $item->id }}">{{ $item->name }}</option>
-                  @endforeach
+                  {{-- Dynamic Data --}}
                 </select>
               </div>
             </div>
@@ -105,10 +112,7 @@
               </div>
               <div class="col-7">
                 <select required name="school2_id" class="form-select" id="school2_id">
-                  <option disabled selected value>Please select ...</option>
-                  @foreach ($schools as $item)
-                    <option value="{{ $item->id }}">{{ $item->name }}</option>
-                  @endforeach
+                  {{-- Dynamic Data --}}
                 </select>
               </div>
             </div>
@@ -202,7 +206,7 @@
 @section('script')
   <script>
     const typeSelected = "<?php echo old('sport_type_id', isset($data) ? $data->sport_type_id : null) ?>";
-    const countySelected = "<?php echo old('county_id', isset($data) ? $data->county_id : null) ?>";
+    const countySelected = "<?php echo old('county_id', isset($data) ? $data->county_id : $default_city) ?>";
     const school1Selected = "<?php echo old('school1_id', isset($data) ? $data->school1_id : null) ?>";
     const school2Selected = "<?php echo old('school2_id', isset($data) ? $data->school2_id : null) ?>";
     const teamTypeSelected = "<?php echo old('team_type_id', isset($data) ? $data->team_type_id : null) ?>";
@@ -211,7 +215,38 @@
     const timeHourSelected = "<?php echo old('time_hour', isset($data) ? $data->time_hour : null) ?>";
     const timeMinuteSelected = "<?php echo old('time_minute', isset($data) ? $data->time_minute : null) ?>";
     
+    const generateSelect = (elemId, data) => {
+      $(elemId).empty()
+
+      $(elemId).append('<option disabled selected value>Please select ...</option')
+      data.map(item => {
+        $(elemId).append(`<option value="${item.id}">${item.name}</option>`)
+      })
+    }
+
+    const getList = (endpoint) => {
+      return new Promise((resolve, reject) => {
+        fetch(endpoint)
+          .then(res => res.json())
+          .then(data => {
+            if (data.status) {
+              resolve(data.data.list)
+            } else {
+              alert(data.message)
+              reject()
+            }
+          })
+      })
+    }
+
     document.addEventListener('DOMContentLoaded', function() {
+      $('#county_id').on('change', async function () {
+        const val = $(this).val()
+        const schools = await getList(`/api/school/list?showall=true&county_id=${val}`)
+        generateSelect('#school1_id', schools)
+        generateSelect('#school2_id', schools)
+      })
+
       $('#sport_type_id').val(typeSelected).change()
       $('#county_id').val(countySelected).change()
       $('#school1_id').val(school1Selected).change()

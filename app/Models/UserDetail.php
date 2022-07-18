@@ -5,10 +5,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-use BinaryCabin\LaravelUUID\Traits\HasUUID;
-
 class UserDetail extends Model {
-	use HasFactory, HasUUID;
+	use HasFactory;
 
 	protected $table = "users_detail";
 	protected $primaryKey = "id";

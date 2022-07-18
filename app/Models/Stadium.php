@@ -6,10 +6,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-use BinaryCabin\LaravelUUID\Traits\HasUUID;
-
 class Stadium extends Model {
-	use HasFactory, SoftDeletes, HasUUID;
+	use HasFactory, SoftDeletes;
  
 	protected $table = "stadium";
 	protected $primaryKey = "id";

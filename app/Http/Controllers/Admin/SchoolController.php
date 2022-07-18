@@ -151,17 +151,24 @@ class SchoolController extends Controller {
 	}
 
 	public function list (Request $request) {
+		$showAll = $request->has('showall') ? (boolean) $request->showall : false;
+		$search = $request->has('search') ? $request->search : null;
+		$county_id = $request->has('county_id') ? $request->county_id : null;
+		
 		$page = $request->has('page') ? $request->page : 1;
 		if (empty($page)) $page = 1; 
-		$search = $request->has('search') ? $request->search : null;
 		$limit = 10;
 
 		$schools = School::with(['county'])
 			->when($search != null, function ($query) use ($search) {
         $query->where('name', 'LIKE', '%'.$search.'%');
       })
-      ->take($limit)
-			->skip($page - 1)
+			->when(!$showAll, function ($query) {
+				$query->take($limit)->skip(($page - 1) * $limit);
+			})
+			->when($county_id != null, function ($query) use ($county_id) {
+				$query->where('county_id', $county_id);
+			})
 			->get();
 
 		$total = School::when($search != null, function ($query) use ($search) {
