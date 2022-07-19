@@ -357,3 +357,11 @@ a.article:hover {
 .text-red {
 	color: #dc3545;
 }
+
+.tab-pane {
+	padding: 20px 0;
+}
+
+.hide {
+	display: none;
+}

@@ -58,6 +58,12 @@
                 <input type="text" id="name" name="name" class="form-control capitalize"
                   value="{{ old('name', isset($data) ? $data->name : null) }}"
                 >
+                <div class="invalid-feedback">
+                  Sekolah sudah terdaftar
+                </div>
+                <div class="valid-feedback">
+                  Sekolah bisa didaftarkan
+                </div>
               </div>
             </div>
 
@@ -67,14 +73,14 @@
               </div>
               <div class="col-7">
                 @if ($default_city != null)
-                    <input type="hidden" name="county_id" />
-                    <select class="form-select" id="county_id" value="{{ $default_city }}">
-                      {{-- Dynamic Data --}}
-                    </select>
+                  <input type="hidden" name="county_id" value="{{ $default_city }}"/>
+                  <select class="form-select" id="county_id" disabled>
+                    {{-- Dynamic Data --}}
+                  </select>
                 @else
-                    <select name="county_id" class="form-select" id="county_id">
-                      {{-- Dynamic Data --}}
-                    </select>
+                  <select name="county_id" class="form-select select2" id="county_id">
+                    {{-- Dynamic Data --}}
+                  </select>
                 @endif
               </div>
             </div>
@@ -105,7 +111,7 @@
             </div>
 
             <div class="form-button">
-              <button type="submit" class="btn btn-primary btn-sm unrounded">
+              <button id="submit" type="submit" class="btn btn-primary btn-sm unrounded disabled">
                 Kirim&nbsp;
                 <i class="fa-solid fa-paper-plane"></i>
               </button>
@@ -152,10 +158,40 @@
       const countries = await getList('/api/country/list')
       const country = countries[0]
 
-      const cities = await getList(`/api/county/list?country_id=${country.id}`)
+      const cities = await getList(`/api/county/list?country_id=${country.id}&showall=true`)
       generateSelect('#county_id', cities)
       $('#county_id').val(countySelected).change()
       if (cityDefault == 1) $('#county_id').prop('disabled', true)
+
+      let validationTimeout
+      $('#name').on('keyup', function () {
+        const val = $(this).val()
+
+        if (validationTimeout) clearTimeout(validationTimeout)
+        validationTimeout = setTimeout(() => {
+          const formData = new FormData()
+          formData.append('school', val)
+
+          fetch(`/api/school/validate`, {
+            method: 'POST',
+            body: formData
+          })
+            .then((response) => response.json())
+            .then((data) => {
+              if (data.data) {
+                $(this).addClass('is-valid')
+                $(this).removeClass('is-invalid')
+
+                $('#submit').removeClass('disabled')
+              } else {
+                $(this).addClass('is-invalid') 
+                $(this).removeClass('is-valid')
+              
+                $('#submit').addClass('disabled')
+              }
+            })
+        }, 1000);
+      })
     })
   </script>
 @endsection

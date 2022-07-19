@@ -56,6 +56,12 @@
                 <input type="text" id="name" name="name" class="form-control capitalize"
                   value="{{ old('name', isset($data) ? $data->name : null) }}"
                 >
+                <div class="invalid-feedback">
+                  Kota sudah terdaftar
+                </div>
+                <div class="valid-feedback">
+                  Kota bisa didaftarkan
+                </div>
               </div>
             </div>
 
@@ -71,7 +77,7 @@
             </div>
 
             <div class="form-button">
-              <button type="submit" class="btn btn-primary btn-sm unrounded">
+              <button id="submit" type="submit" class="btn btn-primary btn-sm unrounded disabled">
                 Kirim&nbsp;
                 <i class="fa-solid fa-paper-plane"></i>
               </button>
@@ -84,3 +90,46 @@
     </div>
   </div>
 @endsection
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const nameValidate = (elem, state) => {
+      console.log(state)
+      if (!state) {
+        $(elem).addClass('is-invalid') 
+        $(elem).removeClass('is-valid')
+      
+        $('#submit').addClass('disabled')
+      } else {
+        $(elem).addClass('is-valid')
+        $(elem).removeClass('is-invalid')
+
+        $('#submit').removeClass('disabled')
+      }
+    }
+
+    let validationTimeout
+    $('#name').on('keyup', function () {
+      const val = $(this).val()
+
+      if (validationTimeout) clearTimeout(validationTimeout)
+      validationTimeout = setTimeout(() => {
+        const formData = new FormData()
+        formData.append('county', val)
+
+        fetch(`/api/county/validate`, {
+          method: 'POST',
+          body: formData
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            if (data.data) {
+              nameValidate(this, true)
+            } else {
+              nameValidate(this, false)
+            }
+          })
+      }, 1000);
+    })
+  })
+</script>

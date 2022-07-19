@@ -96,6 +96,8 @@
             </div>
           </div>
         </form>
+
+        <small class="text-red">*) Harus diisi</small>
       </div>
     </div>
   </div>

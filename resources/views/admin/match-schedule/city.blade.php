@@ -28,9 +28,31 @@
         </a>
       </div>
 
-      <div class="data-center">
-        <div id="schedule-items" style="width: 100%">
-          <table id="datatable" class="table table-bordered"></table>
+      <ul class="nav nav-tabs" id="myTab" role="tablist">
+        <li class="nav-item" role="presentation">
+          <button class="nav-link tab-item" type="button" role="tab" data-state="sudah-bermain">
+            Sudah Bermain
+          </button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link tab-item" type="button" role="tab" data-state="sedang-bermain">
+            Sedang Bermain
+          </button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link tab-item active" type="button" role="tab" data-state="akan-bermain">
+            Akan Bermain
+          </button>
+        </li>
+      </ul>
+
+      <div class="tab-content" id="myTabContent">
+        <div class="tab-pane fade show active" role="tabpanel" tabindex="0">
+          <div class="data-center">
+            <div id="schedule-items" style="width: 100%">
+              <table id="datatable" class="table table-bordered"></table>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -41,8 +63,30 @@
   <script>
     const city_id = "<?php echo $city->id ?>"
     let table = null
+    const data = {
+      state: "akan-bermain"
+    }
+
+    const getData = (params) => {
+      return data[params]
+    }
 
     document.addEventListener('DOMContentLoaded', async function () {
+      $('.tab-item').on('click', function (e) {
+        e.preventDefault()
+
+        data.state = $(this).attr('data-state')
+        table.ajax.reload()
+
+        $('.tab-item').each(function (i, obj) {
+          if ($(obj).attr('data-state') === data.state) {
+            $(obj).addClass('active')
+          } else {
+            $(obj).removeClass('active')
+          }
+        })
+      })
+
       $('#datatable').on('click', '.delete', function (e) {
         e.preventDefault()
 
@@ -89,8 +133,9 @@
           ajax: {
             url: "/api/match-schedule/listDatatable",
             method: 'POST',
-            data: {
-              city_id
+            data: function (data) {
+              data.city_id = city_id,
+              data.state = getData('state')
             }
           },
           columns: [

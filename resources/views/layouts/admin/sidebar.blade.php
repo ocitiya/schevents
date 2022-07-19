@@ -77,10 +77,11 @@
 		</div>
 
 		<div class="menu-group">
-			<li>
+			<li
+				class="{{ str_contains(Request::route()->getName(), 'admin.match-schedule') ? 'active' : null }}"
+			>
 				<a
 					href="{{ route('admin.match-schedule.index') }}"
-					class="{{ str_contains(Request::route()->getName(), 'admin.match-schedule.index') ? 'active' : null }}"
 				>Jadwal Pertandingan</a>
 			</li>
 		</div>

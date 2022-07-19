@@ -33,9 +33,15 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::get('/app/detail', [AppController::class, 'detail']);
 Route::get('/country/list', [CountriesController::class, 'list']);
 Route::get('/province/list/{country_id?}', [ProvincesController::class, 'list']);
+
 Route::get('/county/list/{province_id?}', [CountiesController::class, 'list']);
+Route::post('/county/validate', [CountiesController::class, 'validateCounty']);
+
 Route::get('/municipality/list/{county_id?}', [MunicipalitiesController::class, 'list']);
+
 Route::get('/school/list/{school_id?}', [SchoolController::class, 'list']);
+Route::post('/school/validate', [SchoolController::class, 'validateSchool']);
+
 Route::get('/match-schedule/list', [MatchScheduleController::class, 'list']);
 Route::get('/sport-type/list', [SportTypeController::class, 'list']);
 Route::get('/stadium/list', [StadiumController::class, 'list']);

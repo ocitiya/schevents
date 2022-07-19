@@ -139,6 +139,24 @@ class SchoolController extends Controller {
 		}
 	}
 
+	public function validateSchool (Request $request) {
+		$data = School::where('name', $request->school)->first();
+
+		if ($data) {
+			return response()->json([
+				"status" => true,
+				"message" => null,
+				"data" => false
+			]);
+		} else {
+			return response()->json([
+				"status" => true,
+				"message" => null,
+				"data" => true
+			]);
+		}
+	}
+
 	public function listDatatable(Request $request) {
 		$cityId = isset($request->city_id) ? $request->city_id : null;
 
@@ -147,6 +165,7 @@ class SchoolController extends Controller {
 				$subQuery->where('county_id', $cityId);
 			})
 			->get();
+
 		return Datatables::of($data)->make(true);
 	}
 
@@ -182,10 +201,10 @@ class SchoolController extends Controller {
 				"list" => $schools,
 				"pagination" => [
 					"total" => $total,
-					"page" => (int) $page,
 					"search" => $search,
-					"limit" => $limit,
-					"total_page" => ceil($total / $limit)
+					"page" => !$showAll ? (int) $page : -1,
+					"limit" => !$showAll ? $limit : -1,
+					"total_page" => !$showAll ? ceil($total / $limit) : 1
 				]
 			]
 		]);

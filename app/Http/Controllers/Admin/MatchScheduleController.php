@@ -85,7 +85,7 @@ class MatchScheduleController extends Controller {
       'school2_id' => 'required|uuid',
       'stadium' => 'max:255',
 			'team_type_id' => 'required|uuid',
-			'team_gender' => 'required|in:boy,girl',
+			'team_gender' => 'in:boy,girl',
 			'date' => 'required|date',
 			'time_hour' => 'required|min:0|max:59',
 			'time_minute' => 'required|min:0|max:23'
@@ -195,6 +195,7 @@ class MatchScheduleController extends Controller {
 			->take($limit)
 			->skip(($page - 1) * $limit)
 			->get();
+
 		$total = MatchSchedule::count();
 
 		return response()->json([
@@ -220,10 +221,25 @@ class MatchScheduleController extends Controller {
 
 	function listDatatable (Request $request) {
 		$cityId = isset($request->city_id) ? $request->city_id : null;
+		$state = $request->state;
 
 		$data = MatchSchedule::with(["county", "school1", "school2", "team_type", "sport_type"])
 			->when($cityId != null, function ($subQuery) use ($cityId) {
 				$subQuery->where('county_id', $cityId);
+			})
+			->when($state == 'sudah-bermain', function ($subQuery) {
+				$now1 = Carbon::now()->subMinutes(30);
+				$subQuery->whereDate('datetime', '<', $now1);
+			})
+			->when($state == 'sedang-bermain', function ($subQuery) {
+				$now2 = Carbon::now()->subMinutes(30);
+				$now3 = Carbon::now()->addHours(3);
+
+				$subQuery->whereBetween('datetime', [$now2, $now3]);
+			})
+			->when($state == 'akan-bermain', function ($subQuery) {
+				$now3 = Carbon::now()->addHours(3);
+				$subQuery->whereDate('datetime', '>', $now3);
 			})
 			->get();
 		return Datatables::of($data)->make(true);

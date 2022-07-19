@@ -74,9 +74,11 @@ class CountiesController extends Controller {
 
 	public function list (Request $request) {
 		try {
+			$showAll = $request->has('showall') ? (boolean) $request->showall : false;
+			$search = $request->has('search') ? $request->search : null;
+
 			$page = $request->has('page') ? $request->page : 1;
 			if (empty($page)) $page = 1; 
-			$search = $request->has('search') ? $request->search : null;
 			$limit = 10;
 
 			$country_id = $request->has('country_id') ? $request->country_id : null;
@@ -85,6 +87,9 @@ class CountiesController extends Controller {
 				->withCount('schools')
 				->when($search != null, function ($query) use ($search) {
 					$query->where('name', 'LIKE', '%'.$search.'%');
+				})
+				->when(!$showAll, function ($query) {
+					$query->take($limit)->skip(($page - 1) * $limit);
 				})
 				->when($country_id != null, function ($query) use ($country_id) {
 					$query->where('country_id', $country_id);
@@ -106,10 +111,10 @@ class CountiesController extends Controller {
 					"list" => $counties,
 					"pagination" => [
 						"total" => $total,
-						"page" => (int) $page,
 						"search" => $search,
-						"limit" => $limit,
-						"total_page" => ceil($total / $limit)
+						"page" => !$showAll ? (int) $page : -1,
+						"limit" => !$showAll ? $limit : -1,
+						"total_page" => !$showAll ? ceil($total / $limit) : 1
 					]
 				]
 			]);
@@ -117,6 +122,24 @@ class CountiesController extends Controller {
 			return response()->json([
 				"status" => false,
 				"message" => $exception->getMessage()
+			]);
+		}
+	}
+
+	public function validateCounty (Request $request) {
+		$data = County::where('name', $request->county)->first();
+
+		if ($data) {
+			return response()->json([
+				"status" => true,
+				"message" => null,
+				"data" => false
+			]);
+		} else {
+			return response()->json([
+				"status" => true,
+				"message" => null,
+				"data" => true
 			]);
 		}
 	}

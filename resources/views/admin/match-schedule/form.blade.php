@@ -3,7 +3,7 @@
 @section('content')
   <div id="match-schedule" class="content">
     <div class="title-container">
-      <h4 class="text-primary">Match Schedule</h4>
+      <h4 class="text-primary">Jadwal Pertandingan</h4>
 
       <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
@@ -19,9 +19,9 @@
       <div class="data-header">
         <h5 class="text-primary">
           @if(!isset($data))
-            <span>Create New Schedule</span>
+            <span>Buat Jadwal Pertandingan</span>
           @else
-            <span>Update Schedule</span>
+            <span>Edit Jadwal Pertandingan</span>
           @endisset
         </h5>
       </div>
@@ -50,10 +50,10 @@
           <div class="col-7">
             <div class="row">
               <div class="col-5">
-                <label for="name">Sport Type *</label>
+                <label for="name">Olahraga *</label>
               </div>
               <div class="col-7">
-                <select required name="sport_type_id" class="form-select" id="sport_type_id">
+                <select required name="sport_type_id" class="form-select select2" id="sport_type_id">
                   <option disabled selected value>Please select ...</option>
                   @foreach ($types as $item)
                     <option value="{{ $item->id }}">{{ $item->name }}</option>
@@ -76,7 +76,7 @@
                     @endforeach
                   </select>
                 @else
-                  <select required name="county_id" class="form-select" id="county_id">
+                  <select required name="county_id" class="form-select select2" id="county_id">
                     <option disabled selected value>Please select ...</option>
                     @foreach ($cities as $item)
                       <option value="{{ $item->id }}">{{ $item->name }} - {{ $item->abbreviation }}</option>
@@ -88,10 +88,10 @@
 
             <div class="row">
               <div class="col-5">
-                <label for="name">School *</label>
+                <label for="name">Sekolah *</label>
               </div>
               <div class="col-7">
-                <select required name="school1_id" class="form-select" id="school1_id">
+                <select required name="school1_id" class="form-select select2" id="school1_id">
                   {{-- Dynamic Data --}}
                 </select>
               </div>
@@ -108,10 +108,10 @@
             
             <div class="row">
               <div class="col-5">
-                <label for="name">School *</label>
+                <label for="name">Sekolah *</label>
               </div>
               <div class="col-7">
-                <select required name="school2_id" class="form-select" id="school2_id">
+                <select required name="school2_id" class="form-select select2" id="school2_id">
                   {{-- Dynamic Data --}}
                 </select>
               </div>
@@ -122,7 +122,7 @@
                 <label for="name">Tipe Tim *</label>
               </div>
               <div class="col-7">
-                <select required name="team_type_id" class="form-select" id="team_type_id">
+                <select required name="team_type_id" class="form-select select2" id="team_type_id">
                   <option disabled selected value>Please select ...</option>
                   @foreach ($team_types as $item)
                     <option value="{{ $item->id }}">{{ $item->name }}</option>
@@ -133,7 +133,7 @@
 
             <div class="row">
               <div class="col-5">
-                <label for="name">Stadium</label>
+                <label for="name">Stadion</label>
               </div>
               <div class="col-7">
                 <input type="text" name="stadium" class="form-control" value="{{ old('stadium', isset($data) ? $data->stadium : null) }}">
@@ -142,13 +142,13 @@
           
             <div class="row">
               <div class="col-5">
-                <label for="name">Team Gender *</label>
+                <label for="name">Jenis Tim</label>
               </div>
               <div class="col-7">
-                <select required name="team_gender" class="form-select" id="team_gender">
+                <select name="team_gender" class="form-select select2" id="team_gender">
                   <option disabled selected value>Please select ...</option>
-                  <option value="boy">Boy</option>
-                  <option value="girl">Girl</option>
+                  <option value="boy">Laki-laki</option>
+                  <option value="girl">Perempuan</option>
                 </select>
               </div>
             </div>
@@ -156,12 +156,12 @@
             <div class="border p-3 my-3">
               <small class="">
                 <i class="fa-solid fa-triangle-exclamation"></i>&nbsp;
-                This datetime must in UTC Timezone
+                Tanggal harus berada di zona waktu UTC (+0000)
               </small>
 
               <div class="row">
                 <div class="col-5">
-                  <label for="name">Schedule Date *</label>
+                  <label for="name">Tanggal Pertandingan *</label>
                 </div>
                 <div class="col-7">
                   <input required type="date" id="date" name="date" class="form-control" value="{{ old('date', isset($data) ? $data->date : null) }}">
@@ -170,10 +170,10 @@
 
               <div class="row">
                 <div class="col-5">
-                  <label for="name">Schedule Time *</label>
+                  <label for="name">Waktu Pertandingan *</label>
                 </div>
                 <div class="col-3">
-                  <select name="time_hour" id="time_hour" class="form-select" required>
+                  <select name="time_hour" id="time_hour" class="form-select select2" required>
                     @for ($i = 0; $i <= 23; $i++)
                       <option value="{{ sprintf('%02d', $i) }}">{{ sprintf('%02d', $i) }}</option>
                     @endfor
@@ -181,7 +181,7 @@
                 </div>
 
                 <div class="col-3">
-                  <select name="time_minute" id="time_minute" class="form-select" required>
+                  <select name="time_minute" id="time_minute" class="form-select select2" required>
                     @for ($i = 0; $i <= 59; $i++)
                       <option value="{{ sprintf('%02d', $i) }}">{{ sprintf('%02d', $i) }}</option>
                     @endfor
@@ -192,12 +192,14 @@
 
             <div class="form-button">
               <button type="submit" class="btn btn-primary btn-sm unrounded">
-                Submit&nbsp;
+                Buat Jadwal&nbsp;
                 <i class="fa-solid fa-paper-plane"></i>
               </button>
             </div>
           </div>
         </form>
+
+        <small class="text-red">*) Harus diisi</small>
       </div>
     </div>
   </div>
