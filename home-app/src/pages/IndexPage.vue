@@ -200,6 +200,7 @@ export default defineComponent({
 
     onFilter: async function (filter) {
       this.filter.data = { ...filter }
+      this.pagination.page = 1
       await this.getSchedule()
       this.hideFilterDialog()
     },
