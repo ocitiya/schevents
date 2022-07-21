@@ -94,8 +94,7 @@ class CountiesController extends Controller {
 				->when($country_id != null, function ($query) use ($country_id) {
 					$query->where('country_id', $country_id);
 				})
-				->take($limit)
-				->skip($page - 1)
+				->orderBy('name')
 				->get();
 
 			$total = County::when($search != null, function ($query) use ($search) {

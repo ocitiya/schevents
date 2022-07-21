@@ -1,14 +1,10 @@
 @extends('layouts.admin.master')
 
 @section('content')
-  <div id="schools" class="content">
+  <div id="federation" class="content">
     <div class="title-container">
       <h4 class="text-primary">
-        @if ($default_city != null)
-          Sekolah di kota {{ $city_name }}
-        @else
-          Sekolah
-        @endif
+        Federasi
       </h4>
 
       <nav aria-label="breadcrumb">
@@ -20,17 +16,16 @@
 
     <div class="data-container">
       <div class="data-header">
-        @if ($default_city != null)
-          <a href="{{ route('admin.school.create')."?city_id={$default_city}" }}" class="btn btn-primary btn-sm unrounded">
-            Tambah Sekolah&nbsp;
-            <i class="fa-solid fa-plus"></i>
-          </a>
-        @else
-          <a href="{{ route('admin.school.create') }}" class="btn btn-primary btn-sm unrounded">
-            Tambah Sekolah&nbsp;
-            <i class="fa-solid fa-plus"></i>
-          </a>
-        @endif
+        <a href="{{ route('admin.masterdata.federation.create') }}" class="btn btn-primary btn-sm unrounded">
+          Tambah Federasi&nbsp;
+          <i class="fa-solid fa-plus"></i>
+        </a>
+        
+        <div>
+          <form action="" autocomplete="off" method="POST">
+            <input class="form-control" placeholder="Search" type="text" id="search">
+          </form>
+        </div>
       </div>
 
       <div class="data-center">
@@ -43,20 +38,18 @@
 @section('script')
   <script>
     let table = null;
-    const city_id = "<?php echo $default_city ?>"
-
     document.addEventListener('DOMContentLoaded', async function () {
       $('#datatable').on('click', '.delete', function () {
         const id = $(this).attr('data-id')
         const name = $(this).attr('data-name')
 
-        const deleteURL = `/admin/school/delete`
+        const deleteURL = `/admin/masterdata/federation/delete`
         const formData = new FormData()
         formData.append('id', id)
         formData.append('_token', csrfToken)
 
         swal({
-          text: `Ingin menghapus sekolah ${name}?`,
+          text: `Ingin menghapus federasi ${name}?`,
           icon: "warning",
           buttons: true,
           dangerMode: true,
@@ -72,7 +65,7 @@
                 swal({
                   title: 'Deleted',
                   icon: 'success',
-                  text: `Sekolah ${name} berhasil dihapus`
+                  text: `Tipe ${name} berhasil dihapus`
                 })
               } else {
                 console.log(data.message)
@@ -88,41 +81,25 @@
             processing: true,
             serverSide: true,
             ajax: {
-              url: "/api/school/listDatatable",
-              type: 'POST',
-              data: {
-                city_id
-              }
+              url: "/api/federation/listDatatable"
             },
             columns: [
               {data: 'name', title: 'Name', name: 'name'},
-              {data: 'county', title: 'Kota', name: 'county',
-                "render": function ( data, type, row, meta ) {
-                  return `
-                    ${data.name}
-                  `
-                }
-              },
+              {data: 'abbreviation', title: 'Abbreviation', name: 'abbreviation'},
               {data: 'logo', title: 'Logo', name: 'logo',
                 "render": function ( data, type, row, meta ) {
-                  if (data === null) {
-                    return `
-                      <img src="/images/no-logo-1.png" style="width: 75px" class="mb-3">
-                    `
-                  } else {
-                    return `
-                      <img src="/storage/school/logo/${data}" style="width: 75px" class="mb-3">
-                    `
-                  }
+                  return `
+                    <img src="/storage/federation/logo/${data}" style="width: 75px" class="mb-3">
+                  `
                 }
               },
               {data: 'id', title: 'Aksi', orderable: false, searchable: false,
                 "render": function ( data, type, row, meta ) {
-                  const updateRoute = `/admin/school/update/${data}`
+                  const updateRoute = `/admin/masterdata/federation/update/${data}`
 
                   return `
                     <a href="${updateRoute}" class="btn btn-sm unrounded btn-primary">
-                      <small>Edit Sekolah</small>
+                      <small>Edit Federasi</small>
                     </a>
 
                     <button
@@ -130,14 +107,13 @@
                       data-name="${row.name}"
                       class="btn btn-sm btn-danger unrounded delete"
                     >
-                      <small>Hapus Sekolah</small>
+                      <small>Hapus Federasi</small>
                     </button>
                   `;
                 }
               },
             ]
         });
-
       });
     })
   </script>

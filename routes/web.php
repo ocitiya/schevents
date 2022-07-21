@@ -16,6 +16,8 @@ use App\Http\Controllers\Admin\SchoolController;
 use App\Http\Controllers\Admin\MatchScheduleController;
 use App\Http\Controllers\Admin\StadiumController;
 use App\Http\Controllers\Admin\TeamTypeController;
+use App\Http\Controllers\Admin\AssociationController;
+use App\Http\Controllers\Admin\FederationController;
 
 /*
 |--------------------------------------------------------------------------
@@ -139,6 +141,36 @@ Route::middleware(['haveInstalled'])->group(function () {
 
 				Route::post('/store', [TeamTypeController::class, 'store'])->name('store');
 				Route::post('/delete', [TeamTypeController::class, 'delete'])->name('delete');
+			});
+
+			Route::group(['prefix' => 'team_type', 'as' => 'team_type.'], function () {
+				Route::get('/', [TeamTypeController::class, 'index'])->name('index');
+				Route::get('/create', [TeamTypeController::class, 'create'])->name('create');
+				Route::get('/update/{id}', [TeamTypeController::class, 'update'])->name('update');
+				Route::get('/detail/{id}', [TeamTypeController::class, 'detail'])->name('detail');
+
+				Route::post('/store', [TeamTypeController::class, 'store'])->name('store');
+				Route::post('/delete', [TeamTypeController::class, 'delete'])->name('delete');
+			});
+
+			Route::group(['prefix' => 'association', 'as' => 'association.'], function () {
+				Route::get('/', [AssociationController::class, 'index'])->name('index');
+				Route::get('/create', [AssociationController::class, 'create'])->name('create');
+				Route::get('/update/{id}', [AssociationController::class, 'update'])->name('update');
+				Route::get('/detail/{id}', [AssociationController::class, 'detail'])->name('detail');
+
+				Route::post('/store', [AssociationController::class, 'store'])->name('store');
+				Route::post('/delete', [AssociationController::class, 'delete'])->name('delete');
+			});
+
+			Route::group(['prefix' => 'federation', 'as' => 'federation.'], function () {
+				Route::get('/', [FederationController::class, 'index'])->name('index');
+				Route::get('/create', [FederationController::class, 'create'])->name('create');
+				Route::get('/update/{id}', [FederationController::class, 'update'])->name('update');
+				Route::get('/detail/{id}', [FederationController::class, 'detail'])->name('detail');
+
+				Route::post('/store', [FederationController::class, 'store'])->name('store');
+				Route::post('/delete', [FederationController::class, 'delete'])->name('delete');
 			});
 		});
 	});

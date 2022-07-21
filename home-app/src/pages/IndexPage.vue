@@ -18,6 +18,14 @@
           Upcoming Match
         </div>
 
+        <div class="text-right q-mt-xl">
+          <q-btn label="filter" icon="filter_alt" unelevated color="primary"
+            @click="showFilterDialog"
+          >
+            <q-badge v-if="has_filter" floating color="white" rounded />
+          </q-btn>
+        </div>
+
         <div v-if="schedules.length > 0">
           <q-infinite-scroll @load="loadMore">
             <div class="row q-col-gutter-lg q-mt-md">
@@ -112,6 +120,8 @@
         </div>
       </q-pull-to-refresh>
     </div>
+
+    <match-filter :show="filter.dialog" @hide="hideFilterDialog" @filter="onFilter" />
   </q-page>
 </template>
 
@@ -120,10 +130,21 @@ import { defineComponent } from 'vue'
 import 'moment-timezone'
 import moment from 'moment'
 
+import MatchFilter from 'src/components/MatchFilter.vue'
+import Helper from 'src/services/helper'
+
 export default defineComponent({
   name: 'IndexPage',
+
+  components: { MatchFilter },
+
   data: function () {
     return {
+      filter: {
+        dialog: false,
+        data: {}
+      },
+      has_filter: false,
       schedules: [],
       pagination: {
         page: 1,
@@ -134,10 +155,46 @@ export default defineComponent({
 
   mounted: function () {
     this.getSchedule()
+    this.getSchools()
   },
 
   methods: {
-    async loadMore (index, done) {
+    getSchools: function () {
+      let endpoint = 'school/list'
+      endpoint = Helper.generateURLParams(endpoint, 'showall', true)
+
+      this.$api.get(endpoint).then((response) => {
+        const { data, message, status } = response.data
+
+        if (status) {
+          const schools = []
+          data.list.map(item => {
+            schools.push({
+              label: item.name, 
+              value: item.id
+            })
+          })
+
+          window.localStorage.setItem('masterdata_schools', JSON.stringify(schools))
+        }
+      })
+    },
+
+    onFilter: async function (filter) {
+      this.filter.data = { ...filter }
+      await this.getSchedule()
+      this.hideFilterDialog()
+    },
+
+    hideFilterDialog: function () {
+      this.filter.dialog = false
+    },
+
+    showFilterDialog: function () {
+      this.filter.dialog = true
+    },
+
+    loadMore: async function (index, done) {
       const currentPage = this.pagination.page
 
       if (currentPage < this.pagination.total_page) {
@@ -148,11 +205,13 @@ export default defineComponent({
       done()
     },
 
-    redirect (url) {
-      window.open(url)
+    redirect: function (url) {
+      setTimeout(() => {
+        window.open(url)
+      }, 500)
     },
 
-    async refresh (done) {
+    refresh: async function (done) {
       this.pagination.page = 1
       await this.getSchedule()
       done()
@@ -177,7 +236,16 @@ export default defineComponent({
         const page = this.pagination.page
 
         let endpoint = 'match-schedule/list'
-        endpoint += `?page=${page}` 
+        endpoint = Helper.generateURLParams(endpoint, 'page', page)
+        endpoint = Helper.generateURLParams(endpoint, 'type', 'ongoing')
+
+        this.has_filter = false
+        Object.entries(this.filter.data).forEach(([key, value]) => {
+          if (value !== null) {
+            this.has_filter = true
+            endpoint = Helper.generateURLParams(endpoint, key, value)
+          }
+        })
 
         this.$api.get(endpoint).then((response) => {
           const { data, message, status } = response.data

@@ -49,10 +49,11 @@
 							Olahraga
 						</a>
 					</li>
-					<li>
+					<li
+						class="{{ str_contains(Request::route()->getName(), 'admin.school.index') ? 'active' : null }}"
+					>
 						<a
 							href="{{ route('admin.school.index') }}"
-							class="{{ str_contains(Request::route()->getName(), 'admin.school.index') ? 'active' : null }}"
 						>Sekolah</a>
 					</li>
 					<li class="{{ str_contains(Request::route()->getName(), 'admin.masterdata.team_type.index') ? 'active' : null }}">
@@ -60,16 +61,18 @@
 							href="{{ route('admin.masterdata.team_type.index') }}"
 						>Tipe Tim</a>
 					</li>
-					<li>
+					<li
+						class="{{ str_contains(Request::route()->getName(), 'admin.masterdata.federation') ? 'active' : null }}"
+					>
 						<a
-							href="{{ route('admin.school.index') }}"
-							class="{{ str_contains(Request::route()->getName(), 'admin.school.index') ? 'active' : null }}"
+							href="{{ route('admin.masterdata.federation.index') }}"
 						>Federasi</a>
 					</li>
-					<li>
+					<li
+						class="{{ str_contains(Request::route()->getName(), 'admin.masterdata.association') ? 'active' : null }}"
+					>
 						<a
-							href="{{ route('admin.school.index') }}"
-							class="{{ str_contains(Request::route()->getName(), 'admin.school.index') ? 'active' : null }}"
+							href="{{ route('admin.masterdata.association.index') }}"
 						>Asosiasi</a>
 					</li>
 				</ul>

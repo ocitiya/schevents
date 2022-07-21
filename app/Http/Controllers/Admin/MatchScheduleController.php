@@ -168,9 +168,11 @@ class MatchScheduleController extends Controller {
 	}
 
 	public function list (Request $request) {
+		$showAll = $request->has('showall') ? (boolean) $request->showall : false;
+		$school_id = $request->has('school_id') ? $request->school_id : null;
+
 		$page = $request->has('page') ? $request->page : 1;
 		if (empty($page)) $page = 1; 
-		$search = $request->has('search') ? $request->search : null;
 		$limit = 10;
 
 		$type = $request->has('type') ? $request->type : "all";
@@ -192,11 +194,18 @@ class MatchScheduleController extends Controller {
 
 		$schedule = $schedule->orderBy('datetime')
 			->orderBy('created_at')
-			->take($limit)
-			->skip(($page - 1) * $limit)
+			->when(!$showAll, function ($query) use ($limit, $page) {
+				$query->take($limit)->skip(($page - 1) * $limit);
+			})
+			->when($school_id != null, function ($query) use ($school_id) {
+				$query->where('school1_id', $school_id)->orWhere('school2_id', $school_id);
+			})
 			->get();
 
-		$total = MatchSchedule::count();
+		$total = MatchSchedule::when($school_id != null, function ($query) use ($school_id) {
+			$query->where('school1_id', $school_id)->orWhere('school2_id', $school_id);
+		})
+		->count();
 
 		return response()->json([
 			"status" => true,
@@ -205,10 +214,9 @@ class MatchScheduleController extends Controller {
 				"list" => $schedule,
 				"pagination" => [
 					"total" => $total,
-					"page" => (int) $page,
-					"search" => $search,
-					"limit" => $limit,
-					"total_page" => ceil($total / $limit)
+					"page" => !$showAll ? (int) $page : -1,
+					"limit" => !$showAll ? $limit : -1,
+					"total_page" => !$showAll ? ceil($total / $limit) : 1
 				]
 			]
 		]);

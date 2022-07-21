@@ -14,6 +14,8 @@ use App\Http\Controllers\Admin\MatchScheduleController;
 use App\Http\Controllers\Admin\SportTypeController;
 use App\Http\Controllers\Admin\StadiumController;
 use App\Http\Controllers\Admin\TeamTypeController;
+use App\Http\Controllers\Admin\AssociationController;
+use App\Http\Controllers\Admin\FederationController;
 
 /*
 |--------------------------------------------------------------------------
@@ -50,6 +52,13 @@ Route::get('/city/listDatatable', [CountiesController::class, 'listDatatable']);
 Route::post('/school/listDatatable', [SchoolController::class, 'listDatatable']);
 Route::get('/sport-type/listDatatable', [SportTypeController::class, 'listDatatable']);
 Route::get('/team_type/listDatatable', [TeamTypeController::class, 'listDatatable']);
+
+Route::get('/association/list', [AssociationController::class, 'list']);
+Route::get('/association/listDatatable', [AssociationController::class, 'listDatatable']);
+Route::post('/association/validate', [AssociationController::class, 'validateName']);
+
+Route::get('/federation/listDatatable', [FederationController::class, 'listDatatable']);
+Route::post('/federation/validate', [FederationController::class, 'validateName']);
 
 Route::post('/match-schedule/listDatatable', [MatchScheduleController::class, 'listDatatable']);
 Route::get('/match-schedule/cityMatchDatatable', [MatchScheduleController::class, 'cityMatchDatatable']);

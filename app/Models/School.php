@@ -34,4 +34,12 @@ class School extends Model {
 	public function municipality () {
 		return $this->belongsTo(Municipality::class);
 	}
+
+	public function federation () {
+		return $this->belongsTo(Federation::class);
+	}
+
+	public function associtaion () {
+		return $this->belongsTo(Association::class);
+	}
 }

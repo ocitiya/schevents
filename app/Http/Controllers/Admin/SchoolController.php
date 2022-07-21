@@ -14,6 +14,7 @@ use DataTables;
 use App\Models\Country;
 use App\Models\School;
 use App\Models\County;
+use App\Models\Federation;
 
 class SchoolController extends Controller {
 	public function index (Request $request) {
@@ -29,7 +30,8 @@ class SchoolController extends Controller {
 
 	public function create (Request $request) {
 		$data = [
-			"default_city" => $request->has("city_id") ? $request->city_id : null
+			"default_city" => $request->has("city_id") ? $request->city_id : null,
+			"federations" => Federation::get()
 		];
 
 		return view('admin.school.form', $data);
@@ -39,8 +41,9 @@ class SchoolController extends Controller {
 		$types = School::find($id);
 
 		$data = [
-		    "data" => $types,
-		    "default_city" => $request->has("city_id") ? $request->city_id : null
+			"data" => $types,
+			"default_city" => $request->has("city_id") ? $request->city_id : null,
+			"federations" => Federation::get()
 		];
 		return view('admin.school.form', $data);
 	}
@@ -56,6 +59,8 @@ class SchoolController extends Controller {
 		$validation = [
 			'name' => 'required|max:255',
 			'county_id' => 'required|uuid',
+			'federation_id' => 'uuid',
+			'association_id' => 'uuid',
 			'logo' => 'mimes:jpg,png'
 		];
 
@@ -100,6 +105,8 @@ class SchoolController extends Controller {
 			$school->name = $request->name;
 			$school->country_id = Country::first()->id;
 			$school->county_id = $request->county_id;
+			$school->federation_id = $request->federation_id;
+			$school->association_id = $request->association_id;
 			if ($request->hasFile('logo')) $school->logo = $filename;
 			$school->save();
 
@@ -188,6 +195,7 @@ class SchoolController extends Controller {
 			->when($county_id != null, function ($query) use ($county_id) {
 				$query->where('county_id', $county_id);
 			})
+			->orderBy('name')
 			->get();
 
 		$total = School::when($search != null, function ($query) use ($search) {
