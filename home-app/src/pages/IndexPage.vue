@@ -55,7 +55,7 @@
                   <q-card-section class="q-py-lg">
                     <div class="vs-section">
                       <div v-if="item.school1 !== null" class="text-center q-mr-md">
-                        <q-img v-if="item.schoo1.logo !== null" class="logo"
+                        <q-img v-if="item.school1.logo !== null" class="logo"
                           :src="`${$host}/storage/school/logo/${item.school1.logo}`"
                           :ratio="1"
                         >
@@ -86,7 +86,7 @@
                       </div>
 
                       <div v-if="item.school2 !== null" class="text-center q-ml-md">
-                        <q-img v-if="item.schoo2.logo !== null" class="logo"
+                        <q-img v-if="item.school2.logo !== null" class="logo"
                           :src="`${$host}/storage/school/logo/${item.school2.logo}`"
                           :ratio="1"
                         >
