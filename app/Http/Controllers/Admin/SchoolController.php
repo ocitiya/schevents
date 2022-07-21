@@ -97,7 +97,9 @@ class SchoolController extends Controller {
 			$school = School::find($request->id);
 			if ($request->hasFile('logo')) {
 				$oldPath = storage_path('app/public/school/logo/').$school->logo;
-				unlink($oldPath);
+				if (file_exists($oldPath)) {
+					unlink($oldPath);
+				}
 			}
 		}
 

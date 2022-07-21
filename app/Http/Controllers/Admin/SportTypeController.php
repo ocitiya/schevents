@@ -83,7 +83,9 @@ class SportTypeController extends Controller {
 			$types = SportType::find($request->id);
 			if ($request->hasFile('image')) {
 				$oldPath = storage_path('app/public/sport/image/').$school->logo;
-				unlink($oldPath);
+				if (file_exists($oldPath)) {
+					unlink($oldPath);
+				}
 			}
 		}
 		

@@ -80,7 +80,9 @@ class AssociationController extends Controller {
 			$association = Association::find($request->id);
       if ($request->hasFile('logo')) {
 				$oldPath = storage_path('app/public/association/logo/').$association->logo;
-				unlink($oldPath);
+				if (file_exists($oldPath)) {
+					unlink($oldPath);
+				}
 			}
 		}
 		

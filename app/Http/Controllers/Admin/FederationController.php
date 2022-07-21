@@ -74,7 +74,9 @@ class FederationController extends Controller {
 			$federation = Federation::find($request->id);
       if ($request->hasFile('logo')) {
 				$oldPath = storage_path('app/public/federation/logo/').$federation->logo;
-				unlink($oldPath);
+				if (file_exists($oldPath)) {
+					unlink($oldPath);
+				}
 			}
 		}
 		
