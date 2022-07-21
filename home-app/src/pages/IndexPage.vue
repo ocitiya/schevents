@@ -60,10 +60,7 @@
                           :ratio="1"
                         >
                           <template v-slot:error>
-                            <q-img class="logo"
-                              :src="`${$host}/images/no-logo-1.png`"
-                              :ratio="1"
-                            />
+                            <img src="`${$host}/images/no-logo-1.png`" width="100%" height="100%">
                           </template>
                         </q-img>
 
@@ -91,10 +88,7 @@
                           :ratio="1"
                         >
                           <template v-slot:error>
-                            <q-img class="logo"
-                              :src="`${$host}/images/no-logo-1.png`"
-                              :ratio="1"
-                            />
+                            <img src="`${$host}/images/no-logo-1.png`" width="100%" height="100%">
                           </template>
                         </q-img>
 
