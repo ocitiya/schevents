@@ -86,9 +86,12 @@ export default {
     },
 
     getSchools: function () {
-      const schools = JSON.parse(window.localStorage.getItem('masterdata_schools'))
-      this.options.schools = [...schools]
-      this.master.schools = [...schools]
+      const masterdata_schools = localStorage.getItem('masterdata_schools')
+      if (masterdata_schools !== null) {
+        const schools = JSON.parse(masterdata_schools)
+        this.options.schools = [...schools]
+        this.master.schools = [...schools]
+      }
     },
 
     onFilter: function () {

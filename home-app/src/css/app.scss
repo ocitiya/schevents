@@ -2,3 +2,22 @@
 .capitalize {
   text-transform: capitalize;
 }
+
+.card-bottom {
+  min-width: 600px;
+}
+
+.link {
+  cursor: pointer;
+  transition: all 0.5s;
+  width: fit-content;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}

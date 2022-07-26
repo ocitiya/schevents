@@ -10,7 +10,7 @@
 
     <div class="title-container">
       <h4 class="text-primary">
-        Pertandingan di kota {{ $city->name }}
+        Pertandingan antar kota
       </h4>
 
       <nav aria-label="breadcrumb">
@@ -22,7 +22,7 @@
 
     <div class="data-container">
       <div class="data-header">
-        <a href="{{ route('admin.match-schedule.all.create', ['city_id' => $city->id]) }}" class="btn btn-primary btn-sm unrounded">
+        <a href="{{ route('admin.match-schedule.incity.create') }}" class="btn btn-primary btn-sm unrounded">
           Create New&nbsp;
           <i class="fa-solid fa-plus"></i>
         </a>
@@ -76,7 +76,6 @@
 
 @section('script')
   <script>
-    const city_id = "<?php echo $city->id ?>"
     let table = null
     const data = {
       state: "hari-ini"
@@ -149,8 +148,8 @@
             url: "/api/match-schedule/listDatatable",
             method: 'POST',
             data: function (data) {
-              data.city_id = city_id,
               data.state = getData('state')
+              data.incity = true
             }
           },
           columns: [
@@ -170,6 +169,11 @@
                 } else {
                   return 'Unknown School'
                 }
+              }
+            },
+            {data: 'county2', title: 'Nama Kota 2', name: 'name',
+              "render": function ( data, type, row, meta ) {
+                return data.name
               }
             },
             {data: 'school2', title: 'Club 2', name: 'school2',
@@ -205,7 +209,7 @@
             },
             {data: 'id', title: 'Aksi', orderable: false, searchable: false,
               "render": function ( data, type, row, meta ) {
-                let updateRoute = `/admin/match-schedule/update/${data}`
+                let updateRoute = `/admin/match-schedule/incity/update/${data}`
                 if (getData('state') == 'sudah-bermain') {
                   updateRoute += '?sudah-bermain'
                 }

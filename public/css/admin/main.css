@@ -365,3 +365,7 @@ a.article:hover {
 .hide {
 	display: none;
 }
+
+.card-info {
+	width: 300px;
+}

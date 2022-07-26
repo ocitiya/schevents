@@ -19,6 +19,13 @@
     </div>
 
     <div class="data-container">
+      <div class="data-header">
+        <a href="{{ route('admin.match-schedule.all.create') }}" class="btn btn-primary btn-sm unrounded">
+          Create New&nbsp;
+          <i class="fa-solid fa-plus"></i>
+        </a>
+      </div>
+
       <div class="data-center">
         <table id="datatable" class="table table-bordered"></table>
       </div>

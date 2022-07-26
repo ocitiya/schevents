@@ -112,14 +112,19 @@ Route::middleware(['haveInstalled'])->group(function () {
 		});
 
 		Route::group(['prefix' => 'match-schedule', 'as' => 'match-schedule.'], function () {
-			Route::get('/', [MatchScheduleController::class, 'index'])->name('index');
-			Route::get('/create', [MatchScheduleController::class, 'create'])->name('create');
-			Route::get('/update/{id}', [MatchScheduleController::class, 'update'])->name('update');
+			Route::get('/', [MatchScheduleController::class, 'index'])->name('all.index');
+			Route::get('/create', [MatchScheduleController::class, 'create'])->name('all.create');
+			Route::get('/update/{id}', [MatchScheduleController::class, 'update'])->name('all.update');
 			Route::get('/detail/{id}', [MatchScheduleController::class, 'detail'])->name('detail');
 			Route::get('/city/{id}', [MatchScheduleController::class, 'city'])->name('city');
 
 			Route::post('/store', [MatchScheduleController::class, 'store'])->name('store');
 			Route::post('/delete', [MatchScheduleController::class, 'delete'])->name('delete');
+
+			// Untuk Antar Kota
+			Route::get('/incity/', [MatchScheduleController::class, 'indexInCity'])->name('incity.index');
+			Route::get('/incity/create', [MatchScheduleController::class, 'inCityCreate'])->name('incity.create');
+			Route::get('/incity/update/{id}', [MatchScheduleController::class, 'inCityUpdate'])->name('incity.update');
 		});
 
 		Route::group(['prefix' => 'stadium', 'as' => 'stadium.'], function () {

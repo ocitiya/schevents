@@ -33,6 +33,45 @@ class MatchScheduleController extends Controller {
 		return view('admin.match-schedule.city', $data);
 	}
 
+	public function indexInCity (Request $request) {
+		return view('admin.match-schedule.index-incity');
+	}
+
+	public function inCityCreate (Request $request) {
+		$types = SportType::get();
+		$cities = County::get();
+		$team_types = TeamType::get();
+
+		$data = [
+			"types" => $types,
+			"cities" => $cities,
+			"team_types" => $team_types
+		];
+
+		return view('admin.match-schedule.form-incity', $data);
+	}
+
+	public function inCityUpdate (Request $request, $id) {
+		$types = SportType::get();
+		$cities = County::get();
+		$team_types = TeamType::get();
+
+		$schedule = MatchSchedule::find($id);
+		$dt = new DateTime($schedule->datetime);
+		$schedule->date = $dt->format("Y-m-d");
+		$schedule->time_hour = $dt->format("H");
+		$schedule->time_minute = $dt->format("i");
+
+		$data = [
+			"data" => $schedule,
+			"types" => $types,
+			"cities" => $cities,
+			"team_types" => $team_types
+		];
+
+		return view('admin.match-schedule.form-incity', $data);
+	}
+
 	public function create (Request $request) {
 		$types = SportType::get();
 		$cities = County::get();
@@ -81,6 +120,7 @@ class MatchScheduleController extends Controller {
 		$validated = $request->validate([
       'sport_type_id' => 'required|uuid',
       'county_id' => 'required|uuid',
+      'county2_id' => 'uuid',
       'school1_id' => 'required|uuid',
       'school2_id' => 'required|uuid',
       'stadium' => 'max:255',
@@ -126,8 +166,12 @@ class MatchScheduleController extends Controller {
 		try {
 			$schedule->sport_type_id = $request->sport_type_id;
 			$schedule->county_id = $request->county_id;
+			$schedule->county2_id = $request->county2_id;
 			$schedule->school1_id = $request->school1_id;
 			$schedule->school2_id = $request->school2_id;
+			$schedule->score1 = $request->score1;
+			$schedule->score2 = $request->score2;
+			$schedule->youtube_link = $request->youtube_link;
 			$schedule->stadium = $request->stadium;
 			$schedule->team_type_id = $request->team_type_id;
 			$schedule->team_gender = $request->team_gender;
@@ -177,15 +221,44 @@ class MatchScheduleController extends Controller {
 
 		$type = $request->has('type') ? $request->type : "all";
 
-		$schedule = MatchSchedule::with(["county", "school1", "school2", "team_type", "sport_type"]);
+		$schedule = MatchSchedule::with([
+			"county",
+			"school1" => function ($subQuery) {
+				return $subQuery->with(['county']);
+			},
+			"school2" => function ($subQuery) {
+				return $subQuery->with(['county']);
+			},
+			"team_type",
+			"sport_type"
+		]);
 
 		switch ($type) {
 			case "all":
 				break;
 
 			case "ongoing":
-				$schedule->where('datetime', '>=', DB::raw('NOW()'));
+				$date = Carbon::now()->addDays(7);
+				$schedule->whereDate('datetime', '>', $date);
+				break;
 
+			case "live":
+				$date1 = Carbon::now()->subHours(2);
+				$date2 = Carbon::now()->addHours(3);
+
+				$schedule->whereBetween('datetime', [$date1, $date2]);
+				break;
+
+			case "this-week":
+				$date1 = Carbon::now()->subDays(7);
+				$date2 = Carbon::now();
+
+				$schedule->whereBetween('datetime', [$date1, $date2]);
+				break;
+
+			case "today":
+				$date = Carbon::today();
+				$schedule->whereDate('datetime', $date);
 				break;
 
 			default:
@@ -229,25 +302,47 @@ class MatchScheduleController extends Controller {
 
 	function listDatatable (Request $request) {
 		$cityId = isset($request->city_id) ? $request->city_id : null;
+		$incity = isset($request->incity) ? (boolean) $request->incity : false;
 		$state = $request->state;
 
-		$data = MatchSchedule::with(["county", "school1", "school2", "team_type", "sport_type"])
+		$data = MatchSchedule::with(["county", "county2", "school1", "school2", "team_type", "sport_type"])
 			->when($cityId != null, function ($subQuery) use ($cityId) {
 				$subQuery->where('county_id', $cityId);
 			})
+			->when($state == 'minggu-lalu', function ($subQuery) {
+				$now2 = Carbon::now()->subDays(7);
+				$subQuery->whereDate('datetime', '<', $now2);
+			})
 			->when($state == 'sudah-bermain', function ($subQuery) {
-				$now1 = Carbon::now()->subMinutes(30);
-				$subQuery->whereDate('datetime', '<', $now1);
+				$now1 = Carbon::now()->addHours(3);
+				$now2 = Carbon::now()->addDays(7);
+				$subQuery->whereBetween('datetime', [$now1, $now2]);
+			})
+			->when($state == 'hari-ini', function ($subQuery) {
+				$date = Carbon::today();
+				$subQuery->whereDate('datetime', $date);
 			})
 			->when($state == 'sedang-bermain', function ($subQuery) {
-				$now2 = Carbon::now()->subMinutes(30);
-				$now3 = Carbon::now()->addHours(3);
+				$date1 = Carbon::now()->subHours(2);
+				$date2 = Carbon::now()->addHours(3);
 
-				$subQuery->whereBetween('datetime', [$now2, $now3]);
+				$subQuery->whereBetween('datetime', [$date1, $date2]);
 			})
 			->when($state == 'akan-bermain', function ($subQuery) {
-				$now3 = Carbon::now()->addHours(3);
-				$subQuery->whereDate('datetime', '>', $now3);
+				$date = Carbon::now()->addDays(7);
+				$subQuery->whereDate('datetime', '>', $date);
+			})
+			->when($state == 'minggu-ini', function ($subQuery) {
+				$date1 = Carbon::now()->subDays(7);
+				$date2 = Carbon::now();
+
+				$subQuery->whereBetween('datetime', [$date1, $date2]);
+			})
+			->when($incity, function ($subQuery) {
+				$subQuery->whereNotNull('county2_id');
+			})
+			->when(!$incity, function ($subQuery) {
+				$subQuery->whereNull('county2_id');
 			})
 			->get();
 		return Datatables::of($data)->make(true);

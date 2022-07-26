@@ -8,7 +8,7 @@
       <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
           <li class="breadcrumb-item" aria-current="page">
-            <a href="{{ route('admin.match-schedule.all.index') }}">Index</a>
+            <a href="{{ route('admin.match-schedule.incity.index') }}">Index</a>
           </li>
           <li class="breadcrumb-item active" aria-current="page">Form</li>
         </ol>
@@ -64,25 +64,15 @@
 
             <div class="row">
               <div class="col-5">
-                <label for="name">Kota *</label>
+                <label for="name">Kota 1*</label>
               </div>
               <div class="col-7">
-                @if ($default_city != null)
-                  <input type="hidden" name="county_id" value="{{ $default_city }}">
-                  <select required class="form-select" id="county_id" disabled>
-                    <option disabled selected value>Please select ...</option>
-                    @foreach ($cities as $item)
-                      <option value="{{ $item->id }}">{{ $item->name }} - {{ $item->abbreviation }}</option>
-                    @endforeach
-                  </select>
-                @else
-                  <select required name="county_id" class="form-select select2" id="county_id">
-                    <option disabled selected value>Please select ...</option>
-                    @foreach ($cities as $item)
-                      <option value="{{ $item->id }}">{{ $item->name }} - {{ $item->abbreviation }}</option>
-                    @endforeach
-                  </select>
-                @endif
+                <select required name="county_id" class="form-select select2" id="county_id">
+                  <option disabled selected value>Please select ...</option>
+                  @foreach ($cities as $item)
+                    <option value="{{ $item->id }}">{{ $item->name }} - {{ $item->abbreviation }}</option>
+                  @endforeach
+                </select>
               </div>
             </div>
 
@@ -97,13 +87,22 @@
               </div>
             </div>
 
+            <div class="row">
+              <div class="col-5">
+                <label for="score1">Skor 1</label>
+              </div>
+              <div class="col-7">
+                <input type="number" name="score1" class="form-control" >
+              </div>
+            </div>
+
             @if (isset($_GET['sudah-bermain']) || isset($_GET['minggu-lalu']))
               <div class="row">
                 <div class="col-5">
                   <label for="score1">Skor 1</label>
                 </div>
                 <div class="col-7">
-                  <input type="number" name="score1" class="form-control" value="{{ isset($data) ? $data->score1 : null }}">
+                  <input type="number" name="score1" class="form-control" >
                 </div>
               </div>
             @endif
@@ -114,6 +113,20 @@
               </div>
               <div class="col-7">
                 VS
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-5">
+                <label for="name">Kota 2*</label>
+              </div>
+              <div class="col-7">
+                <select required name="county2_id" class="form-select select2" id="county2_id">
+                  <option disabled selected value>Please select ...</option>
+                  @foreach ($cities as $item)
+                    <option value="{{ $item->id }}">{{ $item->name }} - {{ $item->abbreviation }}</option>
+                  @endforeach
+                </select>
               </div>
             </div>
             
@@ -134,7 +147,7 @@
                   <label for="score2">Skor 2</label>
                 </div>
                 <div class="col-7">
-                  <input type="number" name="score2" class="form-control" value="{{ isset($data) ? $data->score2 : null }}" >
+                  <input type="number" name="score2" class="form-control" >
                 </div>
               </div>
             @endif
@@ -145,7 +158,7 @@
                   <label for="youtube_link">Link Youtube</label>
                 </div>
                 <div class="col-7">
-                  <input type="text" name="youtube_link" class="form-control" value="{{ isset($data) ? $data->youtube_link : null }}">
+                  <input type="text" name="youtube_link" class="form-control" >
                 </div>
               </div>
             @endif
@@ -241,7 +254,8 @@
 @section('script')
   <script>
     const typeSelected = "<?php echo old('sport_type_id', isset($data) ? $data->sport_type_id : null) ?>";
-    const countySelected = "<?php echo old('county_id', isset($data) ? $data->county_id : $default_city) ?>";
+    const countySelected = "<?php echo old('county_id', isset($data) ? $data->county_id : null) ?>";
+    const county2Selected = "<?php echo old('county2_id', isset($data) ? $data->county2_id : null) ?>";
     const school1Selected = "<?php echo old('school1_id', isset($data) ? $data->school1_id : null) ?>";
     const school2Selected = "<?php echo old('school2_id', isset($data) ? $data->school2_id : null) ?>";
     const teamTypeSelected = "<?php echo old('team_type_id', isset($data) ? $data->team_type_id : null) ?>";
@@ -280,13 +294,18 @@
         const schools = await getList(`/api/school/list?showall=true&county_id=${val}`)
         generateSelect('#school1_id', schools)
         $('#school1_id').val(school1Selected).change()
+      })
 
+      $('#county2_id').on('change', async function () {
+        const val = $(this).val()
+        const schools = await getList(`/api/school/list?showall=true&county_id=${val}`)
         generateSelect('#school2_id', schools)
         $('#school2_id').val(school2Selected).change()
       })
 
       $('#sport_type_id').val(typeSelected).change()
       $('#county_id').val(countySelected).change()
+      $('#county2_id').val(county2Selected).change()
       $('#team_gender').val(teamGenderSelected).change()
       $('#time_hour').val(timeHourSelected).change()
       $('#time_minute').val(timeMinuteSelected).change()

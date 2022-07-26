@@ -1,8 +1,6 @@
 <template>
-  <q-item
+  <q-item class="text-primary"
     clickable
-    tag="a"
-    target="_blank"
     @click="changePage"
   >
     <q-item-section
@@ -14,7 +12,6 @@
 
     <q-item-section>
       <q-item-label>{{ title }}</q-item-label>
-      <q-item-label caption>{{ caption }}</q-item-label>
     </q-item-section>
   </q-item>
 </template>
@@ -35,9 +32,9 @@ export default defineComponent({
       default: ''
     },
 
-    link: {
+    link_name: {
       type: String,
-      default: '#'
+      default: 'home'
     },
 
     icon: {
@@ -48,7 +45,7 @@ export default defineComponent({
 
   methods: {
     changePage: function () {
-      this.$router.push(this.link)
+      this.$router.push({ name: this.link_name })
     }
   }
 })

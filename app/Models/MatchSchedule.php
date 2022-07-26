@@ -35,6 +35,10 @@ class MatchSchedule extends Model {
 		return $this->belongsTo(County::class);
 	}
 
+	public function county2 () {
+		return $this->belongsTo(County::class, 'county2_id');
+	}
+
 	public function team_type () {
 		return $this->belongsTo(TeamType::class);
 	}

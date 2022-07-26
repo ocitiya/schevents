@@ -4,26 +4,14 @@
   </div>
 
   <ul class="list-unstyled components">
-		{{-- <small class="title">MASTER DATA</small>
-		<li class="active">
-			<a data-bs-target="#homeSubmenu" data-bs-toggle="collapse" aria-expanded="false" class="dropdown-toggle">
-				Home
-			</a>
-			<ul class="collapse list-unstyled" id="homeSubmenu">
-				<li>
-					<a href="#">School</a>
-				</li>
-				<li>
-					<a href="#">Home 2</a>
-				</li>
-				<li>
-					<a href="#">Home 3</a>
-				</li>
-			</ul>
+		<li
+			class="{{ str_contains(Request::route()->getName(), 'admin.dashboard') ? 'active' : null }}"
+		>
+			<a
+				href="{{ route('admin.dashboard') }}"
+			>Dashboard</a>
 		</li>
-		<li>
-				<a href="#">About</a>
-		</li> --}}
+
 		<div class="menu-group">
 			<div class="dropdown-group">
 				<a data-bs-target="#masterDataMenu" data-bs-toggle="collapse"
@@ -78,15 +66,64 @@
 				</ul>
 			</div>
 		</div>
+	
+		<li
+			class="{{ str_contains(Request::route()->getName(), 'admin.match-schedule.all') ? 'active' : null }}"
+		>
+			<a
+				href="{{ route('admin.match-schedule.all.index') }}"
+			>Jadwal Per Kota</a>
+		</li>
+
+		<li
+			class="{{ str_contains(Request::route()->getName(), 'admin.match-schedule.incity') ? 'active' : null }}"
+		>
+			<a
+				href="{{ route('admin.match-schedule.incity.index') }}"
+			>Jadwal Antar Kota</a>
+		</li>
 
 		<div class="menu-group">
-			<li
-				class="{{ str_contains(Request::route()->getName(), 'admin.match-schedule') ? 'active' : null }}"
-			>
-				<a
-					href="{{ route('admin.match-schedule.index') }}"
-				>Jadwal Pertandingan</a>
-			</li>
+			<div class="dropdown-group">
+				<a data-bs-target="#appSetting" data-bs-toggle="collapse"
+					aria-expanded="{{ str_contains(Request::route()->getName(), 'admin.masterdata') ? 'true' : 'false' }}"
+					class="dropdown-toggle">
+					Pengaturan Aplikasi
+				</a>
+				<ul
+					class="collapse list-unstyled {{ str_contains(Request::route()->getName(), 'admin.location') ? 'show' : null }}"
+					id="appSetting"
+				>
+					<li
+						class="{{ str_contains(Request::route()->getName(), 'admin.location.counties') ? 'active' : null }}"
+					>
+						<a href="{{ route('admin.location.counties.index') }}">
+							Profile
+						</a>
+					</li>
+					<li
+						class="{{ str_contains(Request::route()->getName(), 'admin.sport.type') ? 'active' : null }}"
+					>
+						<a href="{{ route('admin.sport.type.index') }}">
+							Kontak
+						</a>
+					</li>
+					<li
+						class="{{ str_contains(Request::route()->getName(), 'admin.sport.type') ? 'active' : null }}"
+					>
+						<a href="{{ route('admin.sport.type.index') }}">
+							Banner
+						</a>
+					</li>
+					<li
+						class="{{ str_contains(Request::route()->getName(), 'admin.school.index') ? 'active' : null }}"
+					>
+						<a
+							href="{{ route('admin.school.index') }}"
+						>Follow Us</a>
+					</li>
+				</ul>
+			</div>
 		</div>
 
 		<div class="menu-group">
@@ -96,5 +133,4 @@
 			</li>
 		</div>
   </ul>
-
 </nav>
