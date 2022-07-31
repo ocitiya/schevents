@@ -42,9 +42,9 @@
                 <q-card v-ripple class="event-card" @click="() => redirect(item.sport_type.stream_url)">
                   <q-card-section class="flex justify-between items-center">
                     <span class="text-primary">
-                      <span class="capitalize">{{ item.team_gender }},</span>
-                      {{ item.team_type.name }},
-                      {{ item.sport_type.name }}
+                      <span class="capitalize" v-if="item.team_gender !== null">{{ item.team_gender }},</span>
+                      <span v-if="item.team_type !== null">{{ item.team_type.name }},</span>
+                      <span v-if="item.sport_type !== null">{{ item.sport_type.name }}</span>
                     </span>                
                   </q-card-section>
     
@@ -143,6 +143,13 @@
         <div v-else class="text-primary text-h6 text-bold flex flex-center q-my-lg">
           No Upcoming Events
         </div>
+
+        <q-inner-loading
+          :showing="loadingSchedule"
+          label="Please wait..."
+          label-class="text-primary"
+          label-style="font-size: 1.1em"
+        />
       </div>
     </q-pull-to-refresh>
 
@@ -169,6 +176,7 @@ export default defineComponent({
         dialog: false,
         data: {}
       },
+      loadingSchedule: true,
       tab: 'upcoming',
       has_filter: false,
       schedules: [],
@@ -260,6 +268,7 @@ export default defineComponent({
     },
 
     getSchedule: function () {
+      this.loadingSchedule = true
       return new Promise((resolve, reject) => {
         const page = this.pagination.page
 
@@ -294,6 +303,8 @@ export default defineComponent({
           } else {
             reject()
           }
+        }).finally(() => {
+          this.loadingSchedule = false
         })
       })
     }

@@ -138,7 +138,7 @@ class AssociationController extends Controller {
 		$types = Association::when($search != null, function ($query) use ($search) {
       $query->where('name', 'LIKE', '%'.$search.'%');
     })
-		->when(!$showAll, function ($query) {
+		->when(!$showAll, function ($query) use ($page, $limit) {
 			$query->take($limit)->skip(($page - 1) * $limit);
 		})
 		->when($federation_id != null, function ($query) use ($federation_id) {

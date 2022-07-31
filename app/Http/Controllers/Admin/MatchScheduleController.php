@@ -221,7 +221,7 @@ class MatchScheduleController extends Controller {
 
 		$type = $request->has('type') ? $request->type : "all";
 
-		$schedule = MatchSchedule::with([
+		$model = MatchSchedule::with([
 			"county",
 			"school1" => function ($subQuery) {
 				return $subQuery->with(['county']);
@@ -239,46 +239,44 @@ class MatchScheduleController extends Controller {
 
 			case "ongoing":
 				$date = Carbon::now()->addDays(7);
-				$schedule->whereDate('datetime', '>', $date);
+				$model->whereDate('datetime', '>', $date);
 				break;
 
 			case "live":
 				$date1 = Carbon::now()->subHours(2);
 				$date2 = Carbon::now()->addHours(3);
 
-				$schedule->whereBetween('datetime', [$date1, $date2]);
+				$model->whereBetween('datetime', [$date1, $date2]);
 				break;
 
 			case "this-week":
 				$date1 = Carbon::now()->subDays(7);
 				$date2 = Carbon::now();
 
-				$schedule->whereBetween('datetime', [$date1, $date2]);
+				$model->whereBetween('datetime', [$date1, $date2]);
 				break;
 
 			case "today":
 				$date = Carbon::today();
-				$schedule->whereDate('datetime', $date);
+				$model->whereDate('datetime', $date);
 				break;
 
 			default:
 				break;
 		}
 
-		$schedule = $schedule->orderBy('datetime')
+		$model = $model->orderBy('datetime')
 			->orderBy('created_at')
-			->when(!$showAll, function ($query) use ($limit, $page) {
-				$query->take($limit)->skip(($page - 1) * $limit);
-			})
 			->when($school_id != null, function ($query) use ($school_id) {
 				$query->where('school1_id', $school_id)->orWhere('school2_id', $school_id);
-			})
-			->get();
+			});
 
-		$total = MatchSchedule::when($school_id != null, function ($query) use ($school_id) {
-			$query->where('school1_id', $school_id)->orWhere('school2_id', $school_id);
-		})
-		->count();
+		$model2 = $model;
+		$total = $model2->count();
+
+		$schedule = $model->when(!$showAll, function ($query) use ($limit, $page) {
+			$query->take($limit)->skip(($page - 1) * $limit);
+		})->get();
 
 		return response()->json([
 			"status" => true,

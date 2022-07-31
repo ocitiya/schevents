@@ -45,16 +45,19 @@ Route::get('/school/list/{school_id?}', [SchoolController::class, 'list']);
 Route::post('/school/validate', [SchoolController::class, 'validateSchool']);
 
 Route::get('/match-schedule/list', [MatchScheduleController::class, 'list']);
-Route::get('/sport-type/list', [SportTypeController::class, 'list']);
 Route::get('/stadium/list', [StadiumController::class, 'list']);
 
 Route::get('/city/listDatatable', [CountiesController::class, 'listDatatable']);
 Route::post('/school/listDatatable', [SchoolController::class, 'listDatatable']);
+
+Route::get('/sport-type/list', [SportTypeController::class, 'list']);
 Route::get('/sport-type/listDatatable', [SportTypeController::class, 'listDatatable']);
+
 Route::get('/team_type/listDatatable', [TeamTypeController::class, 'listDatatable']);
 
 Route::get('/association/list', [AssociationController::class, 'list']);
 Route::get('/association/listDatatable', [AssociationController::class, 'listDatatable']);
+
 Route::post('/association/validate', [AssociationController::class, 'validateName']);
 
 Route::get('/federation/listDatatable', [FederationController::class, 'listDatatable']);
