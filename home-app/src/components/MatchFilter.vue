@@ -1,7 +1,7 @@
 <template>
   <div>
     <q-dialog v-model="visible" @hide="hide" position="bottom">
-      <q-card>
+      <q-card class="card-bottom">
         <q-card-section>
           <div class="text-h6 text-primary">Filter</div>
         </q-card-section>

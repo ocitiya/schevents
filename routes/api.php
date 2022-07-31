@@ -65,4 +65,8 @@ Route::post('/federation/validate', [FederationController::class, 'validateName'
 
 Route::post('/match-schedule/listDatatable', [MatchScheduleController::class, 'listDatatable']);
 Route::get('/match-schedule/cityMatchDatatable', [MatchScheduleController::class, 'cityMatchDatatable']);
+Route::get('/match-schedule/detail/{id}', [MatchScheduleController::class, 'detailAPI']);
+Route::get('/match-schedule/news/list', [MatchScheduleController::class, 'newsList']);
+Route::get('/match-schedule/latest-video', [MatchScheduleController::class, 'latestVideoAPI']);
+Route::get('/match-schedule/scores', [MatchScheduleController::class, 'scoreAPI']);
 

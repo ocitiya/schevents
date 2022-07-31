@@ -151,7 +151,7 @@
             No Data Available
           </div>
 
-          <q-pagination v-if="sport.pagination.total_page > 0"
+          <q-pagination v-if="sport.pagination.total_page > 1"
             class="flex flex-center"
             v-model="sport.pagination.page"
             :max="sport.pagination.total_page"
@@ -173,7 +173,7 @@
             No Data Available
           </div>
 
-          <q-pagination v-if="state.pagination.total_page > 0"
+          <q-pagination v-if="state.pagination.total_page > 1"
             class="flex flex-center"
             v-model="state.pagination.page"
             :max="state.pagination.total_page"
@@ -195,7 +195,7 @@
             No Data Available
           </div>
 
-          <q-pagination v-if="associations.pagination.total_page > 0"
+          <q-pagination v-if="associations.pagination.total_page > 1"
             class="flex flex-center"
             v-model="associations.pagination.page"
             :max="associations.pagination.total_page"
@@ -262,6 +262,20 @@ export default {
   },
 
   methods: {
+    scheduleDate: function (date) {
+      const formatDate = moment.utc(date).local().format('D MMMM Y')
+      return formatDate
+    },
+
+    scheduleTime: function (date) {
+      const formatTime = moment.utc(date).local().format('hh:mm')
+
+      const zone_name =  moment.tz.guess();
+      const timezone = moment.tz(zone_name).zoneAbbr() 
+
+      return `${formatTime} ${timezone}`
+    },
+    
     getSchedule: function () {
       this.loadingSchedule = true
       return new Promise((resolve, reject) => {

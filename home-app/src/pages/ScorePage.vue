@@ -1,175 +1,156 @@
 <template>
-  <div class="q-px-md q-py-xl page">
+  <div class="q-py-md q-py-xl page bg-grey-1 shadow-1 q-px-xl">
     <div class="text-center text-h5 text-primary text-bold">
       Score Menu
     </div>
 
     <div class="list-container">
-      <div class="q-gutter-md">
-        <q-card class="q-pa-md">
+      <div v-if="Object.keys(data).length > 0" class="q-gutter-md">
+        <q-card class="q-pa-md" v-for="[key, group] of Object.entries(data)" :key="key">
           <div class="flex items-center justify-betweeen">
             <div>Logo Web</div>
-            <div>
-              <div>Noteable HS Football Games</div>
+            <div class="q-ml-md">
+              <div>Noteable HS {{ key }} Games</div>
               <div>This Week</div>
             </div>
           </div>
 
-          <q-separator />
+          <q-separator class="q-my-lg" />
 
-          <div class="card-score">
-            <div>
-              Logo
-            </div>
+          <div class="card-score" v-for="item in group" :key="item.id">
+            <q-img v-if="item.school1.logo !== null" class="logo"
+              :src="`${$host}/storage/school/logo/${item.school1.logo}`"
+              :ratio="1"
+            >
+              <template v-slot:error>
+                <img :src="`${$host}/images/no-logo-1.png`" style="width: 100%; height: 100%;">
+              </template>
+            </q-img>
+
+            <q-img v-else class="logo"
+              :src="`${$host}/images/no-logo-1.png`"
+              :ratio="1"
+            />
+
             <div>
               <div class="school">
                 <div>
-                  <div>Sekolah A (AL)</div>
-                  <div>score</div>
+                  <div>{{ item.school1.name }} ({{ item.school1.county.name }})</div>
+                  <div>{{ item.score1 || '-' }}</div>
                 </div>
                 <div>vs</div>
                 <div>
-                  <div>Sekolah B (Tx)</div>
-                  <div>score</div>
+                  <div>{{ item.school2.name }} ({{ item.school1.county.name }})</div>
+                  <div>{{ item.score2 || '-' }}</div>
                 </div>
               </div>
 
               <div>
-                Fri, 20 Aug 2022 | 10:30 WIB | Stadion | Girl
+                {{ scheduleDate(item.datetime) }} | {{ scheduleTime(item.datetime) }}
+                <span v-if="item.stadium !== null">&nbsp;| {{ item.stadium }}</span>
+                <span v-if="item.team_gender !== null" class="capitalize">&nbsp;| {{ item.team_gender }}</span>
               </div>
 
-              <div class="flex flex-center">
-                <iframe height="100" width="178" src="https://www.youtube.com/embed/UaA9W9VvtvE" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-              </div>
-            </div>
-            <div>Logo</div>
-          </div>
-
-          <q-separator />
-
-          <div class="card-score">
-            <div>
-              Logo
-            </div>
-            <div>
-              <div class="school">
-                <div>
-                  <div>Sekolah A (AL)</div>
-                  <div>score</div>
-                </div>
-                <div>vs</div>
-                <div>
-                  <div>Sekolah B (Tx)</div>
-                  <div>score</div>
-                </div>
-              </div>
-
-              <div>
-                Fri, 20 Aug 2022 | 10:30 WIB | Stadion | Boy
-              </div>
-
-              <div class="flex flex-center">
-                <iframe height="100" width="178" src="https://www.youtube.com/embed/UaA9W9VvtvE" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+              <div class="flex flex-center q-mt-lg">
+                <iframe v-if="item.youtube_link !== null" height="100" width="178" :src="item.youtube_link" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                <q-img v-else :src="`${$host}/images/no-video.jpg`" :ratio="16/9" style="height: 100px; width: 178px"/>
               </div>
             </div>
-            <div>Logo</div>
+
+            <q-img v-if="item.school2.logo !== null" class="logo"
+              :src="`${$host}/storage/school/logo/${item.school2.logo}`"
+              :ratio="1"
+            >
+              <template v-slot:error>
+                <img :src="`${$host}/images/no-logo-1.png`" style="width: 100%; height: 100%;">
+              </template>
+            </q-img>
+
+            <q-img v-else class="logo"
+              :src="`${$host}/images/no-logo-1.png`"
+              :ratio="1"
+            />
           </div>
         </q-card>
+      </div>
 
-        <q-card class="q-pa-md">
-          <div class="flex items-center justify-betweeen">
-            <div>Logo Web</div>
-            <div>
-              <div>Noteable HS Basketball Games</div>
-              <div>This Week</div>
-            </div>
-          </div>
-
-          <q-separator />
-
-          <div class="card-score">
-            <div>
-              Logo
-            </div>
-            <div>
-              <div class="school">
-                <div>
-                  <div>Sekolah A (AL)</div>
-                  <div>score</div>
-                </div>
-                <div>vs</div>
-                <div>
-                  <div>Sekolah B (Tx)</div>
-                  <div>score</div>
-                </div>
-              </div>
-
-              <div>
-                Fri, 20 Aug 2022 | 10:30 WIB | Stadion | Girl
-              </div>
-
-              <div class="flex flex-center">
-                <iframe height="100" width="178" src="https://www.youtube.com/embed/UaA9W9VvtvE" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-              </div>
-            </div>
-            <div>Logo</div>
-          </div>
-
-          <q-separator />
-
-          <div class="card-score">
-            <div>
-              Logo
-            </div>
-            <div>
-              <div class="school">
-                <div>
-                  <div>Sekolah A (AL)</div>
-                  <div>score</div>
-                </div>
-                <div>vs</div>
-                <div>
-                  <div>Sekolah B (Tx)</div>
-                  <div>score</div>
-                </div>
-              </div>
-
-              <div>
-                Fri, 20 Aug 2022 | 10:30 WIB | Stadion | Boy
-              </div>
-
-              <div class="flex flex-center">
-                <q-img :src="`${$host}/images/no-video.jpg`" :ratio="16/9" height="100px" width="178px"/>
-              </div>
-            </div>
-            <div>Logo</div>
-          </div>
-        </q-card>
+      <div v-else class="text-primary text-bold">
+        No Data Available
       </div>
     </div>
   </div>
 </template>
 
 <script>
+import 'moment-timezone'
+import moment from 'moment'
+
 export default {
   data: function () {
     return {
-      search: null,
-      tab: 'live'
+      data: [],
+      loading: true,
+      id: this.$route.params.id
+    }
+  },
+
+  mounted: function () {
+    this.getData()
+  },
+
+  methods: {
+    back: function () {
+      setTimeout(() => {
+        this.$router.push({ name: 'news' })
+      }, 500)
+    },
+
+    scheduleDate: function (date) {
+      const formatDate = moment.utc(date).local().format('dd, D MMMM Y')
+      return formatDate
+    },
+
+    scheduleTime: function (date) {
+      const formatTime = moment.utc(date).local().format('hh:mm')
+
+      const zone_name =  moment.tz.guess();
+      const timezone = moment.tz(zone_name).zoneAbbr() 
+
+      return `${formatTime} ${timezone}`
+    },
+
+    getData: function () {
+      this.loading = true
+      return new Promise((resolve, reject) => {
+        let endpoint = `match-schedule/scores`
+        this.$api.get(endpoint).then((response) => {
+          const { data, message, status } = response.data
+
+          if (status) {
+            this.data = {...data.list}
+            resolve()
+          }
+        }).finally(() => {
+          this.loading = false
+        })
+      })
     }
   }
 }
 </script>
 
 <style scoped>
-.search-container {
-  max-width: 100%;
-  width: 400px;
+@media only screen and (max-width: 599px) {
+  .page {
+    padding-left: 20px !important;
+    padding-right: 20px !important;
+  }
 }
 
 .page {
   max-width: 100%;
   width: 720px;
+  min-height: 75vh;
   margin: auto;
 }
 
@@ -185,5 +166,11 @@ export default {
 .card-score .school {
   display: grid;
   grid-template-columns: 5fr 1fr 5fr;
+}
+
+.logo {
+  text-align: center;
+  max-height: 75px;
+  max-width: 75px;
 }
 </style>

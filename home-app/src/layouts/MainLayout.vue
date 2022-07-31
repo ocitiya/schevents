@@ -19,9 +19,9 @@
         <q-tabs align="right" class="md" dense arrow-indicator>
           <q-route-tab :to="{ name: 'home' }" label="Home" icon="home" />
           <q-route-tab :to="{ name: 'club' }" label="Club" icon="groups" />
-          <q-route-tab :to="{ name: 'news' }" label="News" icon="" />
-          <q-route-tab :to="{ name: 'video' }" label="Videos" icon="" />
-          <q-route-tab :to="{ name: 'scores' }" label="Scores" icon="" />
+          <q-route-tab :to="{ name: 'news' }" label="News" icon="newspaper" />
+          <q-route-tab :to="{ name: 'video' }" label="Videos" icon="videocam" />
+          <q-route-tab :to="{ name: 'scores' }" label="Scores" icon="scoreboard" />
           <q-route-tab :to="{ name: 'about' }" label="About" icon="description" />
         </q-tabs>
       </q-toolbar>
@@ -72,9 +72,9 @@
           <div class="text-bold q-mb-md">Quick Link</div>
           <div class="link" @click="$router.push({ name: 'home' })">Home</div>
           <div class="link" @click="$router.push({ name: 'club' })">Club</div>
-          <div class="link">News</div>
-          <div class="link">Videos</div>
-          <div class="link">Scores</div>
+          <div class="link" @click="$router.push({ name: 'news' })">News</div>
+          <div class="link" @click="$router.push({ name: 'video' })">Videos</div>
+          <div class="link" @click="$router.push({ name: 'scores' })">Scores</div>
           <div class="link" @click="$router.push({ name: 'about' })">About</div>
         </div>
 
@@ -117,6 +117,21 @@ const linksList = [
     title: 'Club',
     icon: 'groups',
     link_name: 'club'
+  },
+  {
+    title: 'News',
+    icon: 'newspaper',
+    link_name: 'news'
+  },
+  {
+    title: 'Videos',
+    icon: 'videocam',
+    link_name: 'video'
+  },
+  {
+    title: 'Scores',
+    icon: 'scores',
+    link_name: 'scoreboard'
   },
   {
     title: 'About',
