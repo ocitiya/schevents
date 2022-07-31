@@ -130,8 +130,8 @@ const linksList = [
   },
   {
     title: 'Scores',
-    icon: 'scores',
-    link_name: 'scoreboard'
+    icon: 'scoreboard',
+    link_name: 'scores'
   },
   {
     title: 'About',
