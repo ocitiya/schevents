@@ -6,17 +6,32 @@
 
     <div class="flex flex-center q-my-xl">
       <div class="search-container">
-        <q-input v-model="search" label="Search School" filled>
+        <q-select filled use-input map-options emit-value
+          v-model="search"
+          label="Search School"
+          input-debounce="0"
+          :options="options.schools"
+          @filter="filterSchool"
+        >
           <template v-slot:append>
             <q-icon name="search" />
           </template>
-        </q-input>
+        </q-select>
       </div>
     </div>
 
-    <div class="text-h6 text-primary text-bold text-center q-my-xl">
-      Live Events
-    </div>
+    <q-tabs
+      v-model="tab"
+      inline-label
+      class="bg-grey-2 q-mb-xl"
+      active-class="bg-primary text-white"
+      @update:model-value="() => getSchedule(1)"
+    >
+      <q-tab name="live" label="Live" />
+      <q-tab name="upcoming" label="Upcoming" />
+      <q-tab name="this-week" label="This Week" />
+      <q-tab name="today" label="Today" />
+    </q-tabs>
 
     <div>
       <div v-if="schedules.length > 0">
@@ -117,11 +132,11 @@
       </div>
 
       <div v-else class="text-primary text-h6 text-bold flex flex-center q-my-lg">
-        No Live Events
+        No Events
       </div>
 
       <q-pagination v-if="pagination.total_page > 0"
-        class="flex flex-center"
+        class="flex flex-center q-mt-xl"
         v-model="pagination.page"
         :max="pagination.total_page"
         @update:model-value="getSchedule"
@@ -210,6 +225,8 @@
 
 <script>
 import Helper from 'src/services/helper'
+import 'moment-timezone'
+import moment from 'moment'
 
 let searchTimeout
 export default {
@@ -220,6 +237,7 @@ export default {
       schedules: [],
       sports: [],
       states: [],
+      tab: 'live',
       pagination: {
         page: 1,
         total_page: 1
@@ -241,6 +259,12 @@ export default {
           page: 1,
           total_page: 1
         }
+      },
+      options: {
+        schools: []
+      },
+      master: {
+        schools: []
       }
     }
   },
@@ -250,6 +274,9 @@ export default {
     this.getSports()
     this.getStates()
     this.getAssociations()
+    this.getSchools()
+
+    this.getMasterDataSchools()
   },
 
   watch: {
@@ -262,6 +289,50 @@ export default {
   },
 
   methods: {
+    filterSchool: function (val, update) {
+      if (val === '') {
+        update(() => {
+          this.options.schools = [...this.master.schools]
+        })
+        return
+      }
+
+      update(() => {
+        const needle = val.toLowerCase()
+        this.options.schools = this.master.schools.filter(v => v.label.toLowerCase().indexOf(needle) > -1)
+      })
+    },
+
+    getMasterDataSchools: function () {
+      const masterdata_schools = localStorage.getItem('masterdata_schools')
+      if (masterdata_schools !== null) {
+        const schools = JSON.parse(masterdata_schools)
+        this.options.schools = [...schools]
+        this.master.schools = [...schools]
+      }
+    },
+
+    getSchools: function () {
+      let endpoint = 'school/list'
+      endpoint = Helper.generateURLParams(endpoint, 'showall', true)
+
+      this.$api.get(endpoint).then((response) => {
+        const { data, message, status } = response.data
+
+        if (status) {
+          const schools = []
+          data.list.map(item => {
+            schools.push({
+              label: item.name, 
+              value: item.id
+            })
+          })
+
+          window.localStorage.setItem('masterdata_schools', JSON.stringify(schools))
+        }
+      })
+    },
+
     scheduleDate: function (date) {
       const formatDate = moment.utc(date).local().format('D MMMM Y')
       return formatDate
@@ -276,17 +347,18 @@ export default {
       return `${formatTime} ${timezone}`
     },
     
-    getSchedule: function () {
+    getSchedule: function (initialPage = null) {
       this.loadingSchedule = true
       return new Promise((resolve, reject) => {
-        const page = this.pagination.page
+        let page = this.pagination.page
+        if (initialPage !== null) page = initialPage
 
         let endpoint = 'match-schedule/list'
         endpoint = Helper.generateURLParams(endpoint, 'page', page)
-        endpoint = Helper.generateURLParams(endpoint, 'type', 'live')
+        endpoint = Helper.generateURLParams(endpoint, 'type', this.tab)
 
         if (this.search !== null) {
-          endpoint = Helper.generateURLParams(endpoint, 'school', this.search)
+          endpoint = Helper.generateURLParams(endpoint, 'school_id', this.search)
         }
 
         this.$api.get(endpoint).then((response) => {
@@ -294,6 +366,7 @@ export default {
 
           if (status) {
             this.schedules = [...data.list]
+
             this.pagination = {
               ...this.pagination,
               page: data.pagination.page,
