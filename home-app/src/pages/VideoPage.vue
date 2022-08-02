@@ -6,7 +6,7 @@
 
     <div class="q-my-xl">
       <div v-if="data.length > 0" class="video-container">
-        <q-card v-ripple class="event-card" v-for="item in data" :key="item.id">
+        <q-card class="event-card" v-for="item in data" :key="item.id">
           <q-card-section class="flex flex-center">
             <iframe v-if="item.youtube_link !== null" height="100" width="178" :src="item.youtube_link" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
             <q-img v-else :src="`${$host}/images/no-video.jpg`" :ratio="16/9" style="height: 100px; width: 178px"/>

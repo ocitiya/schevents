@@ -20,7 +20,7 @@ class MatchSchedule extends Model {
 	protected $keyType = 'string';
 
 	public function sport_type () {
-		return $this->belongsTo(SportType::class, 'sport_type_id');
+		return $this->belongsTo(SportType::class, 'sport_type_id', 'id');
 	}
 
 	public function school1 () {

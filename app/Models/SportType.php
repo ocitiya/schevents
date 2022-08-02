@@ -9,13 +9,13 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class SportType extends Model {
 	use HasFactory, SoftDeletes;
 
-	protected $table = "sport_types";
 	protected $primaryKey = "id";
+	protected $table = "sport_types";
+	protected $keyType = 'string';
+	
+	public $incrementing = false;
 
 	protected $casts = [
 		'id' => 'string'
 	];
-
-	public $incrementing = false;
-	protected $keyType = 'string';
 }

@@ -241,7 +241,6 @@ export default defineComponent({
     },
 
     redirect: function (url) {
-      alert(url)
       setTimeout(() => {
         window.open(url)
       }, 500)
@@ -372,6 +371,7 @@ export default defineComponent({
   }
 
   .event-card {
+    cursor: pointer;
     width: 300px;
     border-radius: 20px;
   }

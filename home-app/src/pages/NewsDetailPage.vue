@@ -7,15 +7,13 @@
 
       <div class="list-container">
         <div class="">
-          <q-card class="q-pa-md">
-            <div class="text-bold text-primary">
+          <q-card class="q-pa-md" flat>
+            <div class="text-bold text-primary text-h6">
               <div v-if="data.sport_type !== null">HS {{ data.sport_type.name }} Games</div>
               <div v-else>Unknown Sport</div>
             </div>
 
-            <q-separator class="q-my-md" />
-
-            <div class="card-score">
+            <div class="card-score q-mt-xl">
               <q-img v-if="data.school1.logo !== null" class="logo"
                 :src="`${$host}/storage/school/logo/${data.school1.logo}`"
                 :ratio="1"
@@ -32,18 +30,18 @@
               
               <div>
                 <div class="school">
-                  <div>
+                  <div class="text-body1 text-primary">
                     <div>{{ data.school1.name }} ({{ data.school1.county.name }})</div>
-                    <div>{{ data.school1.score || '-' }}</div>
+                    <div class="text-bold">{{ data.school1.score || '-' }}</div>
                   </div>
                   <div>vs</div>
-                  <div>
+                  <div class="text-body1 text-primary">
                     <div>{{ data.school2.name }} ({{ data.school2.county.name }})</div>
-                    <div>{{ data.school2.score || '-' }}</div>
+                    <div class="text-bold">{{ data.school2.score || '-' }}</div>
                   </div>
                 </div>
 
-                <div>
+                <div class="text-subtitle2">
                   {{ scheduleDate(data.datetime) }} | {{ scheduleTime(data.datetime) }}
                   <span v-if="data.stadium !== null">&nbsp;| {{ data.stadium }}</span>
                   <span v-if="data.team_gender !== null" class="capitalize">&nbsp;| {{ data.team_gender }}</span>

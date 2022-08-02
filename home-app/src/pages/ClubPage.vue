@@ -21,9 +21,10 @@
     </div>
 
     <q-tabs
+      ref="tab"
       v-model="tab"
       inline-label
-      class="bg-grey-2 q-mb-xl"
+      class="bg-grey-2"
       active-class="bg-primary text-white"
       @update:model-value="() => getSchedule(1)"
     >
@@ -35,7 +36,7 @@
 
     <div>
       <div v-if="schedules.length > 0">
-        <div class="card-schedule-container">
+        <div class="card-schedule-container q-py-xl">
           <div v-for="item in schedules" :key="item.id">
             <q-card v-ripple class="event-card" @click="() => redirect(item.sport_type.stream_url)">
               <q-card-section class="flex justify-between items-center">
@@ -135,25 +136,25 @@
         No Events
       </div>
 
-      <q-pagination v-if="pagination.total_page > 0"
-        class="flex flex-center q-mt-xl"
-        v-model="pagination.page"
-        :max="pagination.total_page"
-        @update:model-value="getSchedule"
-        input
-      />
-
       <q-inner-loading
         :showing="loadingSchedule"
         label="Please wait..."
         label-class="text-primary"
         label-style="font-size: 1.1em"
       />
+
+      <q-pagination v-if="pagination.total_page > 0"
+        class="flex flex-center q-mt-xl"
+        v-model="pagination.page"
+        :max="pagination.total_page"
+        @update:model-value="changePage"
+        input
+      />
     </div>
 
     <div class="list-container">
       <div class="row q-col-gutter-md">
-        <div class="col-12 col-md-4">
+        <div class="col-12 col-sm-4">
           <div class="text-primary text-bold text-h5">
             Sport
           </div>
@@ -175,7 +176,7 @@
           />
         </div>
 
-        <div class="col-12 col-md-4">
+        <div class="col-12 col-sm-4">
           <div class="text-primary text-bold text-h5">
             States
           </div>
@@ -197,7 +198,7 @@
           />
         </div>
 
-        <div class="col-12 col-md-4">
+        <div class="col-12 col-sm-4">
           <div class="text-primary text-bold text-h5">
             Associations
           </div>
@@ -214,7 +215,7 @@
             class="flex flex-center"
             v-model="associations.pagination.page"
             :max="associations.pagination.total_page"
-            @update:model-value="associations"
+            @update:model-value="getAssociations"
             input
           />
         </div>
@@ -289,6 +290,16 @@ export default {
   },
 
   methods: {
+    changePage: function () {
+      Helper.scrollToElement(this.$refs.tab.$el, -100)
+    },
+
+    redirect: function (url) {
+      setTimeout(() => {
+        window.open(url)
+      }, 500)
+    },
+
     filterSchool: function (val, update) {
       if (val === '') {
         update(() => {
@@ -498,6 +509,7 @@ export default {
 }
 
 .event-card {
+  cursor: pointer;
   width: 300px;
   border-radius: 20px;
 }
