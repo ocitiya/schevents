@@ -1,11 +1,46 @@
 <template>
   <div class="q-py-xl bg-grey-2">
     <div class="list-container page">
-      <div class="">
-        <div class="q-pa-md" v-for="[key, group] of Object.entries(notableData)" :key="key">
+      <div class="" v-if="Object.keys(notableData.today).length > 0">
+        <div class="text-center text-h5 text-primary text-bold q-mt-xl">Big Match Today</div>
+        <div class="q-pa-md q-mt-lg" v-for="[key, group] of Object.entries(notableData.today)" :key="key">
+          <div class="">
+            <div class="text-primary text-bold text-body1">
+              Noteable HS {{ key }} Games Today
+            </div>
+
+            <div class="flex q-gutter-md q-mt-md clickable-card">
+              <q-card v-for="item in group" :key="item.id" class="q-pa-md" v-ripple @click="() => toDetail(item.id)">
+                {{ item.school1.name }} Vs {{ item.school2.name }}
+              </q-card>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="" v-if="Object.keys(notableData.this_week).length > 0">
+        <div class="text-center text-h5 text-primary text-bold q-mt-xl">Big Match This Week</div>
+        <div class="q-pa-md q-mt-lg" v-for="[key, group] of Object.entries(notableData.this_week)" :key="key">
           <div class="">
             <div class="text-primary text-bold text-body1">
               Noteable HS {{ key }} Games This Week
+            </div>
+
+            <div class="flex q-gutter-md q-mt-md clickable-card">
+              <q-card v-for="item in group" :key="item.id" class="q-pa-md" v-ripple @click="() => toDetail(item.id)">
+                {{ item.school1.name }} Vs {{ item.school2.name }}
+              </q-card>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="" v-if="Object.keys(notableData.upcoming).length > 0">
+        <div class="text-center text-h5 text-primary text-bold q-mt-xl">Big Match Upcoming</div>
+        <div class="q-pa-md q-mt-lg" v-for="[key, group] of Object.entries(notableData.upcoming)" :key="key">
+          <div class="">
+            <div class="text-primary text-bold text-body1">
+              Noteable HS {{ key }} Games Upcoming
             </div>
 
             <div class="flex q-gutter-md q-mt-md clickable-card">
@@ -187,7 +222,11 @@ export default {
       search: null,
       tab: 'live',
       loading: true,
-      notableData: [],
+      notableData: {
+        this_week: [],
+        today: [],
+        upcoming: []
+      },
       news: {
         last_week: [],
         have_played: []
@@ -210,7 +249,9 @@ export default {
   mounted: function () {
     this.getNewsLastWeek()
     this.getNewsHavePlayed()
-    this.getNotableData()
+    this.getNotableData('minggu-ini')
+    this.getNotableData('hari-ini')
+    this.getNotableData('akan-datang')
   },
 
   methods: {
@@ -220,17 +261,23 @@ export default {
       }, 500)
     },
 
-    getNotableData: function () {
+    getNotableData: function (type = 'minggu-ini') {
       this.loading = true
       return new Promise((resolve, reject) => {
         let endpoint = `match-schedule/scores`
-        endpoint = Helper.generateURLParams(endpoint, 'type', 'minggu-lalu')
+        endpoint = Helper.generateURLParams(endpoint, 'type', type)
 
         this.$api.get(endpoint).then((response) => {
           const { data, message, status } = response.data
 
           if (status) {
-            this.notableData = {...data.list}
+            if (type === 'minggu-ini') {
+              this.notableData.this_week = {...data.list}
+            } else if (type === 'hari-ini') {
+              this.notableData.today = {...data.list}
+            } else if (type === 'akan-datang') {
+              this.notableData.upcoming = {...data.list}
+            }
             resolve()
           }
         }).finally(() => {

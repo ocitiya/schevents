@@ -110,7 +110,8 @@ class MatchScheduleController extends Controller {
 	}
 
 	public function detail ($id) {
-		$schedule = MatchSchedule::with(['school1', 'school2', 'sport_type'])->find($id);
+		$schedule = MatchSchedule::with(['school1', 'school2'])->find($id);
+		$schedule->sport_type = (object) DB::select("SELECT * FROM sport_types WHERE id = '{$schedule->sport_type_id}'")[0];
 		$data = [ "data" => $schedule ];
 
 		return view('admin.match-schedule.detail', $data);
@@ -278,7 +279,7 @@ class MatchScheduleController extends Controller {
 	public function newsList (Request $request) {
 		$page = $request->has('page') ? $request->page : 1;
 		if (empty($page)) $page = 1; 
-		$limit = $request->has('limit') ? $request->limit : 10;
+		$limit = $request->has('limit') ? $request->limit : 30;
 
 		$model = MatchSchedule::with([
 			"county",
@@ -345,13 +346,29 @@ class MatchScheduleController extends Controller {
 			"school2" => function ($subQuery) {
 				return $subQuery->with(['county']);
 			},
-			"team_type",
-			"sport_type"
+			"team_type"
 		]);
 
 		$type = $request->has('type') ? $request->type : "sudah-bermain";
 		switch ($type) {
 			case "all":
+				break;
+
+			case "akan-datang":
+				$date = Carbon::now()->addDays(7);
+				$model->where('datetime', '>', $date);
+				break;
+
+			case "hari-ini":
+				$date = Carbon::today();
+				$model->whereDate('datetime', $date);
+				break;
+
+			case "minggu-ini":
+				$date1 = Carbon::now()->addDays(7);
+				$date2 = Carbon::now()->subHours(2);
+
+				$model->whereBetween('datetime', [$date2, $date1]);
 				break;
 
 			case "minggu-lalu":
@@ -373,8 +390,12 @@ class MatchScheduleController extends Controller {
 		$total = $model2->count();
 
 		$scores = $model->take($limit)->skip(($page - 1) * $limit)->get();
+		foreach($scores as $item) {
+			$item->sport_type = (object) DB::select("SELECT * FROM sport_types WHERE id = '{$item->sport_type_id}'")[0];
+		}
 		$groups = [];
 		foreach ($scores as $item) {
+			// if ($item->sport_type == null) continue;
 			$groups[$item->sport_type->name][] = $item;
 		}
 
@@ -432,10 +453,10 @@ class MatchScheduleController extends Controller {
 				break;
 
 			case "this-week":
-				$date1 = Carbon::now()->subDays(7);
-				$date2 = Carbon::now();
+				$date1 = Carbon::now()->addDays(7);
+				$date2 = Carbon::now()->subHours(2);
 
-				$model->whereBetween('datetime', [$date1, $date2]);
+				$model->whereBetween('datetime', [$date2, $date1]);
 				break;
 
 			case "today":
@@ -510,15 +531,14 @@ class MatchScheduleController extends Controller {
 				$subQuery->whereBetween('datetime', [$date1, $date2]);
 			})
 			->when($state == 'akan-bermain', function ($subQuery) {
-				$date1 = Carbon::now()->addDays(7);
-				$date2 = Carbon::now()->subHours(2);
-				$subQuery->whereBetween('datetime', [$date2, $date1]);
+				$date2 = Carbon::now()->addDays(7);
+				$subQuery->where('datetime', '>', $date2);
 			})
 			->when($state == 'minggu-ini', function ($subQuery) {
 				$date1 = Carbon::now()->addDays(7);
-				$date2 = Carbon::now();
+				$date2 = Carbon::now()->subHours(2);
 
-				$subQuery->whereBetween('datetime', [$date1, $date2]);
+				$subQuery->whereBetween('datetime', [$date2, $date1]);
 			})
 			->when($incity, function ($subQuery) {
 				$subQuery->whereNotNull('county2_id');
