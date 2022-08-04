@@ -1,5 +1,5 @@
 <template>
-  <div class="q-py-md q-py-xl bg-grey-2 q-px-xl">
+  <div class="q-py-md q-py-xl bg-grey-2 q-px-sm q-px-md-xl">
     <div class="text-center text-h5 text-primary text-bold" ref="tab">
       Score Menu
     </div>
@@ -82,7 +82,7 @@
           </div>
         </q-card>
 
-        <div class="flex items-center justify-center q-mt-xl">
+        <div class="flex items-center justify-center q-mt-xl" v-if="pagination.total_page > 1">
           <q-btn class="" label="See More" color="primary" @click="nextPage" />
         </div>
       </div>
