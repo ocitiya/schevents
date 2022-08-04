@@ -8,8 +8,8 @@ import axios from 'axios'
 // "export default () => {}" function below (which runs individually
 // for each client)
 
-// const host = 'https://schsports.com'
-const host = process.env.NODE_ENV === 'development' ? 'http://localhost:8000' : 'https://schsports.com'
+const host = 'https://schsports.com'
+// const host = process.env.NODE_ENV === 'development' ? 'http://localhost:8000' : 'https://schsports.com'
 const api = axios.create({ baseURL: `${host}/api` })
 
 export default boot(({ app }) => {
