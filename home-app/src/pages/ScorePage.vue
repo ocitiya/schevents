@@ -1,7 +1,7 @@
 <template>
   <div class="q-py-md q-py-xl bg-grey-2 q-px-sm q-px-md-xl">
     <div class="text-center text-h5 text-primary text-bold" ref="tab">
-      Score Menu
+      Last Week Scores
     </div>
 
     <div class="list-container page">
@@ -38,7 +38,7 @@
               />
             </div>
 
-            <div class="col-4 flex items-center">
+            <div class="col-4 flex items-center q-pl-md">
               <div class="text-bold text-primary">
                 {{ item.school1.name }} ({{ item.school1.county.abbreviation }})
               </div>
@@ -68,7 +68,7 @@
               />
             </div>
 
-            <div class="col-4 flex items-center">
+            <div class="col-4 flex items-center q-pl-md">
               <div class="text-bold text-primary">
                 {{ item.school2.name }} ({{ item.school2.county.abbreviation }})
               </div>
@@ -79,6 +79,21 @@
                 {{ item.score2 || '-' }}
               </div>
             </div>
+          </div>
+
+          <div v-if="item.stadium !== null">
+            <q-separator class="q-my-md" />
+
+            <div class="text-center">
+              {{ item.stadium }}
+            </div>
+          </div>
+
+          <q-separator class="q-my-md" />
+
+          <div class="flex items-center justify-between">
+            <div>{{ scheduleDate(item.datetime) }}</div>
+            <div>{{ scheduleTime(item.datetime) }}</div>
           </div>
         </q-card>
 
@@ -98,6 +113,7 @@
 import 'moment-timezone'
 import moment from 'moment'
 import Helper from 'src/services/helper'
+import { useMeta } from 'quasar'
 
 export default {
   data: function () {
@@ -114,6 +130,10 @@ export default {
 
   mounted: function () {
     this.getData()
+    
+    useMeta({
+      title: 'Score',
+    })
   },
 
   methods: {

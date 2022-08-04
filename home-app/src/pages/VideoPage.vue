@@ -43,6 +43,7 @@
 import Helper from 'src/services/helper'
 import 'moment-timezone'
 import moment from 'moment'
+import { useMeta } from 'quasar'
 
 export default {
   data: function () {
@@ -58,6 +59,10 @@ export default {
 
   mounted: function () {
     this.getData()
+
+    useMeta({
+      title: 'Video',
+    })
   },
 
   methods: {

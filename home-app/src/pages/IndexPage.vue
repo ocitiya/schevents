@@ -162,6 +162,7 @@
 import { defineComponent } from 'vue'
 import 'moment-timezone'
 import moment from 'moment'
+import { useMeta } from 'quasar'
 
 import MatchFilter from 'src/components/MatchFilter.vue'
 import Helper from 'src/services/helper'
@@ -197,6 +198,10 @@ export default defineComponent({
 
     this.getSchedule()
     this.getSchools()
+
+    useMeta({
+      title: 'Home'
+    })
   },
 
   methods: {

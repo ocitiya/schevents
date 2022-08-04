@@ -222,6 +222,7 @@
 import Helper from 'src/services/helper'
 import 'moment-timezone'
 import moment from 'moment'
+import { useMeta } from 'quasar'
 
 let searchTimeout
 export default {
@@ -270,6 +271,10 @@ export default {
     this.getAssociations()
     this.getSchools()
     this.getMasterDataSchools()
+
+    useMeta({
+      title: 'Club'
+    })
   },
 
   watch: {

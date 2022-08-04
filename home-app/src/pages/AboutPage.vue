@@ -59,6 +59,12 @@ export default {
       search: null,
       tab: 'live'
     }
+  },
+
+  mounted: function () {
+    useMeta({
+      title: 'About'
+    })
   }
 }
 </script>

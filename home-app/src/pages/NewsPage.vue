@@ -323,6 +323,7 @@
 <script>
 import 'moment-timezone'
 import moment from 'moment'
+import { useMeta } from 'quasar'
 
 import Helper from 'src/services/helper'
 import VueHorizontal from "vue-horizontal";
@@ -359,6 +360,10 @@ export default {
     this.getEvent('today')
     this.getEvent('this-week')
     this.getEvent('upcoming')
+
+    useMeta({
+      title: 'News',
+    })
   },
 
   methods: {

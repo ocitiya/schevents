@@ -2,7 +2,7 @@
   <div class="q-px-md q-py-xl page">
     <div v-if="Object.keys(data).length > 0">
       <div class="text-center text-h5 text-primary text-bold">
-        {{ data.school1.name }} ({{ data.school1.county.name }}) vs {{ data.school2.name }} 2 ({{ data.school2.county.name }})
+        {{ data.school1.name }} ({{ data.school1.county.name }}) vs {{ data.school2.name }} ({{ data.school2.county.name }})
       </div>
 
       <div class="list-container">
@@ -79,6 +79,7 @@
 <script>
 import 'moment-timezone'
 import moment from 'moment'
+import { useMeta } from 'quasar'
 
 export default {
   data: function () {
@@ -89,8 +90,26 @@ export default {
     }
   },
 
-  mounted: function () {
-    this.getData()
+  mounted: async function () {
+    await this.getData()
+    const title = `${this.data.school1.name} (${this.data.school1.county.name}) vs ${this.data.school2.name} (${this.data.school2.county.name})`
+    const date = this.scheduleDate(this.data.datetime)
+    const time = this.scheduleTime(this.data.datetime)
+    const stadium = this.data.stadium === null ? '' : this.data.stadium
+
+    useMeta({
+      title,
+      meta: {
+        description: {
+          name: 'description',
+          content: `${title}, ${date}, ${time}, ${stadium}, ${this.data.team_gender}`
+        },
+        keywords: {
+          name: 'keywords',
+          content: this.data.keywords
+        }
+      }
+    })
   },
 
   methods: {
