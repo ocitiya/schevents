@@ -440,6 +440,12 @@ class MatchScheduleController extends Controller {
 			case "all":
 				break;
 
+			case "have-played":
+				$date1 = Carbon::now()->subHours(3);
+				$date2 = Carbon::now()->subDays(7);
+
+				$model->whereBetween('datetime', [$date2, $date1]);
+				break;
 
 			case "live":
 				$date1 = Carbon::now()->subHours(2);

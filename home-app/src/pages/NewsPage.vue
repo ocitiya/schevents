@@ -10,7 +10,7 @@
         <div v-if="event.today.length > 0">
           <vue-horizontal responsive class="v-horizontal" :displacement="0.7" ref="horizontalToday">
             <section v-for="item in event.today" :key="item.id">
-              <q-card v-ripple class="event-card" @click="() => redirect(item.sport_type.stream_url)">
+              <q-card v-ripple class="event-card" @click="() => toDetail(item.id)">
                 <q-card-section class="flex justify-between items-center">
                   <span class="text-primary">
                     <span class="capitalize" v-if="item.team_gender !== null">{{ item.team_gender }},</span>
@@ -118,7 +118,7 @@
         <div v-if="event.this_week.length > 0">
           <vue-horizontal responsive class="v-horizontal" :displacement="0.7" ref="horizontalThisWeek">
             <section v-for="item in event.this_week" :key="item.id">
-              <q-card v-ripple class="event-card" @click="() => redirect(item.sport_type.stream_url)">
+              <q-card v-ripple class="event-card" @click="() => toDetail(item.id)">
                 <q-card-section class="flex justify-between items-center">
                   <span class="text-primary">
                     <span class="capitalize" v-if="item.team_gender !== null">{{ item.team_gender }},</span>
@@ -222,7 +222,7 @@
         <div v-if="event.upcoming.length > 0">
           <vue-horizontal responsive class="v-horizontal" :displacement="0.7" ref="horizontalUpcoming">
             <section v-for="item in event.upcoming" :key="item.id">
-              <q-card v-ripple class="event-card" @click="() => redirect(item.sport_type.stream_url)">
+              <q-card v-ripple class="event-card" @click="() => toDetail(item.id)">
                 <q-card-section class="flex justify-between items-center">
                   <span class="text-primary">
                     <span class="capitalize" v-if="item.team_gender !== null">{{ item.team_gender }},</span>
@@ -365,12 +365,6 @@ export default {
     toHome: function (type) {
       setTimeout(() => {
         this.$router.push({ name: 'home', query: { tab: type } })
-      }, 500)
-    },
-
-    redirect: function (url) {
-      setTimeout(() => {
-        window.open(url)
       }, 500)
     },
     

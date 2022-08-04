@@ -1,156 +1,94 @@
 <template>
-  <div class="q-py-md q-py-xl page bg-grey-1 shadow-1 q-px-xl">
-    <div class="text-center text-h5 text-primary text-bold">
+  <div class="q-py-md q-py-xl bg-grey-2 q-px-xl">
+    <div class="text-center text-h5 text-primary text-bold" ref="tab">
       Score Menu
     </div>
 
-    <div class="list-container">
-      <div v-if="Object.keys(data.this_week).length > 0" class="q-gutter-md">
-        <q-card class="q-pa-md" v-for="[key, group] of Object.entries(data.this_week)" :key="key">
-          <div class="flex items-center justify-betweeen">
-            <div>Logo Web</div>
-            <div class="q-ml-md">
-              <div>Noteable HS {{ key }} Games</div>
-              <div>This Week</div>
+    <div class="list-container page">
+      <div v-if="data.length > 0" class="q-gutter-md">
+        <q-card v-for="item in data" :key="item.id" flat class="bg-white q-pa-md" bordered>
+          <div class="row">
+            <div class="col-7">
+              High School
+              &nbsp;<span class="capitalize">{{ item.team_gender }}</span>
+              &nbsp;{{ item.sport_type.name }}
+            </div>
+
+            <div class="col-5 text-center">
+              Score
             </div>
           </div>
 
-          <q-separator class="q-my-lg" />
+          <q-separator class="q-mt-md" />
 
-          <div class="card-score" v-for="item in group" :key="item.id">
-            <q-img v-if="item.school1.logo !== null" class="logo"
-              :src="`${$host}/storage/school/logo/${item.school1.logo}`"
-              :ratio="1"
-            >
-              <template v-slot:error>
-                <img :src="`${$host}/images/no-logo-1.png`" style="width: 100%; height: 100%;">
-              </template>
-            </q-img>
+          <div class="row q-mt-md">
+            <div class="col-3 flex items-center justify-center">
+              <q-img v-if="item.school1.logo !== null" class="logo"
+                :src="`${$host}/storage/school/logo/${item.school1.logo}`"
+                :ratio="1"
+              >
+                <template v-slot:error>
+                  <img :src="`${$host}/images/no-logo-1.png`" style="width: 100%; height: 100%;">
+                </template>
+              </q-img>
 
-            <q-img v-else class="logo"
-              :src="`${$host}/images/no-logo-1.png`"
-              :ratio="1"
-            />
+              <q-img v-else class="logo"
+                :src="`${$host}/images/no-logo-1.png`"
+                :ratio="1"
+              />
+            </div>
 
-            <div>
-              <div class="school">
-                <div>
-                  <div>{{ item.school1.name }} ({{ item.school1.county.name }})</div>
-                  <div>{{ item.score1 || '-' }}</div>
-                </div>
-                <div>vs</div>
-                <div>
-                  <div>{{ item.school2.name }} ({{ item.school1.county.name }})</div>
-                  <div>{{ item.score2 || '-' }}</div>
-                </div>
-              </div>
-
-              <div>
-                {{ scheduleDate(item.datetime) }} | {{ scheduleTime(item.datetime) }}
-                <span v-if="item.stadium !== null">&nbsp;| {{ item.stadium }}</span>
-                <span v-if="item.team_gender !== null" class="capitalize">&nbsp;| {{ item.team_gender }}</span>
-              </div>
-
-              <div class="flex flex-center q-mt-lg">
-                <iframe v-if="item.youtube_link !== null" height="100" width="178" :src="item.youtube_link" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-                <q-img v-else :src="`${$host}/images/no-video.jpg`" :ratio="16/9" style="height: 100px; width: 178px"/>
+            <div class="col-4 flex items-center">
+              <div class="text-bold text-primary">
+                {{ item.school1.name }} ({{ item.school1.county.abbreviation }})
               </div>
             </div>
 
-            <q-img v-if="item.school2.logo !== null" class="logo"
-              :src="`${$host}/storage/school/logo/${item.school2.logo}`"
-              :ratio="1"
-            >
-              <template v-slot:error>
-                <img :src="`${$host}/images/no-logo-1.png`" style="width: 100%; height: 100%;">
-              </template>
-            </q-img>
+            <div class="col-5 flex items-center justify-center">
+              <div class="text-primary text-bold text-h4">
+                {{ item.score1 || '-'}}
+              </div>
+            </div>
+          </div>
 
-            <q-img v-else class="logo"
-              :src="`${$host}/images/no-logo-1.png`"
-              :ratio="1"
-            />
+          <div class="row q-mt-md">
+            <div class="col-3 flex items-center justify-center">
+              <q-img v-if="item.school2.logo !== null" class="logo"
+                :src="`${$host}/storage/school/logo/${item.school2.logo}`"
+                :ratio="1"
+              >
+                <template v-slot:error>
+                  <img :src="`${$host}/images/no-logo-1.png`" style="width: 100%; height: 100%;">
+                </template>
+              </q-img>
+
+              <q-img v-else class="logo"
+                :src="`${$host}/images/no-logo-1.png`"
+                :ratio="1"
+              />
+            </div>
+
+            <div class="col-4 flex items-center">
+              <div class="text-bold text-primary">
+                {{ item.school2.name }} ({{ item.school2.county.abbreviation }})
+              </div>
+            </div>
+
+            <div class="col-5 flex items-center justify-center">
+              <div class="text-primary text-bold text-h4">
+                {{ item.score2 || '-' }}
+              </div>
+            </div>
           </div>
         </q-card>
+
+        <div class="flex items-center justify-center q-mt-xl">
+          <q-btn class="" label="See More" color="primary" @click="nextPage" />
+        </div>
       </div>
 
       <div v-else class="text-primary text-bold">
-        No Noteable This Week Data Available
-      </div>
-    </div>
-
-    <div class="list-container">
-      <div v-if="Object.keys(data.today).length > 0" class="q-gutter-md">
-        <q-card class="q-pa-md" v-for="[key, group] of Object.entries(data.today)" :key="key">
-          <div class="flex items-center justify-betweeen">
-            <div>Logo Web</div>
-            <div class="q-ml-md">
-              <div>Noteable HS {{ key }} Games</div>
-              <div>Today</div>
-            </div>
-          </div>
-
-          <q-separator class="q-my-lg" />
-
-          <div class="card-score" v-for="item in group" :key="item.id">
-            <q-img v-if="item.school1.logo !== null" class="logo"
-              :src="`${$host}/storage/school/logo/${item.school1.logo}`"
-              :ratio="1"
-            >
-              <template v-slot:error>
-                <img :src="`${$host}/images/no-logo-1.png`" style="width: 100%; height: 100%;">
-              </template>
-            </q-img>
-
-            <q-img v-else class="logo"
-              :src="`${$host}/images/no-logo-1.png`"
-              :ratio="1"
-            />
-
-            <div>
-              <div class="school">
-                <div>
-                  <div>{{ item.school1.name }} ({{ item.school1.county.name }})</div>
-                  <div>{{ item.score1 || '-' }}</div>
-                </div>
-                <div>vs</div>
-                <div>
-                  <div>{{ item.school2.name }} ({{ item.school1.county.name }})</div>
-                  <div>{{ item.score2 || '-' }}</div>
-                </div>
-              </div>
-
-              <div>
-                {{ scheduleDate(item.datetime) }} | {{ scheduleTime(item.datetime) }}
-                <span v-if="item.stadium !== null">&nbsp;| {{ item.stadium }}</span>
-                <span v-if="item.team_gender !== null" class="capitalize">&nbsp;| {{ item.team_gender }}</span>
-              </div>
-
-              <div class="flex flex-center q-mt-lg">
-                <iframe v-if="item.youtube_link !== null" height="100" width="178" :src="item.youtube_link" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-                <q-img v-else :src="`${$host}/images/no-video.jpg`" :ratio="16/9" style="height: 100px; width: 178px"/>
-              </div>
-            </div>
-
-            <q-img v-if="item.school2.logo !== null" class="logo"
-              :src="`${$host}/storage/school/logo/${item.school2.logo}`"
-              :ratio="1"
-            >
-              <template v-slot:error>
-                <img :src="`${$host}/images/no-logo-1.png`" style="width: 100%; height: 100%;">
-              </template>
-            </q-img>
-
-            <q-img v-else class="logo"
-              :src="`${$host}/images/no-logo-1.png`"
-              :ratio="1"
-            />
-          </div>
-        </q-card>
-      </div>
-
-      <div v-else class="text-primary text-bold">
-        No Noteable Today Data Available
+        No Data Available
       </div>
     </div>
   </div>
@@ -164,9 +102,10 @@ import Helper from 'src/services/helper'
 export default {
   data: function () {
     return {
-      data: {
-        this_week: [],
-        today: []
+      data: [],
+      pagination: {
+        page: 1,
+        total_page: 1
       },
       loading: true,
       id: this.$route.params.id
@@ -174,11 +113,16 @@ export default {
   },
 
   mounted: function () {
-    this.getData('hari-ini')
-    this.getData('minggu-ini')
+    this.getData()
   },
 
   methods: {
+    nextPage: async function () {
+      this.pagination.page = parseInt(this.pagination.page) + 1 
+      await this.getData()
+      // Helper.scrollToElement(this.$refs.tab)
+    },
+    
     back: function () {
       setTimeout(() => {
         this.$router.push({ name: 'news' })
@@ -199,25 +143,36 @@ export default {
       return `${formatTime} ${timezone}`
     },
 
-    getData: function (type = 'minggu-ini') {
-      this.loading = true
+    getData: function (type = 'have-played') {
+      Helper.loading(this)
+
       return new Promise((resolve, reject) => {
-        let endpoint = `match-schedule/scores`
+        const page = this.pagination.page
+        let endpoint = 'match-schedule/list'
+        endpoint = Helper.generateURLParams(endpoint, 'page', page)
+        endpoint = Helper.generateURLParams(endpoint, 'limit', 10)
         endpoint = Helper.generateURLParams(endpoint, 'type', type)
 
         this.$api.get(endpoint).then((response) => {
           const { data, message, status } = response.data
 
           if (status) {
-            if (type === 'hari-ini') {
-              this.data.today = {...data.list}
+            if (page > 1) {
+              this.data = this.data.concat(data.list)
             } else {
-              this.data.this_week = {...data.list}
+              this.data = [...data.list]
             }
+            this.pagination = { 
+              page: data.pagination.page,
+              total_page: data.pagination.total_page
+            }
+
             resolve()
+          } else {
+            reject()
           }
         }).finally(() => {
-          this.loading = false
+          Helper.loading(this, false)
         })
       })
     }
