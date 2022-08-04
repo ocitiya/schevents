@@ -21,6 +21,7 @@
     </div>
 
     <q-tabs
+      v-if="search !== null"
       ref="tab"
       v-model="tab"
       inline-label
@@ -34,7 +35,7 @@
       <q-tab name="today" label="Today" />
     </q-tabs>
 
-    <div>
+    <div v-if="search !== null">
       <div v-if="schedules.length > 0">
         <div class="card-schedule-container q-py-xl">
           <div v-for="item in schedules" :key="item.id">
@@ -135,13 +136,6 @@
       <div v-else class="text-primary text-h6 text-bold flex flex-center q-my-lg">
         No Events
       </div>
-
-      <q-inner-loading
-        :showing="loadingSchedule"
-        label="Please wait..."
-        label-class="text-primary"
-        label-style="font-size: 1.1em"
-      />
 
       <q-pagination v-if="pagination.total_page > 0"
         class="flex flex-center q-mt-xl"
@@ -271,12 +265,10 @@ export default {
   },
   
   mounted: function () {
-    this.getSchedule()
     this.getSports()
     this.getStates()
     this.getAssociations()
     this.getSchools()
-
     this.getMasterDataSchools()
   },
 
@@ -359,7 +351,8 @@ export default {
     },
     
     getSchedule: function (initialPage = null) {
-      this.loadingSchedule = true
+      Helper.loading(this)
+      
       return new Promise((resolve, reject) => {
         let page = this.pagination.page
         if (initialPage !== null) page = initialPage
@@ -388,7 +381,7 @@ export default {
             reject()
           }
         }).finally(() => {
-          this.loadingSchedule = false
+            Helper.loading(this, false)
         })
       })
     },

@@ -23,6 +23,7 @@
     <q-tabs
       v-model="tab"
       inline-label
+      ref="tab"
       class="bg-grey-2"
       active-class="bg-primary text-white"
       @update:model-value="getSchedule"
@@ -188,6 +189,12 @@ export default defineComponent({
   },
 
   mounted: function () {
+    const tab = this.$route.query.tab
+    if (typeof tab !== 'undefined') {
+      this.tab = tab
+      Helper.scrollToElement(this.$refs.tab.$el)
+    }
+
     this.getSchedule()
     this.getSchools()
   },

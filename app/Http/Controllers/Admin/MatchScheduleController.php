@@ -440,10 +440,6 @@ class MatchScheduleController extends Controller {
 			case "all":
 				break;
 
-			case "ongoing":
-				$date = Carbon::now()->addDays(7);
-				$model->whereDate('datetime', '>', $date);
-				break;
 
 			case "live":
 				$date1 = Carbon::now()->subHours(2);
@@ -462,6 +458,11 @@ class MatchScheduleController extends Controller {
 			case "today":
 				$date = Carbon::today();
 				$model->whereDate('datetime', $date);
+				break;
+				
+			case "upcoming":
+			    $date = Carbon::today()->addDays(7);
+				$model->whereDate('datetime', '>', $date);
 				break;
 
 			default:

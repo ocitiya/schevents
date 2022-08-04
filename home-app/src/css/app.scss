@@ -30,3 +30,9 @@ a {
 .clickable-card {
   cursor: pointer;
 }
+
+.v-horizontal {
+  .v-hl-container {
+    align-items: center;
+  }
+}
