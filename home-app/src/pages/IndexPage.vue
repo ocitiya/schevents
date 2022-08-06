@@ -26,7 +26,7 @@
       ref="tab"
       class="bg-grey-2"
       active-class="bg-primary text-white"
-      @update:model-value="getSchedule"
+      @update:model-value="getSchedule(1)"
     >
       <q-tab name="live" label="Live" />
       <q-tab name="upcoming" label="Upcoming" />
@@ -226,8 +226,7 @@ export default defineComponent({
 
     onFilter: async function (filter) {
       this.filter.data = { ...filter }
-      this.pagination.page = 1
-      await this.getSchedule()
+      await this.getSchedule(1)
       this.hideFilterDialog()
     },
 
@@ -276,7 +275,9 @@ export default defineComponent({
       return `${formatTime} ${timezone}`
     },
 
-    getSchedule: function () {
+    getSchedule: function (page = null) {
+      if (page !== null) this.pagination.page = page
+
       this.loadingSchedule = true
       return new Promise((resolve, reject) => {
         const page = this.pagination.page
