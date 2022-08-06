@@ -26,7 +26,7 @@
       ref="tab"
       class="bg-grey-2"
       active-class="bg-primary text-white"
-      @update:model-value="getSchedule(1)"
+      @update:model-value="() => getSchedule(1)"
     >
       <q-tab name="live" label="Live" />
       <q-tab name="upcoming" label="Upcoming" />
@@ -256,8 +256,7 @@ export default defineComponent({
     },
 
     refresh: async function (done) {
-      this.pagination.page = 1
-      await this.getSchedule()
+      await this.getSchedule(1)
       done()
     },
 
