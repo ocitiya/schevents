@@ -24,6 +24,16 @@ use App\Models\County;
 use App\Models\TeamType;
 
 class MatchScheduleController extends Controller {
+    protected $now;
+    public function __construct(Request $request) {
+        if ($request->header('Timezone') != null) {
+            date_default_timezone_set($request->header('Timezone'));
+            $this->now = Carbon::now()->tz('UTC');
+        } else {
+            $this->now = Carbon::now();
+        }
+    }
+    
 	public function index (Request $request) {
 		return view('admin.match-schedule.index');
 	}
@@ -435,39 +445,41 @@ class MatchScheduleController extends Controller {
 			"team_type",
 			"sport_type"
 		]);
+		
 
 		switch ($type) {
 			case "all":
 				break;
 
 			case "have-played":
-				$date1 = Carbon::now()->subHours(3);
-				$date2 = Carbon::now()->subDays(7);
+				$date1 = $this->now->subHours(3);
+				$date2 = $this->now->subDays(7);
 
 				$model->whereBetween('datetime', [$date2, $date1]);
 				break;
 
 			case "live":
-				$date1 = Carbon::now()->subHours(2);
-				$date2 = Carbon::now()->addHours(3);
+				$date1 = $this->now->subHours(2);
+				$date2 = $this->now->addHours(3);
 
 				$model->whereBetween('datetime', [$date1, $date2]);
 				break;
 
 			case "this-week":
-				$date1 = Carbon::now()->addDays(7);
-				$date2 = Carbon::now()->subHours(2);
+				$date1 = $this->now->addDays(7);
+				$date2 = $this->now->subHours(2);
 
 				$model->whereBetween('datetime', [$date2, $date1]);
 				break;
 
 			case "today":
-				$date = Carbon::today();
-				$model->whereDate('datetime', $date);
+				$date1 = $this->now->addHours(24);
+				$date2 = $this->now->subHours(24);
+				$model->whereBetween('datetime', [$date2, $date1]);
 				break;
 				
 			case "upcoming":
-			    $date = Carbon::today()->addDays(7);
+			    $date = $this->now->addDays(7);
 				$model->whereDate('datetime', '>', $date);
 				break;
 

@@ -1,5 +1,7 @@
 import { boot } from 'quasar/wrappers'
 import axios from 'axios'
+import 'moment-timezone'
+import moment from 'moment'
 
 // Be careful when using SSR for cross-request state pollution
 // due to creating a Singleton instance here;
@@ -8,9 +10,25 @@ import axios from 'axios'
 // "export default () => {}" function below (which runs individually
 // for each client)
 
+const timezone = moment.tz.guess()
+
 const host = 'https://schsports.com'
 // const host = process.env.NODE_ENV === 'development' ? 'http://localhost:8000' : 'https://schsports.com'
-const api = axios.create({ baseURL: `${host}/api` })
+const api = axios.create({
+  baseURL: `${host}/api`,
+  headers: {
+    Timezone : timezone
+  }
+})
+
+api.interceptors.request.use(function (config) {
+  // Do something before request is sent
+  return config;
+}, function (error) {
+  // Do something with request error
+  return Promise.reject(error);
+});
+
 
 export default boot(({ app }) => {
   // for use inside Vue files (Options API) through this.$axios and this.$api
