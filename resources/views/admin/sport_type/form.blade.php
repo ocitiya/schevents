@@ -87,6 +87,15 @@
 
             <div class="row">
               <div class="col-5">
+                <label for="stream_url">Federasi *</label>
+              </div>
+              <div class="col-7">
+                <input type="url" name="stream_url" id="stream_url" class="form-control" required value="{{ old('stream_url', isset($data) ? $data->stream_url : null) }}">
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-5">
                 <label for="stream_url">Link Stream *</label>
               </div>
               <div class="col-7">

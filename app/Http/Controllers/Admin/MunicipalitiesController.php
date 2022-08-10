@@ -5,6 +5,10 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Storage;
+use Intervention\Image\Facades\Image;
+
+use DataTables;
 
 use App\Models\County;
 use App\Models\Municipality;
@@ -37,12 +41,33 @@ class MunicipalitiesController extends Controller {
 	}
 
 	public function store (Request $request) {
+		$isCreate = $request->id == null ? true : false;
+		
 		$validated = $request->validate([
       'county_id' => 'required|uuid',
-			'name' => 'required|max:255'
+			'name' => 'required|max:255',
+			'logo' => 'nullable|mimes:jpg,png'
 		]);
 
-		$isCreate = $request->id == null ? true : false;
+		if ($request->hasFile('logo')) {
+			if(!Storage::exists("/public/municipalities/logo")) Storage::makeDirectory("/public/municipalities/logo");
+			$file = $request->file('logo');
+
+			$filenameWithExt = $request->file('logo')->getClientOriginalName();
+			$filename = pathinfo($filenameWithExt, PATHINFO_FILENAME);
+			$extension = $request->file('logo')->getClientOriginalExtension();
+
+			$filename = $filename.'_'.time().'.'.$extension;
+			$path = storage_path('app/public/municipalities/logo/').$filename;
+			$file->storeAs('public/municipalities/logo', $filename);
+
+			// Resize image
+			$img = Image::make($file->getRealPath())
+				->resize(512, 512, function ($constraint) {
+					$constraint->aspectRatio();
+				})
+				->save($path, 80);
+		}
 
 		$municipality = null;
 		if ($isCreate) {
@@ -50,11 +75,18 @@ class MunicipalitiesController extends Controller {
 			$municipality->id = Str::uuid();
 		} else {
 			$municipality = Municipality::find($request->id);
+			if ($request->hasFile('logo')) {
+				$oldPath = storage_path('app/public/municipalities/logo/').$counties->logo;
+				if (file_exists($oldPath) && is_file($oldPath)) {
+					unlink($oldPath);
+				}
+			}
 		}
 		
 		try {
 			$municipality->county_id = $request->county_id;
 			$municipality->name = ucwords($request->name);
+			if ($request->hasFile('logo')) $municipality->logo = $filename;
 			$municipality->save();
 
 			return redirect()
@@ -64,6 +96,11 @@ class MunicipalitiesController extends Controller {
 			return redirect()->back()
 				->withErrors($exception->getMessage());
 		}
+	}
+
+	public function listDatatable(Request $request) {
+		$data = Municipality::withCount(["schools"])->get();
+		return Datatables::of($data)->make(true);
 	}
 
 	public function list (Request $request) {

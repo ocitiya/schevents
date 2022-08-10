@@ -86,6 +86,7 @@
             columns: [
               {data: 'name', title: 'Name', name: 'name'},
               {data: 'abbreviation', title: 'Abbreviation', name: 'abbreviation'},
+              {data: 'abbreviation', title: 'Jumlah Olahraga', name: 'abbreviation'},
               {data: 'logo', title: 'Logo', name: 'logo',
                 "render": function ( data, type, row, meta ) {
                   return `
@@ -96,10 +97,15 @@
               {data: 'id', title: 'Aksi', orderable: false, searchable: false,
                 "render": function ( data, type, row, meta ) {
                   const updateRoute = `/admin/masterdata/federation/update/${data}`
+                  const sportRoute = `/admin/sport/type?id_federasi`
 
                   return `
                     <a href="${updateRoute}" class="btn btn-sm unrounded btn-primary">
                       <small>Edit Federasi</small>
+                    </a>
+
+                    <a href="${sportRoute}" class="btn btn-sm unrounded btn-primary">
+                      <small>Data Olahraga</small>
                     </a>
 
                     <button

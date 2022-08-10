@@ -69,7 +69,24 @@
 
             <div class="row">
               <div class="col-5">
-                <label for="name">Federasi</label>
+                <label for="name">Julukan</label>
+              </div>
+              <div class="col-7">
+                <input type="text" id="nickname" name="nickname" class="form-control capitalize"
+                  value="{{ old('nickname', isset($data) ? $data->name : null) }}"
+                >
+                <div class="invalid-feedback">
+                  Sekolah sudah terdaftar
+                </div>
+                <div class="valid-feedback">
+                  Sekolah bisa didaftarkan
+                </div>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-5">
+                <label for="name">Federasi *</label>
               </div>
               <div class="col-7">
                 <select class="form-select" id="federation_id" name="federation_id">
@@ -90,6 +107,24 @@
                   <option disabled selected value>Pilih Federasi Dulu</option>
                   {{-- Dynamic Data --}}
                 </select>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-5">
+                <label for="name">State *</label>
+              </div>
+              <div class="col-7">
+                @if ($default_city != null)
+                  <input type="hidden" name="county_id" value="{{ $default_city }}"/>
+                  <select class="form-select" id="county_id" disabled>
+                    {{-- Dynamic Data --}}
+                  </select>
+                @else
+                  <select name="county_id" class="form-select select2" id="county_id">
+                    {{-- Dynamic Data --}}
+                  </select>
+                @endif
               </div>
             </div>
 

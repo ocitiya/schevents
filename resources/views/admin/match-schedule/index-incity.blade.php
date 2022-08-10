@@ -59,6 +59,11 @@
             Minggu Lalu
           </button>
         </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link tab-item" type="button" role="tab" data-state="minggu-lalu">
+            Data Lama
+          </button>
+        </li>
       </ul>
 
       <div class="tab-content" id="myTabContent">
@@ -153,7 +158,7 @@
             }
           },
           columns: [
-            {data: 'county', title: 'Nama Kota', name: 'name',
+            {data: 'county', title: 'Nama State', name: 'name',
               "render": function ( data, type, row, meta ) {
                 return data.name
               }
@@ -171,7 +176,7 @@
                 }
               }
             },
-            {data: 'county2', title: 'Nama Kota 2', name: 'name',
+            {data: 'county2', title: 'Nama State 2', name: 'name',
               "render": function ( data, type, row, meta ) {
                 return data.name
               }
@@ -187,6 +192,11 @@
                 } else {
                   return 'Unknown School'
                 }
+              }
+            },
+            {data: 'team_type', title: 'Federasi', name: 'team_type',
+              "render": function ( data, type, row, meta ) {
+                return data.name
               }
             },
             {data: 'team_type', title: 'Tipe Tim', name: 'team_type',

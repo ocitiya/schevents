@@ -96,6 +96,8 @@
             },
             columns: [
               {data: 'name', title: 'Name', name: 'name'},
+              {data: 'name', title: 'Singkatan Federasi', name: 'name'},
+              {data: 'county', title: 'State', name: 'county'},
               {data: 'county', title: 'Kota', name: 'county',
                 "render": function ( data, type, row, meta ) {
                   return `

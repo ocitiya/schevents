@@ -3,7 +3,7 @@
 @section('content')
   <div id="counties" class="content">
     <div class="title-container">
-      <h4 class="text-primary">Kota</h4>
+      <h4 class="text-primary">State</h4>
 
       <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
@@ -15,7 +15,7 @@
     <div class="data-container">
       <div class="data-header">
         <a href="{{ route('admin.location.counties.create') }}" class="btn btn-primary btn-sm unrounded">
-          Tambah Kota&nbsp;
+          Tambah State&nbsp;
           <i class="fa-solid fa-plus"></i>
         </a>
       </div>
@@ -34,22 +34,31 @@
         const table = $('#datatable').DataTable({
             processing: true,
             serverSide: true,
-            ajax: "/api/city/listDatatable",
+            ajax: "/api/state/listDatatable",
             columns: [
+              {data: 'logo', title: 'Logo', name: 'logo',
+                "render": function ( data, type, row, meta ) {
+                  if (data === null) {
+                    return '-'
+                  } else {
+                    return `<img src="/storage/counties/logo/${data}" style="width: 75px" class="mb-3">`
+                  }
+                },
+              },
               {data: 'name', title: 'Name', name: 'name'},
               {data: 'abbreviation', title: 'Singkatan', name: 'abbreviation'},
-              {data: 'schools_count', title: 'Jumlah Sekolah', name: 'schools_count'},
+              {data: 'municipality_count', title: 'Jumlah Kota', name: 'municipality_count'},
               {data: 'id', title: 'Aksi', orderable: false, searchable: false,
                 "render": function ( data, type, row, meta ) {
                   const updateRoute = `/admin/location/counties/update/${data}`
+                  const municipalityRoute = `/admin/location/municipalities?state=${data}`
 
                   return `
-                    <a href="/admin/school?city_id=${data}" class="btn btn-sm unrounded btn-primary">
-                      <small>Daftar Sekolah</small>
-                    </a>
-
                     <a href="${updateRoute}" class="btn btn-sm unrounded btn-primary">
-                      <small>Edit Kota</small>
+                      <small>Edit State</small>
+                    </a>
+                    <a href="${municipalityRoute}" class="btn btn-sm unrounded btn-primary">
+                      <small>Data Kota</small>
                     </a>
                   `;
                 }

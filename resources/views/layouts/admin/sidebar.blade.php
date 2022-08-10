@@ -27,6 +27,13 @@
 						class="{{ str_contains(Request::route()->getName(), 'admin.location.counties') ? 'active' : null }}"
 					>
 						<a href="{{ route('admin.location.counties.index') }}">
+							State
+						</a>
+					</li>
+					<li
+						class="{{ str_contains(Request::route()->getName(), 'admin.location.municipalities') ? 'active' : null }}"
+					>
+						<a href="{{ route('admin.location.municipalities.index') }}">
 							Kota
 						</a>
 					</li>
@@ -72,7 +79,7 @@
 		>
 			<a
 				href="{{ route('admin.match-schedule.all.index') }}"
-			>Jadwal Per Kota</a>
+			>Jadwal Federasi</a>
 		</li>
 
 		<li
@@ -80,7 +87,7 @@
 		>
 			<a
 				href="{{ route('admin.match-schedule.incity.index') }}"
-			>Jadwal Antar Kota</a>
+			>Jadwal Pertandingan</a>
 		</li>
 
 		<div class="menu-group">

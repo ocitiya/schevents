@@ -84,6 +84,7 @@
             },
             columns: [
               {data: 'name', title: 'Name', name: 'name'},
+              {data: 'name', title: 'Singkatan Federasi', name: 'name'},
               {data: 'image', title: 'Gambar', name: 'image',
                 "render": function ( data, type, row, meta ) {
                   return `

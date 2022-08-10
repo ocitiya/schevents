@@ -20,6 +20,7 @@
           <q-route-tab :to="{ name: 'home' }" label="Home" icon="home" />
           <q-route-tab :to="{ name: 'club' }" label="Club" icon="groups" />
           <q-route-tab :to="{ name: 'news' }" label="News" icon="newspaper" />
+          <q-route-tab :to="{ name: 'news' }" label="Schedules" icon="newspaper" />
           <q-route-tab :to="{ name: 'video' }" label="Videos" icon="videocam" />
           <q-route-tab :to="{ name: 'scores' }" label="Scores" icon="scoreboard" />
           <q-route-tab :to="{ name: 'about' }" label="About" icon="description" />
@@ -120,6 +121,11 @@ const linksList = [
   },
   {
     title: 'News',
+    icon: 'newspaper',
+    link_name: 'news'
+  },
+  {
+    title: 'Schedule',
     icon: 'newspaper',
     link_name: 'news'
   },

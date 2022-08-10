@@ -50,7 +50,7 @@
           <div class="col-7">
             <div class="row">
               <div class="col-5">
-                <label for="name">Olahraga *</label>
+                <label for="name">Federasi *</label>
               </div>
               <div class="col-7">
                 <select required name="sport_type_id" class="form-select select2" id="sport_type_id">
@@ -64,13 +64,13 @@
 
             <div class="row">
               <div class="col-5">
-                <label for="name">Kota 1*</label>
+                <label for="name">Olahraga *</label>
               </div>
               <div class="col-7">
-                <select required name="county_id" class="form-select select2" id="county_id">
+                <select required name="sport_type_id" class="form-select select2" id="sport_type_id">
                   <option disabled selected value>Please select ...</option>
-                  @foreach ($cities as $item)
-                    <option value="{{ $item->id }}">{{ $item->name }} - {{ $item->abbreviation }}</option>
+                  @foreach ($types as $item)
+                    <option value="{{ $item->id }}">{{ $item->name }}</option>
                   @endforeach
                 </select>
               </div>
@@ -89,10 +89,27 @@
 
             <div class="row">
               <div class="col-5">
-                <label for="score1">Skor 1</label>
+                <label for="name">Sistem Pertandingan</label>
               </div>
               <div class="col-7">
-                <input type="number" name="score1" class="form-control" >
+                <div class="form-check">
+                  <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1">
+                  <label class="form-check-label" for="flexRadioDefault1">
+                    Home
+                  </label>
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault2" checked>
+                  <label class="form-check-label" for="flexRadioDefault2">
+                    Away
+                  </label>
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault2" checked>
+                  <label class="form-check-label" for="flexRadioDefault2">
+                    Neutral
+                  </label>
+                </div>
               </div>
             </div>
 
@@ -118,26 +135,38 @@
 
             <div class="row">
               <div class="col-5">
-                <label for="name">Kota 2*</label>
-              </div>
-              <div class="col-7">
-                <select required name="county2_id" class="form-select select2" id="county2_id">
-                  <option disabled selected value>Please select ...</option>
-                  @foreach ($cities as $item)
-                    <option value="{{ $item->id }}">{{ $item->name }} - {{ $item->abbreviation }}</option>
-                  @endforeach
-                </select>
-              </div>
-            </div>
-            
-            <div class="row">
-              <div class="col-5">
                 <label for="name">Sekolah *</label>
               </div>
               <div class="col-7">
                 <select required name="school2_id" class="form-select select2" id="school2_id">
                   {{-- Dynamic Data --}}
                 </select>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-5">
+                <label for="name">Sistem Pertandingan</label>
+              </div>
+              <div class="col-7">
+                <div class="form-check">
+                  <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1">
+                  <label class="form-check-label" for="flexRadioDefault1">
+                    Home
+                  </label>
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault2" checked>
+                  <label class="form-check-label" for="flexRadioDefault2">
+                    Away
+                  </label>
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault2" checked>
+                  <label class="form-check-label" for="flexRadioDefault2">
+                    Neutral
+                  </label>
+                </div>
               </div>
             </div>
 

@@ -3,7 +3,7 @@
 @section('content')
   <div id="counties" class="content">
     <div class="title-container">
-      <h4 class="text-primary">Kota</h4>
+      <h4 class="text-primary">State</h4>
 
       <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
@@ -19,9 +19,9 @@
       <div class="data-header">
         <h5 class="text-primary">
           @if(!isset($data))
-            <span>Tambah Kota Baru</span>
+            <span>Tambah State Baru</span>
           @else
-            <span>Ubah Kota {{ $data->name }}</span>
+            <span>Ubah State {{ $data->name }}</span>
           @endisset
         </h5>
       </div>
@@ -42,6 +42,7 @@
           method="POST"
           autocomplete="off"
           class="form-container row"
+          enctype="multipart/form-data"
         >
           {{ csrf_field() }}
 
@@ -50,17 +51,17 @@
           <div class="col-6">
             <div class="row">
               <div class="col-5">
-                <label for="name">Nama Kota *</label>
+                <label for="name">Nama State *</label>
               </div>
               <div class="col-7">
                 <input type="text" id="name" name="name" class="form-control capitalize"
                   value="{{ old('name', isset($data) ? $data->name : null) }}"
                 >
                 <div class="invalid-feedback">
-                  Kota sudah terdaftar
+                  State sudah terdaftar
                 </div>
                 <div class="valid-feedback">
-                  Kota bisa didaftarkan
+                  State bisa didaftarkan
                 </div>
               </div>
             </div>
@@ -73,6 +74,31 @@
                 <input type="text" id="abbreviation" name="abbreviation" class="form-control capitalize"
                   value="{{ old('abbreviation', isset($data) ? $data->abbreviation : null) }}"
                 >
+              </div>
+            </div>
+
+            @if (isset($data) && !empty($data->logo))
+              <div class="row">
+                <div class="col-5"></div>
+                <div class="col-7">
+                  <img src="{{"/storage/counties/logo/{$data->logo}" }}" style="width: 100%">
+                </div>
+              </div>
+            @endif
+
+            <div class="row">
+              <div class="col-5">
+                <label for="logo">Logo</label>
+              </div>
+              <div class="col-7">
+                <input type="file" name="logo" id="logo" class="form-control" accept=".png, .jpg">
+                <div class="">
+                  @if (isset($data))
+                    <small>Upload again to change logo | File type: .jpg, .png</small><br><br>
+                  @else
+                    <small>File type: .jpg, .png</small><br><br>
+                  @endif
+                </div>
               </div>
             </div>
 
@@ -92,9 +118,13 @@
 @endsection
 
 <script>
+  let is_create = "<?php echo !isset($data) ? 1 : 0 ?>"
+  is_create = !!parseInt(is_create)
+
   document.addEventListener('DOMContentLoaded', function () {
+    if (!is_create) $('#submit').removeClass('disabled')
+
     const nameValidate = (elem, state) => {
-      console.log(state)
       if (!state) {
         $(elem).addClass('is-invalid') 
         $(elem).removeClass('is-valid')

@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Storage;
+use Intervention\Image\Facades\Image;
 
 use DataTables;
 
@@ -37,12 +39,33 @@ class CountiesController extends Controller {
 	}
 
 	public function store (Request $request) {
+		$isCreate = $request->id == null ? true : false;
+
 		$validated = $request->validate([
 			'name' => 'required|max:255',
 			'abbreviation' => 'required|max:255',
+			'logo' => 'nullable|mimes:jpg,png'
 		]);
 
-		$isCreate = $request->id == null ? true : false;
+		if ($request->hasFile('logo')) {
+			if(!Storage::exists("/public/counties/logo")) Storage::makeDirectory("/public/counties/logo");
+			$file = $request->file('logo');
+
+			$filenameWithExt = $request->file('logo')->getClientOriginalName();
+			$filename = pathinfo($filenameWithExt, PATHINFO_FILENAME);
+			$extension = $request->file('logo')->getClientOriginalExtension();
+
+			$filename = $filename.'_'.time().'.'.$extension;
+			$path = storage_path('app/public/counties/logo/').$filename;
+			$file->storeAs('public/counties/logo', $filename);
+
+			// Resize image
+			$img = Image::make($file->getRealPath())
+				->resize(512, 512, function ($constraint) {
+					$constraint->aspectRatio();
+				})
+				->save($path, 80);
+		}
 
 		$counties = null;
 		if ($isCreate) {
@@ -50,12 +73,19 @@ class CountiesController extends Controller {
 			$counties->id = Str::uuid();
 		} else {
 			$counties = County::find($request->id);
+			if ($request->hasFile('logo')) {
+				$oldPath = storage_path('app/public/counties/logo/').$counties->logo;
+				if (file_exists($oldPath) && is_file($oldPath)) {
+					unlink($oldPath);
+				}
+			}
 		}
 		
 		try {
 			$counties->country_id = Country::first()->id;
 			$counties->abbreviation = $request->abbreviation;
 			$counties->name = ucwords($request->name);
+			if ($request->hasFile('logo')) $counties->logo = $filename;
 			$counties->save();
 
 			return redirect()
@@ -68,7 +98,7 @@ class CountiesController extends Controller {
 	}
 
 	public function listDatatable(Request $request) {
-		$data = County::withCount(["schools"])->get();
+		$data = County::withCount(["municipality"])->get();
 		return Datatables::of($data)->make(true);
 	}
 

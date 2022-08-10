@@ -21,4 +21,12 @@ class Municipality extends Model {
 	public function county () {
 		return $this->belongsTo(County::class);
 	}
+
+	public function schools () {
+		return $this->hasMany(School::class);
+	}
+
+	public function match () {
+		return $this->hasMany(MatchSchedule::class, 'municipality_id');
+	}
 }

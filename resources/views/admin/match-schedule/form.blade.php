@@ -186,6 +186,19 @@
               </div>
             </div>
 
+            <div class="row">
+              <div class="col-5">
+                <label for="name">Jenis Tim</label>
+              </div>
+              <div class="col-7">
+                <select name="team_gender" class="form-select select2" id="team_gender">
+                  <option disabled selected value>Please select ...</option>
+                  <option value="boy">Laki-laki</option>
+                  <option value="girl">Perempuan</option>
+                </select>
+              </div>
+            </div>
+
             <div class="border p-3 my-3">
               <small class="">
                 <i class="fa-solid fa-triangle-exclamation"></i>&nbsp;

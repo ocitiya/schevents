@@ -50,6 +50,7 @@ Route::middleware(['haveInstalled'])->group(function () {
 		Route::middleware('auth')->group(function () {
 			Route::get('/', [AdminDashboardController::class, 'index'])->name('dashboard');
 
+			// admin.location
 			Route::group(['prefix' => 'location', 'as' => 'location.'], function () {
 				Route::group(['prefix' => 'countries', 'as' => 'countries.'], function () {
 					Route::get('/', [CountriesController::class, 'index'])->name('index');
@@ -60,6 +61,7 @@ Route::middleware(['haveInstalled'])->group(function () {
 					Route::post('/store', [CountriesController::class, 'store'])->name('store');
 				});
 
+			// admin.location.provinces
 				Route::group(['prefix' => 'provinces', 'as' => 'provinces.'], function () {
 					Route::get('/', [ProvincesController::class, 'index'])->name('index');
 					Route::get('/create', [ProvincesController::class, 'create'])->name('create');
@@ -69,6 +71,7 @@ Route::middleware(['haveInstalled'])->group(function () {
 					Route::post('/store', [ProvincesController::class, 'store'])->name('store');
 				});
 
+			// admin.location.counties
 				Route::group(['prefix' => 'counties', 'as' => 'counties.'], function () {
 					Route::get('/', [CountiesController::class, 'index'])->name('index');
 					Route::get('/create', [CountiesController::class, 'create'])->name('create');
@@ -78,6 +81,7 @@ Route::middleware(['haveInstalled'])->group(function () {
 					Route::post('/store', [CountiesController::class, 'store'])->name('store');
 				});
 
+			// admin.location.municipalities
 				Route::group(['prefix' => 'municipalities', 'as' => 'municipalities.'], function () {
 					Route::get('/', [MunicipalitiesController::class, 'index'])->name('index');
 					Route::get('/create', [MunicipalitiesController::class, 'create'])->name('create');
