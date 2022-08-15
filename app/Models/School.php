@@ -27,19 +27,19 @@ class School extends Model {
 		return $this->belongsTo(Province::class);
 	}
 
-	public function county () {
-		return $this->belongsTo(County::class);
-	}
-
 	public function municipality () {
 		return $this->belongsTo(Municipality::class);
+	}
+
+	public function county () {
+		return $this->belongsTo(County::class);
 	}
 
 	public function federation () {
 		return $this->belongsTo(Federation::class);
 	}
 
-	public function associtaion () {
+	public function association () {
 		return $this->belongsTo(Association::class);
 	}
 }

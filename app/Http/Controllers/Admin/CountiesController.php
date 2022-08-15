@@ -106,25 +106,14 @@ class CountiesController extends Controller {
 		try {
 			$showAll = $request->has('showall') ? (boolean) $request->showall : false;
 			$search = $request->has('search') ? $request->search : null;
-			$school = $request->has('school') ? $request->school : null;
 
 			$page = $request->has('page') ? $request->page : 1;
 			if (empty($page)) $page = 1; 
 			$limit = 10;
 
-			$country_id = $request->has('country_id') ? $request->country_id : null;
-
 			$model = County::with(['province'])
 				->when($search != null, function ($query) use ($search) {
 					$query->where('name', 'LIKE', '%'.$search.'%');
-				})
-				->when($country_id != null, function ($query) use ($country_id) {
-					$query->where('country_id', $country_id);
-				})
-				->when($school != null, function ($query) use ($school) {
-					$query->whereHas('schools', function ($q2) use ($school) {
-						$q2->where('name', 'like', $school);
-					});
 				});
 
 			$model2 = $model;
@@ -133,7 +122,6 @@ class CountiesController extends Controller {
 			$counties = $model->when(!$showAll, function ($query) use ($limit, $page) {
 				$query->take($limit)->skip(($page - 1) * $limit);
 			})
-				->withCount('schools')
 				->orderBy('name')
 				->get();
 

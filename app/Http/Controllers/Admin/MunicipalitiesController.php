@@ -105,17 +105,35 @@ class MunicipalitiesController extends Controller {
 
 	public function list (Request $request) {
 		try {
+			$showAll = $request->has('showall') ? (boolean) $request->showall : false;
+			$search = $request->has('search') ? $request->search : null;
+			$state_id = $request->has('state_id') ? $request->state_id : null;
+			$id = $request->has('id') ? $request->id : null;
+			
 			$page = $request->has('page') ? $request->page : 1;
 			if (empty($page)) $page = 1; 
-			$search = $request->has('search') ? $request->search : null;
+			
 			$limit = 10;
 
-			$municipalities = Municipality::with(['county'])
+			$model = Municipality::with(['county'])
 				->when($search != null, function ($query) use ($search) {
 					$query->where('name', 'LIKE', '%'.$search.'%');
 				})
-				->take($limit)
-				->skip($page - 1)
+				->when($state_id != null, function ($query) use ($state_id) {
+					$query->where('county_id', $state_id);
+				})
+				->when($id != null, function ($query) use ($id) {
+					$query->where('id', $id);
+				});
+
+			$model2 = $model;
+			$total = $model2->count();
+
+			$municipalities = $model->when(!$showAll, function ($query) use ($limit, $page) {
+				$query->take($limit)->skip(($page - 1) * $limit);
+			})
+				->withCount('schools')
+				->orderBy('name')
 				->get();
 
 			$total = Municipality::when($search != null, function ($query) use ($search) {

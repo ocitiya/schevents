@@ -22,4 +22,12 @@ class Federation extends Model {
   public function associations () {
     return $this->hasMany(Association::class);
   }
+
+	public function sports () {
+		return $this->hasMany(SportType::class);
+	}
+
+	public function matchSchedule () {
+		return $this->hasMany(MatchSchedule::class);
+	}
 }

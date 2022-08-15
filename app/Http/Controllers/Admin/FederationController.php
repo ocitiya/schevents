@@ -119,21 +119,23 @@ class FederationController extends Controller {
 	}
 
 	public function list (Request $request) {
+		$showAll = $request->has('showall') ? (boolean) $request->showall : false;
+		$search = $request->has('search') ? $request->search : null;
+
 		$page = $request->has('page') ? $request->page : 1;
 		if (empty($page)) $page = 1; 
-		$search = $request->has('search') ? $request->search : null;
 		$limit = 10;
 
-		$types = Federation::when($search != null, function ($query) use ($search) {
-      $query->where('name', 'LIKE', '%'.$search.'%');
-    })
-    ->take($limit)
-    ->skip($page - 1)
-    ->get();
+		$model = Federation::withCount("sports")
+			->when($search != null, function ($query) use ($search) {
+				$query->where('name', 'LIKE', '%'.$search.'%');
+			});
 
-		$total = Federation::when($search != null, function ($query) use ($search) {
-			$query->where('name', 'LIKE', '%'.$search.'%');
-		})->count();
+		$types = clone($model)->when(!$showAll, function ($query) use ($limit, $page) {
+			$query->take($limit)->skip(($page - 1) * $limit);
+		});
+
+		$total = clone($model)->count();
 
 		return response()->json([
 			"status" => true,
@@ -152,7 +154,7 @@ class FederationController extends Controller {
 	}
 
 	public function listDatatable(Request $request) {
-		$data = Federation::get();
+		$data = Federation::withCount("sports")->get();
 		return Datatables::of($data)->make(true);
 	}
 

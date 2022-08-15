@@ -53,9 +53,9 @@
                 <label for="name">Federasi *</label>
               </div>
               <div class="col-7">
-                <select required name="sport_type_id" class="form-select select2" id="sport_type_id">
+                <select required name="federation_id" class="form-select select2" id="federation_id">
                   <option disabled selected value>Please select ...</option>
-                  @foreach ($types as $item)
+                  @foreach ($federations as $item)
                     <option value="{{ $item->id }}">{{ $item->name }}</option>
                   @endforeach
                 </select>
@@ -68,10 +68,8 @@
               </div>
               <div class="col-7">
                 <select required name="sport_type_id" class="form-select select2" id="sport_type_id">
-                  <option disabled selected value>Please select ...</option>
-                  @foreach ($types as $item)
-                    <option value="{{ $item->id }}">{{ $item->name }}</option>
-                  @endforeach
+                  <option disabled selected value>Pilih Federasi Dulu</option>
+                  {{-- Dynamic Data --}}
                 </select>
               </div>
             </div>
@@ -82,6 +80,7 @@
               </div>
               <div class="col-7">
                 <select required name="school1_id" class="form-select select2" id="school1_id">
+                  <option disabled selected value>Pilih Federasi Dulu</option>
                   {{-- Dynamic Data --}}
                 </select>
               </div>
@@ -93,20 +92,20 @@
               </div>
               <div class="col-7">
                 <div class="form-check">
-                  <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1">
-                  <label class="form-check-label" for="flexRadioDefault1">
+                  <input class="form-check-input" type="radio" name="match_system" value="home" id="match_system_home">
+                  <label class="form-check-label" for="match_system_home">
                     Home
                   </label>
                 </div>
                 <div class="form-check">
-                  <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault2" checked>
-                  <label class="form-check-label" for="flexRadioDefault2">
+                  <input class="form-check-input" type="radio" name="match_system" value="away" id="match_system_away">
+                  <label class="form-check-label" for="match_system_away">
                     Away
                   </label>
                 </div>
                 <div class="form-check">
-                  <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault2" checked>
-                  <label class="form-check-label" for="flexRadioDefault2">
+                  <input class="form-check-input" type="radio" name="match_system" value="neutral" id="match_system_neutral">
+                  <label class="form-check-label" for="match_system_neutral">
                     Neutral
                   </label>
                 </div>
@@ -135,10 +134,11 @@
 
             <div class="row">
               <div class="col-5">
-                <label for="name">Sekolah *</label>
+                <label for="name">Sekolah 2 *</label>
               </div>
               <div class="col-7">
                 <select required name="school2_id" class="form-select select2" id="school2_id">
+                  <option disabled selected value>Pilih Federasi Dulu</option>
                   {{-- Dynamic Data --}}
                 </select>
               </div>
@@ -150,20 +150,20 @@
               </div>
               <div class="col-7">
                 <div class="form-check">
-                  <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1">
-                  <label class="form-check-label" for="flexRadioDefault1">
+                  <input class="form-check-input" type="radio" name="match_system2" value="home" id="match_system2_home">
+                  <label class="form-check-label" for="match_system2_home">
                     Home
                   </label>
                 </div>
                 <div class="form-check">
-                  <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault2" checked>
-                  <label class="form-check-label" for="flexRadioDefault2">
+                  <input class="form-check-input" type="radio" name="match_system2" value="away" id="match_system2_away">
+                  <label class="form-check-label" for="match_system2_away">
                     Away
                   </label>
                 </div>
                 <div class="form-check">
-                  <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault2" checked>
-                  <label class="form-check-label" for="flexRadioDefault2">
+                  <input class="form-check-input" type="radio" name="match_system2" value="neutral" id="match_system2_neutral">
+                  <label class="form-check-label" for="match_system2_neutral">
                     Neutral
                   </label>
                 </div>
@@ -282,25 +282,15 @@
 
 @section('script')
   <script>
-    const typeSelected = "<?php echo old('sport_type_id', isset($data) ? $data->sport_type_id : null) ?>";
-    const countySelected = "<?php echo old('county_id', isset($data) ? $data->county_id : null) ?>";
-    const county2Selected = "<?php echo old('county2_id', isset($data) ? $data->county2_id : null) ?>";
+    const sportSelected = "<?php echo old('sport_type_id', isset($data) ? $data->sport_type_id : null) ?>";
     const school1Selected = "<?php echo old('school1_id', isset($data) ? $data->school1_id : null) ?>";
     const school2Selected = "<?php echo old('school2_id', isset($data) ? $data->school2_id : null) ?>";
     const teamTypeSelected = "<?php echo old('team_type_id', isset($data) ? $data->team_type_id : null) ?>";
     const teamGenderSelected = "<?php echo old('team_gender', isset($data) ? $data->team_gender : null) ?>";
-    // const datetimeFill = "<?php echo old('datetime', isset($data) ? $data->datetime : null) ?>"
     const timeHourSelected = "<?php echo old('time_hour', isset($data) ? $data->time_hour : null) ?>";
     const timeMinuteSelected = "<?php echo old('time_minute', isset($data) ? $data->time_minute : null) ?>";
-    
-    const generateSelect = (elemId, data) => {
-      $(elemId).empty()
-
-      $(elemId).append('<option disabled selected value>Please select ...</option')
-      data.map(item => {
-        $(elemId).append(`<option value="${item.id}">${item.name}</option>`)
-      })
-    }
+    const matchSystemSelected = "<?php echo old('match_system', isset($data) ? $data->match_system : null) ?>";
+    const matchSystem2Selected = "<?php echo old('match_system2', isset($data) ? $data->match_system2 : null) ?>";
 
     const getList = (endpoint) => {
       return new Promise((resolve, reject) => {
@@ -318,27 +308,33 @@
     }
 
     document.addEventListener('DOMContentLoaded', function() {
-      $('#county_id').on('change', async function () {
+      $('#federation_id').on('change', async function () {
         const val = $(this).val()
-        const schools = await getList(`/api/school/list?showall=true&county_id=${val}`)
-        generateSelect('#school1_id', schools)
+
+        const schools = await getList(`/api/school/list?showall=true&federation_id=${val}`)
+        generateSelect('#school1_id', schools, false)
         $('#school1_id').val(school1Selected).change()
-      })
 
-      $('#county2_id').on('change', async function () {
-        const val = $(this).val()
-        const schools = await getList(`/api/school/list?showall=true&county_id=${val}`)
-        generateSelect('#school2_id', schools)
+        generateSelect('#school2_id', schools, false)
         $('#school2_id').val(school2Selected).change()
+
+        const sports = await getList(`/api/sport-type/list?showall=true&federation_id=${val}`)
+        generateSelect('#sport_type_id', sports, false)
+        $('#sport_type_id').val(sportSelected).change()
       })
 
-      $('#sport_type_id').val(typeSelected).change()
-      $('#county_id').val(countySelected).change()
-      $('#county2_id').val(county2Selected).change()
       $('#team_gender').val(teamGenderSelected).change()
       $('#time_hour').val(timeHourSelected).change()
       $('#time_minute').val(timeMinuteSelected).change()
       $('#team_type_id').val(teamTypeSelected).change()
+
+      if (matchSystemSelected !== null) {
+        $(`#match_system_${matchSystemSelected}`).prop("checked", true);
+      }
+
+      if (matchSystem2Selected !== null) {
+        $(`#match_system_${matchSystem2Selected}`).prop("checked", true);
+      }
 
       const datetime = $('#datetimeHidden').daterangepicker({
         autoUpdateInput: false,

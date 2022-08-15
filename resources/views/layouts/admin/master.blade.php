@@ -77,6 +77,19 @@
         }
       }
 
+      const generateSelect = (elemId, data, abbreviation = true) => {
+        $(elemId).empty()
+
+        $(elemId).append('<option disabled selected value>Please select ...</option')
+        data.map(item => {
+          if (abbreviation) {
+            $(elemId).append(`<option value="${item.id}">${item.name} - ${item.abbreviation}</option>`)
+          } else {
+            $(elemId).append(`<option value="${item.id}">${item.name}</option>`)
+          }
+        })
+      }
+
       document.addEventListener('DOMContentLoaded', function () {
         const sidebarCollapse = document.querySelector('#sidebarCollapse')
         const sidebar = document.querySelector('#sidebar')

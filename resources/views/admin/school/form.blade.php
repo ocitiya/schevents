@@ -89,7 +89,7 @@
                 <label for="name">Federasi *</label>
               </div>
               <div class="col-7">
-                <select class="form-select" id="federation_id" name="federation_id">
+                <select class="form-select" id="federation_id" name="federation_id" required>
                   <option disabled selected value>Please select ...</option>
                   @foreach ($federations as $item)
                     <option value="{{ $item->id }}">{{ $item->name }}</option>
@@ -115,8 +115,8 @@
                 <label for="name">State *</label>
               </div>
               <div class="col-7">
-                @if ($default_city != null)
-                  <input type="hidden" name="county_id" value="{{ $default_city }}"/>
+                @if ($default_state != null)
+                  <input type="hidden" name="county_id" value="{{ $default_state }}"/>
                   <select class="form-select" id="county_id" disabled>
                     {{-- Dynamic Data --}}
                   </select>
@@ -133,16 +133,10 @@
                 <label for="name">Kota *</label>
               </div>
               <div class="col-7">
-                @if ($default_city != null)
-                  <input type="hidden" name="county_id" value="{{ $default_city }}"/>
-                  <select class="form-select" id="county_id" disabled>
-                    {{-- Dynamic Data --}}
-                  </select>
-                @else
-                  <select name="county_id" class="form-select select2" id="county_id">
-                    {{-- Dynamic Data --}}
-                  </select>
-                @endif
+                <select name="municipality_id" class="form-select select2" id="municipality_id">
+                  <option disabled selected value>Pilih State Dulu</option>
+                  {{-- Dynamic Data --}}
+                </select>
               </div>
             </div>
 
@@ -192,7 +186,8 @@
 
 @section('script')
   <script>
-    const countySelected = "<?php echo old('county_id', isset($data) ? $data->county_id : $default_city) ?>";
+    let stateSelected = "<?php echo old('county_id', isset($data) ? $data->county_id : $default_state) ?>";
+    let citySelected = "<?php echo old('municipality_id', isset($data) ? $data->municipality_id : $default_city) ?>";
     const federationSelected = "<?php echo old('federation_id', isset($data) ? $data->federation_id : null) ?>";
     const associationSelected = "<?php echo old('association_id', isset($data) ? $data->association_id : null) ?>";
     const cityDefault = "<?php echo $default_city ? 1 : 0 ?>"
@@ -215,17 +210,15 @@
       })
     }
 
-    const generateSelect = (elemId, data) => {
-      $(elemId).empty()
-
-      $(elemId).append('<option disabled selected value>Please select ...</option')
-      data.map(item => {
-        $(elemId).append(`<option value="${item.id}">${item.name} - ${item.abbreviation}</option>`)
-      })
-    }
-
     document.addEventListener('DOMContentLoaded', async function () {
       if (!is_create) $('#submit').removeClass('disabled')
+      if (cityDefault == 1) {
+        $('#county_id').prop('disabled', true)
+        $(`<input type="hidden" name="county_id" value="${stateSelected}" />`).insertBefore('#county_id')
+      
+        $('#municipality_id').prop('disabled', true)
+        $(`<input type="hidden" name="municipality_id" value="${citySelected}" />`).insertBefore('#municipality_id')
+      }
       
       $('#federation_id').on('change', async function () {
         const val = $(this).val()
@@ -236,13 +229,25 @@
         }
       })
 
+      $('#county_id').on('change', async function () {
+        const val = $(this).val()
+        if (val !== null) {
+          stateSelected = val
+
+          const municipalities = await getList(`/api/municipality/list?state_id=${stateSelected}&showall=true`)
+          generateSelect('#municipality_id', municipalities, false)
+          $('#municipality_id').val(citySelected).change()
+          if (cityDefault == 1) $('input[name=municipality_id').val(citySelected)
+        }
+      })
+
       const countries = await getList('/api/country/list')
       const country = countries[0]
 
       const cities = await getList(`/api/county/list?country_id=${country.id}&showall=true`)
       generateSelect('#county_id', cities)
-      $('#county_id').val(countySelected).change()
-      if (cityDefault == 1) $('#county_id').prop('disabled', true)
+      $('#county_id').val(stateSelected).change()
+      if (cityDefault == 1) $('input[name=county_id').val(stateSelected)
 
       $('#federation_id').val(federationSelected).change()
       

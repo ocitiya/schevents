@@ -21,7 +21,7 @@
     <div class="data-container">
       <div class="data-header">
         @if ($default_city != null)
-          <a href="{{ route('admin.school.create')."?city_id={$default_city}" }}" class="btn btn-primary btn-sm unrounded">
+          <a href="{{ route('admin.school.create')."?state_id={$default_state}&city_id={$default_city}" }}" class="btn btn-primary btn-sm unrounded">
             Tambah Sekolah&nbsp;
             <i class="fa-solid fa-plus"></i>
           </a>
@@ -43,7 +43,9 @@
 @section('script')
   <script>
     let table = null;
+    const state_id = "<?php echo $default_state ?>"
     const city_id = "<?php echo $default_city ?>"
+    const isCityDefault = "<?php echo $default_city ? 1 : 0 ?>"
 
     document.addEventListener('DOMContentLoaded', async function () {
       $('#datatable').on('click', '.delete', function () {
@@ -97,8 +99,7 @@
             columns: [
               {data: 'name', title: 'Name', name: 'name'},
               {data: 'name', title: 'Singkatan Federasi', name: 'name'},
-              {data: 'county', title: 'State', name: 'county'},
-              {data: 'county', title: 'Kota', name: 'county',
+              {data: 'municipality', title: 'Kota', name: 'municipality',
                 "render": function ( data, type, row, meta ) {
                   return `
                     ${data.name}
@@ -120,7 +121,12 @@
               },
               {data: 'id', title: 'Aksi', orderable: false, searchable: false,
                 "render": function ( data, type, row, meta ) {
-                  const updateRoute = `/admin/school/update/${data}`
+                  let updateRoute
+                  if (isCityDefault) {
+                    updateRoute = `/admin/school/update/${data}?state_id=${state_id}&city_id=${city_id}`
+                  } else {
+                    updateRoute = `/admin/school/update/${data}`
+                  }
 
                   return `
                     <a href="${updateRoute}" class="btn btn-sm unrounded btn-primary">

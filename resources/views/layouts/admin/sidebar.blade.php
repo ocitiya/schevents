@@ -75,18 +75,18 @@
 		</div>
 	
 		<li
-			class="{{ str_contains(Request::route()->getName(), 'admin.match-schedule.all') ? 'active' : null }}"
+			class="{{ str_contains(Request::route()->getName(), 'admin.match-schedule.federation.index') ? 'active' : null }}"
 		>
 			<a
-				href="{{ route('admin.match-schedule.all.index') }}"
+				href="{{ route('admin.match-schedule.federation.index') }}"
 			>Jadwal Federasi</a>
 		</li>
 
 		<li
-			class="{{ str_contains(Request::route()->getName(), 'admin.match-schedule.incity') ? 'active' : null }}"
+			class="{{ str_contains(Request::route()->getName(), 'admin.match-schedule.index') ? 'active' : null }}"
 		>
 			<a
-				href="{{ route('admin.match-schedule.incity.index') }}"
+				href="{{ route('admin.match-schedule.index') }}"
 			>Jadwal Pertandingan</a>
 		</li>
 

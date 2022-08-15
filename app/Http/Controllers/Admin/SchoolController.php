@@ -14,22 +14,26 @@ use DataTables;
 use App\Models\Country;
 use App\Models\School;
 use App\Models\County;
+use App\Models\Municipality;
 use App\Models\Federation;
 
 class SchoolController extends Controller {
 	public function index (Request $request) {
+		$defaultState = $request->has("state_id") ? $request->state_id : null;
 		$defaultCity = $request->has("city_id") ? $request->city_id : null;
 
 		$data = [
+			"default_state" => $defaultState,
 			"default_city" => $defaultCity,
-			"city_name" => ($defaultCity != null) ? County::find($defaultCity)->name : null
+			"city_name" => ($defaultCity != null) ? Municipality::find($defaultCity)->name : null
 		];
-
+		
 		return view('admin.school.index', $data);
 	}
 
 	public function create (Request $request) {
 		$data = [
+			"default_state" => $request->has("state_id") ? $request->state_id : null,
 			"default_city" => $request->has("city_id") ? $request->city_id : null,
 			"federations" => Federation::get()
 		];
@@ -42,9 +46,11 @@ class SchoolController extends Controller {
 
 		$data = [
 			"data" => $types,
+			"default_state" => $request->has("state_id") ? $request->state_id : null,
 			"default_city" => $request->has("city_id") ? $request->city_id : null,
 			"federations" => Federation::get()
 		];
+
 		return view('admin.school.form', $data);
 	}
 
@@ -59,9 +65,10 @@ class SchoolController extends Controller {
 		$validation = [
 			'name' => 'required|max:255',
 			'county_id' => 'required|uuid',
-			'federation_id' => 'uuid',
+			'municipality_id' => 'required|uuid',
+			'federation_id' => 'required|uuid',
 			'association_id' => 'uuid',
-			'logo' => 'mimes:jpg,png'
+			'logo' => 'mimes:jpg,png',
 		];
 
 		$isCreate = $request->id == null ? true : false;
@@ -95,9 +102,10 @@ class SchoolController extends Controller {
 			$school->id = Str::uuid();
 		} else {
 			$school = School::find($request->id);
+
 			if ($request->hasFile('logo')) {
 				$oldPath = storage_path('app/public/school/logo/').$school->logo;
-				if (file_exists($oldPath)) {
+				if (file_exists($oldPath && is_file($oldPath))) {
 					unlink($oldPath);
 				}
 			}
@@ -107,14 +115,18 @@ class SchoolController extends Controller {
 			$school->name = $request->name;
 			$school->country_id = Country::first()->id;
 			$school->county_id = $request->county_id;
+			$school->municipality_id = $request->municipality_id;
 			$school->federation_id = $request->federation_id;
 			$school->association_id = $request->association_id;
 			if ($request->hasFile('logo')) $school->logo = $filename;
 			$school->save();
 
 			if ($request->redirect_city == 1) {
-				$city_id = $request->county_id;
-				return redirect()->route('admin.school.index', ["city_id" => $city_id]);
+				return redirect()->route('admin.school.index', [
+					"state_id" => $request->county_id,
+					"city_id" => $request->municipality_id
+				]);
+				
 			} else {
 				return redirect()->route('admin.school.index');
 			}
@@ -169,9 +181,9 @@ class SchoolController extends Controller {
 	public function listDatatable(Request $request) {
 		$cityId = isset($request->city_id) ? $request->city_id : null;
 
-		$data = School::with(["county"])
+		$data = School::with(["municipality", "federation", "association"])
 			->when($cityId != null, function ($subQuery) use ($cityId) {
-				$subQuery->where('county_id', $cityId);
+				$subQuery->where('municipality_id', $cityId);
 			})
 			->get();
 
@@ -182,27 +194,30 @@ class SchoolController extends Controller {
 		$showAll = $request->has('showall') ? (boolean) $request->showall : false;
 		$search = $request->has('search') ? $request->search : null;
 		$county_id = $request->has('county_id') ? $request->county_id : null;
+		$federation_id = $request->has('federation_id') ? $request->federation_id : null;
 		
 		$page = $request->has('page') ? $request->page : 1;
 		if (empty($page)) $page = 1; 
 		$limit = 10;
 
-		$schools = School::with(['county'])
+		$model = School::with(["federation", "association", "municipality", "county"])
 			->when($search != null, function ($query) use ($search) {
         $query->where('name', 'LIKE', '%'.$search.'%');
       })
-			->when(!$showAll, function ($query) {
-				$query->take($limit)->skip(($page - 1) * $limit);
-			})
 			->when($county_id != null, function ($query) use ($county_id) {
 				$query->where('county_id', $county_id);
 			})
+			->when($federation_id != null, function ($query) use ($federation_id) {
+				$query->where('federation_id', $federation_id);
+			});
+
+		$schools = clone($model)->when(!$showAll, function ($query) {
+			$query->take($limit)->skip(($page - 1) * $limit);
+		})
 			->orderBy('name')
 			->get();
 
-		$total = School::when($search != null, function ($query) use ($search) {
-			$query->where('name', 'LIKE', '%'.$search.'%');
-		})->count();
+		$total = $model->count();
 
 		return response()->json([
 			"status" => true,
@@ -212,7 +227,7 @@ class SchoolController extends Controller {
 				"pagination" => [
 					"total" => $total,
 					"search" => $search,
-					"page" => !$showAll ? (int) $page : -1,
+					"page" => !$showAll ? (int) $page : 1,
 					"limit" => !$showAll ? $limit : -1,
 					"total_page" => !$showAll ? ceil($total / $limit) : 1
 				]

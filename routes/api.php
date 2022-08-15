@@ -42,6 +42,7 @@ Route::post('/county/validate', [CountiesController::class, 'validateCounty']);
 Route::get('/municipality/list/{county_id?}', [MunicipalitiesController::class, 'list']);
 
 Route::get('/school/list/{school_id?}', [SchoolController::class, 'list']);
+Route::post('/school/listDatatable', [SchoolController::class, 'listDatatable']);
 Route::post('/school/validate', [SchoolController::class, 'validateSchool']);
 
 Route::get('/match-schedule/list', [MatchScheduleController::class, 'list']);
@@ -50,10 +51,9 @@ Route::get('/stadium/list', [StadiumController::class, 'list']);
 Route::get('/state/listDatatable', [CountiesController::class, 'listDatatable']);
 Route::get('/city/listDatatable', [MunicipalitiesController::class, 'listDatatable']);
 
-Route::post('/school/listDatatable', [SchoolController::class, 'listDatatable']);
-
 Route::get('/sport-type/list', [SportTypeController::class, 'list']);
-Route::get('/sport-type/listDatatable', [SportTypeController::class, 'listDatatable']);
+Route::post('/sport-type/listDatatable', [SportTypeController::class, 'listDatatable']);
+Route::post('/sport-type/validate', [SportTypeController::class, 'validateName']);
 
 Route::get('/team_type/listDatatable', [TeamTypeController::class, 'listDatatable']);
 
@@ -65,6 +65,7 @@ Route::post('/association/validate', [AssociationController::class, 'validateNam
 Route::get('/federation/listDatatable', [FederationController::class, 'listDatatable']);
 Route::post('/federation/validate', [FederationController::class, 'validateName']);
 
+Route::get('/match-schedule/listOnFederation', [MatchScheduleController::class, 'listOnFederation']);
 Route::post('/match-schedule/listDatatable', [MatchScheduleController::class, 'listDatatable']);
 Route::get('/match-schedule/cityMatchDatatable', [MatchScheduleController::class, 'cityMatchDatatable']);
 Route::get('/match-schedule/detail/{id}', [MatchScheduleController::class, 'detailAPI']);

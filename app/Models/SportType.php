@@ -18,4 +18,8 @@ class SportType extends Model {
 	protected $casts = [
 		'id' => 'string'
 	];
+
+	public function federation() {
+		return $this->belongsTo(Federation::class);
+	}
 }

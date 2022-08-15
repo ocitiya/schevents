@@ -58,7 +58,7 @@
                   const updateRoute = `/admin/location/municipalities/update/${data}`
 
                   return `
-                    <a href="/admin/school?city_id=${data}" class="btn btn-sm unrounded btn-primary">
+                    <a href="/admin/school?state_id=${row.county_id}&city_id=${data}" class="btn btn-sm unrounded btn-primary">
                       <small>Daftar Sekolah</small>
                     </a>
 

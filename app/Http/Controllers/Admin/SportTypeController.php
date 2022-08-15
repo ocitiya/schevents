@@ -11,20 +11,37 @@ use Intervention\Image\Facades\Image;
 use DataTables;
 
 use App\Models\SportType;
+use App\Models\Federation;
 
 class SportTypeController extends Controller {
 	public function index (Request $request) {
-		return view('admin.sport_type.index');
+		$defaultFederation = $request->has("federation_id") ? $request->federation_id : null;
+
+		$data = [
+			"default_federation" => $defaultFederation,
+			"federation_name" => ($defaultFederation != null) ? Federation::find($defaultFederation)->name : null
+		];
+
+		return view('admin.sport_type.index', $data);
 	}
 
-	public function create () {
-		return view('admin.sport_type.form');
+	public function create (Request $request) {
+		$data = [
+			"default_federation" => $request->has("federation_id") ? $request->federation_id : null,
+			"federations" => Federation::get()
+		];
+
+		return view('admin.sport_type.form', $data);
 	}
 
-	public function update ($id) {
+	public function update (Request $request, $id) {
 		$types = SportType::find($id);
+		$data = [
+			"default_federation" => $request->has("federation_id") ? $request->federation_id : null,
+			"federations" => Federation::get(),
+			"data" => $types
+		];
 
-		$data = [ "data" => $types ];
 		return view('admin.sport_type.form', $data);
 	}
 
@@ -39,7 +56,8 @@ class SportTypeController extends Controller {
 		$isCreate = $request->id == null ? true : false;
 		$validation = [
 			'name' => 'required|max:255',
-			'stream_url' => 'required|url'
+			'stream_url' => 'required|url',
+			'federation_id' => 'required|uuid'
 		];
 		
 		if ($isCreate) {
@@ -82,7 +100,7 @@ class SportTypeController extends Controller {
 		} else {
 			$types = SportType::find($request->id);
 			if ($request->hasFile('image')) {
-				$oldPath = storage_path('app/public/sport/image/').$school->logo;
+				$oldPath = storage_path('app/public/sport/image/').$types->image;
 				if (file_exists($oldPath)) {
 					unlink($oldPath);
 				}
@@ -92,12 +110,20 @@ class SportTypeController extends Controller {
 		try {
 			$types->name = ucwords($request->name);
 			if ($request->hasFile('image')) $types->image = $filename;
+			$types->federation_id = $request->federation_id;
 			$types->stream_url = $request->stream_url;
 			$types->save();
 
-			return redirect()
-				->route("admin.sport.type.index")
-				->with('success', 'Data successfully saved');
+			if ($request->is_default_federation == 1) {
+				return redirect()
+					->route("admin.sport.type.index", ["federation_id" => $request->federation_id])
+					->with('success', 'Data successfully saved');
+			} else {
+				return redirect()
+					->route("admin.sport.type.index")
+					->with('success', 'Data successfully saved');
+			}
+
 		} catch (QueryException $exception) {
 			unlink($path);
 			return redirect()->back()
@@ -128,22 +154,26 @@ class SportTypeController extends Controller {
 	}
 
 	public function list (Request $request) {
+		$search = $request->has('search') ? $request->search : null;
+		$showAll = $request->has('showall') ? (boolean) $request->showall : false;
+		$federation_id = $request->has('federation_id') ? $request->federation_id : null;
+
 		$page = $request->has('page') ? $request->page : 1;
 		if (empty($page)) $page = 1; 
-		$search = $request->has('search') ? $request->search : null;
 		$limit = 10;
 
-		$types = SportType::when($search != null, function ($query) use ($search) {
-        $query->where('name', 'LIKE', '%'.$search.'%');
-      })
-      ->take($limit)
-			->skip($page - 1)
-			->get();
-
-		$total = SportType::when($search != null, function ($query) use ($search) {
+		$model = SportType::when($search != null, function ($query) use ($search) {
 			$query->where('name', 'LIKE', '%'.$search.'%');
-		})->count();
+		})->when($federation_id != null, function ($query) use ($federation_id) {
+			$query->where("federation_id", $federation_id);
+		});
 
+		$types = clone($model)->when(!$showAll, function ($query) use ($limit, $page) {
+			$query->take($limit)->skip(($page - 1) * $limit);
+		})->get();
+
+		$total = $model->count();
+		
 		return response()->json([
 			"status" => true,
 			"message" => null,
@@ -151,17 +181,40 @@ class SportTypeController extends Controller {
 				"list" => $types,
 				"pagination" => [
 					"total" => $total,
-					"page" => (int) $page,
 					"search" => $search,
-					"limit" => $limit,
-					"total_page" => ceil($total / $limit)
+					"page" => !$showAll ? (int) $page : 1,
+					"limit" => !$showAll ? $limit : -1,
+					"total_page" => !$showAll ? ceil($total / $limit) : 1
 				]
 			]
 		]);
 	}
 
 	public function listDatatable(Request $request) {
-		$data = SportType::get();
+		$data = SportType::with(["federation"])
+			->when($request->federation_id != null, function ($query) use ($request) {
+				$query->where("federation_id", $request->federation_id);
+			})
+			->get();
+		
 		return Datatables::of($data)->make(true);
+	}
+
+	public function validateName (Request $request) {
+		$data = SportType::where('name', $request->name)->first();
+
+		if ($data) {
+			return response()->json([
+				"status" => true,
+				"message" => null,
+				"data" => false
+			]);
+		} else {
+			return response()->json([
+				"status" => true,
+				"message" => null,
+				"data" => true
+			]);
+		}
 	}
 }

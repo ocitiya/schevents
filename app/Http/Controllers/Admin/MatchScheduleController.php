@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Intervention\Image\Facades\Image;
 use Illuminate\Database\QueryException;
@@ -22,547 +22,492 @@ use App\Models\SportType;
 use App\Models\Stadium;
 use App\Models\County;
 use App\Models\TeamType;
+use App\Models\Federation;
 
 class MatchScheduleController extends Controller {
-    protected $now;
-    public function __construct(Request $request) {
-        if ($request->header('Timezone') != null) {
-            date_default_timezone_set($request->header('Timezone'));
-            $this->now = Carbon::now()->tz('UTC');
-        } else {
-            $this->now = Carbon::now();
-        }
+  protected $now;
+  public function __construct(Request $request) {
+    if ($request->header('Timezone') != null) {
+      $this->now = Carbon::now($request->header('Timezone'))->setTimezone('UTC');
+    } else {
+      $this->now = Carbon::now();
     }
+  }
     
-	public function index (Request $request) {
-		return view('admin.match-schedule.index');
-	}
+  public function index (Request $request) {
+    $federation_id = $request->has('federation_id') ? $request->federation_id : null;
 
-	public function city (Request $request, $city_id) {
-		$data = ["city" => County::find($city_id)];
-		return view('admin.match-schedule.city', $data);
-	}
+    $data = [ "federation_id" => $federation_id ];
+    if ($federation_id != null) {
+      $federationName = Federation::find($federation_id)->name;
+      $data["federation_name"] = $federationName;
+    }
 
-	public function indexInCity (Request $request) {
-		return view('admin.match-schedule.index-incity');
-	}
+    return view('admin.match-schedule.index', $data);
+  }
 
-	public function inCityCreate (Request $request) {
-		$types = SportType::get();
-		$cities = County::get();
-		$team_types = TeamType::get();
+  public function indexFederation (Request $request) {
+    return view('admin.match-schedule.index-federation');
+  }
 
-		$data = [
-			"types" => $types,
-			"cities" => $cities,
-			"team_types" => $team_types
-		];
+  public function city (Request $request, $city_id) {
+    $data = ["city" => County::find($city_id)];
+    return view('admin.match-schedule.city', $data);
+  }
 
-		return view('admin.match-schedule.form-incity', $data);
-	}
+  public function create (Request $request) {
+    $federation_id = $request->has('federation_id') ? $request->federation_id : null;
 
-	public function inCityUpdate (Request $request, $id) {
-		$types = SportType::get();
-		$cities = County::get();
-		$team_types = TeamType::get();
+    $team_types = TeamType::get();
+    $federations = Federation::get();
 
-		$schedule = MatchSchedule::find($id);
-		$dt = new DateTime($schedule->datetime);
-		$schedule->date = $dt->format("Y-m-d");
-		$schedule->time_hour = $dt->format("H");
-		$schedule->time_minute = $dt->format("i");
+    $data = [
+      "team_types" => $team_types,
+      "federations" => $federations,
+      "federation_id" => $federation_id
+    ];
 
-		$data = [
-			"data" => $schedule,
-			"types" => $types,
-			"cities" => $cities,
-			"team_types" => $team_types
-		];
+    return view('admin.match-schedule.form', $data);
+  }
 
-		return view('admin.match-schedule.form-incity', $data);
-	}
+  public function update (Request $request, $id) {
+    $federation_id = $request->has('federation_id') ? $request->federation_id : null;
 
-	public function create (Request $request) {
-		$types = SportType::get();
-		$cities = County::get();
-		$team_types = TeamType::get();
+    $federations = Federation::get();
+    $team_types = TeamType::get();
 
-		$data = [
-			"types" => $types,
-			"cities" => $cities,
-			"team_types" => $team_types,
-			"default_city" => $request->has("city_id") ? $request->city_id : null
-		];
+    $schedule = MatchSchedule::find($id);
+    $dt = new DateTime($schedule->datetime);
+    $schedule->date = $dt->format("Y-m-d");
+    $schedule->time_hour = $dt->format("H");
+    $schedule->time_minute = $dt->format("i");
 
-		return view('admin.match-schedule.form', $data);
-	}
+    $data = [
+      "data" => $schedule,
+      "federations" => $federations,
+      "team_types" => $team_types,
+      "federation_id" => $federation_id
+    ];
 
-	public function update (Request $request, $id) {
-		$types = SportType::get();
-		$cities = County::get();
-		$team_types = TeamType::get();
+    return view('admin.match-schedule.form', $data);
+  }
 
-		$schedule = MatchSchedule::find($id);
-		$dt = new DateTime($schedule->datetime);
-		$schedule->date = $dt->format("Y-m-d");
-		$schedule->time_hour = $dt->format("H");
-		$schedule->time_minute = $dt->format("i");
+  public function detail ($id) {
+    $schedule = MatchSchedule::with(['school1', 'school2'])->find($id);
+    $schedule->sport_type = (object) DB::select("SELECT * FROM sport_types WHERE id = '{$schedule->sport_type_id}'")[0];
+    $data = [ "data" => $schedule ];
 
-		$data = [
-			"data" => $schedule,
-			"types" => $types,
-			"cities" => $cities,
-			"team_types" => $team_types,
-			"default_city" => $request->has("city_id") ? $request->city_id : null
-		];
+    return view('admin.match-schedule.detail', $data);
+  }
 
-		return view('admin.match-schedule.form', $data);
-	}
-
-	public function detail ($id) {
-		$schedule = MatchSchedule::with(['school1', 'school2'])->find($id);
-		$schedule->sport_type = (object) DB::select("SELECT * FROM sport_types WHERE id = '{$schedule->sport_type_id}'")[0];
-		$data = [ "data" => $schedule ];
-
-		return view('admin.match-schedule.detail', $data);
-	}
-
-	public function store (Request $request) {
-		$validated = $request->validate([
+  public function store (Request $request) {
+    $validated = $request->validate([
+      'federation_id' => 'required|uuid',
       'sport_type_id' => 'required|uuid',
-      'county_id' => 'required|uuid',
-      'county2_id' => 'uuid',
       'school1_id' => 'required|uuid',
+      'match_system' => 'required|in:home,away,neutral',
       'school2_id' => 'required|uuid',
+      'match_system2' => 'required|in:home,away,neutral',
+      'score1' => 'numeric',
+      'score2' => 'numeric',
+      'youtube_link' => 'string',
+      'team_gender' => 'in:boy,girl',
       'stadium' => 'max:255',
-			'team_type_id' => 'required|uuid',
-			'team_gender' => 'in:boy,girl',
-			'date' => 'required|date',
-			'time_hour' => 'required|min:0|max:59',
-			'time_minute' => 'required|min:0|max:23'
-		]);
+      'team_type_id' => 'required|uuid',
+      'date' => 'required|date',
+      'time_hour' => 'required|min:0|max:59',
+      'time_minute' => 'required|min:0|max:23'
+    ]);
 
-		$isCreate = $request->id == null ? true : false;
+    $isCreate = $request->id == null ? true : false;
 
-		$schedule = null;
-		if ($isCreate) {
-			$schedule = new MatchSchedule;
-			$schedule->id = Str::uuid();
-		} else {
-			$schedule = MatchSchedule::find($request->id);
-		}
+    $schedule = null;
+    if ($isCreate) {
+      $schedule = new MatchSchedule;
+      $schedule->id = Str::uuid();
+      $schedule->created_by = Auth::id();
+    } else {
+      $schedule = MatchSchedule::find($request->id);
+      $schedule->updated_by = Auth::id();
+    }
 
-		$school1 = School::find($request->school1_id);
-		$school2 = School::find($request->school2_id);
+    $school1 = School::find($request->school1_id);
+    $school2 = School::find($request->school2_id);
 
-		$level_of_education1 = explode(" ", $school1->level_of_education);
-		$level_of_education2 = explode(" ", $school2->level_of_education);
+    $level_of_education1 = explode(" ", $school1->level_of_education);
+    $level_of_education2 = explode(" ", $school2->level_of_education);
 
-		$level_of_education = [];
-		foreach ($level_of_education1 as $item) {
-			array_push($level_of_education, $item);
-		}
+    $level_of_education = [];
+    foreach ($level_of_education1 as $item) {
+      array_push($level_of_education, $item);
+    }
 
-		foreach ($level_of_education2 as $item) {
-			if (!in_array($item, $level_of_education)) {
-				array_push($level_of_education, $item);
-			}
-		}
+    foreach ($level_of_education2 as $item) {
+      if (!in_array($item, $level_of_education)) {
+        array_push($level_of_education, $item);
+      }
+    }
 
-		$level_of_education = implode(",", $level_of_education);
+    $level_of_education = implode(",", $level_of_education);
 
-		$datetime = "{$request->date} {$request->time_hour}:{$request->time_minute}";
-		$keywords = "{$school1->name},{$school2->name},{$level_of_education}";
+    $datetime = "{$request->date} {$request->time_hour}:{$request->time_minute}";
+    $keywords = "{$school1->name},{$school2->name},{$level_of_education}";
 
-		try {
-			$schedule->sport_type_id = $request->sport_type_id;
-			$schedule->county_id = $request->county_id;
-			$schedule->county2_id = $request->county2_id;
-			$schedule->school1_id = $request->school1_id;
-			$schedule->school2_id = $request->school2_id;
-			$schedule->score1 = $request->score1;
-			$schedule->score2 = $request->score2;
-			$schedule->youtube_link = $request->youtube_link;
-			$schedule->stadium = $request->stadium;
-			$schedule->team_type_id = $request->team_type_id;
-			$schedule->team_gender = $request->team_gender;
-			$schedule->datetime = $datetime;
-			$schedule->keywords = $keywords;
-			$schedule->created_by = Auth::id();
-			$schedule->save();
+    try {
+      $schedule->federation_id = $request->federation_id;
+      $schedule->sport_type_id = $request->sport_type_id;
+      $schedule->school1_id = $request->school1_id;
+      $schedule->match_system = $request->match_system;
+      $schedule->school2_id = $request->school2_id;
+      $schedule->match_system2 = $request->match_system2;
+      $schedule->score1 = $request->score1;
+      $schedule->score2 = $request->score2;
+      $schedule->youtube_link = $request->youtube_link;
+      $schedule->team_gender = $request->team_gender;
+      $schedule->stadium = $request->stadium;
+      $schedule->team_type_id = $request->team_type_id;
+      $schedule->datetime = $datetime;
+      $schedule->keywords = $keywords;
+      $schedule->save();
 
-			return redirect()
-				->route("admin.match-schedule.city", ["id" => $request->county_id])
-				->with('success', 'Schedule successfully saved');
-		} catch (QueryException $exception) {
-			return redirect()->back()
-				->withErrors($exception->getMessage());
-		}
-	}
+      if (isset($request->isDefaultFederation)) {
+        return redirect()
+          ->route("admin.match-schedule.index", [ "federation_id" => $request-> federation_id ])
+          ->with('success', 'Schedule successfully saved');
+      } else {
+        return redirect()
+          ->route("admin.match-schedule.index")
+          ->with('success', 'Schedule successfully saved');
+      }
 
-	public function delete (Request $request) {
-		$validated = $request->validate([
-			'id' => 'required|uuid'
-		]);
+    } catch (QueryException $exception) {
+      return redirect()->back()
+        ->withErrors($exception->getMessage());
+    }
+  }
 
-		try {
-			$type = MatchSchedule::find($request->id);
-			$type->delete();
+  public function delete (Request $request) {
+    $validated = $request->validate([
+      'id' => 'required|uuid'
+    ]);
 
-			$request->session()->flash('message', "Schedule successfully deleted");
-			return response()->json([
-				"status" => true,
-				"message" => null
-			]);
-		} catch (QueryException $exception) {
-			return response()->json([
-				"status" => false,
-				"message" => $exception->getMessage()
-			]);
-		}
-	}
+    try {
+      $type = MatchSchedule::find($request->id);
+      $type->delete();
 
-	public function latestVideoAPI (Request $request) {
-		$page = $request->has('page') ? $request->page : 1;
-		if (empty($page)) $page = 1; 
-		$limit = $request->has('limit') ? $request->limit : 10;
+      $request->session()->flash('message', "Schedule successfully deleted");
+      return response()->json([
+        "status" => true,
+        "message" => null
+      ]);
+    } catch (QueryException $exception) {
+      return response()->json([
+        "status" => false,
+        "message" => $exception->getMessage()
+      ]);
+    }
+  }
 
-		$model = MatchSchedule::with([
-			"county",
-			"school1" => function ($subQuery) {
-				return $subQuery->with(['county']);
-			},
-			"school2" => function ($subQuery) {
-				return $subQuery->with(['county']);
-			},
-			"team_type",
-			"sport_type"
-		]);
+  public function latestVideoAPI (Request $request) {
+    $page = $request->has('page') ? $request->page : 1;
+    if (empty($page)) $page = 1; 
+    $limit = $request->has('limit') ? $request->limit : 10;
 
-		$date1 = Carbon::now();
-		$date2 = Carbon::now()->subDays(7);
-		$model = $model->orderBy('datetime')
-			->orderBy('created_at', 'desc')
-			->whereBetween('datetime', [$date2, $date1]);
-		
-		$model2 = $model;
-		$total = $model2->count();
+    $model = MatchSchedule::with([
+      "county",
+      "school1" => function ($subQuery) {
+        return $subQuery->with(['county']);
+      },
+      "school2" => function ($subQuery) {
+        return $subQuery->with(['county']);
+      },
+      "team_type",
+      "sport_type"
+    ]);
 
-		$news = $model->take($limit)->skip(($page - 1) * $limit)->get();
+    $date1 = Carbon::now();
+    $date2 = Carbon::now()->subDays(7);
+    $model = $model->orderBy('datetime')
+      ->orderBy('created_at', 'desc')
+      ->whereBetween('datetime', [$date2, $date1]);
+    
+    $model2 = $model;
+    $total = $model2->count();
 
-		return response()->json([
-			"status" => true,
-			"message" => null,
-			"data" => [
-				"list" => $news,
-				"pagination" => [
-					"total" => $total,
-					"page" => (int) $page,
-					"limit" => $limit,
-					"total_page" => ceil($total / $limit)
-				]
-			]
-		]);
-	}
+    $news = $model->take($limit)->skip(($page - 1) * $limit)->get();
 
-	public function detailAPI ($id) {
-		$model = MatchSchedule::with([
-			"county",
-			"school1" => function ($subQuery) {
-				return $subQuery->with(['county']);
-			},
-			"school2" => function ($subQuery) {
-				return $subQuery->with(['county']);
-			},
-			"team_type",
-			"sport_type"
-		])
-			->find($id);
+    return response()->json([
+      "status" => true,
+      "message" => null,
+      "data" => [
+        "list" => $news,
+        "pagination" => [
+          "total" => $total,
+          "page" => (int) $page,
+          "limit" => $limit,
+          "total_page" => ceil($total / $limit)
+        ]
+      ]
+    ]);
+  }
 
-		return response()->json([
-			"data" => $model,
-			"status" => true,
-			"message" => null
-		]);
-	}
+  public function detailAPI ($id) {
+    $model = MatchSchedule::with([
+      "county",
+      "school1" => function ($subQuery) {
+        return $subQuery->with(['county']);
+      },
+      "school2" => function ($subQuery) {
+        return $subQuery->with(['county']);
+      },
+      "team_type",
+      "sport_type"
+    ])
+      ->find($id);
 
-	public function newsList (Request $request) {
-		$page = $request->has('page') ? $request->page : 1;
-		if (empty($page)) $page = 1; 
-		$limit = $request->has('limit') ? $request->limit : 30;
+    return response()->json([
+      "data" => $model,
+      "status" => true,
+      "message" => null
+    ]);
+  }
 
-		$model = MatchSchedule::with([
-			"county",
-			"school1" => function ($subQuery) {
-				return $subQuery->with(['county']);
-			},
-			"school2" => function ($subQuery) {
-				return $subQuery->with(['county']);
-			},
-			"team_type",
-			"sport_type"
-		]);
+  public function newsList (Request $request) {
+    $page = $request->has('page') ? $request->page : 1;
+    if (empty($page)) $page = 1; 
+    $limit = $request->has('limit') ? $request->limit : 30;
 
-		$type = $request->has('type') ? $request->type : "all";
-		switch ($type) {
-			case "all":
-				break;
+    $model = MatchSchedule::with([
+      "county",
+      "school1" => function ($subQuery) {
+        return $subQuery->with(['county']);
+      },
+      "school2" => function ($subQuery) {
+        return $subQuery->with(['county']);
+      },
+      "team_type",
+      "sport_type"
+    ]);
 
-			case "minggu-lalu":
-				$date1 = Carbon::now()->subDays(14);
-				$now2 = Carbon::now()->subDays(7);
-				$model->whereBetween('datetime', [$date1, $now2]);
-				break;
+    $type = $request->has('type') ? $request->type : "all";
+    $model = $this->_scheduleType($model, $type);
 
-			case "sudah-bermain":
-				$date1 = Carbon::now()->subHours(3);
-				$date2 = Carbon::now()->subDays(7);
-				$model->whereBetween('datetime', [$date2, $date1]);
-				break;
+    $total = clone($model)->count();
+    $news = clone($model)->take($limit)->skip(($page - 1) * $limit)->get();
 
-			default: break;
-		}
-		
-		$model2 = $model;
-		$total = $model2->count();
+    return response()->json([
+      "status" => true,
+      "message" => null,
+      "data" => [
+        "list" => $news,
+        "pagination" => [
+          "total" => $total,
+          "page" => (int) $page,
+          "limit" => $limit,
+          "total_page" => ceil($total / $limit)
+        ]
+      ]
+    ]);
+  }
 
-		$news = $model->take($limit)->skip(($page - 1) * $limit)->get();
+  public function scoreAPI (Request $request) {
+    $page = $request->has('page') ? $request->page : 1;
+    if (empty($page)) $page = 1; 
+    $limit = $request->has('limit') ? $request->limit : 10;
 
-		return response()->json([
-			"status" => true,
-			"message" => null,
-			"data" => [
-				"list" => $news,
-				"pagination" => [
-					"total" => $total,
-					"page" => (int) $page,
-					"limit" => $limit,
-					"total_page" => ceil($total / $limit)
-				]
-			]
-		]);
-	}
+    $model = MatchSchedule::with([
+      "county",
+      "school1" => function ($subQuery) {
+        return $subQuery->with(['county']);
+      },
+      "school2" => function ($subQuery) {
+        return $subQuery->with(['county']);
+      },
+      "team_type"
+    ]);
 
-	public function scoreAPI (Request $request) {
-		$page = $request->has('page') ? $request->page : 1;
-		if (empty($page)) $page = 1; 
-		$limit = $request->has('limit') ? $request->limit : 10;
+    $type = $request->has('type') ? $request->type : "have-played";
 
-		$model = MatchSchedule::with([
-			"county",
-			"school1" => function ($subQuery) {
-				return $subQuery->with(['county']);
-			},
-			"school2" => function ($subQuery) {
-				return $subQuery->with(['county']);
-			},
-			"team_type"
-		]);
+    $model = $this->_scheduleType($model, $type);    
+    $total = clone($model)->count();
 
-		$type = $request->has('type') ? $request->type : "sudah-bermain";
-		switch ($type) {
-			case "all":
-				break;
+    $scores = clone($model)->take($limit)->skip(($page - 1) * $limit)->get();
+    foreach($scores as $item) {
+      $item->sport_type = (object) DB::select("SELECT * FROM sport_types WHERE id = '{$item->sport_type_id}'")[0];
+    }
 
-			case "akan-datang":
-				$date = Carbon::now()->addDays(7);
-				$model->where('datetime', '>', $date);
-				break;
+    $groups = [];
+    foreach ($scores as $item) {
+      // if ($item->sport_type == null) continue;
+      $groups[$item->sport_type->name][] = $item;
+    }
 
-			case "hari-ini":
-				$date = Carbon::today();
-				$model->whereDate('datetime', $date);
-				break;
+    return response()->json([
+      "status" => true,
+      "message" => null,
+      "data" => [
+        "list" => $groups,
+        "pagination" => [
+          "total" => $total,
+          "page" => (int) $page,
+          "limit" => $limit,
+          "total_page" => ceil($total / $limit)
+        ]
+      ]
+    ]);
+  }
 
-			case "minggu-ini":
-				$date1 = Carbon::now()->addDays(7);
-				$date2 = Carbon::now()->subHours(2);
+  public function list (Request $request) {
+    $showAll = $request->has('showall') ? (boolean) $request->showall : false;
+    $school_id = $request->has('school_id') ? $request->school_id : null;
 
-				$model->whereBetween('datetime', [$date2, $date1]);
-				break;
+    $page = $request->has('page') ? $request->page : 1;
+    if (empty($page)) $page = 1; 
+    $limit = $request->has('limit') ? $request->limit : 10;
 
-			case "minggu-lalu":
-				$date1 = Carbon::now()->subDays(14);
-				$now2 = Carbon::now()->subDays(7);
-				$model->whereBetween('datetime', [$date1, $now2]);
-				break;
+    $type = $request->has('type') ? $request->type : "all";
 
-			case "sudah-bermain":
-				$date1 = Carbon::now()->subHours(3);
-				$date2 = Carbon::now()->subDays(7);
-				$model->whereBetween('datetime', [$date2, $date1]);
-				break;
+    $model = MatchSchedule::with([
+      "county",
+      "school1" => function ($subQuery) {
+        return $subQuery->with(['county']);
+      },
+      "school2" => function ($subQuery) {
+        return $subQuery->with(['county']);
+      },
+      "team_type",
+      "sport_type"
+    ]);
+    
 
-			default: break;
-		}
-		
-		$model2 = $model;
-		$total = $model2->count();
+    $model = $this->_scheduleType($model, $type);
+    $model = $model->orderBy('datetime')
+      ->orderBy('created_at')
+      ->when($school_id != null, function ($query) use ($school_id) {
+        $query->where('school1_id', $school_id)->orWhere('school2_id', $school_id);
+      });
 
-		$scores = $model->take($limit)->skip(($page - 1) * $limit)->get();
-		foreach($scores as $item) {
-			$item->sport_type = (object) DB::select("SELECT * FROM sport_types WHERE id = '{$item->sport_type_id}'")[0];
-		}
-		$groups = [];
-		foreach ($scores as $item) {
-			// if ($item->sport_type == null) continue;
-			$groups[$item->sport_type->name][] = $item;
-		}
+    $model2 = $model;
+    $total = $model2->count();
 
-		return response()->json([
-			"status" => true,
-			"message" => null,
-			"data" => [
-				"list" => $groups,
-				"pagination" => [
-					"total" => $total,
-					"page" => (int) $page,
-					"limit" => $limit,
-					"total_page" => ceil($total / $limit)
-				]
-			]
-		]);
-	}
+    $schedule = $model->when(!$showAll, function ($query) use ($limit, $page) {
+      $query->take($limit)->skip(($page - 1) * $limit);
+    })->get();
 
-	public function list (Request $request) {
-		$showAll = $request->has('showall') ? (boolean) $request->showall : false;
-		$school_id = $request->has('school_id') ? $request->school_id : null;
+    return response()->json([
+      "status" => true,
+      "message" => null,
+      "data" => [
+        "list" => $schedule,
+        "pagination" => [
+          "total" => $total,
+          "page" => !$showAll ? (int) $page : -1,
+          "limit" => !$showAll ? $limit : -1,
+          "total_page" => !$showAll ? ceil($total / $limit) : 1
+        ]
+      ]
+    ]);
+  }
 
-		$page = $request->has('page') ? $request->page : 1;
-		if (empty($page)) $page = 1; 
-		$limit = $request->has('limit') ? $request->limit : 10;
+  function cityMatchDatatable () {
+    $data = County::withCount('match')->get();
+    return Datatables::of($data)->make(true);
+  }
 
-		$type = $request->has('type') ? $request->type : "all";
+  function listDatatable (Request $request) {
+    $state = $request->state;
 
-		$model = MatchSchedule::with([
-			"county",
-			"school1" => function ($subQuery) {
-				return $subQuery->with(['county']);
-			},
-			"school2" => function ($subQuery) {
-				return $subQuery->with(['county']);
-			},
-			"team_type",
-			"sport_type"
-		]);
-		
+    $model = MatchSchedule::with([
+      "school1" => function ($query) {
+        return $query->with(["municipality", "county"]);
+      },
+      "school2" => function ($query) {
+        return $query->with(["municipality", "county"]);
+      },
+      "team_type",
+      "sport_type"
+    ])
+      ->when($request->federation_id != null, function ($query) use ($request) {
+        $query->where("federation_id", $request->federation_id);
+      });
 
-		switch ($type) {
-			case "all":
-				break;
+    $model = $this->_scheduleType($model, $state);
+    $model = $model->get();
+      
+    return Datatables::of($model)->make(true);
+  }
 
-			case "have-played":
-				$date1 = $this->now->subHours(3);
-				$date2 = $this->now->subDays(7);
+  function listOnFederation (Request $request) {
+    $model = Federation::withCount("matchSchedule");
+    $model = $model->get();
+      
+    return Datatables::of($model)->make(true);
+  }
 
-				$model->whereBetween('datetime', [$date2, $date1]);
-				break;
+  private function _scheduleType($model, $type) {
+    switch ($type) {
+      case "all":
+        return $model;
 
-			case "live":
-				$date1 = $this->now->subHours(2);
-				$date2 = $this->now->addHours(3);
+      case "old-data":
+        $date = clone($this->now);
+        $date = $date->subDays(14);
 
-				$model->whereBetween('datetime', [$date1, $date2]);
-				break;
+        return $model->whereDate('datetime', '<', $date);
 
-			case "this-week":
-				$date1 = $this->now->addDays(7);
-				$date2 = $this->now->subHours(2);
+      case "last-week":
+        $date1 = clone($this->now);
+        $date1 = $date1->subDays(14);
 
-				$model->whereBetween('datetime', [$date2, $date1]);
-				break;
+        $date2 = clone($this->now);
+        $date2 = $date2->subDays(7);
 
-			case "today":
-				$date1 = $this->now->addHours(24);
-				$date2 = $this->now->subHours(24);
-				$model->whereBetween('datetime', [$date2, $date1]);
-				break;
-				
-			case "upcoming":
-			    $date = $this->now->addDays(7);
-				$model->whereDate('datetime', '>', $date);
-				break;
+        return $model->whereBetween('datetime', [$date1, $date2]);
 
-			default:
-				break;
-		}
+      case "have-played":
+        $date1 = clone($this->now);
+        $date1 = $date1->subHours(3);
 
-		$model = $model->orderBy('datetime')
-			->orderBy('created_at')
-			->when($school_id != null, function ($query) use ($school_id) {
-				$query->where('school1_id', $school_id)->orWhere('school2_id', $school_id);
-			});
+        $date2 = clone($this->now);
+        $date2 = $date2->subDays(7);
 
-		$model2 = $model;
-		$total = $model2->count();
+        return $model->whereBetween('datetime', [$date2, $date1]);
 
-		$schedule = $model->when(!$showAll, function ($query) use ($limit, $page) {
-			$query->take($limit)->skip(($page - 1) * $limit);
-		})->get();
+      case "live":
+        $date1 = clone($this->now);
+        $date1 = $date1->subHours(2);
 
-		return response()->json([
-			"status" => true,
-			"message" => null,
-			"data" => [
-				"list" => $schedule,
-				"pagination" => [
-					"total" => $total,
-					"page" => !$showAll ? (int) $page : -1,
-					"limit" => !$showAll ? $limit : -1,
-					"total_page" => !$showAll ? ceil($total / $limit) : 1
-				]
-			]
-		]);
-	}
+        $date2 = clone($this->now);
+        $date2 = $date2->addHours(3);
 
-	function cityMatchDatatable () {
-		$data = County::withCount('match')->get();
-		return Datatables::of($data)->make(true);
-	}
+        return $model->whereBetween('datetime', [$date1, $date2]);
 
-	function listDatatable (Request $request) {
-		$cityId = isset($request->city_id) ? $request->city_id : null;
-		$incity = isset($request->incity) ? (boolean) $request->incity : false;
-		$state = $request->state;
+      case "this-week":
+        $date1 = clone($this->now);
+        $date1 = $date1->addDays(7);
 
-		$data = MatchSchedule::with(["county", "county2", "school1", "school2", "team_type", "sport_type"])
-			->when($cityId != null, function ($subQuery) use ($cityId) {
-				$subQuery->where('county_id', $cityId);
-			})
-			->when($state == 'minggu-lalu', function ($subQuery) {
-				$now1 = Carbon::now()->subDays(14);
-				$now2 = Carbon::now()->subDays(7);
-				$subQuery->whereBetween('datetime', [$now1, $now2]);
-			})
-			->when($state == 'sudah-bermain', function ($subQuery) {
-				$date1 = Carbon::now()->subHours(3);
-				$date2 = Carbon::now()->subDays(7);
-				$subQuery->whereBetween('datetime', [$date2, $date1]);
-			})
-			->when($state == 'hari-ini', function ($subQuery) {
-				$date = Carbon::today();
-				$subQuery->whereDate('datetime', $date);
-			})
-			->when($state == 'sedang-bermain', function ($subQuery) {
-				$date1 = Carbon::now()->subHours(2);
-				$date2 = Carbon::now()->addHours(3);
+        $date2 = clone($this->now);
+        $date2 = $date2->subHours(2);
 
-				$subQuery->whereBetween('datetime', [$date1, $date2]);
-			})
-			->when($state == 'akan-bermain', function ($subQuery) {
-				$date2 = Carbon::now()->addDays(7);
-				$subQuery->where('datetime', '>', $date2);
-			})
-			->when($state == 'minggu-ini', function ($subQuery) {
-				$date1 = Carbon::now()->addDays(7);
-				$date2 = Carbon::now()->subHours(2);
+        return $model->whereBetween('datetime', [$date2, $date1]);
 
-				$subQuery->whereBetween('datetime', [$date2, $date1]);
-			})
-			->when($incity, function ($subQuery) {
-				$subQuery->whereNotNull('county2_id');
-			})
-			->get();
-		return Datatables::of($data)->make(true);
-	}
+      case "today":
+        $date1 = clone($this->now);
+        $date1 = $date1->addHours(12);
+
+        $date2 = clone($this->now);
+        $date2 = $date2->subHours(12);
+
+        return $model->whereBetween('datetime', [$date2, $date1]);
+        
+      case "upcoming":
+        $date = clone($this->now);
+        $date = $date->addDays(7);
+
+        return $model->whereDate('datetime', '>', $date);
+
+      default:
+        return $model;
+    }
+  } 
 }
