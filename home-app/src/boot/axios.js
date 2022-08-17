@@ -12,8 +12,8 @@ import moment from 'moment'
 
 const timezone = moment.tz.guess()
 
-const host = 'https://schsports.com'
-// const host = process.env.NODE_ENV === 'development' ? 'http://localhost:8000' : 'https://schsports.com'
+// const host = 'https://schevents.com'
+const host = process.env.NODE_ENV === 'development' ? 'http://localhost:8000' : 'https://schevents.com'
 const api = axios.create({
   baseURL: `${host}/api`,
   headers: {

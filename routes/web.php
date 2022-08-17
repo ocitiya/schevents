@@ -186,6 +186,8 @@ Route::middleware(['haveInstalled'])->group(function () {
     });
   });
 
+  Route::get("schedule/{id}", [MatchScheduleController::class, "schedulePreview"]);
+
   Route::get('{any}', function () {
     return view('app');
   })->where('any','.*');

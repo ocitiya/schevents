@@ -1,5 +1,5 @@
 <template>
-  <div class="q-px-md q-py-xl page">
+  <div class="q-px-md q-py-xl page bg-accent">
     <div class="text-center text-h5 text-primary text-bold">
       Club Menu
     </div>

@@ -509,5 +509,23 @@ class MatchScheduleController extends Controller {
       default:
         return $model;
     }
-  } 
+  }
+
+  function schedulePreview (Request $request, $id) {
+    $model = MatchSchedule::with([
+      "county",
+      "school1" => function ($subQuery) {
+        return $subQuery->with(['county']);
+      },
+      "school2" => function ($subQuery) {
+        return $subQuery->with(['county']);
+      },
+      "team_type",
+      "sport_type"
+    ])
+      ->find($id);
+
+    $data = ["data" => $model];
+    return view("shedule-preview", $data);
+  }
 }

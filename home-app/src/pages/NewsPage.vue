@@ -1,5 +1,5 @@
 <template>
-  <div class="q-py-xl bg-grey-2">
+  <div class="q-py-xl bg-accent">
     <div class="list-container page q-px-xl">
       <div class="q-my-xl">
         <div class="mb-4 flex justify-between items-center">
@@ -88,7 +88,7 @@
 
                 <q-separator />
 
-                <q-card-section class="flex items-center justify-between q-px-md bg-primary text-white">
+                <q-card-section class="flex items-center justify-between q-px-md bg-secondary text-accent text-bold">
                   <div class="flex flex-center">
                     <q-icon name="calendar_month" />
                     <span class="q-ml-sm">{{ scheduleDate(item.datetime) }}</span>
@@ -104,7 +104,7 @@
           </vue-horizontal>
         </div>
 
-        <div v-else class="text-center text-body1">
+        <div v-else class="text-center text-body1 text-bold q-mt-md">
           No Data Available
         </div>
       </div>
@@ -196,7 +196,7 @@
 
                 <q-separator />
 
-                <q-card-section class="flex items-center justify-between q-px-md bg-primary text-white">
+                <q-card-section class="flex items-center justify-between q-px-md bg-secondary text-accent text-bold">
                   <div class="flex flex-center">
                     <q-icon name="calendar_month" />
                     <span class="q-ml-sm">{{ scheduleDate(item.datetime) }}</span>
@@ -210,6 +210,10 @@
               </q-card>
             </section>
           </vue-horizontal>
+        </div>
+
+        <div v-else class="text-center text-body1 text-bold q-mt-md">
+          No Data Available
         </div>
       </div>
 
@@ -300,7 +304,7 @@
 
                 <q-separator />
 
-                <q-card-section class="flex items-center justify-between q-px-md bg-primary text-white">
+                <q-card-section class="flex items-center justify-between q-px-md bg-secondary text-accent text-bold">
                   <div class="flex flex-center">
                     <q-icon name="calendar_month" />
                     <span class="q-ml-sm">{{ scheduleDate(item.datetime) }}</span>
@@ -314,6 +318,10 @@
               </q-card>
             </section>
           </vue-horizontal>
+        </div>
+
+        <div v-else class="text-center text-body1 text-bold q-mt-md">
+          No Data Available
         </div>
       </div>
     </div>
@@ -470,7 +478,6 @@ export default {
 
 section {
   padding: 16px 24px;
-  background: #f3f3f3;
 }
 
 .search-container {

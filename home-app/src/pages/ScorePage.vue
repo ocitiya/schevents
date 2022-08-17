@@ -1,5 +1,5 @@
 <template>
-  <div class="q-py-md q-py-xl bg-grey-2 q-px-sm q-px-md-xl">
+  <div class="q-py-md q-py-xl bg-accent q-px-sm q-px-md-xl">
     <div class="text-center text-h5 text-primary text-bold" ref="tab">
       Last Week Scores
     </div>

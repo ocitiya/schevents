@@ -1,5 +1,5 @@
 <template>
-  <div class="q-px-md q-py-xl page">
+  <div class="q-px-md q-py-xl page bg-accent">
     <div class="text-center text-h5 text-primary text-bold">
       About Menu
     </div>
@@ -53,6 +53,8 @@
 </template>
 
 <script>
+import { useMeta } from 'quasar'
+
 export default {
   data: function () {
     return {

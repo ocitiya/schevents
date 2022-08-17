@@ -1,5 +1,5 @@
 <template>
-  <div class="q-px-md q-py-xl bg-grey-2">
+  <div class="q-px-md q-py-xl bg-accent">
     <div class="text-center text-h5 text-primary text-bold q-mb-xl">
       Latest Video
     </div>

@@ -20,7 +20,6 @@
           <q-route-tab :to="{ name: 'home' }" label="Home" icon="home" />
           <q-route-tab :to="{ name: 'club' }" label="Club" icon="groups" />
           <q-route-tab :to="{ name: 'news' }" label="News" icon="newspaper" />
-          <q-route-tab :to="{ name: 'news' }" label="Schedules" icon="newspaper" />
           <q-route-tab :to="{ name: 'video' }" label="Videos" icon="videocam" />
           <q-route-tab :to="{ name: 'scores' }" label="Scores" icon="scoreboard" />
           <q-route-tab :to="{ name: 'about' }" label="About" icon="description" />
@@ -33,6 +32,7 @@
       v-model="leftDrawerOpen"
       show-if-above
       bordered
+      class="text-white drawer-container"
     >
       <q-list>
         <q-item-label
@@ -66,7 +66,7 @@
       <div class="row q-col-gutter-xl">
         <div class="col-6 col-md-4">
           Logo App
-          <div>schsports</div>
+          <div>schevents</div>
         </div>
 
         <div class="col-6 col-md-4">
@@ -82,13 +82,13 @@
         <div class="col-12 col-md-4">
           <div class="text-bold q-mb-md">Contact</div>
           <div>email:
-            <a href="mailto:admin@schsports.com">
-              admin@schsports.com
+            <a href="mailto:admin@schevents.com">
+              admin@schevents.com
             </a>
           </div>
           <div>website: 
-            <a href="https://schsports.com" target="_blank">
-              https://schsports.com
+            <a href="https://schevents.com" target="_blank">
+              https://schevents.com
             </a>
           </div>
 
@@ -121,11 +121,6 @@ const linksList = [
   },
   {
     title: 'News',
-    icon: 'newspaper',
-    link_name: 'news'
-  },
-  {
-    title: 'Schedule',
     icon: 'newspaper',
     link_name: 'news'
   },
@@ -177,3 +172,18 @@ export default defineComponent({
   }
 })
 </script>
+
+<style>
+  .drawer-container {
+    background-image: linear-gradient(
+      185deg,
+      hsl(213deg 41% 5%) 72%,
+      hsl(98deg 40% 11%) 97%,
+      hsl(90deg 57% 14%) 101%,
+      hsl(87deg 67% 16%) 102%,
+      hsl(85deg 76% 18%) 101%,
+      hsl(84deg 84% 19%) 101%,
+      hsl(82deg 100% 19%) 100%
+    );
+  }
+</style>

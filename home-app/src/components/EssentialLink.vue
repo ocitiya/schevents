@@ -1,5 +1,5 @@
 <template>
-  <q-item class="text-primary"
+  <q-item class=""
     clickable
     @click="changePage"
   >
