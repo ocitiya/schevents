@@ -131,8 +131,8 @@ class MatchScheduleController extends Controller {
       $schedule->updated_by = Auth::id();
     }
 
-    $school1 = School::find($request->school1_id);
-    $school2 = School::find($request->school2_id);
+    $school1 = School::with(["county"])->find($request->school1_id);
+    $school2 = School::with(["county"])->find($request->school2_id);
 
     $level_of_education1 = explode(" ", $school1->level_of_education);
     $level_of_education2 = explode(" ", $school2->level_of_education);
@@ -151,7 +151,16 @@ class MatchScheduleController extends Controller {
     $level_of_education = implode(",", $level_of_education);
 
     $datetime = "{$request->date} {$request->time_hour}:{$request->time_minute}";
-    $keywords = "{$school1->name},{$school2->name},{$level_of_education}";
+
+    $keywords = [
+      $school1->name,
+      $school2->name,
+      $level_of_education,
+      $school1->county->name,
+      $school2->county->name,
+    ];
+
+    $keywords = implode(",", $keywords);
 
     try {
       $schedule->federation_id = $request->federation_id;

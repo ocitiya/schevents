@@ -8,6 +8,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+  <meta name="description" content="Watch online {{ $data->sport_type->name }} Games, {{ $title }}" >
+  <meta name="keywords" content="{{ $data->keywords }}">
+  <meta name="robots" content="index,follow">
+
   <title>{{ $title }}</title>
   <link href="{{ asset('css/bootstrap.min.css') }}" rel="stylesheet">
 
@@ -67,7 +72,7 @@
             <h4 class="my-4"><b>{{ $data->score1 ?? "-" }}</b></h4>
           </div>
 
-          <div class="text-center">vs</div>
+          <div class="d-flex justify-content-center align-items-center">vs</div>
 
           <div class="text-center">
             <div>
@@ -93,7 +98,15 @@
         </div>
       </div>
 
-      <div class="mt-5">
+      <div class="mt-5" id="stream">
+        <a class="btn btn-light" href="{{ $data->sport_type->stream_url }}"><b>
+          <i class="fa-solid fa-video"></i>
+          &nbsp;Watch Online
+        </b></a>
+      </div>
+
+      <div class="mt-5" id="replay">
+        <h5 class="text-center mb-3"><b>Replay Video</b></h5>
         <div class="d-flex justify-content-center align-items-center">
           @if (!empty($data->youtube_link))
             <iframe width="100%" height="315" src="{{ $data->youtube_link }}" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen style="object-fit: contain;"></iframe>
@@ -108,19 +121,26 @@
   <script src="{{ asset('js/moment.min.js') }}"></script>
   <script src="{{ asset('js/moment-timezone-with-data.js') }}"></script>
   <script src="{{ asset('js/bootstrap.bundle.min.js') }}"></script>
+  <script src="{{ asset('js/fontawesome-free-6.1.1-web.all.min.js') }}"></script>
 
   <script>
     document.addEventListener('DOMContentLoaded', function () {
       const datetimeElem = document.querySelector('#datetime')
       
       const datetime = datetimeElem.innerHTML;
-      const formatDate = moment.utc(datetime, 'Y MMMM D hh:mm').local().format('ddd, D MMMM Y');
-      const formatTime = moment.utc(datetime, 'Y MMMM D hh:mm').local().format('hh:mm');
+      const datelocal = moment.utc(datetime, 'D MMM YYYY hh:mm').local()
+      const formatDate = datelocal.format('ddd, D MMMM Y hh:mm');
 
-      const zone_name =  moment.tz.guess();
+      const zone_name = moment.tz.guess();
       const timezone = moment.tz(zone_name).zoneAbbr() 
 
-      datetimeElem.innerHTML = `${formatDate} | ${formatTime} ${timezone}`;
+      datetimeElem.innerHTML = `${formatDate} ${timezone}`;
+
+      if (moment().isAfter(datelocal)) {
+        document.querySelector('#stream').style.display = 'none';
+      } else {
+        document.querySelector('#replay').style.display = 'none';
+      }
     });
   </script>
 </body>
