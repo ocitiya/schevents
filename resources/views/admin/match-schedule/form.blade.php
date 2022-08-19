@@ -45,8 +45,8 @@
         >
           {{ csrf_field() }}
 
-          <input type="hidden" name="id" value="{{ isset($data) ? $data->id : null }}">
           @if ($federation_id != null)
+            <input type="hidden" name="id" value="{{ isset($data) ? $data->id : null }}">
             <input type="hidden" name="isDefaultFederation" value="true">  
           @endif
 
@@ -314,7 +314,7 @@
     }
 
     document.addEventListener('DOMContentLoaded', function() {
-      if (defaultFederation !== null) {
+      if (defaultFederation !== null && defaultFederation) {
         $('#federation_id').prop('disabled', true);
         $(`<input type="hidden" name="federation_id" value="${defaultFederation}" />`).insertBefore('#federation_id');
       }

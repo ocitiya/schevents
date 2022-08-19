@@ -89,9 +89,15 @@
               {data: 'sports_count', title: 'Jumlah Olahraga', name: 'sports_count'},
               {data: 'logo', title: 'Logo', name: 'logo',
                 "render": function ( data, type, row, meta ) {
-                  return `
-                    <img src="/storage/federation/logo/${data}" style="width: 75px" class="mb-3">
-                  `
+                  if (data === null) {
+                    return `
+                      <img src="/images/no-logo-1.png" style="width: 75px" class="mb-3">
+                    `
+                  } else {
+                    return `
+                      <img src="/storage/federation/logo/${data}" style="width: 75px" class="mb-3">
+                    `
+                  }
                 }
               },
               {data: 'id', title: 'Aksi', orderable: false, searchable: false,
