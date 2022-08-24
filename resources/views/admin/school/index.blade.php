@@ -98,7 +98,13 @@
             },
             columns: [
               {data: 'name', title: 'Name', name: 'name'},
-              {data: 'name', title: 'Singkatan Federasi', name: 'name'},
+              {data: 'federation', title: 'Singkatan Federasi', name: 'federation',
+                "render": function ( data, type, row, meta ) {
+                  return `
+                    ${data.abbreviation}
+                  `
+                }
+              },
               {data: 'municipality', title: 'Kota', name: 'municipality',
                 "render": function ( data, type, row, meta ) {
                   return `
@@ -117,6 +123,13 @@
                       <img src="/storage/school/logo/${data}" style="width: 75px" class="mb-3">
                     `
                   }
+                }
+              },
+              {data: 'county', title: 'State', name: 'county',
+                "render": function ( data, type, row, meta ) {
+                  return `
+                    ${data.name}
+                  `
                 }
               },
               {data: 'id', title: 'Aksi', orderable: false, searchable: false,

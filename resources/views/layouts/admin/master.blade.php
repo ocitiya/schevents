@@ -77,13 +77,17 @@
         }
       }
 
-      const generateSelect = (elemId, data, abbreviation = true) => {
+      const generateSelect = (elemId, data, abbreviation = true, abbreviationOnly = false) => {
         $(elemId).empty()
 
         $(elemId).append('<option disabled selected value>Please select ...</option')
         data.map(item => {
           if (abbreviation) {
-            $(elemId).append(`<option value="${item.id}">${item.name} - ${item.abbreviation}</option>`)
+            if (abbreviationOnly) {
+              $(elemId).append(`<option value="${item.id}">${item.abbreviation}</option>`)
+            } else {
+              $(elemId).append(`<option value="${item.id}">${item.abbreviation} - ${item.name}</option>`)
+            }
           } else {
             $(elemId).append(`<option value="${item.id}">${item.name}</option>`)
           }

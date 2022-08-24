@@ -105,15 +105,15 @@ class MatchScheduleController extends Controller {
       'federation_id' => 'required|uuid',
       'sport_type_id' => 'required|uuid',
       'school1_id' => 'required|uuid',
-      'match_system' => 'required|in:home,away,neutral',
+      'match_system' => 'in:home,away,neutral',
       'school2_id' => 'required|uuid',
-      'match_system2' => 'required|in:home,away,neutral',
+      'match_system2' => 'in:home,away,neutral',
       'score1' => 'numeric',
       'score2' => 'numeric',
       'youtube_link' => 'string',
       'team_gender' => 'in:boy,girl',
       'stadium' => 'max:255',
-      'team_type_id' => 'required|uuid',
+      'team_type_id' => 'uuid',
       'date' => 'required|date',
       'time_hour' => 'required|min:0|max:59',
       'time_minute' => 'required|min:0|max:23'
@@ -434,7 +434,8 @@ class MatchScheduleController extends Controller {
         return $query->with(["municipality", "county"]);
       },
       "team_type",
-      "sport_type"
+      "sport_type",
+      "federation"
     ])
       ->when($request->federation_id != null, function ($query) use ($request) {
         $query->where("federation_id", $request->federation_id);

@@ -181,7 +181,7 @@ class SchoolController extends Controller {
 	public function listDatatable(Request $request) {
 		$cityId = isset($request->city_id) ? $request->city_id : null;
 
-		$data = School::with(["municipality", "federation", "association"])
+		$data = School::with(["municipality", "federation", "association", "county"])
 			->when($cityId != null, function ($subQuery) use ($cityId) {
 				$subQuery->where('municipality_id', $cityId);
 			})

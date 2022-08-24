@@ -3,7 +3,13 @@
 @section('content')
   <div id="municipalities" class="content">
     <div class="title-container">
-      <h4 class="text-primary">State</h4>
+      <h4 class="text-primary">
+        @if ($state_id != null)
+          Kota di state {{ $state_name }}
+        @else
+          Kota
+        @endif
+      </h4>
 
       <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
@@ -14,10 +20,17 @@
 
     <div class="data-container">
       <div class="data-header">
-        <a href="{{ route('admin.location.municipalities.create') }}" class="btn btn-primary btn-sm unrounded">
-          Tambah baru&nbsp;
-          <i class="fa-solid fa-plus"></i>
-        </a>
+        @if (empty($state_id))
+          <a href="{{ route('admin.location.municipalities.create') }}" class="btn btn-primary btn-sm unrounded">
+            Tambah baru&nbsp;
+            <i class="fa-solid fa-plus"></i>
+          </a>
+        @else
+          <a href="{{ route('admin.location.municipalities.create', ["state_id" => $state_id]) }}" class="btn btn-primary btn-sm unrounded">
+            Tambah baru&nbsp;
+            <i class="fa-solid fa-plus"></i>
+          </a>
+        @endif
 
         <div>
           <form action="" autocomplete="off" method="POST">
@@ -35,27 +48,34 @@
 
 @section('script')
   <script>
+    const state_id = "<?php echo $state_id ?>";
+
     document.addEventListener('DOMContentLoaded', async function () {
       $(function () {
         const table = $('#datatable').DataTable({
             processing: true,
             serverSide: true,
-            ajax: "/api/city/listDatatable",
+            ajax: {
+              url: "/api/city/listDatatable",
+              type: 'POST',
+              data: { state_id }
+            },
             columns: [
-              {data: 'logo', title: 'Logo', name: 'logo',
-                "render": function ( data, type, row, meta ) {
-                  if (data === null) {
-                    return '-'
-                  } else {
-                    return `<img src="/storage/municipalities/logo/${data}" style="width: 75px" class="mb-3">`
-                  }
-                },
-              },
               {data: 'name', title: 'Name', name: 'name'},
               {data: 'schools_count', title: 'Jumlah Sekolah', name: 'schools_count'},
+              {data: 'county', title: 'State', name: 'county', 
+                "render": function ( data, type, row, meta ) {
+                  return data.name
+                }
+              },
               {data: 'id', title: 'Aksi', orderable: false, searchable: false,
                 "render": function ( data, type, row, meta ) {
-                  const updateRoute = `/admin/location/municipalities/update/${data}`
+                  let updateRoute
+                  if (state_id === '') {
+                    updateRoute = `/admin/location/municipalities/update/${data}`
+                  } else {
+                    updateRoute = `/admin/location/municipalities/update/${data}?state_id=${state_id}`
+                  }
 
                   return `
                     <a href="/admin/school?state_id=${row.county_id}&city_id=${data}" class="btn btn-sm unrounded btn-primary">

@@ -89,10 +89,10 @@
                 <label for="name">Federasi *</label>
               </div>
               <div class="col-7">
-                <select class="form-select" id="federation_id" name="federation_id" required>
+                <select class="form-select select2" id="federation_id" name="federation_id" required>
                   <option disabled selected value>Please select ...</option>
                   @foreach ($federations as $item)
-                    <option value="{{ $item->id }}">{{ $item->name }}</option>
+                    <option value="{{ $item->id }}">{{ $item->abbreviation }}</option>
                   @endforeach
                 </select>
               </div>
@@ -103,7 +103,7 @@
                 <label for="name">Asosiasi</label>
               </div>
               <div class="col-7">
-                <select class="form-select" id="association_id" name="association_id">
+                <select class="form-select select2" id="association_id" name="association_id">
                   <option disabled selected value>Pilih Federasi Dulu</option>
                   {{-- Dynamic Data --}}
                 </select>
@@ -224,7 +224,7 @@
         const val = $(this).val()
         if (val !== null) {
           const associations = await getList(`/api/association/list?showall=true&federation_id=${val}`)
-          generateSelect('#association_id', associations)
+          generateSelect('#association_id', associations, true)
           $('#association_id').val(associationSelected).change()
         }
       })
@@ -245,7 +245,7 @@
       const country = countries[0]
 
       const cities = await getList(`/api/county/list?country_id=${country.id}&showall=true`)
-      generateSelect('#county_id', cities)
+      generateSelect('#county_id', cities, true)
       $('#county_id').val(stateSelected).change()
       if (cityDefault == 1) $('input[name=county_id').val(stateSelected)
 

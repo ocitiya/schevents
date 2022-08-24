@@ -87,7 +87,7 @@
                 <select name="federation_id" class="form-select select2" id="federation_id" required>
                   <option disabled selected value>Please select ...</option>
                   @foreach ($federations as $item)
-                    <option value="{{ $item->id }}">{{ $item->name }}</option>
+                    <option value="{{ $item->id }}">{{ $item->abbreviation }}</option>
                   @endforeach
                 </select>
               </div>

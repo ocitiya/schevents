@@ -39,7 +39,7 @@
               {data: 'logo', title: 'Logo', name: 'logo',
                 "render": function ( data, type, row, meta ) {
                   if (data === null) {
-                    return '-'
+                    return '<img src="/images/no-logo-1.png" style="width: 75px" class="mb-3">'
                   } else {
                     return `<img src="/storage/counties/logo/${data}" style="width: 75px" class="mb-3">`
                   }
@@ -51,7 +51,7 @@
               {data: 'id', title: 'Aksi', orderable: false, searchable: false,
                 "render": function ( data, type, row, meta ) {
                   const updateRoute = `/admin/location/counties/update/${data}`
-                  const municipalityRoute = `/admin/location/municipalities?state=${data}`
+                  const municipalityRoute = `/admin/location/municipalities?state_id=${data}`
 
                   return `
                     <a href="${updateRoute}" class="btn btn-sm unrounded btn-primary">

@@ -49,7 +49,7 @@ Route::get('/match-schedule/list', [MatchScheduleController::class, 'list']);
 Route::get('/stadium/list', [StadiumController::class, 'list']);
 
 Route::get('/state/listDatatable', [CountiesController::class, 'listDatatable']);
-Route::get('/city/listDatatable', [MunicipalitiesController::class, 'listDatatable']);
+Route::post('/city/listDatatable', [MunicipalitiesController::class, 'listDatatable']);
 
 Route::get('/sport-type/list', [SportTypeController::class, 'list']);
 Route::post('/sport-type/listDatatable', [SportTypeController::class, 'listDatatable']);

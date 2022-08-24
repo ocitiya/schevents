@@ -15,21 +15,40 @@ use App\Models\Municipality;
 
 class MunicipalitiesController extends Controller {
 	public function index (Request $request) {
-		return view('admin.municipalities.index');
+		$state_id = $request->has('state_id') ? $request->state_id : null;
+
+    $data = [ "state_id" => $state_id ];
+    if ($state_id != null) {
+      $stateName = County::find($state_id)->name;
+      $data["state_name"] = $stateName;
+    }
+
+		return view('admin.municipalities.index', $data);
 	}
 
-	public function create () {
+	public function create (Request $request) {
+		$state_id = $request->has('state_id') ? $request->state_id : null;
     $counties = County::get();
     
-    $data = [ "counties" => $counties ];
+    $data = [
+			"counties" => $counties,
+			"state_id" => $state_id
+		];
+
 		return view('admin.municipalities.form', $data);
 	}
 
-	public function update ($id) {
+	public function update (Request $request, $id) {
+		$state_id = $request->has('state_id') ? $request->state_id : null;
     $counties = County::get();
 		$municipality = Municipality::find($id);
 
-		$data = [ "data" => $municipality, "counties" => $counties ];
+		$data = [
+			"data" => $municipality,
+			"counties" => $counties,
+			"state_id" => $state_id
+		];
+
 		return view('admin.municipalities.form', $data);
 	}
 
@@ -49,49 +68,29 @@ class MunicipalitiesController extends Controller {
 			'logo' => 'nullable|mimes:jpg,png'
 		]);
 
-		if ($request->hasFile('logo')) {
-			if(!Storage::exists("/public/municipalities/logo")) Storage::makeDirectory("/public/municipalities/logo");
-			$file = $request->file('logo');
-
-			$filenameWithExt = $request->file('logo')->getClientOriginalName();
-			$filename = pathinfo($filenameWithExt, PATHINFO_FILENAME);
-			$extension = $request->file('logo')->getClientOriginalExtension();
-
-			$filename = $filename.'_'.time().'.'.$extension;
-			$path = storage_path('app/public/municipalities/logo/').$filename;
-			$file->storeAs('public/municipalities/logo', $filename);
-
-			// Resize image
-			$img = Image::make($file->getRealPath())
-				->resize(512, 512, function ($constraint) {
-					$constraint->aspectRatio();
-				})
-				->save($path, 80);
-		}
-
 		$municipality = null;
 		if ($isCreate) {
 			$municipality = new Municipality;
 			$municipality->id = Str::uuid();
 		} else {
 			$municipality = Municipality::find($request->id);
-			if ($request->hasFile('logo')) {
-				$oldPath = storage_path('app/public/municipalities/logo/').$counties->logo;
-				if (file_exists($oldPath) && is_file($oldPath)) {
-					unlink($oldPath);
-				}
-			}
 		}
 		
 		try {
 			$municipality->county_id = $request->county_id;
 			$municipality->name = ucwords($request->name);
-			if ($request->hasFile('logo')) $municipality->logo = $filename;
 			$municipality->save();
 
-			return redirect()
-				->route("admin.location.municipalities.index")
-				->with('success', 'Data successfully saved');
+			if ($request->has("isStateDefault")) {
+				return redirect()
+					->route("admin.location.municipalities.index", ["state_id" => $request->county_id])
+					->with('success', 'Data successfully saved');
+			} else {
+				return redirect()
+					->route("admin.location.municipalities.index")
+					->with('success', 'Data successfully saved');
+			}
+
 		} catch (QueryException $exception) {
 			return redirect()->back()
 				->withErrors($exception->getMessage());
@@ -99,7 +98,14 @@ class MunicipalitiesController extends Controller {
 	}
 
 	public function listDatatable(Request $request) {
-		$data = Municipality::withCount(["schools"])->get();
+		$stateId = isset($request->state_id) ? $request->state_id : null;
+		
+		$data = Municipality::withCount(["schools"])
+			->with(["county"])
+			->when($stateId != null, function ($subQuery) use ($stateId) {
+				$subQuery->where('county_id', $stateId);
+			})
+			->get();
 		return Datatables::of($data)->make(true);
 	}
 

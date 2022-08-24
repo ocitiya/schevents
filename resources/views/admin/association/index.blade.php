@@ -88,7 +88,7 @@
               {data: 'abbreviation', title: 'Abbreviation', name: 'abbreviation'},
               {data: 'federation', title: 'Federasi', name: 'federation',
                 render: function ( data, type, row, meta ) {
-                  return data.name
+                  return data.abbreviation
                 } 
               },
               {data: 'logo', title: 'Logo', name: 'logo',

@@ -42,4 +42,8 @@ class MatchSchedule extends Model {
 	public function team_type () {
 		return $this->belongsTo(TeamType::class);
 	}
+
+	public function federation () {
+		return $this->belongsTo(Federation::class);
+	}
 }

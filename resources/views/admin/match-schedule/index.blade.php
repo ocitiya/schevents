@@ -212,12 +212,12 @@
                 }
               }
             },
-            {data: 'team_type', title: 'Federasi', name: 'team_type',
+            {data: 'federation', title: 'Federasi', name: 'federation',
               "render": function ( data, type, row, meta ) {
-                return data.name
+                return data.abbreviation
               }
             },
-            {data: 'team_type', title: 'Tipe Tim', name: 'team_type',
+            {data: 'sport_type', title: 'Olahraga', name: 'team_type',
               "render": function ( data, type, row, meta ) {
                 return data.name
               }
