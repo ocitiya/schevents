@@ -1,5 +1,11 @@
 @php
-  $title = "{$data->school1->name} ({$data->school1->county->name}) vs {$data->school2->name} ({$data->school2->county->name})"
+  $title = "{$data->federation->abbreviation} - {$data->school1->name} ({$data->school1->municipality->name}, {$data->school1->county->abbreviation}) vs {$data->school2->name} ({$data->school2->municipality->name}, {$data->school2->county->abbreviation})";
+  $description = "Watch online {$data->team_type->name} {$data->team_gender} {$data->sport_type->name}";
+  $team = "{$data->team_type->name} {$data->team_gender} {$data->sport_type->name}";
+  $school1 = $data->school1->name;
+  $school2 = $data->school2->name;
+  $stream_url = $data->sport_type->stream_url;
+  $federation = $data->federation->abbreviation;
 @endphp
 
 <!DOCTYPE html>
@@ -9,7 +15,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
 
-  <meta name="description" content="Watch online {{ $data->sport_type->name }} Games, {{ $title }}" >
+  <meta name="description" content="{{ $description }}" >
   <meta name="keywords" content="{{ $data->keywords }}">
   <meta name="robots" content="index,follow">
 
@@ -51,10 +57,22 @@
 </head>
 <body>
   <div class="content">
-    <h4 class="text-center mb-5 title"><b>{{ $title }}</b></h4>
+    <div class="text-center">
+      Powered by
+    </div>
+    <div class="text-center mt-3">
+      <img src="{{ "/storage/federation/logo/{$data->federation->logo}" }}" style="width: 80px">
+      <img src="/images/playon.jpg" style="width: 80px">
+    </div>
 
-    <div class="c2">
-      <h5 class="mb-4"><b>{{ $data->sport_type->name }} Games</b></h5>
+    <div class="c2 mt-5">
+      <h5 class="mb-4"><b>
+        {{ $data->team_type->name }}
+        @if (!empty($data->team_gender))
+        {{ $data->team_gender }}
+        @endif
+        {{ $data->sport_type->name }}
+      </b></h5>
 
       <div class="card-score">
         <div class="row3">
@@ -67,9 +85,10 @@
               @endif
             </div>
             <div>
-              {{ "{$data->school1->name} ({$data->school1->county->name})" }}
+              {{ $data->school1->name }}<br/>
+              {{ $data->school1->municipality->name }},
+              {{ $data->school1->county->abbreviation }}
             </div>
-            <h4 class="my-4"><b>{{ $data->score1 ?? "-" }}</b></h4>
           </div>
 
           <div class="d-flex justify-content-center align-items-center">vs</div>
@@ -83,13 +102,14 @@
               @endif
             </div>
             <div>
-              {{ "{$data->school2->name} ({$data->school2->county->name})" }}
+              {{ $data->school2->name }}<br/>
+              {{ $data->school2->municipality->name }},
+              {{ $data->school2->county->abbreviation }}
             </div>
-            <h4 class="my-4"><b>{{ $data->score2 ?? "-" }}</b></h45>
           </div>
         </div>
 
-        <div class="">
+        <div class="mt-5">
           <b>
             <span id="datetime">
               {{ date("d M Y H:i", strtotime($data->datetime)) }}
@@ -98,21 +118,28 @@
         </div>
       </div>
 
-      <div class="mt-5" id="stream">
-        <a class="btn btn-light" href="{{ $data->sport_type->stream_url }}"><b>
+      <div class="mt-5">
+        <a class="btn btn-light" id="stream" href="{{ $data->sport_type->stream_url }}"><b>
           <i class="fa-solid fa-video"></i>
           &nbsp;Watch Online
         </b></a>
+        <a class="btn btn-light" href="/"><b>
+          <i class=""></i>
+          &nbsp;More Event
+        </b></a>
       </div>
 
-      <div class="mt-5" id="replay">
-        <h5 class="text-center mb-3"><b>Replay Video</b></h5>
-        <div class="d-flex justify-content-center align-items-center">
-          @if (!empty($data->youtube_link))
-            <iframe width="100%" height="315" src="{{ $data->youtube_link }}" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen style="object-fit: contain;"></iframe>
-          @else
-            <img src="/images/no-video.jpg" style="width: 100%; max-height: 180px; object-fit: contain;" />                
-          @endif
+      <div class="share-container mt-5">
+        <h5><b>Share this event</b></h5>
+
+        <div class="d-flex gap-2 flex-wrap pt-2">
+          <button id="share-to-fb" class="btn btn-sm">
+            <img src="/images/fb-logo-2.png" alt="Facebook Logo" style="height: 30px; width: 30px">
+          </button>
+
+          <button id="share-to-twitter" class="btn btn-sm">
+            <img src="/images/twitter-logo-2.png" alt="Twitter Logo" style="height: 30px; width: 30px">
+          </button>
         </div>
       </div>
     </div>
@@ -124,7 +151,26 @@
   <script src="{{ asset('js/fontawesome-free-6.1.1-web.all.min.js') }}"></script>
 
   <script>
+    const title = "<?php echo $title ?>";
+    const description = "<?php echo $description ?>";
+    const keywords = "<?php echo $data->keywords ?>";
+    const team = "<?php echo $team ?>";
+    const school1 = "<?php echo $school1 ?>";
+    const school2 = "<?php echo $school2 ?>";
+    const stream_url = "<?php echo $stream_url ?>";
+    const federation = "<?php echo $federation ?>";
+
+    let hashtag = keywords.split(',');
+    hashtag = hashtag.filter((a) => a);
+    hashtag.map((item, i) => {
+      const a = item.replace(/ /g, '');
+      hashtag[i] = `#${a}`
+    })
+
+    hashtag = hashtag.join(' ');
+
     document.addEventListener('DOMContentLoaded', function () {
+      const selfURL = window.location.href;
       const datetimeElem = document.querySelector('#datetime')
       
       const datetime = datetimeElem.innerHTML;
@@ -136,11 +182,25 @@
 
       datetimeElem.innerHTML = `${formatDate} ${timezone}`;
 
-      if (moment().isAfter(datelocal)) {
-        document.querySelector('#stream').style.display = 'none';
-      } else {
-        document.querySelector('#replay').style.display = 'none';
-      }
+      document.querySelector('meta[name="description"]').setAttribute("content", `${formatDate} ${timezone}, Watch online ${team}, ${title}`);
+
+      // if (datelocal.isSame(new Date(), 'day') || moment().add(3, 'hours').isAfter(datelocal)) {
+      //   // null
+      // } else {
+      //   document.querySelector('#stream').style.display = 'none';
+      // }
+
+      document.querySelector('#share-to-fb').addEventListener('click', function(){
+        const shareURL = `https://www.facebook.com/sharer/sharer.php?u=${selfURL}`;
+        window.open(shareURL, '_blank', 'location=yes,height=570,width=520,scrollbars=yes,status=yes');
+      });
+
+      document.querySelector('#share-to-twitter').addEventListener('click', function(){
+        const desc = this.getAttribute('data-description');
+        const text = encodeURIComponent(`${federation}\n${team} | ${formatDate} ${timezone}\n${school1} vs ${school2}\nWatch on\n${selfURL}\nor\n${stream_url}\n\nShare this event to everyone and happy watching the game !`);
+        const shareURL = `https://twitter.com/intent/tweet?text=${text}`;
+        window.open(shareURL, '_blank', 'location=yes,height=570,width=520,scrollbars=yes,status=yes');
+      });
     });
   </script>
 </body>

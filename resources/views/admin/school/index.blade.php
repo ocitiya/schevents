@@ -128,7 +128,7 @@
               {data: 'county', title: 'State', name: 'county',
                 "render": function ( data, type, row, meta ) {
                   return `
-                    ${data.name}
+                    ${row.county.abbreviation} - ${data.name}
                   `
                 }
               },

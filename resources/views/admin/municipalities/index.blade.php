@@ -65,7 +65,7 @@
               {data: 'schools_count', title: 'Jumlah Sekolah', name: 'schools_count'},
               {data: 'county', title: 'State', name: 'county', 
                 "render": function ( data, type, row, meta ) {
-                  return data.name
+                  return `${row.county.abbreviation} - ${data.name}`
                 }
               },
               {data: 'id', title: 'Aksi', orderable: false, searchable: false,

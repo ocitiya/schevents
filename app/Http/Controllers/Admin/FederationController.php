@@ -74,7 +74,7 @@ class FederationController extends Controller {
 			$federation = Federation::find($request->id);
       if ($request->hasFile('logo')) {
 				$oldPath = storage_path('app/public/federation/logo/').$federation->logo;
-				if (file_exists($oldPath)) {
+				if (file_exists($oldPath) && is_file($oldPath)) {
 					unlink($oldPath);
 				}
 			}
@@ -90,7 +90,10 @@ class FederationController extends Controller {
 				->route("admin.masterdata.federation.index")
 				->with('success', 'Data successfully saved');
 		} catch (QueryException $exception) {
-      unlink($path);
+			if (is_file($path)) {
+				unlink($path);
+			}
+			
 			return redirect()->back()
 				->withErrors($exception->getMessage());
 		}

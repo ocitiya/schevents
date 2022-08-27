@@ -27,11 +27,15 @@
             <div class="card-schedule-container">
               <q-card v-for="item in schedules" :key="item.id" v-ripple class="event-card" @click="() => redirect(item.id)">
                 <q-card-section class="flex justify-between items-center">
-                  <span class="text-primary">
-                    <span class="capitalize" v-if="item.team_gender !== null">{{ item.team_gender }},</span>
-                    <span v-if="item.team_type !== null">{{ item.team_type.name }},</span>
+                  <div class="text-primary">
+                    <span v-if="item.team_type !== null">{{ item.team_type.name }}&nbsp;</span>
+                    <span class="capitalize" v-if="item.team_gender !== null">{{ item.team_gender }}&nbsp;</span>
                     <span v-if="item.sport_type !== null">{{ item.sport_type.name }}</span>
-                  </span>                
+                  </div>      
+                  
+                  <div class="text-primary text-bold">
+                    <span>{{ item.federation.abbreviation }}</span>
+                  </div>
                 </q-card-section>
   
                 <q-separator />
@@ -53,8 +57,13 @@
                         :ratio="1"
                       />
 
-                      <div class="text-bold text-primary q-mt-md">
-                        {{ item.school1.name }} ({{ item.school1.county.abbreviation }})
+                      <div class="text-primary q-mt-md">
+                        <div class="text-bold">{{ item.school1.name }}</div>
+                        <div>{{ item.school1.municipality.name }},&nbsp;
+                          <span class="text-bold">
+                            {{ item.school1.county.abbreviation }}
+                          </span>
+                        </div>
                       </div>
                     </div>
 
@@ -81,8 +90,13 @@
                         :ratio="1"
                       />
 
-                      <div class="text-bold text-primary q-mt-md">
-                        {{ item.school2.name }} ({{ item.school2.county.abbreviation }})
+                      <div class="text-primary q-mt-md">
+                        <div class="text-bold">{{ item.school1.name }}</div>
+                        <div>{{ item.school2.municipality.name }},&nbsp;
+                          <span class="text-bold">
+                            {{ item.school2.county.abbreviation }}
+                          </span>
+                        </div>
                       </div>
                     </div>
 

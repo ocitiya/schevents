@@ -163,6 +163,25 @@
         });
       })
 
+      const sharetoFB = (shareURL) => {
+        console.log(shareURL)
+        window.open(shareURL, '_blank', 'location=yes,height=570,width=520,scrollbars=yes,status=yes');
+      }
+
+      const shareToTw = (shareURL) => {
+        window.open(shareURL, '_blank', 'location=yes,height=570,width=520,scrollbars=yes,status=yes');
+      }
+
+      $('#datatable').on('click', '.share-to-fb', function () {
+        const shareURL = $(this).attr('data-share')
+        sharetoFB(shareURL)
+      });
+
+      $('#datatable').on('click', '.share-to-twitter', function () {
+        const shareURL = $(this).attr('data-share')
+        sharetoFB(shareURL)
+      });
+
       $(function () {
         table = $('#datatable').DataTable({
           processing: true,
@@ -176,27 +195,17 @@
             }
           },
           columns: [
-            {data: 'school1', title: 'Nama State', name: 'state1',
-              "render": function ( data, type, row, meta ) {
-                return data.county.name
-              }
-            },
             {data: 'school1', title: 'Club 1', name: 'school1',
               "render": function ( data, type, row, meta ) {
                 if (data !== null) {
                   if (row.score1 !== null) {
                     return `${data.name} <span class="text-bg-success">(${row.score1})</span>`
                   } else {
-                    return data.name
+                    return `<span class="text-bold">${row.school1.county.abbreviation}<span> - ${data.name}`
                   }
                 } else {
                   return 'Unknown School'
                 }
-              }
-            },
-            {data: 'school2', title: 'Nama State 2', name: 'state2',
-              "render": function ( data, type, row, meta ) {
-                return data.county.name
               }
             },
             {data: 'school2', title: 'Club 2', name: 'school2',
@@ -205,7 +214,7 @@
                   if (row.score2 !== null) {
                     return `${data.name} <span class="text-bg-success">(${row.score2})</span>`
                   } else {
-                    return data.name
+                    return `<span class="text-bold">${row.school2.county.abbreviation}<span> - ${data.name}`
                   }
                 } else {
                   return 'Unknown School'
@@ -222,17 +231,52 @@
                 return data.name
               }
             },
-            {data: 'datetime', title: 'Tanggal', name: 'datetime',
+            {data: 'datetime', title: 'Tanggal Main', name: 'datetime',
               "render": function ( data, type, row, meta ) {
                 const formatDate = moment.utc(data).local().format('D MMMM Y')
                 return formatDate
               }
             },
-            {data: 'datetime', title: 'Waktu', name: 'datetime',
+            {data: 'datetime', title: 'Waktu Main', name: 'datetime',
               "render": function ( data, type, row, meta ) {
                 const timezone = moment().tz(moment.tz.guess()).format('z')
                 const formatDate = moment.utc(data).local().format('hh:mm')
                 return `${formatDate} ${timezone}`
+              }
+            },
+            {data: 'id', title: 'Aksi', orderable: false, searchable: false,
+              "render": function ( data, type, row, meta ) {
+                const origin = window.location.origin
+                const shareURL = `https://www.facebook.com/sharer/sharer.php?u=${origin}/schedule/${data}`;
+
+                let hashtag = row.keywords.split(',');
+                hashtag = hashtag.filter((a) => a);
+                hashtag.map((item, i) => {
+                  const a = item.replace(/ /g, '');
+                  hashtag[i] = `#${a}`
+                })
+
+                hashtag = hashtag.join(' ');
+
+                const datetime = row.datetime
+                const datelocal = moment.utc(datetime, 'D MMM YYYY hh:mm').local()
+                const formatDate = datelocal.format('ddd, D MMMM Y hh:mm');
+
+                const zone_name = moment.tz.guess();
+                const timezone = moment.tz(zone_name).zoneAbbr() 
+                
+                const text = encodeURIComponent(`${row.federation.abbreviation}\n${row.team_type.name} | ${formatDate} ${timezone}\n${row.school1.name} vs ${row.school2.name}\nWatch on\n${origin}/schedule/${data}\nor\n${row.sport_type.stream_url}\n\n${hashtag}`);
+                const shareURLTW = `https://twitter.com/intent/tweet?text=${text}`;
+
+                return `
+                  <button class="share-to-fb btn btn-sm" data-share="${shareURL}">
+                    <img src="/images/fb-logo-2.png" alt="Facebook Logo" style="height: 30px; width: 30px">
+                  </button>
+
+                  <button class="share-to-twitter btn btn-sm" data-share="${shareURLTW}">
+                    <img src="/images/twitter-logo-2.png" alt="Twitter Logo" style="height: 30px; width: 30px">
+                  </button>
+                `
               }
             },
             {data: 'id', title: 'Aksi', orderable: false, searchable: false,
