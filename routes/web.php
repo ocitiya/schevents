@@ -133,16 +133,6 @@ Route::middleware(['haveInstalled'])->group(function () {
       // Route::get('/incity/update/{id}', [MatchScheduleController::class, 'inCityUpdate'])->name('incity.update');
     });
 
-    Route::group(['prefix' => 'stadium', 'as' => 'stadium.'], function () {
-      Route::get('/', [StadiumController::class, 'index'])->name('index');
-      Route::get('/create', [StadiumController::class, 'create'])->name('create');
-      Route::get('/update/{id}', [StadiumController::class, 'update'])->name('update');
-      Route::get('/detail/{id}', [StadiumController::class, 'detail'])->name('detail');
-
-      Route::post('/store', [StadiumController::class, 'store'])->name('store');
-      Route::post('/delete', [StadiumController::class, 'delete'])->name('delete');
-    });
-
     Route::group(['prefix' => 'masterdata', 'as' => 'masterdata.'], function () {
       Route::group(['prefix' => 'team_type', 'as' => 'team_type.'], function () {
         Route::get('/', [TeamTypeController::class, 'index'])->name('index');
@@ -182,6 +172,16 @@ Route::middleware(['haveInstalled'])->group(function () {
 
         Route::post('/store', [FederationController::class, 'store'])->name('store');
         Route::post('/delete', [FederationController::class, 'delete'])->name('delete');
+      });
+
+      Route::group(['prefix' => 'stadium', 'as' => 'stadium.'], function () {
+        Route::get('/', [StadiumController::class, 'index'])->name('index');
+        Route::get('/create', [StadiumController::class, 'create'])->name('create');
+        Route::get('/update/{id}', [StadiumController::class, 'update'])->name('update');
+        Route::get('/detail/{id}', [StadiumController::class, 'detail'])->name('detail');
+  
+        Route::post('/store', [StadiumController::class, 'store'])->name('store');
+        Route::post('/delete', [StadiumController::class, 'delete'])->name('delete');
       });
     });
   });

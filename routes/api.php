@@ -46,7 +46,9 @@ Route::post('/school/listDatatable', [SchoolController::class, 'listDatatable'])
 Route::post('/school/validate', [SchoolController::class, 'validateSchool']);
 
 Route::get('/match-schedule/list', [MatchScheduleController::class, 'list']);
+
 Route::get('/stadium/list', [StadiumController::class, 'list']);
+Route::get('/stadium/listDatatable', [StadiumController::class, 'listDatatable']);
 
 Route::get('/state/listDatatable', [CountiesController::class, 'listDatatable']);
 Route::post('/city/listDatatable', [MunicipalitiesController::class, 'listDatatable']);

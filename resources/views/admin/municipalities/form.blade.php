@@ -61,7 +61,7 @@
                 <select name="county_id" class="select2 form-select" id="county_id">
                   <option disabled selected value>Please select ...</option>
                   @foreach ($counties as $item)
-                    <option value="{{ $item->id }}">{{ $item->name }}</option>
+                    <option value="{{ $item->id }}">{{  $item->abbreviation}} - {{ $item->name }}</option>
                   @endforeach
                 </select>
               </div>

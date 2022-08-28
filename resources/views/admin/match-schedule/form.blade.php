@@ -45,8 +45,9 @@
         >
           {{ csrf_field() }}
 
+          <input type="hidden" name="id" value="{{ isset($data) ? $data->id : null }}">
+
           @if ($federation_id != null)
-            <input type="hidden" name="id" value="{{ isset($data) ? $data->id : null }}">
             <input type="hidden" name="isDefaultFederation" value="true">  
           @endif
 
@@ -211,10 +212,15 @@
 
             <div class="row">
               <div class="col-5">
-                <label for="name">Stadion</label>
+                <label for="stadium_id">Lapanngan / Stadion</label>
               </div>
               <div class="col-7">
-                <input type="text" name="stadium" class="form-control" value="{{ old('stadium', isset($data) ? $data->stadium : null) }}">
+                <select name="stadium_id" class="form-select select2" id="stadium_id">
+                  <option disabled selected value>Please select ...</option>
+                  @foreach ($stadiums as $item)
+                    <option value="{{ $item->id }}">{{ $item->name }}</option>
+                  @endforeach
+                </select>
               </div>
             </div>
           
@@ -297,6 +303,7 @@
     const timeMinuteSelected = "<?php echo old('time_minute', isset($data) ? $data->time_minute : null) ?>";
     const matchSystemSelected = "<?php echo old('match_system', isset($data) ? $data->match_system : null) ?>";
     const matchSystem2Selected = "<?php echo old('match_system2', isset($data) ? $data->match_system2 : null) ?>";
+    const stadiumSelected = "<?php echo old('stadium_id', isset($data) ? $data->stadium_id : null) ?>";
 
     const getList = (endpoint) => {
       return new Promise((resolve, reject) => {
@@ -339,6 +346,7 @@
       $('#time_hour').val(timeHourSelected).change()
       $('#time_minute').val(timeMinuteSelected).change()
       $('#team_type_id').val(teamTypeSelected).change()
+      $('#stadium_id').val(stadiumSelected).change()
 
       if (matchSystemSelected !== null) {
         $(`#match_system_${matchSystemSelected}`).prop("checked", true);

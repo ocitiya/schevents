@@ -56,6 +56,11 @@
 							href="{{ route('admin.masterdata.team_type.index') }}"
 						>Tipe Tim</a>
 					</li>
+					<li class="{{ str_contains(Request::route()->getName(), 'admin.masterdata.stadium.index') ? 'active' : null }}">
+						<a
+							href="{{ route('admin.masterdata.stadium.index') }}"
+						>Stadium</a>
+					</li>
 					<li
 						class="{{ str_contains(Request::route()->getName(), 'admin.masterdata.federation') ? 'active' : null }}"
 					>

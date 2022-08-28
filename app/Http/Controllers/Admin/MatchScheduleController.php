@@ -60,11 +60,13 @@ class MatchScheduleController extends Controller {
 
     $team_types = TeamType::get();
     $federations = Federation::get();
+    $stadiums = Stadium::get();
 
     $data = [
       "team_types" => $team_types,
       "federations" => $federations,
-      "federation_id" => $federation_id
+      "federation_id" => $federation_id,
+      "stadiums" => $stadiums
     ];
 
     return view('admin.match-schedule.form', $data);
@@ -75,6 +77,7 @@ class MatchScheduleController extends Controller {
 
     $federations = Federation::get();
     $team_types = TeamType::get();
+    $stadiums = Stadium::get();
 
     $schedule = MatchSchedule::find($id);
     $dt = new DateTime($schedule->datetime);
@@ -85,8 +88,9 @@ class MatchScheduleController extends Controller {
     $data = [
       "data" => $schedule,
       "federations" => $federations,
+      "stadiums" => $stadiums,
       "team_types" => $team_types,
-      "federation_id" => $federation_id
+      "federation_id" => $federation_id,
     ];
 
     return view('admin.match-schedule.form', $data);
@@ -112,7 +116,7 @@ class MatchScheduleController extends Controller {
       'score2' => 'numeric',
       'youtube_link' => 'string',
       'team_gender' => 'in:boy,girl',
-      'stadium' => 'max:255',
+      'stadium' => 'nullable|uuid',
       'team_type_id' => 'uuid',
       'date' => 'required|date',
       'time_hour' => 'required|min:0|max:59',
@@ -133,6 +137,7 @@ class MatchScheduleController extends Controller {
 
     $school1 = School::with(["county"])->find($request->school1_id);
     $school2 = School::with(["county"])->find($request->school2_id);
+    $federation = Federation::find($request->federation_id);
 
     $level_of_education1 = explode(" ", $school1->level_of_education);
     $level_of_education2 = explode(" ", $school2->level_of_education);
@@ -158,6 +163,7 @@ class MatchScheduleController extends Controller {
       $level_of_education,
       $school1->county->name,
       $school2->county->name,
+      $federation->abbreviation
     ];
 
     $keywords = implode(",", $keywords);
@@ -173,7 +179,7 @@ class MatchScheduleController extends Controller {
       $schedule->score2 = $request->score2;
       $schedule->youtube_link = $request->youtube_link;
       $schedule->team_gender = $request->team_gender;
-      $schedule->stadium = $request->stadium;
+      $schedule->stadium_id = $request->stadium_id;
       $schedule->team_type_id = $request->team_type_id;
       $schedule->datetime = $datetime;
       $schedule->keywords = $keywords;
@@ -386,7 +392,8 @@ class MatchScheduleController extends Controller {
       },
       "team_type",
       "sport_type",
-      "federation"
+      "federation",
+      "stadium"
     ]);
     
 
@@ -493,21 +500,22 @@ class MatchScheduleController extends Controller {
 
         return $model->whereBetween('datetime', [$date1, $date2]);
 
-      case "this-week":
-        $date1 = clone($this->now);
-        $date1 = $date1->addDays(7);
-
-        $date2 = clone($this->now);
-        $date2 = $date2->subHours(2);
-
-        return $model->whereBetween('datetime', [$date2, $date1]);
-
       case "today":
         $date1 = clone($this->now);
         $date1 = $date1->addHours(12);
 
         $date2 = clone($this->now);
         $date2 = $date2->subHours(12);
+
+        return $model->whereBetween('datetime', [$date2, $date1]);
+        // return $model->whereDate('datetime', $date1);
+
+      case "this-week":
+        $date1 = clone($this->now);
+        $date1 = $date1->addDays(7);
+
+        $date2 = clone($this->now);
+        $date2 = $date2->addHours(12);
 
         return $model->whereBetween('datetime', [$date2, $date1]);
         

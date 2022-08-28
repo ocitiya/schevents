@@ -76,12 +76,12 @@
                     </div>
                   </div>
 
-                  <div v-if="item.stadium !== null">
+                  <div v-if="item.stadium_id !== null">
                     <q-separator />
 
                     <div class="flex items-center text-primary q-mt-md">
                       <q-icon name="pin_drop" />&nbsp;
-                      {{ item.stadium }}
+                      {{ item.stadium.name }}
                     </div>
                   </div>
                 </q-card-section>
@@ -184,12 +184,12 @@
                     </div>
                   </div>
 
-                  <div v-if="item.stadium !== null">
+                  <div v-if="item.stadium_id !== null">
                     <q-separator />
 
                     <div class="flex items-center text-primary q-mt-md">
                       <q-icon name="pin_drop" />&nbsp;
-                      {{ item.stadium }}
+                      {{ item.stadium.name }}
                     </div>
                   </div>
                 </q-card-section>
@@ -292,12 +292,12 @@
                     </div>
                   </div>
 
-                  <div v-if="item.stadium !== null">
+                  <div v-if="item.stadium_id !== null">
                     <q-separator />
 
                     <div class="flex items-center text-primary q-mt-md">
                       <q-icon name="pin_drop" />&nbsp;
-                      {{ item.stadium }}
+                      {{ item.stadium.name }}
                     </div>
                   </div>
                 </q-card-section>

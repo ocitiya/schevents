@@ -201,7 +201,7 @@
                   if (row.score1 !== null) {
                     return `${data.name} <span class="text-bg-success">(${row.score1})</span>`
                   } else {
-                    return `<span class="text-bold">${row.school1.county.abbreviation}<span> - ${data.name}`
+                    return `<b>${row.school1.county.abbreviation}</b> - ${data.name}`
                   }
                 } else {
                   return 'Unknown School'
@@ -214,7 +214,7 @@
                   if (row.score2 !== null) {
                     return `${data.name} <span class="text-bg-success">(${row.score2})</span>`
                   } else {
-                    return `<span class="text-bold">${row.school2.county.abbreviation}<span> - ${data.name}`
+                    return `<b>${row.school2.county.abbreviation}</b> - ${data.name}`
                   }
                 } else {
                   return 'Unknown School'
@@ -244,7 +244,7 @@
                 return `${formatDate} ${timezone}`
               }
             },
-            {data: 'id', title: 'Aksi', orderable: false, searchable: false,
+            {data: 'id', title: 'Share', orderable: false, searchable: false,
               "render": function ( data, type, row, meta ) {
                 const origin = window.location.origin
                 const shareURL = `https://www.facebook.com/sharer/sharer.php?u=${origin}/schedule/${data}`;
@@ -259,13 +259,15 @@
                 hashtag = hashtag.join(' ');
 
                 const datetime = row.datetime
-                const datelocal = moment.utc(datetime, 'D MMM YYYY hh:mm').local()
-                const formatDate = datelocal.format('ddd, D MMMM Y hh:mm');
-
-                const zone_name = moment.tz.guess();
-                const timezone = moment.tz(zone_name).zoneAbbr() 
                 
-                const text = encodeURIComponent(`${row.federation.abbreviation}\n${row.team_type.name} | ${formatDate} ${timezone}\n${row.school1.name} vs ${row.school2.name}\nWatch on\n${origin}/schedule/${data}\nor\n${row.sport_type.stream_url}\n\n${hashtag}`);
+                const datelocal = moment.utc(datetime, 'YYYY-MM-DD hh:mm').local()
+                const formatDate = datelocal.format('ddd, D MMMM Y hh:mm');
+                const zone_name = moment.tz.guess();
+                const timezone = moment.tz(zone_name).zoneAbbr()
+
+                const team_type = row.team_type === null ? null : row.team_type.name
+                
+                const text = encodeURIComponent(`${row.federation.abbreviation}\n${team_type} | ${formatDate} ${timezone}\n${row.school1.name} vs ${row.school2.name}\nWatch on\n${origin}/schedule/${data}\nor\n${row.sport_type.stream_url}\n\n${hashtag}`);
                 const shareURLTW = `https://twitter.com/intent/tweet?text=${text}`;
 
                 return `

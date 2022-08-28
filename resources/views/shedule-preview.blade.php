@@ -1,7 +1,8 @@
 @php
   $title = "{$data->federation->abbreviation} - {$data->school1->name} ({$data->school1->municipality->name}, {$data->school1->county->abbreviation}) vs {$data->school2->name} ({$data->school2->municipality->name}, {$data->school2->county->abbreviation})";
-  $description = "Watch online {$data->team_type->name} {$data->team_gender} {$data->sport_type->name}";
-  $team = "{$data->team_type->name} {$data->team_gender} {$data->sport_type->name}";
+  $team_type = empty($data->team_type) ? null : $data->team_type->name;
+  $description = "Watch online {$team_type} {$data->team_gender} {$data->sport_type->name}";
+  $team = "{$team_type} {$data->team_gender} {$data->sport_type->name}";
   $school1 = $data->school1->name;
   $school2 = $data->school2->name;
   $stream_url = $data->sport_type->stream_url;
@@ -67,7 +68,7 @@
 
     <div class="c2 mt-5">
       <h5 class="mb-4"><b>
-        {{ $data->team_type->name }}
+        {{ $team_type }}
         @if (!empty($data->team_gender))
         {{ $data->team_gender }}
         @endif

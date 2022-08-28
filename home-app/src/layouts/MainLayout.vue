@@ -82,13 +82,13 @@
         <div class="col-12 col-md-4">
           <div class="text-bold q-mb-md">Contact</div>
           <div>email:
-            <a href="mailto:admin@schevents.com">
-              admin@schevents.com
+            <a href="mailto:admin@schsports.com">
+              admin@schsports.com
             </a>
           </div>
           <div>website: 
-            <a href="https://schevents.com" target="_blank">
-              https://schevents.com
+            <a href="https://live.schsports.com" target="_blank">
+              https://live.schsports.com
             </a>
           </div>
 
