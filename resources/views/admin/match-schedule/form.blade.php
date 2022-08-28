@@ -212,7 +212,7 @@
 
             <div class="row">
               <div class="col-5">
-                <label for="stadium_id">Lapanngan / Stadion</label>
+                <label for="stadium_id">Lapangan / Stadion</label>
               </div>
               <div class="col-7">
                 <select name="stadium_id" class="form-select select2" id="stadium_id">
