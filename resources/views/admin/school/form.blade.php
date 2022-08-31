@@ -58,12 +58,6 @@
                 <input type="text" id="name" name="name" class="form-control capitalize"
                   value="{{ old('name', isset($data) ? $data->name : null) }}"
                 >
-                <div class="invalid-feedback">
-                  Sekolah sudah terdaftar
-                </div>
-                <div class="valid-feedback">
-                  Sekolah bisa didaftarkan
-                </div>
               </div>
             </div>
 
@@ -75,12 +69,6 @@
                 <input type="text" id="nickname" name="nickname" class="form-control capitalize"
                   value="{{ old('nickname', isset($data) ? $data->name : null) }}"
                 >
-                <div class="invalid-feedback">
-                  Sekolah sudah terdaftar
-                </div>
-                <div class="valid-feedback">
-                  Sekolah bisa didaftarkan
-                </div>
               </div>
             </div>
 
@@ -170,7 +158,7 @@
             </div>
 
             <div class="form-button">
-              <button id="submit" type="submit" class="btn btn-primary btn-sm unrounded disabled">
+              <button id="submit" type="submit" class="btn btn-primary btn-sm unrounded">
                 Kirim&nbsp;
                 <i class="fa-solid fa-paper-plane"></i>
               </button>
@@ -190,10 +178,13 @@
     let citySelected = "<?php echo old('municipality_id', isset($data) ? $data->municipality_id : $default_city) ?>";
     const federationSelected = "<?php echo old('federation_id', isset($data) ? $data->federation_id : null) ?>";
     const associationSelected = "<?php echo old('association_id', isset($data) ? $data->association_id : null) ?>";
-    const cityDefault = "<?php echo $default_city ? 1 : 0 ?>"
+    const cityDefault = "<?php echo $default_city ? 1 : 0 ?>";
 
-    let is_create = "<?php echo !isset($data) ? 1 : 0 ?>"
-    is_create = !!parseInt(is_create)
+    let is_error = "<?php echo $errors->any() ? 1 : 0 ?>";
+    is_error = !!parseInt(is_error);
+
+    let is_create = "<?php echo !isset($data) ? 1 : 0 ?>";
+    is_create = !!parseInt(is_create);
 
     const getList = (endpoint) => {
       return new Promise((resolve, reject) => {
@@ -201,85 +192,65 @@
           .then(res => res.json())
           .then(data => {
             if (data.status) {
-              resolve(data.data.list)
+              resolve(data.data.list);
             } else {
-              alert(data.message)
-              reject()
+              alert(data.message);
+              reject();
             }
-          })
-      })
+          });
+      });
     }
 
     document.addEventListener('DOMContentLoaded', async function () {
-      if (!is_create) $('#submit').removeClass('disabled')
-      if (cityDefault == 1) {
-        $('#county_id').prop('disabled', true)
-        $(`<input type="hidden" name="county_id" value="${stateSelected}" />`).insertBefore('#county_id')
-      
-        $('#municipality_id').prop('disabled', true)
-        $(`<input type="hidden" name="municipality_id" value="${citySelected}" />`).insertBefore('#municipality_id')
+      if (is_error) {
+        $('#submit').prop('disabled', true);
       }
+
+      if (cityDefault == 1) {
+        $('#county_id').prop('disabled', true);
+        $(`<input type="hidden" name="county_id" value="${stateSelected}" />`).insertBefore('#county_id');
+      
+        $('#municipality_id').prop('disabled', true);
+        $(`<input type="hidden" name="municipality_id" value="${citySelected}" />`).insertBefore('#municipality_id');
+      }
+
+      $('#name').on('keyup', function () {
+        if (is_error) {
+          $('#submit').prop('disabled', false);
+          is_error = false;
+        }
+      });
       
       $('#federation_id').on('change', async function () {
-        const val = $(this).val()
+        const val = $(this).val();
         if (val !== null) {
-          const associations = await getList(`/api/association/list?showall=true&federation_id=${val}`)
-          generateSelect('#association_id', associations, true)
-          $('#association_id').val(associationSelected).change()
+          const associations = await getList(`/api/association/list?showall=true&federation_id=${val}`);
+          generateSelect('#association_id', associations, true);
+          $('#association_id').val(associationSelected).change();
         }
-      })
+      });
 
       $('#county_id').on('change', async function () {
-        const val = $(this).val()
+        const val = $(this).val();
         if (val !== null) {
-          stateSelected = val
+          stateSelected = val;
 
-          const municipalities = await getList(`/api/municipality/list?state_id=${stateSelected}&showall=true`)
-          generateSelect('#municipality_id', municipalities, false)
-          $('#municipality_id').val(citySelected).change()
-          if (cityDefault == 1) $('input[name=municipality_id').val(citySelected)
+          const municipalities = await getList(`/api/municipality/list?state_id=${stateSelected}&showall=true`);
+          generateSelect('#municipality_id', municipalities, false);
+          $('#municipality_id').val(citySelected).change();
+          if (cityDefault == 1) $('input[name=municipality_id').val(citySelected);
         }
       })
 
-      const countries = await getList('/api/country/list')
-      const country = countries[0]
+      const countries = await getList('/api/country/list');
+      const country = countries[0];
 
-      const cities = await getList(`/api/county/list?country_id=${country.id}&showall=true`)
-      generateSelect('#county_id', cities, true)
-      $('#county_id').val(stateSelected).change()
-      if (cityDefault == 1) $('input[name=county_id').val(stateSelected)
+      const cities = await getList(`/api/county/list?country_id=${country.id}&showall=true`);
+      generateSelect('#county_id', cities, true);
+      $('#county_id').val(stateSelected).change();
+      if (cityDefault == 1) $('input[name=county_id').val(stateSelected);
 
-      $('#federation_id').val(federationSelected).change()
-      
-      let validationTimeout
-      $('#name').on('keyup', function () {
-        const val = $(this).val()
-
-        if (validationTimeout) clearTimeout(validationTimeout)
-        validationTimeout = setTimeout(() => {
-          const formData = new FormData()
-          formData.append('school', val)
-
-          fetch(`/api/school/validate`, {
-            method: 'POST',
-            body: formData
-          })
-            .then((response) => response.json())
-            .then((data) => {
-              if (data.data) {
-                $(this).addClass('is-valid')
-                $(this).removeClass('is-invalid')
-
-                $('#submit').removeClass('disabled')
-              } else {
-                $(this).addClass('is-invalid') 
-                $(this).removeClass('is-valid')
-              
-                $('#submit').addClass('disabled')
-              }
-            })
-        }, 1000);
-      })
-    })
+      $('#federation_id').val(federationSelected).change();
+    });
   </script>
 @endsection

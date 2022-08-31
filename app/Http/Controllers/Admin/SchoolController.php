@@ -73,7 +73,37 @@ class SchoolController extends Controller {
 
 		$isCreate = $request->id == null ? true : false;
 		$validated = $request->validate($validation);
-		
+
+		$school = null;
+		if ($isCreate) {
+			$validateSchool = School::where("federation_id", $request->federation_id)
+				->where("county_id", $request->county_id)
+				->where("municipality_id", $request->municipality_id)
+				->count();
+			
+		if ($validateSchool > 0) {
+			$state = County::find($request->county_id)->name;
+			$city = Municipality::find($request->municipality_id)->name;
+
+			return redirect()->back()
+				->withInput($request->input())
+				->withErrors(["Sekolah dengan nama {$request->name} di State {$state} dan 
+					di Kota {$city} telah ada, silahkan input dengan nama lain"]); 
+		}
+				
+			$school = new School;
+			$school->id = Str::uuid();
+		} else {
+			$school = School::find($request->id);
+
+			if ($request->hasFile('logo')) {
+				$oldPath = storage_path('app/public/school/logo/').$school->logo;
+				if (file_exists($oldPath && is_file($oldPath))) {
+					unlink($oldPath);
+				}
+			}
+		}
+
 		// Upload Image
 		if ($request->hasFile('logo')) {
 			if(!Storage::exists("/public/school/logo")) Storage::makeDirectory("/public/school/logo");
@@ -94,21 +124,6 @@ class SchoolController extends Controller {
 				})
 				->fit(512, 512, null, 'center')
 				->save($path, 80);
-		}
-
-		$school = null;
-		if ($isCreate) {
-			$school = new School;
-			$school->id = Str::uuid();
-		} else {
-			$school = School::find($request->id);
-
-			if ($request->hasFile('logo')) {
-				$oldPath = storage_path('app/public/school/logo/').$school->logo;
-				if (file_exists($oldPath && is_file($oldPath))) {
-					unlink($oldPath);
-				}
-			}
 		}
 
 		try {
@@ -134,6 +149,7 @@ class SchoolController extends Controller {
 		} catch (QueryException $exception) {
 			unlink($path);
 			return redirect()->back()
+				->withInput($request->input())
 				->withErrors($exception->getMessage());
 		}
 	}

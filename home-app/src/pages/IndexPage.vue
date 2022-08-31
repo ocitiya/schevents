@@ -6,6 +6,14 @@
       </div>
     </div>
 
+    <div class="text-right bg-secondary q-pr-md">
+      <q-btn label="filter" icon="filter_alt" unelevated color="primary"
+        @click="showFilterDialog"
+      >
+        <q-badge v-if="has_filter" floating color="white" rounded />
+      </q-btn>
+    </div>
+
     <q-tabs
       v-model="tab"
       inline-label
@@ -91,7 +99,7 @@
                       />
 
                       <div class="text-primary q-mt-md">
-                        <div class="text-bold">{{ item.school1.name }}</div>
+                        <div class="text-bold">{{ item.school2.name }}</div>
                         <div>{{ item.school2.municipality.name }},&nbsp;
                           <span class="text-bold">
                             {{ item.school2.county.abbreviation }}
@@ -151,6 +159,8 @@
         />
       </div>
     </q-pull-to-refresh>
+
+    <match-filter :show="filter.dialog" @hide="hideFilterDialog" @filter="onFilter" />
   </q-page>
 </template>
 
@@ -165,6 +175,8 @@ import Helper from 'src/services/helper'
 
 export default defineComponent({
   name: 'IndexPage',
+
+  components: { MatchFilter },
 
   data: function () {
     return {

@@ -57,6 +57,11 @@
           </button>
         </li>
         <li class="nav-item" role="presentation">
+          <button class="nav-link tab-item" type="button" role="tab" data-state="tomorrow">
+            Besok
+          </button>
+        </li>
+        <li class="nav-item" role="presentation">
           <button class="nav-link tab-item active" type="button" role="tab" data-state="today">
             Hari Ini
           </button>

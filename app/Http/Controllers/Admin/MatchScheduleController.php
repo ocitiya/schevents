@@ -395,17 +395,18 @@ class MatchScheduleController extends Controller {
       "federation",
       "stadium"
     ]);
-    
 
     $model = $this->_scheduleType($model, $type);
-    $model = $model->orderBy('datetime')
-      ->orderBy('created_at')
-      ->when($school_id != null, function ($query) use ($school_id) {
-        $query->where('school1_id', $school_id)->orWhere('school2_id', $school_id);
+    $model = $model->when($school_id != null, function ($query) use ($school_id) {
+      return $query->where(function ($q) use ($school_id) {
+        return $q->where('school1_id', $school_id)
+          ->orWhere('school2_id', $school_id);
       });
+    })->orderBy('datetime')
+      ->orderBy('created_at');
 
-    $model2 = $model;
-    $total = $model2->count();
+    $total = clone($model);
+    $total = $total->count();
 
     $schedule = $model->when(!$showAll, function ($query) use ($limit, $page) {
       $query->take($limit)->skip(($page - 1) * $limit);
@@ -509,6 +510,12 @@ class MatchScheduleController extends Controller {
 
         return $model->whereBetween('datetime', [$date2, $date1]);
         // return $model->whereDate('datetime', $date1);
+
+      case "tomorrow":
+        $date1 = clone($this->now);
+        $date1 = $date1->addDays(1);
+
+        return $model->whereDate('datetime', $date1);
 
       case "this-week":
         $date1 = clone($this->now);
