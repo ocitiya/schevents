@@ -26,6 +26,7 @@
       <q-tab name="upcoming" label="Upcoming" />
       <q-tab name="this-week" label="This Week" />
       <q-tab name="today" label="Today" />
+      <q-tab name="tomorrow" label="Tomorrow" />
     </q-tabs>
 
     <q-pull-to-refresh @refresh="refresh">

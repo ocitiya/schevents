@@ -79,17 +79,19 @@ class SchoolController extends Controller {
 			$validateSchool = School::where("federation_id", $request->federation_id)
 				->where("county_id", $request->county_id)
 				->where("municipality_id", $request->municipality_id)
+				->where("name", $request->name)
 				->count();
 			
-		if ($validateSchool > 0) {
-			$state = County::find($request->county_id)->name;
-			$city = Municipality::find($request->municipality_id)->name;
+			if ($validateSchool > 0) {
+				$state = County::find($request->county_id)->name;
+				$city = Municipality::find($request->municipality_id)->name;
+				$federation = Federation::find($request->federation_id)->name;
 
-			return redirect()->back()
-				->withInput($request->input())
-				->withErrors(["Sekolah dengan nama {$request->name} di State {$state} dan 
-					di Kota {$city} telah ada, silahkan input dengan nama lain"]); 
-		}
+				return redirect()->back()
+					->withInput($request->input())
+					->withErrors(["Sekolah dengan nama {$request->name} di Federasi {$federation} dengan 
+						State {$state} dan Kota {$city} telah ada, silahkan input dengan nama lain"]); 
+			}
 				
 			$school = new School;
 			$school->id = Str::uuid();

@@ -167,4 +167,26 @@ class MunicipalitiesController extends Controller {
 			]);
 		}
 	}
+
+	public function delete (Request $request) {
+		$validated = $request->validate([
+			'id' => 'required|uuid'
+		]);
+
+		try {
+			$municipality = Municipality::find($request->id);
+			$municipality->delete();
+
+			$request->session()->flash('message', "{$municipality->name} successfully deleted");
+			return response()->json([
+				"status" => true,
+				"message" => null
+			]);
+		} catch (QueryException $exception) {
+			return response()->json([
+				"status" => false,
+				"message" => $exception->getMessage()
+			]);
+		}
+	}
 }
