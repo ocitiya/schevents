@@ -70,6 +70,19 @@ class MunicipalitiesController extends Controller {
 
 		$municipality = null;
 		if ($isCreate) {
+			$validateSchool = Municipality::where("county_id", $request->county_id)
+				->where("name", $request->name)
+				->count();
+			
+			if ($validateSchool > 0) {
+				$state = County::find($request->county_id)->name;
+
+				return redirect()->back()
+					->withInput($request->input())
+					->withErrors(["Kota dengan nama {$request->name} di 
+						State {$state}, silahkan input dengan nama lain"]); 
+			}
+
 			$municipality = new Municipality;
 			$municipality->id = Str::uuid();
 		} else {

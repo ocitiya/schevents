@@ -112,9 +112,9 @@ class MatchScheduleController extends Controller {
       'match_system' => 'in:home,away,neutral',
       'school2_id' => 'required|uuid',
       'match_system2' => 'in:home,away,neutral',
-      'score1' => 'numeric',
-      'score2' => 'numeric',
-      'youtube_link' => 'string',
+      'score1' => 'nullable|numeric',
+      'score2' => 'nullable|numeric',
+      'youtube_link' => 'nullable|string',
       'team_gender' => 'in:boy,girl',
       'stadium' => 'nullable|uuid',
       'team_type_id' => 'uuid',
@@ -444,7 +444,13 @@ class MatchScheduleController extends Controller {
       },
       "team_type",
       "sport_type",
-      "federation"
+      "federation",
+      "createdBy" => function ($query) {
+        return $query->select("id", "username");
+      },
+      "updatedBy" => function ($query) {
+        return $query->select("id", "username");
+      }
     ])
       ->when($request->federation_id != null, function ($query) use ($request) {
         $query->where("federation_id", $request->federation_id);
@@ -503,13 +509,10 @@ class MatchScheduleController extends Controller {
 
       case "today":
         $date1 = clone($this->now);
-        $date1 = $date1->addHours(12);
+        $date1 = $date1->today();
 
-        $date2 = clone($this->now);
-        $date2 = $date2->subHours(12);
-
-        return $model->whereBetween('datetime', [$date2, $date1]);
-        // return $model->whereDate('datetime', $date1);
+        // return $model->whereBetween('datetime', [$date2, $date1]);
+        return $model->whereDate('datetime', $date1);
 
       case "tomorrow":
         $date1 = clone($this->now);

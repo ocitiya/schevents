@@ -11,6 +11,7 @@ class MatchSchedule extends Model {
 
 	protected $table = "match_schedule";
 	protected $primaryKey = "id";
+	public $timestamps = false;
 
 	protected $casts = [
 		'id' => 'string'
@@ -49,5 +50,13 @@ class MatchSchedule extends Model {
 
 	public function stadium () {
 		return $this->belongsTo(Stadium::class);
+	}
+
+	public function createdBy () {
+		return $this->belongsTo(User::class, "created_by");
+	}
+
+	public function updatedBy () {
+		return $this->belongsTo(User::class, "updated_by");
 	}
 }

@@ -66,7 +66,7 @@ class StadiumController extends Controller {
 			$stadium = Stadium::find($request->id);
 
 			if ($request->hasFile('image')) {
-				$oldPath = storage_path('app/public/stadium/image/').$school->image;
+				$oldPath = storage_path('app/public/stadium/image/').$stadium->image;
 				if (file_exists($oldPath && is_file($oldPath))) {
 					unlink($oldPath);
 				}

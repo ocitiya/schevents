@@ -92,7 +92,7 @@
         <div class="tab-pane fade show active" role="tabpanel" tabindex="0">
           <div class="data-center">
             <div id="schedule-items" style="width: 100%">
-              <table id="datatable" class="table table-bordered"></table>
+              <table id="datatable" class="table table-bordered" style="font-size: small"></table>
             </div>
           </div>
         </div>
@@ -206,7 +206,7 @@
                   if (row.score1 !== null) {
                     return `${data.name} <span class="text-bg-success">(${row.score1})</span>`
                   } else {
-                    return `<b>${row.school1.county.abbreviation}</b> - ${data.name}`
+                    return `<b>${row.school1.county.abbreviation}</b> <br/> ${data.name}`
                   }
                 } else {
                   return 'Unknown School'
@@ -219,7 +219,7 @@
                   if (row.score2 !== null) {
                     return `${data.name} <span class="text-bg-success">(${row.score2})</span>`
                   } else {
-                    return `<b>${row.school2.county.abbreviation}</b> - ${data.name}`
+                    return `<b>${row.school2.county.abbreviation}</b> <br/> ${data.name}`
                   }
                 } else {
                   return 'Unknown School'
@@ -237,16 +237,16 @@
               }
             },
             {data: 'datetime', title: 'Tanggal Main', name: 'datetime',
+              className: 'no-wrap',
               "render": function ( data, type, row, meta ) {
-                const formatDate = moment.utc(data).local().format('D MMMM Y')
-                return formatDate
-              }
-            },
-            {data: 'datetime', title: 'Waktu Main', name: 'datetime',
-              "render": function ( data, type, row, meta ) {
+                const formatDate1 = moment(data).format('DD-MM-Y')
+                const formatTime1 = moment(data).format('hh:mm')
+                
                 const timezone = moment().tz(moment.tz.guess()).format('z')
-                const formatDate = moment.utc(data).local().format('hh:mm')
-                return `${formatDate} ${timezone}`
+                const formatDate2 = moment.utc(data).local().format('DD-MM-Y')
+                const formatTime2 = moment.utc(data).local().format('hh:mm')
+
+                return `${formatDate1} <br/> ${formatTime1} UTC <br/><br/> ${formatDate2} <br/> ${formatTime2} ${timezone}`
               }
             },
             {data: 'id', title: 'Share', orderable: false, searchable: false,
@@ -277,13 +277,37 @@
 
                 return `
                   <button class="share-to-fb btn btn-sm" data-share="${shareURL}">
-                    <img src="/images/fb-logo-2.png" alt="Facebook Logo" style="height: 30px; width: 30px">
+                    <img src="/images/fb-logo-2.png" alt="Facebook Logo" style="height: 20px; width: 20px">
                   </button>
 
+                  <br />
+
                   <button class="share-to-twitter btn btn-sm" data-share="${shareURLTW}">
-                    <img src="/images/twitter-logo-2.png" alt="Twitter Logo" style="height: 30px; width: 30px">
+                    <img src="/images/twitter-logo-2.png" alt="Twitter Logo" style="height: 20px; width: 20px">
                   </button>
                 `
+              }
+            },
+            {data: 'created_at', title: 'Dibuat', orderable: false, searchable: false,
+              className: 'no-wrap',
+              "render": function (data, type, row, meta) {
+                const date = moment(data).format('DD-MM-Y')
+                const time = moment(data).format('hh:mm:ss ZZ')
+                return `${date} <br/> ${time} <br/> ${row.created_by.username}`
+              }
+            },
+            {data: 'updated_at', title: 'Diubah', orderable: false, searchable: false,
+              className: 'no-wrap',
+              "render": function (data, type, row, meta) {
+                if (data === null) {
+                  return '-'
+                } else {
+                  const date = moment(data).format('DD-MM-Y')
+                  const time = moment(data).format('hh:mm:ss ZZ')
+                  const username = row.updated_by === null ? '-' : row.updated_by.username
+
+                  return `${date} <br/> ${time} <br/> ${username}`
+                }
               }
             },
             {data: 'id', title: 'Aksi', orderable: false, searchable: false,
@@ -297,17 +321,16 @@
                   updateRoute += '&sudah-bermain'
                 }
 
-
                 return `
                   <a href="${updateRoute}" class="btn btn-sm unrounded btn-primary">
-                    <small>Edit Pertandingan</small>
+                    <small>Edit</small>
                   </a>
 
                   <button
                     class="btn btn-sm unrounded btn-danger delete"
                     data-id="${d}"
                   >
-                    <small>Hapus Pertandingan</small>
+                    <small>Hapus</small>
                   </button>
                 `;
               }

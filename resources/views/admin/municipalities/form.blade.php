@@ -79,7 +79,7 @@
             </div>
 
             <div class="form-button">
-              <button type="submit" class="btn btn-primary btn-sm unrounded">
+              <button type="submit" id="submit" class="btn btn-primary btn-sm unrounded">
                 Submit&nbsp;
                 <i class="fa-solid fa-paper-plane"></i>
               </button>
@@ -96,7 +96,21 @@
     const state_id = "<?php echo $state_id ?>";
     const countySelected = "<?php echo old('county_id', isset($data) ? $data->county_id : $state_id) ?>";
 
+    let is_error = "<?php echo $errors->any() ? 1 : 0 ?>";
+    is_error = !!parseInt(is_error);
+
     document.addEventListener('DOMContentLoaded', function() {
+      if (is_error) {
+        $('#submit').prop('disabled', true);
+      }
+
+      $('#name').on('keyup', function () {
+        if (is_error) {
+          $('#submit').prop('disabled', false);
+          is_error = false;
+        }
+      });
+
       $('#county_id').val(countySelected).change()
 
       if (state_id !== "") {
