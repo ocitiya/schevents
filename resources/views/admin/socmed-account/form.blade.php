@@ -1,14 +1,14 @@
 @extends('layouts.admin.master')
 
 @section('content')
-  <div id="sport_type" class="content">
+  <div id="socmed" class="content">
     <div class="title-container">
-      <h4 class="text-primary">Link Stream</h4>
+      <h4 class="text-primary">Akun Sosmed</h4>
 
       <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
           <li class="breadcrumb-item" aria-current="page">
-            <a href="{{ route('admin.sport.type.index') }}">Index</a>
+            <a href="{{ route('admin.masterdata.socmed.index') }}">Index</a>
           </li>
           <li class="breadcrumb-item active" aria-current="page">Form</li>
         </ol>
@@ -19,9 +19,9 @@
       <div class="data-header">
         <h5 class="text-primary">
           @if(!isset($data))
-            <span>Link Stream Baru</span>
+            <span>Tambah Sosmed</span>
           @else
-            <span>Ubah Link Stream {{ $data->name }}</span>
+            <span>Ubah Sosmed {{ $data->name }}</span>
           @endisset
         </h5>
       </div>
@@ -38,7 +38,7 @@
         @endif
 
         <form
-          action="{{ route('admin.sport.type.store') }}"
+          action="{{ route('admin.masterdata.socmed-account.store') }}"
           method="POST"
           autocomplete="off"
           enctype="multipart/form-data"
@@ -51,37 +51,12 @@
           <div class="col-6">
             <div class="row">
               <div class="col-5">
-                <label for="sport_id">Olahraga *</label>
+                <label for="socmed_id">Sosmed *</label>
               </div>
               <div class="col-7">
-                <select name="sport_id" class="form-select select2" id="sport_id">
+                <select name="socmed_id" class="form-select select2" id="socmed_id">
                   {{-- Dynamic Data --}}
                 </select>
-              </div>
-            </div>
-
-            @if (isset($data))
-              <div class="row">
-                <div class="col-5"></div>
-                <div class="col-7">
-                  <img src="{{"/storage/sport/image/{$data->image}" }}" style="width: 100%">
-                </div>
-              </div>
-            @endif
-
-            <div class="row">
-              <div class="col-5">
-                <label for="image">Gambar *</label>
-              </div>
-              <div class="col-7">
-                <input type="file" name="image" id="image" class="form-control" accept=".png, .jpg">
-                <div class="">
-                  @if (isset($data))
-                    <small>Masukkan gambar untuk mengganti gambar | File type: .jpg, .png</small><br><br>
-                  @else
-                    <small>File type: .jpg, .png</small><br><br>
-                  @endif
-                </div>
               </div>
             </div>
 
@@ -90,27 +65,56 @@
                 <label for="federation_id">Federasi *</label>
               </div>
               <div class="col-7">
-                <select class="form-select select2" id="federation_id" name="federation_id">
-                  <option disabled selected value>Please select ...</option>
-                  @foreach ($federations as $item)
-                    <option value="{{ $item->id }}">{{ $item->abbreviation }}</option>
-                  @endforeach
+                <select name="federation_id" class="form-select select2" id="federation_id">
+                  {{-- Dynamic Data --}}
                 </select>
               </div>
             </div>
 
             <div class="row">
               <div class="col-5">
-                <label for="stream_url">Link Stream *</label>
+                <label for="account_profile">Nama Profil *</label>
               </div>
               <div class="col-7">
-                <input type="url" name="stream_url" id="stream_url" class="form-control" required value="{{ old('stream_url', isset($data) ? $data->stream_url : null) }}">
+                <input type="text" name="account_profile" id="account_profile" class="form-control" value="{{ old('account_profile', isset($data) ? $data->account_profile : null) }}" required>
               </div>
             </div>
 
-            @if ($default_federation != null)
-              <input type="hidden" name="is_default_federation" value="1">
-            @endif
+            <div class="row">
+              <div class="col-5">
+                <label for="username">username *</label>
+              </div>
+              <div class="col-7">
+                <input type="text" name="username" id="username" class="form-control" value="{{ old('username', isset($data) ? $data->username : null) }}" required>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-5">
+                <label for="account_profile">email</label>
+              </div>
+              <div class="col-7">
+                <input type="email" name="email" id="email" class="form-control" value="{{ old('email', isset($data) ? $data->email : null) }}">
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-5">
+                <label for="phone">No. HP</label>
+              </div>
+              <div class="col-7">
+                <input type="text" name="phone" id="phone" class="form-control" value="{{ old('phone', isset($data) ? $data->phone : null) }}">
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-5">
+                <label for="password">password *</label>
+              </div>
+              <div class="col-7">
+                <input type="text" name="password" id="password" class="form-control" value="{{ old('password', isset($data) ? $data->password : null) }}" required>
+              </div>
+            </div>
 
             <div class="form-button">
               <button type="submit" class="btn btn-primary btn-sm unrounded">
@@ -129,9 +133,8 @@
 
 @section('script')
   <script>
-    const federationSelected = "<?php echo old('federation_id', isset($data) ? $data->federation_id : $default_federation) ?>";
-    const federationDefault = "<?php echo $default_federation ? 1 : 0 ?>"
-    let sportSelected = "<?php echo old('sport_id', isset($data) ? $data->sport_id : null) ?>";
+    const socmedSelected = "<?php echo old('socmed_id', isset($data) ? $data->socmed_id : null) ?>";
+    const federationSelected = "<?php echo old('federation_id', isset($data) ? $data->federation_id : null) ?>";
 
     let is_create = "<?php echo !isset($data) ? 1 : 0 ?>"
     is_create = !!parseInt(is_create)
@@ -152,16 +155,15 @@
     }
 
     document.addEventListener('DOMContentLoaded', async function () {
-      const sports = await getList(`/api/sport/list?showall=true`)
-      generateSelect('#sport_id', sports, false)
-      $('#sport_id').val(sportSelected).change()
+      const socmed = await getList(`/api/socmed/list?showall=true`)
+      generateSelect('#socmed_id', socmed, false)
+      $('#socmed_id').val(socmedSelected).change()
+
+      const federation = await getList(`/api/federation/list?showall=true`)
+      generateSelect('#federation_id', federation, false)
+      $('#federation_id').val(federationSelected).change()
 
       if (!is_create) $('#submit').removeClass('disabled')
-      $('#federation_id').val(federationSelected).change()
-      if (federationDefault == 1) {
-        $('#federation_id').prop('disabled', true)
-        $(`<input type="hidden" name="federation_id" value="${federationSelected}">`).insertBefore('#federation_id')
-      }
 
       let validationTimeout
       $('#name').on('keyup', function () {
@@ -172,7 +174,7 @@
           const formData = new FormData()
           formData.append('name', val)
 
-          fetch(`/api/sport-type/validate`, {
+          fetch(`/api/socmed_account/validate`, {
             method: 'POST',
             body: formData
           })

@@ -63,11 +63,11 @@
 
             <div class="row">
               <div class="col-5">
-                <label for="name">Julukan</label>
+                <label for="nickname">Julukan</label>
               </div>
               <div class="col-7">
                 <input type="text" id="nickname" name="nickname" class="form-control capitalize"
-                  value="{{ old('nickname', isset($data) ? $data->name : null) }}"
+                  value="{{ old('nickname', isset($data) ? $data->nickname : null) }}"
                 >
               </div>
             </div>

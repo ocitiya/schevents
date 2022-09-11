@@ -42,4 +42,8 @@ class User extends Authenticatable {
 		'id' => 'string'
 	];
 
+	public function user_detail () {
+		return $this->hasOne(UserDetail::class, 'user_id', 'id');
+	}
+
 }

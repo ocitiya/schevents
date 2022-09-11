@@ -1,14 +1,10 @@
 @extends('layouts.admin.master')
 
 @section('content')
-  <div id="sport_types" class="content">
+  <div id="socmed_account" class="content">
     <div class="title-container">
       <h4 class="text-primary">
-        @if ($default_federation != null)
-          Olahraga dalam federasi: {{ $federation_name }}
-        @else
-          Link Stream
-        @endif
+        Akun Sosmed
       </h4>
 
       <nav aria-label="breadcrumb">
@@ -20,17 +16,10 @@
 
     <div class="data-container">
       <div class="data-header">
-        @if ($default_federation != null)
-          <a href="{{ route('admin.sport.type.create')."?federation_id={$default_federation}" }}" class="btn btn-primary btn-sm unrounded">
-            Tambah Olahraga&nbsp;
-            <i class="fa-solid fa-plus"></i>
-          </a>
-        @else
-          <a href="{{ route('admin.sport.type.create') }}" class="btn btn-primary btn-sm unrounded">
-            Tambah Olahraga&nbsp;
-            <i class="fa-solid fa-plus"></i>
-          </a>
-        @endif
+        <a href="{{ route('admin.masterdata.socmed-account.create') }}" class="btn btn-primary btn-sm unrounded">
+          Tambah Akun Sosmed&nbsp;
+          <i class="fa-solid fa-plus"></i>
+        </a>
       </div>
 
       <div class="data-center">
@@ -44,27 +33,17 @@
 
 @section('script')
   <script>
-    const isFederationDefault = "<?php echo $default_federation ? 1 : 0 ?>";
-
-    const data = {
-      federation_id: "<?php echo $default_federation ?>"
-    };
-
-    const getData = (params) => {
-      return data[params]
-    };
-
     $('#datatable').on('click', '.delete', function () {
       const id = $(this).attr('data-id')
       const name = $(this).attr('data-name')
 
-      const deleteURL = `/admin/sport/type/delete`
+      const deleteURL = `/admin/masterdata/socmed-account/delete`
       const formData = new FormData()
       formData.append('id', id)
       formData.append('_token', csrfToken)
 
       swal({
-        text: `Ingin menghapus olahraga ${name}?`,
+        text: `Ingin menghapus akun sosmed ${name}?`,
         icon: "warning",
         buttons: true,
         dangerMode: true,
@@ -80,7 +59,7 @@
               swal({
                 title: 'Deleted',
                 icon: 'success',
-                text: `Olahraga ${name} berhasil dihapus`
+                text: `Sosmed ${name} berhasil dihapus`
               })
             } else {
               console.log(data.message)
@@ -97,58 +76,45 @@
             processing: true,
             serverSide: true,
             ajax: {
-              url: "/api/sport-type/listDatatable",
-              method: 'POST',
-              data: function (data) {
-                data.federation_id = getData('federation_id')
-              }
+              url: "/api/socmed-account/listDatatable"
             },
             columns: [
-              {data: 'name', title: 'Name', name: 'name',
+              {data: 'socmed', title: 'Sosmed', name: 'socmed',
                 "render": function ( data, type, row, meta ) {
-                  if (data === null) {
-                     return row.sport.name
-                  } else {
-                    return data
-                  }
+                  return data.name
                 }
               },
-              {data: 'federation', title: 'Singkatan Federasi', name: 'federation',
+              {data: 'federation', title: 'Federasi', name: 'federation',
                 "render": function ( data, type, row, meta ) {
-                  return data.abbreviation
+                  return data.name
                 }
               },
-              {data: 'image', title: 'Gambar', name: 'image',
-                "render": function ( data, type, row, meta ) {
-                  return `
-                    <img src="/storage/sport/image/${data}" style="width: 75px" class="mb-3">
-                  `
-                }
-              },
+              {data: 'account_profile', title: 'Nama Profile', name: 'account_profile'},
+              {data: 'username', title: 'username', name: 'username'},
+              {data: 'email', title: 'email', name: 'email'},
+              {data: 'phone', title: 'phone', name: 'phone'},
+              {data: 'password', title: 'password', name: 'password'},
+
               {data: 'id', title: 'Aksi', orderable: false, searchable: false,
                 "render": function ( data, type, row, meta ) {
                   let updateRoute
-                  if (isFederationDefault == 0) {
-                    updateRoute = `/admin/sport/type/update/${data}`
-                  } else {
-                    updateRoute = `/admin/sport/type/update/${data}?federation_id=${data.federation_id}`
-                  }
+                  updateRoute = `/admin/masterdata/socmed-account/update/${data}`
 
                   return `
                     <a href="${updateRoute}" class="btn btn-sm unrounded btn-primary">
-                      <small>Edit Olahraga</small>
+                      <small>Edit Akun Sosmed</small>
                     </a>
 
                     <button
                       data-id="${data}"
-                      data-name="${row.name}"
+                      data-name="${row.socmed.name}"
                       class="btn btn-sm btn-danger unrounded delete"
                     >
-                      <small>Hapus Olahraga</small>
+                      <small>Hapus Akun Sosmed</small>
                     </button>
                   `;
                 }
-              },
+              }
             ]
         });
       });

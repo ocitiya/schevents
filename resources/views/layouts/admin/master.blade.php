@@ -34,6 +34,8 @@
 
             <div>
               <div class="btn btn-light text-black-75">
+                {{ Auth::user()->name }}
+                ({{ Session::get("role") }})
                 <i class="fa-solid fa-user"></i>
               </div>
 

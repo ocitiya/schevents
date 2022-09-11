@@ -12,12 +12,16 @@ use App\Http\Controllers\Admin\ProvincesController;
 use App\Http\Controllers\Admin\CountiesController;
 use App\Http\Controllers\Admin\MunicipalitiesController;
 use App\Http\Controllers\Admin\SportTypeController;
+use App\Http\Controllers\Admin\SportController;
 use App\Http\Controllers\Admin\SchoolController;
 use App\Http\Controllers\Admin\MatchScheduleController;
 use App\Http\Controllers\Admin\StadiumController;
 use App\Http\Controllers\Admin\TeamTypeController;
 use App\Http\Controllers\Admin\AssociationController;
 use App\Http\Controllers\Admin\FederationController;
+use App\Http\Controllers\Admin\SocmedController;
+use App\Http\Controllers\Admin\SocmedAccountController;
+use App\Http\Controllers\Admin\UserDetailController;
 
 /*
 |--------------------------------------------------------------------------
@@ -48,6 +52,9 @@ Route::middleware(['haveInstalled'])->group(function () {
     Route::post('login-auth', [LoginController::class, 'loginAuth'])->name('login.auth');
 
     Route::middleware('auth')->group(function () {
+      Route::get('change-password', [AdminDashboardController::class, 'changePassword'])->name('change-password');
+      Route::post('update-password', [AdminDashboardController::class, 'updatePassword'])->name('update-password');
+      
       Route::get('/', [AdminDashboardController::class, 'index'])->name('dashboard');
 
       // admin.location
@@ -103,6 +110,14 @@ Route::middleware(['haveInstalled'])->group(function () {
           Route::post('/store', [SportTypeController::class, 'store'])->name('store');
           Route::post('/delete', [SportTypeController::class, 'delete'])->name('delete');
         });
+
+        Route::get('/', [SportController::class, 'index'])->name('index');
+        Route::get('/create', [SportController::class, 'create'])->name('create');
+        Route::get('/update/{id}', [SportController::class, 'update'])->name('update');
+        Route::get('/detail/{id}', [SportController::class, 'detail'])->name('detail');
+
+        Route::post('/store', [SportController::class, 'store'])->name('store');
+        Route::post('/delete', [SportController::class, 'delete'])->name('delete');
       });
     });
 
@@ -135,6 +150,28 @@ Route::middleware(['haveInstalled'])->group(function () {
     });
 
     Route::group(['prefix' => 'masterdata', 'as' => 'masterdata.'], function () {
+      // Socmed Route
+      Route::group(['prefix' => 'socmed', 'as' => 'socmed.'], function () {
+        Route::get('/', [SocmedController::class, 'index'])->name('index');
+        Route::get('/create', [SocmedController::class, 'create'])->name('create');
+        Route::get('/update/{id}', [SocmedController::class, 'update'])->name('update');
+        Route::get('/detail/{id}', [SocmedController::class, 'detail'])->name('detail');
+
+        Route::post('/store', [SocmedController::class, 'store'])->name('store');
+        Route::post('/delete', [SocmedController::class, 'delete'])->name('delete');
+      });
+
+      // account Socmed Route
+      Route::group(['prefix' => 'socmed-account', 'as' => 'socmed-account.'], function () {
+        Route::get('/', [SocmedAccountController::class, 'index'])->name('index');
+        Route::get('/create', [SocmedAccountController::class, 'create'])->name('create');
+        Route::get('/update/{id}', [SocmedAccountController::class, 'update'])->name('update');
+        Route::get('/detail/{id}', [SocmedAccountController::class, 'detail'])->name('detail');
+
+        Route::post('/store', [SocmedAccountController::class, 'store'])->name('store');
+        Route::post('/delete', [SocmedAccountController::class, 'delete'])->name('delete');
+      });
+
       Route::group(['prefix' => 'team_type', 'as' => 'team_type.'], function () {
         Route::get('/', [TeamTypeController::class, 'index'])->name('index');
         Route::get('/create', [TeamTypeController::class, 'create'])->name('create');
@@ -184,6 +221,16 @@ Route::middleware(['haveInstalled'])->group(function () {
         Route::post('/store', [StadiumController::class, 'store'])->name('store');
         Route::post('/delete', [StadiumController::class, 'delete'])->name('delete');
       });
+    });
+
+    Route::group(['prefix' => 'user', 'as' => 'user.'], function () {
+      Route::get('/', [UserDetailController::class, 'index'])->name('index');
+      Route::get('/create', [UserDetailController::class, 'create'])->name('create');
+      Route::get('/update/{id}', [UserDetailController::class, 'update'])->name('update');
+      Route::get('/detail/{id}', [UserDetailController::class, 'detail'])->name('detail');
+
+      Route::post('/store', [UserDetailController::class, 'store'])->name('store');
+      Route::post('/delete', [UserDetailController::class, 'delete'])->name('delete');
     });
   });
 

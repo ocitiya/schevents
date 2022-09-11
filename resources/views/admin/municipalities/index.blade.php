@@ -90,7 +90,7 @@
                   data-name="${row.name}"
                   class="btn btn-sm btn-danger unrounded delete"
                 >
-                  <small>Hapus Sekolah</small>
+                  <small>Hapus Kota</small>
                 </button>
               `;
             }

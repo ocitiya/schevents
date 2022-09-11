@@ -64,6 +64,7 @@ class SchoolController extends Controller {
 	public function store (Request $request) {
 		$validation = [
 			'name' => 'required|max:255',
+			'nickname' => 'required|string',
 			'county_id' => 'required|uuid',
 			'municipality_id' => 'required|uuid',
 			'federation_id' => 'required|uuid',
@@ -130,6 +131,7 @@ class SchoolController extends Controller {
 
 		try {
 			$school->name = $request->name;
+			$school->nickname = $request->nickname;
 			$school->country_id = Country::first()->id;
 			$school->county_id = $request->county_id;
 			$school->municipality_id = $request->municipality_id;
@@ -149,7 +151,8 @@ class SchoolController extends Controller {
 			}
 
 		} catch (QueryException $exception) {
-			unlink($path);
+			if ($request->hasFile('logo')) unlink($path);
+
 			return redirect()->back()
 				->withInput($request->input())
 				->withErrors($exception->getMessage());

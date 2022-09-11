@@ -4,11 +4,7 @@
   <div id="sport_types" class="content">
     <div class="title-container">
       <h4 class="text-primary">
-        @if ($default_federation != null)
-          Olahraga dalam federasi: {{ $federation_name }}
-        @else
-          Link Stream
-        @endif
+        Tipe Olahraga
       </h4>
 
       <nav aria-label="breadcrumb">
@@ -20,17 +16,10 @@
 
     <div class="data-container">
       <div class="data-header">
-        @if ($default_federation != null)
-          <a href="{{ route('admin.sport.type.create')."?federation_id={$default_federation}" }}" class="btn btn-primary btn-sm unrounded">
-            Tambah Olahraga&nbsp;
-            <i class="fa-solid fa-plus"></i>
-          </a>
-        @else
-          <a href="{{ route('admin.sport.type.create') }}" class="btn btn-primary btn-sm unrounded">
-            Tambah Olahraga&nbsp;
-            <i class="fa-solid fa-plus"></i>
-          </a>
-        @endif
+        <a href="{{ route('admin.sport.create') }}" class="btn btn-primary btn-sm unrounded">
+          Tambah Olahraga&nbsp;
+          <i class="fa-solid fa-plus"></i>
+        </a>
       </div>
 
       <div class="data-center">
@@ -44,21 +33,11 @@
 
 @section('script')
   <script>
-    const isFederationDefault = "<?php echo $default_federation ? 1 : 0 ?>";
-
-    const data = {
-      federation_id: "<?php echo $default_federation ?>"
-    };
-
-    const getData = (params) => {
-      return data[params]
-    };
-
     $('#datatable').on('click', '.delete', function () {
       const id = $(this).attr('data-id')
       const name = $(this).attr('data-name')
 
-      const deleteURL = `/admin/sport/type/delete`
+      const deleteURL = `/admin/sport/delete`
       const formData = new FormData()
       formData.append('id', id)
       formData.append('_token', csrfToken)
@@ -80,7 +59,7 @@
               swal({
                 title: 'Deleted',
                 icon: 'success',
-                text: `Olahraga ${name} berhasil dihapus`
+                text: `Tipe olahraga ${name} berhasil dihapus`
               })
             } else {
               console.log(data.message)
@@ -97,42 +76,27 @@
             processing: true,
             serverSide: true,
             ajax: {
-              url: "/api/sport-type/listDatatable",
-              method: 'POST',
-              data: function (data) {
-                data.federation_id = getData('federation_id')
-              }
+              url: "/api/sport/listDatatable"
             },
             columns: [
-              {data: 'name', title: 'Name', name: 'name',
-                "render": function ( data, type, row, meta ) {
-                  if (data === null) {
-                     return row.sport.name
-                  } else {
-                    return data
-                  }
-                }
-              },
-              {data: 'federation', title: 'Singkatan Federasi', name: 'federation',
-                "render": function ( data, type, row, meta ) {
-                  return data.abbreviation
-                }
-              },
+              {data: 'name', title: 'Name', name: 'name'},
               {data: 'image', title: 'Gambar', name: 'image',
                 "render": function ( data, type, row, meta ) {
-                  return `
-                    <img src="/storage/sport/image/${data}" style="width: 75px" class="mb-3">
-                  `
+                  if (data === null) {
+                    return `
+                      <img src="/images/no-logo-1.png" style="width: 75px" class="mb-3">
+                    `
+                  } else {
+                    return `
+                      <img src="/storage/sport_type/image/${data}" style="width: 75px" class="mb-3">
+                    `
+                  }
                 }
               },
               {data: 'id', title: 'Aksi', orderable: false, searchable: false,
                 "render": function ( data, type, row, meta ) {
                   let updateRoute
-                  if (isFederationDefault == 0) {
-                    updateRoute = `/admin/sport/type/update/${data}`
-                  } else {
-                    updateRoute = `/admin/sport/type/update/${data}?federation_id=${data.federation_id}`
-                  }
+                  updateRoute = `/admin/sport/update/${data}`
 
                   return `
                     <a href="${updateRoute}" class="btn btn-sm unrounded btn-primary">

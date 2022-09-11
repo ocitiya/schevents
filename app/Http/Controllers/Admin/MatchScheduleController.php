@@ -10,7 +10,8 @@ use Intervention\Image\Facades\Image;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\DB;
 
-use Auth;
+use Illuminate\Support\Facades\Auth;
+
 use DataTables;
 use DateTime;
 
@@ -156,14 +157,16 @@ class MatchScheduleController extends Controller {
     $level_of_education = implode(",", $level_of_education);
 
     $datetime = "{$request->date} {$request->time_hour}:{$request->time_minute}";
+    $sport = SportType::find($request->sport_type_id);
 
     $keywords = [
       $school1->name,
       $school2->name,
       $level_of_education,
-      $school1->county->name,
-      $school2->county->name,
-      $federation->abbreviation
+      $school1->nickname,
+      $school2->nickname,
+      $federation->abbreviation,
+      $sport->name
     ];
 
     $keywords = implode(",", $keywords);
@@ -210,7 +213,7 @@ class MatchScheduleController extends Controller {
       $type = MatchSchedule::find($request->id);
       $type->delete();
 
-      $request->session()->flash('message', "Schedule successfully deleted");
+      session()->flash('message', "Schedule successfully deleted");
       return response()->json([
         "status" => true,
         "message" => null

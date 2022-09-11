@@ -1,14 +1,10 @@
 @extends('layouts.admin.master')
 
 @section('content')
-  <div id="sport_types" class="content">
+  <div id="user" class="content">
     <div class="title-container">
       <h4 class="text-primary">
-        @if ($default_federation != null)
-          Olahraga dalam federasi: {{ $federation_name }}
-        @else
-          Link Stream
-        @endif
+        User
       </h4>
 
       <nav aria-label="breadcrumb">
@@ -20,17 +16,10 @@
 
     <div class="data-container">
       <div class="data-header">
-        @if ($default_federation != null)
-          <a href="{{ route('admin.sport.type.create')."?federation_id={$default_federation}" }}" class="btn btn-primary btn-sm unrounded">
-            Tambah Olahraga&nbsp;
-            <i class="fa-solid fa-plus"></i>
-          </a>
-        @else
-          <a href="{{ route('admin.sport.type.create') }}" class="btn btn-primary btn-sm unrounded">
-            Tambah Olahraga&nbsp;
-            <i class="fa-solid fa-plus"></i>
-          </a>
-        @endif
+        <a href="{{ route('admin.user.create') }}" class="btn btn-primary btn-sm unrounded">
+          Tambah User&nbsp;
+          <i class="fa-solid fa-plus"></i>
+        </a>
       </div>
 
       <div class="data-center">
@@ -44,27 +33,17 @@
 
 @section('script')
   <script>
-    const isFederationDefault = "<?php echo $default_federation ? 1 : 0 ?>";
-
-    const data = {
-      federation_id: "<?php echo $default_federation ?>"
-    };
-
-    const getData = (params) => {
-      return data[params]
-    };
-
     $('#datatable').on('click', '.delete', function () {
       const id = $(this).attr('data-id')
       const name = $(this).attr('data-name')
 
-      const deleteURL = `/admin/sport/type/delete`
+      const deleteURL = `/admin/user/delete`
       const formData = new FormData()
       formData.append('id', id)
       formData.append('_token', csrfToken)
 
       swal({
-        text: `Ingin menghapus olahraga ${name}?`,
+        text: `Ingin menghapus user ${name}?`,
         icon: "warning",
         buttons: true,
         dangerMode: true,
@@ -80,7 +59,7 @@
               swal({
                 title: 'Deleted',
                 icon: 'success',
-                text: `Olahraga ${name} berhasil dihapus`
+                text: `User ${name} berhasil dihapus`
               })
             } else {
               console.log(data.message)
@@ -97,58 +76,51 @@
             processing: true,
             serverSide: true,
             ajax: {
-              url: "/api/sport-type/listDatatable",
-              method: 'POST',
-              data: function (data) {
-                data.federation_id = getData('federation_id')
-              }
+              url: "/api/user/listDatatable"
             },
             columns: [
-              {data: 'name', title: 'Name', name: 'name',
+              {data: 'user', title: 'username', name: 'user',
                 "render": function ( data, type, row, meta ) {
-                  if (data === null) {
-                     return row.sport.name
-                  } else {
-                    return data
-                  }
+                  return data.username
                 }
               },
-              {data: 'federation', title: 'Singkatan Federasi', name: 'federation',
+
+              {data: 'user', title: 'email', name: 'email',
                 "render": function ( data, type, row, meta ) {
-                  return data.abbreviation
+                  return data.email
                 }
               },
-              {data: 'image', title: 'Gambar', name: 'image',
+              {data: 'level', title: 'Role', name: 'level'},
+              {data: 'telephone', title: 'Telephone', name: 'telephone'},
+              {data: 'user', title: 'Status', name: 'user',
                 "render": function ( data, type, row, meta ) {
-                  return `
-                    <img src="/storage/sport/image/${data}" style="width: 75px" class="mb-3">
-                  `
+                  return !!data.is_active ? 'Active' : 'Inactive'
                 }
               },
+
               {data: 'id', title: 'Aksi', orderable: false, searchable: false,
                 "render": function ( data, type, row, meta ) {
-                  let updateRoute
-                  if (isFederationDefault == 0) {
-                    updateRoute = `/admin/sport/type/update/${data}`
-                  } else {
-                    updateRoute = `/admin/sport/type/update/${data}?federation_id=${data.federation_id}`
-                  }
+                  updateRoute = `/admin/user/update/${data}`
 
-                  return `
+                  if (row.level !== 'superadmin') {
+                    return `
                     <a href="${updateRoute}" class="btn btn-sm unrounded btn-primary">
-                      <small>Edit Olahraga</small>
+                      <small>Edit User</small>
                     </a>
 
                     <button
                       data-id="${data}"
-                      data-name="${row.name}"
+                      data-name="${row.user.name}"
                       class="btn btn-sm btn-danger unrounded delete"
                     >
-                      <small>Hapus Olahraga</small>
+                      <small>Hapus User</small>
                     </button>
                   `;
+                  } else {
+                    return '-';
+                  }
                 }
-              },
+              }
             ]
         });
       });

@@ -101,7 +101,8 @@ class InstallController extends Controller {
 		try {
 			$usersDetail = new UserDetail;
 			$usersDetail->id = Str::uuid();
-			$usersDetail->level = 'sysadmin';
+			$usersDetail->user_id = $users->id;
+			$usersDetail->level = 'superadmin';
 			$usersDetail->gender = $request->gender;
 			$usersDetail->save();
 		} catch (QueryException $exception) {

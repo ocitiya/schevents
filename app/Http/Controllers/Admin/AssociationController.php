@@ -7,8 +7,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
 use Intervention\Image\Facades\Image;
-
-use DataTables;
+use Illuminate\Database\QueryException;
+use Yajra\DataTables\Datatables;
 
 use App\Models\Association;
 use App\Models\Federation;
@@ -29,7 +29,11 @@ class AssociationController extends Controller {
 	public function update ($id) {
 		$association = Association::find($id);
 
-		$data = [ "data" => $association ];
+		$data = [
+			"data" => $association,
+      "federations" => Federation::get()
+		];
+		
 		return view('admin.association.form', $data);
 	}
 
@@ -112,7 +116,7 @@ class AssociationController extends Controller {
 			$type = Association::find($request->id);
 			$type->delete();
 
-			$request->session()->flash('message', "{$type->name} successfully deleted");
+			session()->flash('message', "{$type->name} successfully deleted");
 			return response()->json([
 				"status" => true,
 				"message" => null

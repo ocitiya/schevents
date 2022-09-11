@@ -24,21 +24,31 @@ class LoginController extends Controller {
 		]);
 
 		$user = User::where("username", $request->username)
-			->get("email")
+			->with(['user_detail'])
 			->first();
 
 		if (!$user) {
 			return redirect()->back()->withErrors('username or password incorrect');
 		}
 
+		if ($user->is_active == 0) {
+			return redirect()->back()->withErrors('Akun Anda sudah tidak aktif lagi');
+		}
+
 		$credentials = ["email" => $user->email, "password" => $request->password];
 		if (!Auth::attempt($credentials)) {
-			return redirect()->back()->withErrors('username or password incorrect');
+			return redirect()->back()->withErrors('username or password incorrect')
+				->withInput(
+					$request->except("password")
+				);
 		}
 		
-		return redirect()->route('admin.dashboard')->withInput(
-			$request->except("password")
-		);
+		$request->session()->put('role', $user->user_detail->level);
+		if ($user->is_default == 1) {
+			return redirect()->route('admin.change-password');
+		} else {
+			return redirect()->route('admin.dashboard');
+		}
 	}
 
 	public function logout (Request $request) {

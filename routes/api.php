@@ -16,6 +16,10 @@ use App\Http\Controllers\Admin\StadiumController;
 use App\Http\Controllers\Admin\TeamTypeController;
 use App\Http\Controllers\Admin\AssociationController;
 use App\Http\Controllers\Admin\FederationController;
+use App\Http\Controllers\Admin\SocmedAccountController;
+use App\Http\Controllers\Admin\SocmedController;
+use App\Http\Controllers\Admin\SportController;
+use App\Http\Controllers\Admin\UserDetailController;
 
 /*
 |--------------------------------------------------------------------------
@@ -55,6 +59,18 @@ Route::get('/sport-type/list', [SportTypeController::class, 'list']);
 Route::post('/sport-type/listDatatable', [SportTypeController::class, 'listDatatable']);
 Route::post('/sport-type/validate', [SportTypeController::class, 'validateName']);
 
+Route::get('/sport/list', [SportController::class, 'list']);
+Route::get('/sport/listDatatable', [SportController::class, 'listDatatable']);
+Route::post('/sport/validate', [SportController::class, 'validateName']);
+
+Route::get('/socmed/list', [SocmedController::class, 'list']);
+Route::get('/socmed/listDatatable', [SocmedController::class, 'listDatatable']);
+Route::post('/socmed/validate', [SocmedController::class, 'validateName']);
+
+Route::get('/socmed-account/list', [SocmedAccountController::class, 'list']);
+Route::get('/socmed-account/listDatatable', [SocmedAccountController::class, 'listDatatable']);
+Route::post('/socmed-account/validate', [SocmedAccountController::class, 'validateName']);
+
 Route::get('/team_type/listDatatable', [TeamTypeController::class, 'listDatatable']);
 
 Route::get('/association/list', [AssociationController::class, 'list']);
@@ -62,8 +78,13 @@ Route::get('/association/listDatatable', [AssociationController::class, 'listDat
 
 Route::post('/association/validate', [AssociationController::class, 'validateName']);
 
+Route::get('/federation/list', [FederationController::class, 'list']);
 Route::get('/federation/listDatatable', [FederationController::class, 'listDatatable']);
 Route::post('/federation/validate', [FederationController::class, 'validateName']);
+
+Route::get('/user/list', [UserDetailController::class, 'list']);
+Route::get('/user/listDatatable', [UserDetailController::class, 'listDatatable']);
+Route::get('/user/validate', [UserDetailController::class, 'validateUser']);
 
 Route::get('/match-schedule/list', [MatchScheduleController::class, 'list']);
 Route::get('/match-schedule/listOnFederation', [MatchScheduleController::class, 'listOnFederation']);

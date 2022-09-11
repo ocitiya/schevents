@@ -86,7 +86,7 @@
 
           <div class="row">
             <div class="col-4">
-              <label for="country">Gender *</label>
+              <label for="gender">Gender *</label>
             </div>
             <div class="col-8">
               <select name="gender" id="gender" class="form-select">

@@ -168,6 +168,10 @@
         });
       })
 
+      function capitalizeFirstLetter(string) {
+        return string.charAt(0).toUpperCase() + string.slice(1);
+      }
+
       const sharetoFB = (shareURL) => {
         console.log(shareURL)
         window.open(shareURL, '_blank', 'location=yes,height=570,width=520,scrollbars=yes,status=yes');
@@ -266,13 +270,15 @@
                 const datetime = row.datetime
                 
                 const datelocal = moment.utc(datetime, 'YYYY-MM-DD hh:mm').local()
-                const formatDate = datelocal.format('ddd, D MMMM Y hh:mm');
+                const formatDate = datelocal.format('ddd, D MMMM Y | hh:mm');
                 const zone_name = moment.tz.guess();
                 const timezone = moment.tz(zone_name).zoneAbbr()
 
                 const team_type = row.team_type === null ? null : row.team_type.name
+                const gender = row.team_gender !== null ? ` ${capitalizeFirstLetter(row.team_gender)} ` : ''
+                const sport = row.sport_type === null ? null : row.sport_type.name
                 
-                const text = encodeURIComponent(`${row.federation.abbreviation}\n${team_type} | ${formatDate} ${timezone}\n${row.school1.name} vs ${row.school2.name}\nWatch on\n${origin}/schedule/${data}\nor\n${row.sport_type.stream_url}\n\n${hashtag}`);
+                const text = encodeURIComponent(`${row.federation.abbreviation}\n${team_type}${gender}${sport} | ${formatDate} ${timezone}\n${row.school1.name} (${row.school1.county.abbreviation}) vs ${row.school2.name} (${row.school2.county.abbreviation})\nWatch on\n${origin}/schedule/${data}\n${hashtag}`);
                 const shareURLTW = `https://twitter.com/intent/tweet?text=${text}`;
 
                 return `

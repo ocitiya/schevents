@@ -20,7 +20,7 @@ class HaveInstalled {
 		$haveInstalled = false;
 
 		$appData = App::count();
-		$sysAdminData = UserDetail::where('level', 'sysadmin')->count();
+		$sysAdminData = UserDetail::where('level', 'superadmin')->count();
 
 		if ($appData > 0 && $sysAdminData > 0) $haveInstalled = true;
 

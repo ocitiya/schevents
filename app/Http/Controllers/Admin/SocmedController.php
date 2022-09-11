@@ -10,90 +10,92 @@ use Intervention\Image\Facades\Image;
 use Illuminate\Database\QueryException;
 use Yajra\DataTables\Datatables;
 
-use App\Models\Federation;
+use App\Models\Socmed;
 
-class FederationController extends Controller {
+class SocmedController extends Controller {
 	public function index (Request $request) {
-		return view('admin.federation.index');
+		return view('admin.socmed.index');
 	}
 
-	public function create () {
-		return view('admin.federation.form');
+	public function create (Request $request) {
+		return view('admin.socmed.form');
 	}
 
-	public function update ($id) {
-		$federation = Federation::find($id);
+	public function update (Request $request, $id) {
+		$sport = Socmed::find($id);
+		$data = [
+			"data" => $sport
+		];
 
-		$data = [ "data" => $federation ];
-		return view('admin.federation.form', $data);
+		return view('admin.socmed.form', $data);
 	}
 
 	public function detail ($id) {
-		$types = Federation::find($id);
-		$data = [ "data" => $types ];
+		$socmed = Socmed::find($id);
+		$data = [ "data" => $socmed ];
 
-		return view('admin.federation.detail', $data);
+		return view('admin.socmed.detail', $data);
 	}
 
 	public function store (Request $request) {
 		$isCreate = $request->id == null ? true : false;
 		$validation = [
 			'name' => 'required|max:255',
-			'abbreviation' => 'required|max:255',
-			'logo' => 'mimes:jpg,png'
+			'image' => 'mimes:jpg,png',
+      'link' => 'nullable|url'
 		];
-		
+
 		$validated = $request->validate($validation);
 
-    if ($request->hasFile('logo')) {
-			if(!Storage::exists("/public/federation/logo")) Storage::makeDirectory("/public/federation/logo");
-			$file = $request->file('logo');
+		// Upload Image
+		if ($request->hasFile('image')) {
+			if(!Storage::exists("/public/socmed/image")) Storage::makeDirectory("/public/socmed/image");
+			$file = $request->file('image');
 
-			$filenameWithExt = $request->file('logo')->getClientOriginalName();
+			$filenameWithExt = $request->file('image')->getClientOriginalName();
 			$filename = pathinfo($filenameWithExt, PATHINFO_FILENAME);
-			$extension = $request->file('logo')->getClientOriginalExtension();
+			$extension = $request->file('image')->getClientOriginalExtension();
 
 			$filename = $filename.'_'.time().'.'.$extension;
-			$path = storage_path('app/public/federation/logo/').$filename;
-			$file->storeAs('public/federation/logo', $filename);
+			$path = storage_path('app/public/socmed/image/').$filename;
+			$file->storeAs('public/socmed/image', $filename);
 
 			// Resize image
 			$img = Image::make($file->getRealPath())
-				->resize(512, 512, function ($constraint) {
+				->resize(1024, 1024, function ($constraint) {
 					$constraint->aspectRatio();
 				})
-				->fit(512, 512, null, 'center')
 				->save($path, 80);
 		}
-
-		$federation = null;
+		
+		$socmed = null;
 		if ($isCreate) {
-			$federation = new Federation;
-			$federation->id = Str::uuid();
+			$socmed = new Socmed;
+			$socmed->id = Str::uuid();
 		} else {
-			$federation = Federation::find($request->id);
-      if ($request->hasFile('logo')) {
-				$oldPath = storage_path('app/public/federation/logo/').$federation->logo;
-				if (file_exists($oldPath) && is_file($oldPath)) {
+			$socmed = Socmed::find($request->id);
+			if ($request->hasFile('image')) {
+				$oldPath = storage_path('app/public/socmed/image/').$socmed->image;
+				if (file_exists($oldPath) && !is_dir($oldPath)) {
 					unlink($oldPath);
 				}
 			}
 		}
 		
 		try {
-			$federation->name = ucwords($request->name);
-			$federation->abbreviation = $request->abbreviation;
-      if ($request->hasFile('logo')) $federation->logo = $filename;
-			$federation->save();
+			$socmed->name = ucwords($request->name);
+			if ($request->hasFile('image')) $socmed->image = $filename;
+		  $socmed->link = $request->link;
+			$socmed->save();
 
 			return redirect()
-				->route("admin.masterdata.federation.index")
+				->route("admin.masterdata.socmed.index")
 				->with('success', 'Data successfully saved');
+
 		} catch (QueryException $exception) {
-			if (is_file($path)) {
+			if ($request->hasFile('image')) {
 				unlink($path);
 			}
-			
 			return redirect()->back()
 				->withErrors($exception->getMessage());
 		}
@@ -105,10 +107,10 @@ class FederationController extends Controller {
 		]);
 
 		try {
-			$type = Federation::find($request->id);
-			$type->delete();
+			$socmed = Socmed::find($request->id);
+			$socmed->delete();
 
-			session()->flash('message', "{$type->name} successfully deleted");
+			session()->flash('message', "{$socmed->name} successfully deleted");
 			return response()->json([
 				"status" => true,
 				"message" => null
@@ -122,34 +124,32 @@ class FederationController extends Controller {
 	}
 
 	public function list (Request $request) {
-		$showAll = $request->has('showall') ? (boolean) $request->showall : false;
 		$search = $request->has('search') ? $request->search : null;
+		$showAll = $request->has('showall') ? (boolean) $request->showall : false;
 
 		$page = $request->has('page') ? $request->page : 1;
 		if (empty($page)) $page = 1; 
 		$limit = 10;
 
-		$model = Federation::withCount("sports")
-			->when($search != null, function ($query) use ($search) {
-				$query->where('name', 'LIKE', '%'.$search.'%');
-			});
+		$model = Socmed::when($search != null, function ($query) use ($search) {
+			$query->where('name', 'LIKE', '%'.$search.'%');
+		});
 
-		$total = clone($model);
-		$total = $total->count();
-
-		$types = $model->when(!$showAll, function ($query) use ($limit, $page) {
+		$socmed = clone($model)->when(!$showAll, function ($query) use ($limit, $page) {
 			$query->take($limit)->skip(($page - 1) * $limit);
 		})->get();
 
+		$total = $model->count();
+		
 		return response()->json([
 			"status" => true,
 			"message" => null,
 			"data" => [
-				"list" => $types,
+				"list" => $socmed,
 				"pagination" => [
 					"total" => $total,
 					"search" => $search,
-					"page" => !$showAll ? (int) $page : -1,
+					"page" => !$showAll ? (int) $page : 1,
 					"limit" => !$showAll ? $limit : -1,
 					"total_page" => !$showAll ? ceil($total / $limit) : 1
 				]
@@ -158,12 +158,13 @@ class FederationController extends Controller {
 	}
 
 	public function listDatatable(Request $request) {
-		$data = Federation::withCount("sports")->get();
+		$data = Socmed::get();
+		
 		return Datatables::of($data)->make(true);
 	}
 
-  public function validateName (Request $request) {
-		$data = Federation::where('name', $request->name)->first();
+	public function validateName (Request $request) {
+		$data = Socmed::where('name', $request->name)->first();
 
 		if ($data) {
 			return response()->json([

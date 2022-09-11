@@ -65,7 +65,7 @@
                 <label for="county_id">State *</label>
               </div>
               <div class="col-7">
-                <select name="county_id" class="form-select" id="county_id">
+                <select name="county_id" class="form-select select2" id="county_id">
                   {{-- Dynamic Data --}}
                 </select>
               </div>
@@ -127,7 +127,7 @@
 
             <div class="row">
               <div class="col-5">
-                <label for="surface">Permukaan</label>
+                <label for="surface">Operator</label>
               </div>
               <div class="col-7">
                 <input type="text" id="surface" name="surface" class="form-control capitalize"
@@ -213,7 +213,7 @@
         }
       })
 
-      const cities = await getList(`/api/county/list?country_id=${country.id}`)
+      const cities = await getList(`/api/county/list?country_id=${country.id}&showall=true`)
       generateSelect('#county_id', cities)
       $('#county_id').val(stateSelected).change()
     })
