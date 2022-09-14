@@ -553,10 +553,11 @@ class MatchScheduleController extends Controller {
         return $subQuery->with(['county']);
       },
       "team_type",
-      "sport_type",
-      "federation"
+      "sport_type"
     ])
       ->find($id);
+
+    $model->federation = Federation::find($model->federation_id);
 
     $data = ["data" => $model];
     return view("shedule-preview", $data);

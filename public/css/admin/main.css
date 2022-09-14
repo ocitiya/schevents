@@ -373,3 +373,7 @@ a.article:hover {
 .no-wrap {
 	white-space: nowrap;
 }
+
+.dropdown-item.active, .dropdown-item:active {
+	background-color: #ec7505;
+}

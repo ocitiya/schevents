@@ -32,14 +32,21 @@
               {{ $app->name }}
             </div>
 
-            <div>
-              <div class="btn btn-light text-black-75">
-                {{ Auth::user()->name }}
-                ({{ Session::get("role") }})
-                <i class="fa-solid fa-user"></i>
+            <div class="d-flex">
+              <div class="dropdown">
+                <button class="btn btn-light text-black-75 dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                  <div class="pe-4">
+                    {{ Auth::user()->name }}
+                    ({{ Session::get("role") }})
+                  </div>
+                </button>
+                <ul class="dropdown-menu">
+                  <li><a class="dropdown-item" href="{{ route("admin.my-account") }}">Akun Saya</a></li>
+                  <li><a class="dropdown-item" href="{{ route("admin.my-account.change-password") }}">Ganti Password</a></li>
+                </ul>
               </div>
 
-              <a href="{{ route('admin.logout') }}" class="btn btn-danger">
+              <a href="{{ route('admin.logout') }}" class="btn btn-danger d-flex align-items-center">
                 <i class="fa-solid fa-right-from-bracket"></i>
               </a>
             </div>

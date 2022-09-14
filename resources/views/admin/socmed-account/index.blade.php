@@ -86,13 +86,11 @@
               },
               {data: 'federation', title: 'Federasi', name: 'federation',
                 "render": function ( data, type, row, meta ) {
-                  return data.name
+                  return data.abbreviation
                 }
               },
               {data: 'account_profile', title: 'Nama Profile', name: 'account_profile'},
               {data: 'username', title: 'username', name: 'username'},
-              {data: 'email', title: 'email', name: 'email'},
-              {data: 'phone', title: 'phone', name: 'phone'},
               {data: 'password', title: 'password', name: 'password'},
 
               {data: 'id', title: 'Aksi', orderable: false, searchable: false,

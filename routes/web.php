@@ -48,12 +48,16 @@ Route::middleware(['haveInstalled'])->group(function () {
     Route::get('login', [LoginController::class, 'login'])->name('login');
     Route::get('forgot-password', [LoginController::class, 'forgotPassword'])->name('forgot-password');
     Route::get('logout', [LoginController::class, 'logout'])->name('logout');
-
+    
     Route::post('login-auth', [LoginController::class, 'loginAuth'])->name('login.auth');
-
+    
     Route::middleware('auth')->group(function () {
       Route::get('change-password', [AdminDashboardController::class, 'changePassword'])->name('change-password');
       Route::post('update-password', [AdminDashboardController::class, 'updatePassword'])->name('update-password');
+      Route::get('my-account', [AdminDashboardController::class, 'myAccount'])->name('my-account');
+      Route::get('my-account/edit', [AdminDashboardController::class, 'myAccountEdit'])->name('my-account.edit');
+      Route::post('my-account/store', [AdminDashboardController::class, 'myAccountStore'])->name('my-account.store');
+      Route::get('my-account/change-password', [AdminDashboardController::class, 'myAccountChangePassword'])->name('my-account.change-password');
       
       Route::get('/', [AdminDashboardController::class, 'index'])->name('dashboard');
 

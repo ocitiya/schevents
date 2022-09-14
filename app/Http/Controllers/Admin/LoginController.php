@@ -9,6 +9,10 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 
 class LoginController extends Controller {
+	public function username(){
+    return 'username';
+	}
+
 	public function login () {
 		return view('admin.login');
 	}
@@ -35,7 +39,7 @@ class LoginController extends Controller {
 			return redirect()->back()->withErrors('Akun Anda sudah tidak aktif lagi');
 		}
 
-		$credentials = ["email" => $user->email, "password" => $request->password];
+		$credentials = ["username" => $user->username, "password" => $request->password];
 		if (!Auth::attempt($credentials)) {
 			return redirect()->back()->withErrors('username or password incorrect')
 				->withInput(

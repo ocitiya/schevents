@@ -79,25 +79,17 @@
               url: "/api/user/listDatatable"
             },
             columns: [
+              {data: 'user', title: 'Nama', name: 'user', 
+                "render": function ( data, type, row, meta ) {
+                  return data.name
+                }
+              },
               {data: 'user', title: 'username', name: 'user',
                 "render": function ( data, type, row, meta ) {
                   return data.username
                 }
               },
-
-              {data: 'user', title: 'email', name: 'email',
-                "render": function ( data, type, row, meta ) {
-                  return data.email
-                }
-              },
               {data: 'level', title: 'Role', name: 'level'},
-              {data: 'telephone', title: 'Telephone', name: 'telephone'},
-              {data: 'user', title: 'Status', name: 'user',
-                "render": function ( data, type, row, meta ) {
-                  return !!data.is_active ? 'Active' : 'Inactive'
-                }
-              },
-
               {data: 'id', title: 'Aksi', orderable: false, searchable: false,
                 "render": function ( data, type, row, meta ) {
                   updateRoute = `/admin/user/update/${data}`
