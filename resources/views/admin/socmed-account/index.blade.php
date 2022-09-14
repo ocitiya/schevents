@@ -79,6 +79,15 @@
               url: "/api/socmed-account/listDatatable"
             },
             columns: [
+              {data: 'created_by', title: 'Pemilik Akun', name: 'created_by',
+                "render": function ( data, type, row, meta ) {
+                  if (data === null) {
+                    return '-'
+                  } else {
+                    return data.name
+                  }
+                }
+              },
               {data: 'socmed', title: 'Sosmed', name: 'socmed',
                 "render": function ( data, type, row, meta ) {
                   return data.name

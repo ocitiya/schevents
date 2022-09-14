@@ -26,4 +26,8 @@ class SocmedAccount extends Model {
 	public function socmed () {
 		return $this->belongsTo(Socmed::class);
 	}
+
+	public function created_by () {
+		return $this->belongsTo(User::class);
+	}
 }

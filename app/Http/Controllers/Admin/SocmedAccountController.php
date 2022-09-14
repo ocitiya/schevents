@@ -11,6 +11,9 @@ use Illuminate\Database\QueryException;
 use Yajra\DataTables\Datatables;
 
 use App\Models\SocmedAccount;
+use Illuminate\Support\Facades\Auth;
+
+use Session;
 
 class SocmedAccountController extends Controller {
 	public function index (Request $request) {
@@ -54,8 +57,10 @@ class SocmedAccountController extends Controller {
 		$socmed = null;
 		if ($isCreate) {
 			$socmed = new SocmedAccount;
+			$socmed->created_by_id = Auth::id();
 		} else {
 			$socmed = SocmedAccount::find($request->id);
+			$socmed->updated_by_id = Auth::id();
 		}
 		
 		try {
@@ -85,6 +90,8 @@ class SocmedAccountController extends Controller {
 
 		try {
 			$socmed = SocmedAccount::find($request->id);
+			$socmed->deleted_by_id = Auth::id();
+			$socmed->save();
 			$socmed->delete();
 
 			session()->flash('message', "{$socmed->name} successfully deleted");
@@ -135,7 +142,23 @@ class SocmedAccountController extends Controller {
 	}
 
 	public function listDatatable(Request $request) {
-		$data = SocmedAccount::with(["socmed", "federation"])
+		$role = $request->session()->get('role');
+
+		$data = SocmedAccount::with(["socmed", "federation", "created_by"])
+			->whereHas("created_by", function ($q) use ($role) {
+				$q->whereHas("user_detail", function ($sq) use ($role) {
+					$sq->when($role === "superadmin", function ($w) {
+						$w->where("level", "superadmin")
+							->orWhere("level", "admin")
+							->orWhere("level", "user");
+					})->when($role === "admin", function ($w) {
+						$w->where("level", "admin")
+							->orWhere("level", "user");
+					})->when($role === "user", function ($w) {
+						$w->where("level", "user");
+					});
+				});
+			})
 			->get();
 		
 		return Datatables::of($data)->make(true);
