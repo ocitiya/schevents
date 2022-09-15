@@ -299,7 +299,10 @@
               "render": function (data, type, row, meta) {
                 const date = moment(data).format('DD-MM-Y')
                 const time = moment(data).format('hh:mm:ss ZZ')
-                return `${date} <br/> ${time} <br/> ${row.created_by.username}`
+
+                const username = row.created_by === null ? '' : row.created_by.username
+
+                return `${date} <br/> ${time} <br/> ${username}`
               }
             },
             {data: 'updated_at', title: 'Diubah', orderable: false, searchable: false,
@@ -327,17 +330,24 @@
                   updateRoute += '&sudah-bermain'
                 }
 
+                let deleteButton = '';
+                if (['admin', 'superadmin'].includes(role)) {
+                  deleteButton = `
+                    <button
+                      class="btn btn-sm unrounded btn-danger delete"
+                      data-id="${d}"
+                    >
+                      <small>Hapus</small>
+                    </button>
+                  `;
+                }
+
                 return `
                   <a href="${updateRoute}" class="btn btn-sm unrounded btn-primary">
                     <small>Edit</small>
                   </a>
 
-                  <button
-                    class="btn btn-sm unrounded btn-danger delete"
-                    data-id="${d}"
-                  >
-                    <small>Hapus</small>
-                  </button>
+                  ${deleteButton}
                 `;
               }
             },

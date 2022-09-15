@@ -81,7 +81,7 @@
             </li>
           @endif
 
-          @if (inRole(["superadmin", "admin"]))
+          @if (inRole(["superadmin", "admin", "user"]))
             <li class="{{ str_contains(Request::route()->getName(), 'admin.masterdata.stadium.index') ? 'active' : null }}">
               <a
                 href="{{ route('admin.masterdata.stadium.index') }}"
@@ -132,7 +132,7 @@
       </div>
     </div>
   
-    @if(inRole(["superadmin", "user", "admin"]))
+    @if(inRole(["superadmin", "admin"]))
       <li
         class="{{ str_contains(Request::route()->getName(), 'admin.match-schedule.federation.index') ? 'active' : null }}"
       >
@@ -140,7 +140,9 @@
           href="{{ route('admin.match-schedule.federation.index') }}"
         >Jadwal Federasi</a>
       </li>
+    @endif
 
+    @if(inRole(["superadmin", "admin", "user"]))
       <li
         class="{{ str_contains(Request::route()->getName(), 'admin.match-schedule.index') ? 'active' : null }}"
       >

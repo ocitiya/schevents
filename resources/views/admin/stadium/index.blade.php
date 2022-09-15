@@ -114,18 +114,25 @@
                 "render": function ( data, type, row, meta ) {
                   const updateRoute = `/admin/masterdata/stadium/update/${data}`
 
+                  let deleteButton = '';
+                  if (['admin', 'superadmin'].includes(role)) {
+                    deleteButton = `
+                      <button
+                        data-id="${data}"
+                        data-name="${row.name}"
+                        class="btn btn-sm btn-danger unrounded delete"
+                      >
+                        <small>Hapus Data</small>
+                      </button>
+                    `;
+                  }
+                  
                   return `
                     <a href="${updateRoute}" class="btn btn-sm unrounded btn-primary">
                       <small>Edit Data</small>
                     </a>
 
-                    <button
-                      data-id="${data}"
-                      data-name="${row.name}"
-                      class="btn btn-sm btn-danger unrounded delete"
-                    >
-                      <small>Hapus Data</small>
-                    </button>
+                    ${deleteButton}
                   `;
                 }
               },

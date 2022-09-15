@@ -35,7 +35,7 @@
             serverSide: true,
             ajax: "/api/match-schedule/listOnFederation",
             columns: [
-              {data: 'name', title: 'Nama Federasi', name: 'name'},
+              {data: 'abbreviation', title: 'Nama Federasi', name: 'abbreviation'},
               {data: 'match_schedule_count', title: 'Jumlah Pertandingan', name: 'match_schedule_count'},
               {data: 'id', title: 'Aksi', orderable: false, searchable: false,
                 "render": function ( data, type, row, meta ) {

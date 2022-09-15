@@ -70,6 +70,7 @@
 
     <script>
       const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+      const role = "<?php echo Session::get('role')?>";
 
       const setParams = (key, value) => {
         if ('URLSearchParams' in window) {

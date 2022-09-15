@@ -141,18 +141,25 @@
                     updateRoute = `/admin/school/update/${data}`
                   }
 
+                  let deleteButton = '';
+                  if (['admin', 'superadmin'].includes(role)) {
+                    deleteButton = `
+                      <button
+                        data-id="${data}"
+                        data-name="${row.name}"
+                        class="btn btn-sm btn-danger unrounded delete"
+                      >
+                        <small>Hapus Sekolah</small>
+                      </button>
+                    `;
+                  }
+
                   return `
                     <a href="${updateRoute}" class="btn btn-sm unrounded btn-primary">
                       <small>Edit Sekolah</small>
                     </a>
 
-                    <button
-                      data-id="${data}"
-                      data-name="${row.name}"
-                      class="btn btn-sm btn-danger unrounded delete"
-                    >
-                      <small>Hapus Sekolah</small>
-                    </button>
+                    ${deleteButton}
                   `;
                 }
               },

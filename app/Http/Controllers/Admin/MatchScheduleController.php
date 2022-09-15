@@ -166,7 +166,7 @@ class MatchScheduleController extends Controller {
       $school1->nickname,
       $school2->nickname,
       $federation->abbreviation,
-      $sport->name
+      "{$federation->abbreviation}{$sport->name}"
     ];
 
     $keywords = implode(",", $keywords);
@@ -557,9 +557,13 @@ class MatchScheduleController extends Controller {
     ])
       ->find($id);
 
-    $model->federation = Federation::find($model->federation_id);
+    if ($model) {
+      $model->federation = Federation::find($model->federation_id);
 
-    $data = ["data" => $model];
-    return view("shedule-preview", $data);
+      $data = ["data" => $model];
+      return view("shedule-preview", $data);
+    } else {
+      return abort(404);
+    }
   }
 }

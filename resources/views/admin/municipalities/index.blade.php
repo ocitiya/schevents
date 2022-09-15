@@ -76,6 +76,19 @@
                 updateRoute = `/admin/location/municipalities/update/${data}?state_id=${state_id}`
               }
 
+              let deleteButton = '';
+              if (['admin', 'superadmin'].includes(role)) {
+                deleteButton = `
+                  <button
+                    data-id="${data}"
+                    data-name="${row.name}"
+                    class="btn btn-sm btn-danger unrounded delete"
+                  >
+                    <small>Hapus Kota</small>
+                  </button>
+                `;
+              }
+
               return `
                 <a href="/admin/school?state_id=${row.county_id}&city_id=${data}" class="btn btn-sm unrounded btn-primary">
                   <small>Daftar Sekolah</small>
@@ -85,13 +98,7 @@
                   <small>Edit Kota</small>
                 </a>
 
-                <button
-                  data-id="${data}"
-                  data-name="${row.name}"
-                  class="btn btn-sm btn-danger unrounded delete"
-                >
-                  <small>Hapus Kota</small>
-                </button>
+                ${deleteButton}
               `;
             }
           },

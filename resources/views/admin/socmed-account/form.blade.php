@@ -160,7 +160,7 @@
       $('#socmed_id').val(socmedSelected).change()
 
       const federation = await getList(`/api/federation/list?showall=true`)
-      generateSelect('#federation_id', federation, false)
+      generateSelect('#federation_id', federation, true, true)
       $('#federation_id').val(federationSelected).change()
 
       if (!is_create) $('#submit').removeClass('disabled')
