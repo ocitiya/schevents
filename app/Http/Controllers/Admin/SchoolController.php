@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Storage;
 use Intervention\Image\Facades\Image;
 use Illuminate\Database\QueryException;
 
-use DataTables;
+use Yajra\DataTables\Datatables;
 
 use App\Models\Country;
 use App\Models\School;
@@ -18,241 +18,245 @@ use App\Models\Municipality;
 use App\Models\Federation;
 
 class SchoolController extends Controller {
-	public function index (Request $request) {
-		$defaultState = $request->has("state_id") ? $request->state_id : null;
-		$defaultCity = $request->has("city_id") ? $request->city_id : null;
+  public function index (Request $request) {
+    $defaultState = $request->has("state_id") ? $request->state_id : null;
+    $defaultCity = $request->has("city_id") ? $request->city_id : null;
 
-		$data = [
-			"default_state" => $defaultState,
-			"default_city" => $defaultCity,
-			"city_name" => ($defaultCity != null) ? Municipality::find($defaultCity)->name : null
-		];
-		
-		return view('admin.school.index', $data);
-	}
+    $data = [
+      "default_state" => $defaultState,
+      "default_city" => $defaultCity,
+      "city_name" => ($defaultCity != null) ? Municipality::find($defaultCity)->name : null
+    ];
+    
+    return view('admin.school.index', $data);
+  }
 
-	public function create (Request $request) {
-		$data = [
-			"default_state" => $request->has("state_id") ? $request->state_id : null,
-			"default_city" => $request->has("city_id") ? $request->city_id : null,
-			"federations" => Federation::get()
-		];
+  public function create (Request $request) {
+    $data = [
+      "default_state" => $request->has("state_id") ? $request->state_id : null,
+      "default_city" => $request->has("city_id") ? $request->city_id : null,
+      "federations" => Federation::get()
+    ];
 
-		return view('admin.school.form', $data);
-	}
+    return view('admin.school.form', $data);
+  }
 
-	public function update (Request $request, $id) {
-		$types = School::find($id);
+  public function update (Request $request, $id) {
+    $types = School::find($id);
 
-		$data = [
-			"data" => $types,
-			"default_state" => $request->has("state_id") ? $request->state_id : null,
-			"default_city" => $request->has("city_id") ? $request->city_id : null,
-			"federations" => Federation::get()
-		];
+    $data = [
+      "data" => $types,
+      "default_state" => $request->has("state_id") ? $request->state_id : null,
+      "default_city" => $request->has("city_id") ? $request->city_id : null,
+      "federations" => Federation::get()
+    ];
 
-		return view('admin.school.form', $data);
-	}
+    return view('admin.school.form', $data);
+  }
 
-	public function detail ($id) {
-		$types = School::find($id);
-		$data = [ "data" => $types ];
+  public function detail ($id) {
+    $types = School::find($id);
+    $data = [ "data" => $types ];
 
-		return view('admin.school.detail', $data);
-	}
+    return view('admin.school.detail', $data);
+  }
 
-	public function store (Request $request) {
-		$validation = [
-			'name' => 'required|max:255',
-			'nickname' => 'required|string',
-			'county_id' => 'required|uuid',
-			'municipality_id' => 'required|uuid',
-			'federation_id' => 'required|uuid',
-			'association_id' => 'uuid',
-			'logo' => 'mimes:jpg,png',
-		];
+  public function store (Request $request) {
+    $validation = [
+      'name' => 'required|max:255',
+      'nickname' => 'required|string',
+      'county_id' => 'required|uuid',
+      'municipality_id' => 'required|uuid',
+      'federation_id' => 'required|uuid',
+      'association_id' => 'uuid',
+      'logo' => 'mimes:jpg,png',
+    ];
 
-		$isCreate = $request->id == null ? true : false;
-		$validated = $request->validate($validation);
+    $isCreate = $request->id == null ? true : false;
+    $validated = $request->validate($validation);
 
-		$school = null;
-		if ($isCreate) {
-			$validateSchool = School::where("federation_id", $request->federation_id)
-				->where("county_id", $request->county_id)
-				->where("municipality_id", $request->municipality_id)
-				->where("name", $request->name)
-				->count();
-			
-			if ($validateSchool > 0) {
-				$state = County::find($request->county_id)->name;
-				$city = Municipality::find($request->municipality_id)->name;
-				$federation = Federation::find($request->federation_id)->name;
+    $school = null;
+    if ($isCreate) {
+      $validateSchool = School::where("federation_id", $request->federation_id)
+        ->where("county_id", $request->county_id)
+        ->where("municipality_id", $request->municipality_id)
+        ->where("name", $request->name)
+        ->count();
+      
+      if ($validateSchool > 0) {
+        $state = County::find($request->county_id)->name;
+        $city = Municipality::find($request->municipality_id)->name;
+        $federation = Federation::find($request->federation_id)->name;
 
-				return redirect()->back()
-					->withInput($request->input())
-					->withErrors(["Sekolah dengan nama {$request->name} di Federasi {$federation} dengan 
-						State {$state} dan Kota {$city} telah ada, silahkan input dengan nama lain"]); 
-			}
-				
-			$school = new School;
-			$school->id = Str::uuid();
-		} else {
-			$school = School::find($request->id);
+        return redirect()->back()
+          ->withInput($request->input())
+          ->withErrors(["Sekolah dengan nama {$request->name} di Federasi {$federation} dengan 
+            State {$state} dan Kota {$city} telah ada, silahkan input dengan nama lain"]); 
+      }
+        
+      $school = new School;
+      $school->id = Str::uuid();
+    } else {
+      $school = School::find($request->id);
 
-			if ($request->hasFile('logo')) {
-				$oldPath = storage_path('app/public/school/logo/').$school->logo;
-				if (file_exists($oldPath && is_file($oldPath))) {
-					unlink($oldPath);
-				}
-			}
-		}
+      if ($request->hasFile('logo')) {
+        $oldPath = storage_path('app/public/school/logo/').$school->logo;
+        if (file_exists($oldPath && is_file($oldPath))) {
+          unlink($oldPath);
+        }
+      }
+    }
 
-		// Upload Image
-		if ($request->hasFile('logo')) {
-			if(!Storage::exists("/public/school/logo")) Storage::makeDirectory("/public/school/logo");
-			$file = $request->file('logo');
+    // Upload Image
+    if ($request->hasFile('logo')) {
+      if(!Storage::exists("/public/school/logo")) Storage::makeDirectory("/public/school/logo");
+      $file = $request->file('logo');
 
-			$filenameWithExt = $request->file('logo')->getClientOriginalName();
-			$filename = pathinfo($filenameWithExt, PATHINFO_FILENAME);
-			$extension = $request->file('logo')->getClientOriginalExtension();
+      $filenameWithExt = $request->file('logo')->getClientOriginalName();
+      $filename = pathinfo($filenameWithExt, PATHINFO_FILENAME);
+      $extension = $request->file('logo')->getClientOriginalExtension();
 
-			$filename = $filename.'_'.time().'.'.$extension;
-			$path = storage_path('app/public/school/logo/').$filename;
-			$file->storeAs('public/school/logo', $filename);
+      $filename = $filename.'_'.time().'.'.$extension;
+      $path = storage_path('app/public/school/logo/').$filename;
+      $file->storeAs('public/school/logo', $filename);
 
-			// Resize image
-			$img = Image::make($file->getRealPath())
-				->resize(512, 512, function ($constraint) {
-					$constraint->aspectRatio();
-				})
-				->fit(512, 512, null, 'center')
-				->save($path, 80);
-		}
+      // Resize image
+      $img = Image::make($file->getRealPath())
+        ->resize(512, 512, function ($constraint) {
+          $constraint->aspectRatio();
+        })
+        ->fit(512, 512, null, 'center')
+        ->save($path, 80);
+    }
 
-		try {
-			$school->name = $request->name;
-			$school->nickname = $request->nickname;
-			$school->country_id = Country::first()->id;
-			$school->county_id = $request->county_id;
-			$school->municipality_id = $request->municipality_id;
-			$school->federation_id = $request->federation_id;
-			$school->association_id = $request->association_id;
-			if ($request->hasFile('logo')) $school->logo = $filename;
-			$school->save();
+    try {
+      $school->name = $request->name;
+      $school->nickname = $request->nickname;
+      $school->country_id = Country::first()->id;
+      $school->county_id = $request->county_id;
+      $school->municipality_id = $request->municipality_id;
+      $school->federation_id = $request->federation_id;
+      $school->association_id = $request->association_id;
+      if ($request->hasFile('logo')) $school->logo = $filename;
+      $school->save();
 
-			if ($request->redirect_city == 1) {
-				return redirect()->route('admin.school.index', [
-					"state_id" => $request->county_id,
-					"city_id" => $request->municipality_id
-				]);
-				
-			} else {
-				return redirect()->route('admin.school.index');
-			}
+      if ($request->redirect_city == 1) {
+        return redirect()->route('admin.school.index', [
+          "state_id" => $request->county_id,
+          "city_id" => $request->municipality_id
+        ]);
+        
+      } else {
+        return redirect()->route('admin.school.index');
+      }
 
-		} catch (QueryException $exception) {
-			if ($request->hasFile('logo')) unlink($path);
+    } catch (QueryException $exception) {
+      if ($request->hasFile('logo')) unlink($path);
 
-			return redirect()->back()
-				->withInput($request->input())
-				->withErrors($exception->getMessage());
-		}
-	}
+      return redirect()->back()
+        ->withInput($request->input())
+        ->withErrors($exception->getMessage());
+    }
+  }
 
-	public function delete (Request $request) {
-		$validated = $request->validate([
-			'id' => 'required|uuid'
-		]);
+  public function delete (Request $request) {
+    $validated = $request->validate([
+      'id' => 'required|uuid'
+    ]);
 
-		try {
-			$type = School::find($request->id);
-			$type->delete();
+    try {
+      $type = School::find($request->id);
+      $type->delete();
 
-			$request->session()->flash('message', "{$type->name} successfully deleted");
-			return response()->json([
-				"status" => true,
-				"message" => null
-			]);
-		} catch (QueryException $exception) {
-			return response()->json([
-				"status" => false,
-				"message" => $exception->getMessage()
-			]);
-		}
-	}
+      session()->flash('message', "{$type->name} successfully deleted");
+      return response()->json([
+        "status" => true,
+        "message" => null
+      ]);
+    } catch (QueryException $exception) {
+      return response()->json([
+        "status" => false,
+        "message" => $exception->getMessage()
+      ]);
+    }
+  }
 
-	public function validateSchool (Request $request) {
-		$data = School::where('name', $request->school)->first();
+  public function validateSchool (Request $request) {
+    $data = School::where('name', $request->school)->first();
 
-		if ($data) {
-			return response()->json([
-				"status" => true,
-				"message" => null,
-				"data" => false
-			]);
-		} else {
-			return response()->json([
-				"status" => true,
-				"message" => null,
-				"data" => true
-			]);
-		}
-	}
+    if ($data) {
+      return response()->json([
+        "status" => true,
+        "message" => null,
+        "data" => false
+      ]);
+    } else {
+      return response()->json([
+        "status" => true,
+        "message" => null,
+        "data" => true
+      ]);
+    }
+  }
 
-	public function listDatatable(Request $request) {
-		$cityId = isset($request->city_id) ? $request->city_id : null;
+  public function listDatatable(Request $request) {
+    $cityId = isset($request->city_id) ? $request->city_id : null;
+    $federationId = isset($request->federation_id) ? $request->federation_id : null;
 
-		$data = School::with(["municipality", "federation", "association", "county"])
-			->when($cityId != null, function ($subQuery) use ($cityId) {
-				$subQuery->where('municipality_id', $cityId);
-			})
-			->get();
+    $data = School::with(["municipality", "federation", "association", "county"])
+      ->when($cityId != null, function ($subQuery) use ($cityId) {
+        $subQuery->where('municipality_id', $cityId);
+      })
+      ->when($federationId != null, function ($subQuery) use ($federationId) {
+        $subQuery->where('federation_id', $federationId);
+      })
+      ->get();
 
-		return Datatables::of($data)->make(true);
-	}
+    return Datatables::of($data)->make(true);
+  }
 
-	public function list (Request $request) {
-		$showAll = $request->has('showall') ? (boolean) $request->showall : false;
-		$search = $request->has('search') ? $request->search : null;
-		$county_id = $request->has('county_id') ? $request->county_id : null;
-		$federation_id = $request->has('federation_id') ? $request->federation_id : null;
-		
-		$page = $request->has('page') ? $request->page : 1;
-		if (empty($page)) $page = 1; 
-		$limit = 10;
+  public function list (Request $request) {
+    $showAll = $request->has('showall') ? (boolean) $request->showall : false;
+    $search = $request->has('search') ? $request->search : null;
+    $county_id = $request->has('county_id') ? $request->county_id : null;
+    $federation_id = $request->has('federation_id') ? $request->federation_id : null;
+    
+    $page = $request->has('page') ? $request->page : 1;
+    if (empty($page)) $page = 1; 
+    $limit = 10;
 
-		$model = School::with(["federation", "association", "municipality", "county"])
-			->when($search != null, function ($query) use ($search) {
+    $model = School::with(["federation", "association", "municipality", "county"])
+      ->when($search != null, function ($query) use ($search) {
         $query->where('name', 'LIKE', '%'.$search.'%');
       })
-			->when($county_id != null, function ($query) use ($county_id) {
-				$query->where('county_id', $county_id);
-			})
-			->when($federation_id != null, function ($query) use ($federation_id) {
-				$query->where('federation_id', $federation_id);
-			});
+      ->when($county_id != null, function ($query) use ($county_id) {
+        $query->where('county_id', $county_id);
+      })
+      ->when($federation_id != null, function ($query) use ($federation_id) {
+        $query->where('federation_id', $federation_id);
+      });
 
-		$schools = clone($model)->when(!$showAll, function ($query) {
-			$query->take($limit)->skip(($page - 1) * $limit);
-		})
-			->orderBy('name')
-			->get();
+    $schools = clone($model)->when(!$showAll, function ($query) use ($limit, $page) {
+      $query->take($limit)->skip(($page - 1) * $limit);
+    })
+      ->orderBy('name')
+      ->get();
 
-		$total = $model->count();
+    $total = $model->count();
 
-		return response()->json([
-			"status" => true,
-			"message" => null,
-			"data" => [
-				"list" => $schools,
-				"pagination" => [
-					"total" => $total,
-					"search" => $search,
-					"page" => !$showAll ? (int) $page : 1,
-					"limit" => !$showAll ? $limit : -1,
-					"total_page" => !$showAll ? ceil($total / $limit) : 1
-				]
-			]
-		]);
-	}
+    return response()->json([
+      "status" => true,
+      "message" => null,
+      "data" => [
+        "list" => $schools,
+        "pagination" => [
+          "total" => $total,
+          "search" => $search,
+          "page" => !$showAll ? (int) $page : 1,
+          "limit" => !$showAll ? $limit : -1,
+          "total_page" => !$showAll ? ceil($total / $limit) : 1
+        ]
+      ]
+    ]);
+  }
 }

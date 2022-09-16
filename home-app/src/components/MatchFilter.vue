@@ -8,6 +8,15 @@
 
         <q-card-section class="q-pt-none">
           <q-select use-input map-options emit-value
+            label="Federation"
+            input-debounce="0"
+            v-model="filter.federation_id"
+            :options="options.federations"
+            @filter="filterFederation"
+            @update:model-value="onFederationChange"
+          />
+
+          <q-select use-input map-options emit-value
             label="School"
             input-debounce="0"
             v-model="filter.school_id"
@@ -26,8 +35,11 @@
 </template>
 
 <script>
+import Helper from 'src/services/helper'
+
 const defaultFilter = {
-  school_id: null
+  school_id: null,
+  federation_id: null
 }
 
 export default {
@@ -43,10 +55,12 @@ export default {
       visible: this.show,
       filter: {...defaultFilter},
       options: {
-        schools: []
+        schools: [],
+        federations: []
       },
       master: {
-        schools: []
+        schools: [],
+        federations: []
       }
     }
   },
@@ -62,9 +76,14 @@ export default {
 
   mounted: function () {
     this.getSchools()
+    this.getFederations()
   },
 
   methods: {
+    onFederationChange: function (value) {
+      this.getSchools(value)
+    },
+
     clearFilter: function () {
       this.filter = {...defaultFilter}
       this.$emit('filter', this.filter)
@@ -72,26 +91,83 @@ export default {
     },
 
     filterSchool: function (val, update) {
-      if (val === '') {
-        update(() => {
-          this.options.schools = [...this.master.schools]
-        })
-        return
-      }
-
       update(() => {
         const needle = val.toLowerCase()
         this.options.schools = this.master.schools.filter(v => v.label.toLowerCase().indexOf(needle) > -1)
       })
     },
 
-    getSchools: function () {
-      const masterdata_schools = localStorage.getItem('masterdata_schools')
-      if (masterdata_schools !== null) {
-        const schools = JSON.parse(masterdata_schools)
-        this.options.schools = [...schools]
-        this.master.schools = [...schools]
+    filterFederation: function (val, update) {
+      update(() => {
+        const needle = val.toLowerCase()
+        this.options.federations = this.master.federations.filter(v => v.label.toLowerCase().indexOf(needle) > -1)
+      })
+    },
+
+
+    getSchools: function (federation_id = null) {
+      Helper.loading(this)
+      
+      this.options.schools = []
+      this.master.schools = []
+      window.localStorage.removeItem('masterdata_schools')
+
+      let endpoint = 'school/list'
+      endpoint = Helper.generateURLParams(endpoint, 'showall', true)
+
+      if (federation_id !== null) {
+        endpoint = Helper.generateURLParams(endpoint, 'federation_id', federation_id)
       }
+      this.$api.get(endpoint).then((response) => {
+        const { data, message, status } = response.data
+
+        if (status) {
+          const schools = []
+          data.list.map(item => {
+            schools.push({
+              label: item.name, 
+              value: item.id
+            })
+          })
+
+          this.options.schools = [...schools]
+          this.master.schools = [...schools]
+          window.localStorage.setItem('masterdata_schools', JSON.stringify(schools))
+        }
+      }).finally(() => {
+        Helper.loading(this, false)
+      })
+    },
+
+    getFederations: function () {
+      this.options.federations = []
+      this.master.federations = []
+      window.localStorage.removeItem('masterdata_federations')
+
+      Helper.loading(this)
+
+      let endpoint = 'federation/list'
+      endpoint = Helper.generateURLParams(endpoint, 'showall', true)
+
+      this.$api.get(endpoint).then((response) => {
+        const { data, message, status } = response.data
+
+        if (status) {
+          const federations = []
+          data.list.map(item => {
+            federations.push({
+              label: item.abbreviation, 
+              value: item.id
+            })
+          })
+
+          this.options.federations = [...federations]
+          this.master.federations = [...federations]
+          window.localStorage.setItem('masterdata_federations', JSON.stringify(federations))
+        }
+      }).finally(() => {
+        Helper.loading(this, false)
+      })
     },
 
     onFilter: function () {

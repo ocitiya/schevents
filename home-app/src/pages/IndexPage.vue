@@ -204,7 +204,6 @@ export default defineComponent({
     }
 
     this.getSchedule()
-    this.getSchools()
 
     useMeta({
       title: 'Home'
@@ -212,27 +211,6 @@ export default defineComponent({
   },
 
   methods: {
-    getSchools: function () {
-      let endpoint = 'school/list'
-      endpoint = Helper.generateURLParams(endpoint, 'showall', true)
-
-      this.$api.get(endpoint).then((response) => {
-        const { data, message, status } = response.data
-
-        if (status) {
-          const schools = []
-          data.list.map(item => {
-            schools.push({
-              label: item.name, 
-              value: item.id
-            })
-          })
-
-          window.localStorage.setItem('masterdata_schools', JSON.stringify(schools))
-        }
-      })
-    },
-
     onFilter: async function (filter) {
       this.filter.data = { ...filter }
       await this.getSchedule(1)

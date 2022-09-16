@@ -16,6 +16,17 @@
           <template v-slot:append>
             <q-icon name="search" />
           </template>
+
+          <template v-slot:option="scope">
+            <q-item v-bind="scope.itemProps">
+              <q-item-section avatar>
+                <q-img :src="scope.opt.icon" />
+              </q-item-section>
+              <q-item-section>
+                <q-item-label>{{ scope.opt.label }}</q-item-label>
+              </q-item-section>
+            </q-item>
+          </template>
         </q-select>
       </div>
     </div>
@@ -270,7 +281,6 @@ export default {
     this.getStates()
     this.getAssociations()
     this.getSchools()
-    this.getMasterDataSchools()
 
     useMeta({
       title: 'Club'
@@ -311,16 +321,9 @@ export default {
       })
     },
 
-    getMasterDataSchools: function () {
-      const masterdata_schools = localStorage.getItem('masterdata_schools')
-      if (masterdata_schools !== null) {
-        const schools = JSON.parse(masterdata_schools)
-        this.options.schools = [...schools]
-        this.master.schools = [...schools]
-      }
-    },
-
     getSchools: function () {
+      Helper.loading(this)
+
       let endpoint = 'school/list'
       endpoint = Helper.generateURLParams(endpoint, 'showall', true)
 
@@ -332,11 +335,14 @@ export default {
           data.list.map(item => {
             schools.push({
               label: item.name, 
-              value: item.id
+              value: item.id,
+              icon: `${this.$host}/storage/school/logo/${item.logo}`
             })
           })
 
-          window.localStorage.setItem('masterdata_schools', JSON.stringify(schools))
+          this.options.schools = [...schools]
+          this.master.schools = [...schools]
+          Helper.loading(this, false)
         }
       })
     },

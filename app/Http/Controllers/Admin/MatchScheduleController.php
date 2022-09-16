@@ -9,12 +9,11 @@ use Illuminate\Support\Facades\Storage;
 use Intervention\Image\Facades\Image;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\DB;
-
 use Illuminate\Support\Facades\Auth;
 
-use DataTables;
-use DateTime;
+use Yajra\DataTables\Datatables;
 
+use DateTime;
 use Carbon\Carbon;
 
 use App\Models\MatchSchedule;
@@ -136,9 +135,10 @@ class MatchScheduleController extends Controller {
       $schedule->updated_by = Auth::id();
     }
 
-    $school1 = School::with(["county"])->find($request->school1_id);
-    $school2 = School::with(["county"])->find($request->school2_id);
+    $school1 = School::with(["county", "association"])->find($request->school1_id);
+    $school2 = School::with(["county", "association"])->find($request->school2_id);
     $federation = Federation::find($request->federation_id);
+    $team_type = TeamType::find($request->team_type_id);
 
     $level_of_education1 = explode(" ", $school1->level_of_education);
     $level_of_education2 = explode(" ", $school2->level_of_education);
@@ -165,10 +165,25 @@ class MatchScheduleController extends Controller {
       $level_of_education,
       $school1->nickname,
       $school2->nickname,
-      $federation->abbreviation,
-      "{$federation->abbreviation}{$sport->name}"
+      $sport->name,
+      $team_type->name
     ];
 
+    if (!empty($school1->association)) {
+      $abbr = str_replace("-", "", $school1->association->abbreviation);
+      $abbr = str_replace(" ", "", $abbr);
+      array_push($keywords, $abbr);
+    }
+
+    if (!empty($school2->association)) {
+      $abbr = str_replace("-", "", $school2->association->abbreviation);
+      $abbr = str_replace(" ", "", $abbr);
+      array_push($keywords, $abbr);
+    }
+
+    array_push($keywords, "{$federation->abbreviation}{$sport->name}");
+
+    $keywords = array_unique($keywords);
     $keywords = implode(",", $keywords);
 
     try {
@@ -183,7 +198,7 @@ class MatchScheduleController extends Controller {
       $schedule->youtube_link = $request->youtube_link;
       $schedule->team_gender = $request->team_gender;
       $schedule->stadium_id = $request->stadium_id;
-      $schedule->team_type_id = $request->team_type_id;
+      $schedule->team_type_id = $team_type->id;
       $schedule->datetime = $datetime;
       $schedule->keywords = $keywords;
       $schedule->save();
@@ -378,6 +393,7 @@ class MatchScheduleController extends Controller {
   public function list (Request $request) {
     $showAll = $request->has('showall') ? (boolean) $request->showall : false;
     $school_id = $request->has('school_id') ? $request->school_id : null;
+    $federation_id = $request->has('federation_id') ? $request->federation_id : null;
 
     $page = $request->has('page') ? $request->page : 1;
     if (empty($page)) $page = 1; 
@@ -401,11 +417,12 @@ class MatchScheduleController extends Controller {
 
     $model = $this->_scheduleType($model, $type);
     $model = $model->when($school_id != null, function ($query) use ($school_id) {
-      return $query->where(function ($q) use ($school_id) {
-        return $q->where('school1_id', $school_id)
-          ->orWhere('school2_id', $school_id);
-      });
-    })->orderBy('datetime')
+      return $query->where('school1_id', $school_id)
+        ->orWhere('school2_id', $school_id);
+    }) ->when($federation_id != null, function ($query) use ($federation_id) {
+      return $query->where('federation_id', $federation_id);
+    })
+      ->orderBy('datetime')
       ->orderBy('created_at');
 
     $total = clone($model);

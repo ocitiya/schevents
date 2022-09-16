@@ -152,7 +152,8 @@ class SocmedAccountController extends Controller {
 							->orWhere("level", "admin")
 							->orWhere("level", "user");
 					})->when($role === "admin", function ($w) {
-						$w->where("level", "admin")
+						$w->where("level", "superadmin")
+							->orWhere("level", "admin")
 							->orWhere("level", "user");
 					})->when($role === "user", function ($w) {
 						$w->where("level", "user");

@@ -275,10 +275,10 @@
                 const timezone = moment.tz(zone_name).zoneAbbr()
 
                 const team_type = row.team_type === null ? null : row.team_type.name
-                const gender = row.team_gender !== null ? ` ${capitalizeFirstLetter(row.team_gender)} ` : ''
+                const gender = row.team_gender !== null ? `${capitalizeFirstLetter(row.team_gender)} ` : ''
                 const sport = row.sport_type === null ? null : row.sport_type.name
                 
-                const text = encodeURIComponent(`${row.federation.abbreviation}\n${team_type}${gender}${sport} | ${formatDate} ${timezone}\n${row.school1.name} (${row.school1.county.abbreviation}) vs ${row.school2.name} (${row.school2.county.abbreviation})\nWatch on\n${origin}/schedule/${data}\n${hashtag}`);
+                const text = encodeURIComponent(`${row.federation.abbreviation}\n${team_type} ${gender}${sport} | ${formatDate} ${timezone}\n${row.school1.name} (${row.school1.county.abbreviation}) vs ${row.school2.name} (${row.school2.county.abbreviation})\nWatch on\n${origin}/schedule/${data}\n${hashtag}`);
                 const shareURLTW = `https://twitter.com/intent/tweet?text=${text}`;
 
                 return `
