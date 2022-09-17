@@ -202,28 +202,6 @@
             input
           />
         </div>
-
-        <div class="col-12 col-sm-4">
-          <div class="text-primary text-bold text-h5">
-            Associations
-          </div>
-
-          <q-list separator class="q-mt-md" v-if="associations.length > 0">
-            <q-item v-for="item in associations" :key="item.id" >{{ item.name }}</q-item>
-          </q-list>
-
-          <div v-else class="text-primary text-bold">
-            No Data Available
-          </div>
-
-          <q-pagination v-if="associations.pagination.total_page > 1"
-            class="flex flex-center"
-            v-model="associations.pagination.page"
-            :max="associations.pagination.total_page"
-            @update:model-value="getAssociations"
-            input
-          />
-        </div>
       </div>
     </div>
   </div>
@@ -261,12 +239,6 @@ export default {
           total_page: 1
         }
       },
-      associations: {
-        pagination: {
-          page: 1,
-          total_page: 1
-        }
-      },
       options: {
         schools: []
       },
@@ -279,7 +251,6 @@ export default {
   mounted: function () {
     this.getSports()
     this.getStates()
-    this.getAssociations()
     this.getSchools()
 
     useMeta({
@@ -310,7 +281,7 @@ export default {
     filterSchool: function (val, update) {
       if (val === '') {
         update(() => {
-          this.options.schools = [...this.master.schools]
+          this.options.schools = []
         })
         return
       }
@@ -436,31 +407,6 @@ export default {
             this.states = [...data.list]
             this.state.pagination = {
               ...this.state.pagination,
-              page: data.pagination.page,
-              total_page: data.pagination.total_page
-            }
-            resolve()
-          } else {
-            reject()
-          }
-        })
-      })
-    },
-
-    getAssociations: function () {
-      return new Promise((resolve, reject) => {
-        const page = this.associations.pagination.page
-
-        let endpoint = 'association/list'
-        endpoint = Helper.generateURLParams(endpoint, 'page', page)
-
-        this.$api.get(endpoint).then((response) => {
-          const { data, message, status } = response.data
-
-          if (status) {
-            this.associations = [...data.list]
-            this.associations.pagination = {
-              ...this.associations.pagination,
               page: data.pagination.page,
               total_page: data.pagination.total_page
             }

@@ -17,6 +17,14 @@
           />
 
           <q-select use-input map-options emit-value
+            label="Sport"
+            input-debounce="0"
+            v-model="filter.sport_id"
+            :options="options.sports"
+            @filter="filterSport"
+          />
+
+          <q-select use-input map-options emit-value
             label="School"
             input-debounce="0"
             v-model="filter.school_id"
@@ -39,7 +47,8 @@ import Helper from 'src/services/helper'
 
 const defaultFilter = {
   school_id: null,
-  federation_id: null
+  federation_id: null,
+  sport_id: null
 }
 
 export default {
@@ -56,11 +65,13 @@ export default {
       filter: {...defaultFilter},
       options: {
         schools: [],
-        federations: []
+        federations: [],
+        sports: []
       },
       master: {
         schools: [],
-        federations: []
+        federations: [],
+        sports: []
       }
     }
   },
@@ -77,11 +88,16 @@ export default {
   mounted: function () {
     this.getSchools()
     this.getFederations()
+    this.getSports()
   },
 
   methods: {
     onFederationChange: function (value) {
+      this.filter.school_id = null
+      this.filter.sport_id = null
+
       this.getSchools(value)
+      this.getSports(value)
     },
 
     clearFilter: function () {
@@ -104,6 +120,12 @@ export default {
       })
     },
 
+    filterSport: function (val, update) {
+      update(() => {
+        const needle = val.toLowerCase()
+        this.options.sports = this.master.sports.filter(v => v.label.toLowerCase().indexOf(needle) > -1)
+      })
+    },
 
     getSchools: function (federation_id = null) {
       Helper.loading(this)
@@ -133,6 +155,40 @@ export default {
           this.options.schools = [...schools]
           this.master.schools = [...schools]
           window.localStorage.setItem('masterdata_schools', JSON.stringify(schools))
+        }
+      }).finally(() => {
+        Helper.loading(this, false)
+      })
+    },
+
+    getSports: function (federation_id = null) {
+      this.options.sports = []
+      this.master.sports = []
+      window.localStorage.removeItem('masterdata_sports')
+
+      Helper.loading(this)
+
+      let endpoint = 'sport-type/list'
+      endpoint = Helper.generateURLParams(endpoint, 'showall', true)
+      if (federation_id !== null) {
+        endpoint = Helper.generateURLParams(endpoint, 'federation_id', federation_id)
+      }
+
+      this.$api.get(endpoint).then((response) => {
+        const { data, message, status } = response.data
+
+        if (status) {
+          const sports = []
+          data.list.map(item => {
+            sports.push({
+              label: `${item.federation.abbreviation} - ${item.name}`, 
+              value: item.id
+            })
+          })
+
+          this.options.sports = [...sports]
+          this.master.sports = [...sports]
+          window.localStorage.setItem('masterdata_sports', JSON.stringify(sports))
         }
       }).finally(() => {
         Helper.loading(this, false)

@@ -20,8 +20,8 @@
           <q-route-tab :to="{ name: 'home' }" label="Home" icon="home" />
           <q-route-tab :to="{ name: 'club' }" label="Club" icon="groups" />
           <q-route-tab :to="{ name: 'news' }" label="News" icon="newspaper" />
-          <q-route-tab :to="{ name: 'video' }" label="Videos" icon="videocam" />
-          <q-route-tab :to="{ name: 'scores' }" label="Scores" icon="scoreboard" />
+          <!-- <q-route-tab :to="{ name: 'video' }" label="Videos" icon="videocam" />
+          <q-route-tab :to="{ name: 'scores' }" label="Scores" icon="scoreboard" /> -->
           <q-route-tab :to="{ name: 'about' }" label="About" icon="description" />
         </q-tabs>
       </q-toolbar>
@@ -74,8 +74,8 @@
           <div class="link" @click="$router.push({ name: 'home' })">Home</div>
           <div class="link" @click="$router.push({ name: 'club' })">Club</div>
           <div class="link" @click="$router.push({ name: 'news' })">News</div>
-          <div class="link" @click="$router.push({ name: 'video' })">Videos</div>
-          <div class="link" @click="$router.push({ name: 'scores' })">Scores</div>
+          <!-- <div class="link" @click="$router.push({ name: 'video' })">Videos</div>
+          <div class="link" @click="$router.push({ name: 'scores' })">Scores</div> -->
           <div class="link" @click="$router.push({ name: 'about' })">About</div>
         </div>
 
@@ -124,16 +124,16 @@ const linksList = [
     icon: 'newspaper',
     link_name: 'news'
   },
-  {
-    title: 'Videos',
-    icon: 'videocam',
-    link_name: 'video'
-  },
-  {
-    title: 'Scores',
-    icon: 'scoreboard',
-    link_name: 'scores'
-  },
+  // {
+  //   title: 'Videos',
+  //   icon: 'videocam',
+  //   link_name: 'video'
+  // },
+  // {
+  //   title: 'Scores',
+  //   icon: 'scoreboard',
+  //   link_name: 'scores'
+  // },
   {
     title: 'About',
     icon: 'description',
