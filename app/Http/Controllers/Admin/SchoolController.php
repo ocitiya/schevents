@@ -61,6 +61,14 @@ class SchoolController extends Controller {
     return view('admin.school.detail', $data);
   }
 
+  public function detailApi ($school_id) {
+    return response()->json([
+      "status" => true,
+      "message" => null,
+      "data" => School::with(["county", "federation"])->find($school_id)
+    ]);
+  }
+
   public function store (Request $request) {
     $validation = [
       'name' => 'required|max:255',

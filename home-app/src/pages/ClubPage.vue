@@ -1,5 +1,5 @@
 <template>
-  <div class="q-px-md q-py-xl page bg-accent">
+  <div class="q-px-md q-py-xl page bg-accent" style="min-height: inherit">
     <div class="text-center text-h5 text-primary text-bold">
       Club Menu
     </div>
@@ -12,6 +12,7 @@
           input-debounce="0"
           :options="options.schools"
           @filter="filterSchool"
+          @update:model-value="getData"
         >
           <template v-slot:append>
             <q-icon name="search" />
@@ -31,177 +32,38 @@
       </div>
     </div>
 
-    <q-tabs
-      v-if="search !== null"
-      ref="tab"
-      v-model="tab"
-      inline-label
-      class="bg-grey-2"
-      active-class="bg-primary text-white"
-      @update:model-value="() => getSchedule(1)"
-    >
-      <q-tab name="live" label="Live" />
-      <q-tab name="upcoming" label="Upcoming" />
-      <q-tab name="this-week" label="This Week" />
-      <q-tab name="today" label="Today" />
-    </q-tabs>
+    <div v-if="Object.keys(data).length > 0" class="flex flex-center">
+      <div class="card-schedule-container">
+        <q-card v-ripple class="event-card" @click="() => toMatchSchedule(data.id)">
+          <q-card-section>
+            <q-img v-if="data.logo !== null" class="logo"
+              :src="`${$host}/storage/school/logo/${data.logo}`"
+              :ratio="1"
+            >
+              <template v-slot:error>
+                <img :src="`${$host}/images/no-logo-1.png`" style="width: 100%; height: 100%;">
+              </template>
+            </q-img>
 
-    <div v-if="search !== null">
-      <div v-if="schedules.length > 0">
-        <div class="card-schedule-container q-py-xl">
-          <div v-for="item in schedules" :key="item.id">
-            <q-card v-ripple class="event-card" @click="() => redirect(item.sport_type.stream_url)">
-              <q-card-section class="flex justify-between items-center">
-                <span class="text-primary">
-                  <span class="capitalize" v-if="item.team_gender !== null">{{ item.team_gender }},</span>
-                  <span v-if="item.team_type !== null">{{ item.team_type.name }},</span>
-                  <span v-if="item.sport_type !== null">{{ item.sport_type.name }}</span>
-                </span>                
-              </q-card-section>
+            <q-img v-else class="logo"
+              :src="`${$host}/images/no-logo-1.png`"
+              :ratio="1"
+            />
 
-              <q-separator />
+            <div class="text-bold text-primary q-mt-md">
+              {{ data.name }}
+            </div>
+            <div>
+              {{ data.county.name }} {{ data.federation.abbreviation }}
+            </div>
+          </q-card-section>
 
-              <q-card-section class="q-py-lg">
-                <div class="vs-section q-mb-md">
-                  <div v-if="item.school1 !== null" class="text-center q-mr-md">
-                    <q-img v-if="item.school1.logo !== null" class="logo"
-                      :src="`${$host}/storage/school/logo/${item.school1.logo}`"
-                      :ratio="1"
-                    >
-                      <template v-slot:error>
-                        <img :src="`${$host}/images/no-logo-1.png`" style="width: 100%; height: 100%;">
-                      </template>
-                    </q-img>
+          <q-separator />
 
-                    <q-img v-else class="logo"
-                      :src="`${$host}/images/no-logo-1.png`"
-                      :ratio="1"
-                    />
-
-                    <div class="text-bold text-primary q-mt-md">
-                      {{ item.school1.name }} ({{ item.school1.county.abbreviation }})
-                    </div>
-                  </div>
-
-                  <div v-else class="q-ml-md flex flex-center">
-                    <div class="text-red text-bold">Unknown School</div>
-                  </div>
-
-                  <div class="text-body1 text-grey-7 flex flex-center">
-                    VS
-                  </div>
-
-                  <div v-if="item.school2 !== null" class="text-center q-ml-md">
-                    <q-img v-if="item.school2.logo !== null" class="logo"
-                      :src="`${$host}/storage/school/logo/${item.school2.logo}`"
-                      :ratio="1"
-                    >
-                      <template v-slot:error>
-                        <img :src="`${$host}/images/no-logo-1.png`" style="width: 100%; height: 100%;">
-                      </template>
-                    </q-img>
-
-                    <q-img v-else class="logo"
-                      :src="`${$host}/images/no-logo-1.png`"
-                      :ratio="1"
-                    />
-
-                    <div class="text-bold text-primary q-mt-md">
-                      {{ item.school2.name }} ({{ item.school2.county.abbreviation }})
-                    </div>
-                  </div>
-
-                  <div v-else class="q-ml-md flex flex-center">
-                    <div class="text-red text-bold">Unknown School</div>
-                  </div>
-                </div>
-
-                <div v-if="item.stadium_id !== null">
-                  <q-separator />
-
-                  <div class="flex items-center text-primary q-mt-md">
-                    <q-icon name="pin_drop" />&nbsp;
-                    {{ item.stadium.name }}
-                  </div>
-                </div>
-              </q-card-section>
-
-              <q-separator />
-
-              <q-card-section class="flex items-center justify-between q-px-md bg-primary text-white">
-                <div class="flex flex-center">
-                  <q-icon name="calendar_month" />
-                  <span class="q-ml-sm">{{ scheduleDate(item.datetime) }}</span>
-                </div>
-
-                <div class="flex flex-center">
-                  <q-icon name="schedule" />
-                  <span class="q-ml-sm">{{ scheduleTime(item.datetime) }}</span>
-                </div>
-              </q-card-section>
-            </q-card>
-          </div>
-        </div>
-      </div>
-
-      <div v-else class="text-primary text-h6 text-bold flex flex-center q-my-lg">
-        No Events
-      </div>
-
-      <q-pagination v-if="pagination.total_page > 0"
-        class="flex flex-center q-mt-xl"
-        v-model="pagination.page"
-        :max="pagination.total_page"
-        @update:model-value="changePage"
-        input
-      />
-    </div>
-
-    <div class="list-container">
-      <div class="row q-col-gutter-md">
-        <div class="col-12 col-sm-4">
-          <div class="text-primary text-bold text-h5">
-            Sport
-          </div>
-
-          <q-list separator class="q-mt-md" v-if="sports.length > 0">
-            <q-item v-for="item in sports" :key="item.id" >{{ item.name }}</q-item>
-          </q-list>
-
-          <div v-else class="text-primary text-bold">
-            No Data Available
-          </div>
-
-          <q-pagination v-if="sport.pagination.total_page > 1"
-            class="flex flex-center"
-            v-model="sport.pagination.page"
-            :max="sport.pagination.total_page"
-            @update:model-value="getSports"
-            input
-          />
-        </div>
-
-        <div class="col-12 col-sm-4">
-          <div class="text-primary text-bold text-h5">
-            States
-          </div>
-
-          <q-list separator class="q-mt-md" v-if="states.length > 0">
-            <q-item v-for="item in states" :key="item.id" >{{ item.name }}</q-item>
-          </q-list>
-
-          <div v-else class="text-primary text-bold">
-            No Data Available
-          </div>
-
-          <q-pagination v-if="state.pagination.total_page > 1"
-            class="flex flex-center"
-            v-model="state.pagination.page"
-            :max="state.pagination.total_page"
-            @update:model-value="getStates"
-            input
-          />
-        </div>
+          <q-card-section class="text-center q-px-md bg-primary text-white">
+            Watch Game
+          </q-card-section>
+        </q-card>
       </div>
     </div>
   </div>
@@ -219,26 +81,7 @@ export default {
     return {
       search: null,
       loadingSchedule: true,
-      schedules: [],
-      sports: [],
-      states: [],
-      tab: 'live',
-      pagination: {
-        page: 1,
-        total_page: 1
-      },
-      sport: {
-        pagination: {
-          page: 1,
-          total_page: 1
-        }
-      },
-      state: {
-        pagination: {
-          page: 1,
-          total_page: 1
-        }
-      },
+      data: {},
       options: {
         schools: []
       },
@@ -249,37 +92,27 @@ export default {
   },
   
   mounted: function () {
-    this.getSports()
-    this.getStates()
-    this.getSchools()
-
     useMeta({
       title: 'Club'
     })
   },
 
-  watch: {
-    search: function (val) {
-      if (searchTimeout) clearTimeout(searchTimeout)
-      searchTimeout = setTimeout(() => {
-        this.getSchedule()
-      }, 500)
-    }
-  },
-
   methods: {
-    changePage: function () {
-      Helper.scrollToElement(this.$refs.tab.$el, -100)
-    },
-
     redirect: function (url) {
       setTimeout(() => {
         window.open(url)
       }, 500)
     },
 
+    toMatchSchedule: function (school_id) {
+      setTimeout(() => {
+        if (searchTimeout) clearTimeout(searchTimeout)
+        this.$router.push({ name: 'home', query: { school_id } })
+      }, 300)
+    },
+
     filterSchool: function (val, update) {
-      if (val === '') {
+      if (val.length <= 3) {
         update(() => {
           this.options.schools = []
         })
@@ -287,133 +120,64 @@ export default {
       }
 
       update(() => {
-        const needle = val.toLowerCase()
-        this.options.schools = this.master.schools.filter(v => v.label.toLowerCase().indexOf(needle) > -1)
+        if (searchTimeout) clearTimeout(searchTimeout)
+        searchTimeout = setTimeout(async () => {
+          const needle = val.toLowerCase()
+          await this.getSchools(needle)
+          this.options.schools = this.master.schools.filter(v => v.label.toLowerCase().indexOf(needle) > -1)
+        }, 500)
       })
     },
 
-    getSchools: function () {
+    getSchools: function (search) {
       Helper.loading(this)
 
       let endpoint = 'school/list'
       endpoint = Helper.generateURLParams(endpoint, 'showall', true)
+      endpoint = Helper.generateURLParams(endpoint, 'search', search)
 
-      this.$api.get(endpoint).then((response) => {
-        const { data, message, status } = response.data
-
-        if (status) {
-          const schools = []
-          data.list.map(item => {
-            schools.push({
-              label: item.name, 
-              value: item.id,
-              icon: `${this.$host}/storage/school/logo/${item.logo}`
-            })
-          })
-
-          this.options.schools = [...schools]
-          this.master.schools = [...schools]
-          Helper.loading(this, false)
-        }
-      })
-    },
-
-    scheduleDate: function (date) {
-      const formatDate = moment.utc(date).local().format('D MMMM Y')
-      return formatDate
-    },
-
-    scheduleTime: function (date) {
-      const formatTime = moment.utc(date).local().format('hh:mm')
-
-      const zone_name =  moment.tz.guess();
-      const timezone = moment.tz(zone_name).zoneAbbr() 
-
-      return `${formatTime} ${timezone}`
-    },
-    
-    getSchedule: function (initialPage = null) {
-      Helper.loading(this)
-      
-      return new Promise((resolve, reject) => {
-        let page = this.pagination.page
-        if (initialPage !== null) page = initialPage
-
-        let endpoint = 'match-schedule/list'
-        endpoint = Helper.generateURLParams(endpoint, 'page', page)
-        endpoint = Helper.generateURLParams(endpoint, 'type', this.tab)
-
-        if (this.search !== null) {
-          endpoint = Helper.generateURLParams(endpoint, 'school_id', this.search)
-        }
-
+      return new Promise(resolve => {
         this.$api.get(endpoint).then((response) => {
           const { data, message, status } = response.data
 
           if (status) {
-            this.schedules = [...data.list]
+            const schools = []
+            data.list.map(item => {
+              schools.push({
+                label: item.name, 
+                value: item.id,
+                icon: `${this.$host}/storage/school/logo/${item.logo}`
+              })
+            })
 
-            this.pagination = {
-              ...this.pagination,
-              page: data.pagination.page,
-              total_page: data.pagination.total_page
-            }
+            this.options.schools = [...schools]
+            this.master.schools = [...schools]
+            Helper.loading(this, false)
+
+            resolve()
+          } else {
+            reject()
+          }
+        })
+      })
+    },
+
+    getData: function (school_id) {
+      Helper.loading(this)
+      
+      return new Promise((resolve, reject) => {
+        const endpoint = `school/detail/${school_id}`
+        this.$api.get(endpoint).then((response) => {
+          const { data, message, status } = response.data
+
+          if (status) {
+            this.data = { ...data }
             resolve()
           } else {
             reject()
           }
         }).finally(() => {
             Helper.loading(this, false)
-        })
-      })
-    },
-
-    getSports: function () {
-      return new Promise((resolve, reject) => {
-        const page = this.sport.pagination.page
-
-        let endpoint = 'sport-type/list'
-        endpoint = Helper.generateURLParams(endpoint, 'page', page)
-
-        this.$api.get(endpoint).then((response) => {
-          const { data, message, status } = response.data
-
-          if (status) {
-            this.sports = [...data.list]
-            this.sport.pagination = {
-              ...this.sport.pagination,
-              page: data.pagination.page,
-              total_page: data.pagination.total_page
-            }
-            resolve()
-          } else {
-            reject()
-          }
-        })
-      })
-    },
-
-    getStates: function () {
-      return new Promise((resolve, reject) => {
-        const page = this.state.pagination.page
-
-        let endpoint = 'county/list'
-        endpoint = Helper.generateURLParams(endpoint, 'page', page)
-
-        this.$api.get(endpoint).then((response) => {
-          const { data, message, status } = response.data
-
-          if (status) {
-            this.states = [...data.list]
-            this.state.pagination = {
-              ...this.state.pagination,
-              page: data.pagination.page,
-              total_page: data.pagination.total_page
-            }
-            resolve()
-          } else {
-            reject()
-          }
         })
       })
     }
@@ -464,17 +228,25 @@ export default {
   border-radius: 20px;
 }
 
+@media only screen and (max-width: 599px) {
+  .event-card {
+    width: 100% !important;
+  }
+}
+
 .vs-section {
   grid-template-columns: 7fr 1fr 7fr;
   grid-auto-flow: column;
   display: grid;
 }
 
+@media only screen and (max-width: 599px) {
+  .card-schedule-container {
+    width: 100% !important;
+  }
+}
+
 .card-schedule-container {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-wrap: wrap;
-  gap: 20px;
+  width: 300px;
 }
 </style>

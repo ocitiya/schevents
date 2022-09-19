@@ -30,7 +30,18 @@
             v-model="filter.school_id"
             :options="options.schools"
             @filter="filterSchool"
-          />
+          >
+            <template v-slot:option="scope">
+              <q-item v-bind="scope.itemProps">
+                <q-item-section avatar>
+                  <q-img :src="scope.opt.icon" />
+                </q-item-section>
+                <q-item-section>
+                  <q-item-label>{{ scope.opt.label }}</q-item-label>
+                </q-item-section>
+              </q-item>
+            </template>
+          </q-select>
         </q-card-section>
 
         <q-card-actions align="right">
@@ -148,7 +159,8 @@ export default {
           data.list.map(item => {
             schools.push({
               label: item.name, 
-              value: item.id
+              value: item.id,
+              icon: `${this.$host}/storage/school/logo/${item.logo}`
             })
           })
 

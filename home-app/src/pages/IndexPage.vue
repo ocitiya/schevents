@@ -183,7 +183,11 @@ export default defineComponent({
     return {
       filter: {
         dialog: false,
-        data: {}
+        data: {
+          school_id: this.$route.query.school_id !== 'undefined' ? this.$route.query.school_id : null,
+          federation_id: null,
+          sport_id: null
+        }
       },
       loadingSchedule: true,
       tab: 'upcoming',
@@ -203,7 +207,12 @@ export default defineComponent({
       Helper.scrollToElement(this.$refs.tab.$el)
     }
 
-    this.getSchedule()
+    if (this.filter.data.school_id !== null) {
+      this.filter.data.school_id = this.filter.data.school_id
+      this.onFilter(this.filter.data)
+    } else {
+      this.getSchedule()
+    }
 
     useMeta({
       title: 'Home'

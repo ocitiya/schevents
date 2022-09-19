@@ -48,6 +48,7 @@ Route::get('/municipality/list/{county_id?}', [MunicipalitiesController::class, 
 Route::get('/school/list/{school_id?}', [SchoolController::class, 'list']);
 Route::post('/school/listDatatable', [SchoolController::class, 'listDatatable']);
 Route::post('/school/validate', [SchoolController::class, 'validateSchool']);
+Route::get('/school/detail/{school_id?}', [SchoolController::class, 'detailApi']);
 
 Route::get('/stadium/list', [StadiumController::class, 'list']);
 Route::get('/stadium/listDatatable', [StadiumController::class, 'listDatatable']);
