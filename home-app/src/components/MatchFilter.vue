@@ -169,6 +169,7 @@ export default {
           window.localStorage.setItem('masterdata_schools', JSON.stringify(schools))
         }
       }).finally(() => {
+        this.filter.school_id = typeof this.$route.query.school_id !== 'undefined' ? this.$route.query.school_id : null
         Helper.loading(this, false)
       })
     },
@@ -192,10 +193,17 @@ export default {
         if (status) {
           const sports = []
           data.list.map(item => {
-            sports.push({
-              label: `${item.federation.abbreviation} - ${item.name}`, 
-              value: item.id
-            })
+            if (item.sport !== null) {
+              sports.push({
+                label: `${item.federation.abbreviation} - ${item.sport.name}`, 
+                value: item.id
+              })
+            } else {
+              sports.push({
+                label: `${item.federation.abbreviation} - ${item.name}`, 
+                value: item.id
+              })
+            }
           })
 
           this.options.sports = [...sports]

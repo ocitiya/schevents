@@ -184,7 +184,7 @@ export default defineComponent({
       filter: {
         dialog: false,
         data: {
-          school_id: this.$route.query.school_id !== 'undefined' ? this.$route.query.school_id : null,
+          school_id: typeof this.$route.query.school_id !== 'undefined' ? this.$route.query.school_id : null,
           federation_id: null,
           sport_id: null
         }
@@ -201,6 +201,8 @@ export default defineComponent({
   },
 
   mounted: function () {
+    console.log(this.filter.data.school_id)
+
     const tab = this.$route.query.tab
     if (typeof tab !== 'undefined') {
       this.tab = tab

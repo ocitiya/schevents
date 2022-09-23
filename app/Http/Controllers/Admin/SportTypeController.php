@@ -166,7 +166,7 @@ class SportTypeController extends Controller {
 			$query->where('name', 'LIKE', '%'.$search.'%');
 		})->when($federation_id != null, function ($query) use ($federation_id) {
 			$query->where("federation_id", $federation_id);
-		})->with(["federation"]);
+		})->with(["federation", "sport"]);
 
 		$types = clone($model)->when(!$showAll, function ($query) use ($limit, $page) {
 			$query->take($limit)->skip(($page - 1) * $limit);
