@@ -91,6 +91,15 @@
       <div class="tab-content" id="myTabContent">
         <div class="tab-pane fade show active" role="tabpanel" tabindex="0">
           <div class="data-center">
+            @if (inRole(["admin", "superadmin"]))
+              <div class="mb-3 justify-content-end delete-all-container" style="display: none">
+                <button id="delete-all" class="btn btn-sm unrounded btn-danger text-end" type="button">
+                  <i class="fa-solid fa-trash"></i>&nbsp;
+                  <small>Hapus Semua</small>
+                </button>
+              </div>
+            @endif
+
             <div id="schedule-items" style="width: 100%">
               <table id="datatable" class="table table-bordered" style="font-size: small"></table>
             </div>
@@ -113,11 +122,69 @@
       return data[params]
     }
 
+    const toggleDeleteAllButton = () => {
+      if (['have-played', 'last-week', 'old-data'].includes(data.state)) {
+        $('.delete-all-container').css('display', 'flex');
+      } else {
+        $('.delete-all-container').css('display', 'none');
+      }
+    }
+
     document.addEventListener('DOMContentLoaded', async function () {
+      toggleDeleteAllButton();
+
+      $('#delete-all').on('click', function (e) {
+        let stateText = null
+        if (data.state === 'have-played') {
+          stateText = 'sudah bermain'
+        } else if (data.state === 'last-week') {
+          stateText = 'minggu lalu'
+        } else if (data.state === 'old-data') {
+          stateText = 'data lama'
+        }
+
+        // Verify state
+        if (stateText === null) return false
+        
+        swal({
+          text: `Ingin menghapus semua jadwal pertandingan ${stateText}?`,
+          icon: 'warning',
+          buttons: true,
+          dangerMode: true,
+        })
+        .then((confirm) => {
+          if (confirm) {
+            const deleteURL = `/admin/match-schedule/delete-all`
+            const formData = new FormData()
+            formData.append('state', data.state)
+            formData.append('_token', csrfToken)
+            
+            fetch(deleteURL, {
+              method: 'POST',
+              body: formData
+            }).then(res => res.json()).then(data => {
+              if (data.status) {
+                table.ajax.reload()
+                swal({
+                  title: 'Deleted',
+                  icon: 'success',
+                  text: `Semua jadwal pertandingan ${stateText} berhasil dihapus`
+                })
+              } else {
+                console.log(data.message)
+                swal(data.message, { icon: 'error' });
+              }
+            })
+          }
+        })
+      })
+
       $('.tab-item').on('click', function (e) {
         e.preventDefault()
 
         data.state = $(this).attr('data-state')
+
+        toggleDeleteAllButton()
         table.ajax.reload()
 
         $('.tab-item').each(function (i, obj) {
@@ -173,7 +240,6 @@
       }
 
       const sharetoFB = (shareURL) => {
-        console.log(shareURL)
         window.open(shareURL, '_blank', 'location=yes,height=570,width=520,scrollbars=yes,status=yes');
       }
 

@@ -135,6 +135,8 @@ Route::middleware(['haveInstalled'])->group(function () {
       Route::post('/delete', [SchoolController::class, 'delete'])->name('delete');
     });
 
+    // Match Schedule
+    // /admin/match-schedule
     Route::group(['prefix' => 'match-schedule', 'as' => 'match-schedule.'], function () {
       Route::get('/', [MatchScheduleController::class, 'index'])->name('index');
       Route::get('/create', [MatchScheduleController::class, 'create'])->name('create');
@@ -144,6 +146,7 @@ Route::middleware(['haveInstalled'])->group(function () {
 
       Route::post('/store', [MatchScheduleController::class, 'store'])->name('store');
       Route::post('/delete', [MatchScheduleController::class, 'delete'])->name('delete');
+      Route::post('/delete-all', [MatchScheduleController::class, 'deleteAll'])->name('delete-all');
 
       Route::get('/federation', [MatchScheduleController::class, 'indexFederation'])->name('federation.index');
 

@@ -320,6 +320,22 @@
       })
     }
 
+    const generateSelectSport = async (federation_id) => {
+      const sports = await getList(`/api/sport-type/list?showall=true&federation_id=${federation_id}`)
+      $('#sport_type_id').empty()
+
+      $('#sport_type_id').append('<option disabled selected value>Please select ...</option')
+      sports.map(item => {
+        if (item.sport === null) {
+          $('#sport_type_id').append(`<option value="${item.id}">${item.name}</option>`)
+        } else {
+          $('#sport_type_id').append(`<option value="${item.id}">${item.sport.name}</option>`)
+        }
+      })
+
+      $('#sport_type_id').val(sportSelected).change()
+    }
+
     document.addEventListener('DOMContentLoaded', function() {
       if (defaultFederation !== null && defaultFederation) {
         $('#federation_id').prop('disabled', true);
@@ -336,9 +352,7 @@
         generateSelect('#school2_id', schools, false)
         $('#school2_id').val(school2Selected).change()
 
-        const sports = await getList(`/api/sport-type/list?showall=true&federation_id=${val}`)
-        generateSelect('#sport_type_id', sports, false)
-        $('#sport_type_id').val(sportSelected).change()
+        generateSelectSport(val)
       })
       
       $('#federation_id').val(federationSelected).change()

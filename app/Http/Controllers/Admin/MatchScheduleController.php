@@ -241,6 +241,39 @@ class MatchScheduleController extends Controller {
     }
   }
 
+  public function deleteAll (Request $request) {
+    $validated = $request->validate([
+      'state' => 'required|in:have-played,last-week,old-data'
+    ]);
+
+    try {
+      $stateText = null;
+      if ($request->state == 'have-played') {
+        $stateText = 'sudah bermain';
+      } else if ($request->state == 'last-week') {
+        $stateText = 'minggu lalu';
+      } else if ($request->state == 'old-data') {
+        $stateText = 'data lama';
+      }
+      
+      $model = new MatchSchedule;
+      $model = $this->_scheduleType($model, $request->state);
+
+      $model->delete();
+
+      session()->flash('message', "Schedule successfully deleted");
+      return response()->json([
+        "status" => true,
+        "message" => null
+      ]);
+    } catch (QueryException $exception) {
+      return response()->json([
+        "status" => false,
+        "message" => $exception->getMessage()
+      ]);
+    }
+  }
+
   public function latestVideoAPI (Request $request) {
     $page = $request->has('page') ? $request->page : 1;
     if (empty($page)) $page = 1; 
@@ -361,7 +394,7 @@ class MatchScheduleController extends Controller {
 
     $type = $request->has('type') ? $request->type : "have-played";
 
-    $model = $this->_scheduleType($model, $type);    
+    $model = $this->_scheduleType($model, $type);
     $total = clone($model)->count();
 
     $scores = clone($model)->take($limit)->skip(($page - 1) * $limit)->get();

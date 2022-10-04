@@ -3,7 +3,7 @@
 @section('content')
   <div id="federation" class="content">
     <div class="title-container">
-      <h4 class="text-primary">Fededrasi</h4>
+      <h4 class="text-primary">Federasi</h4>
 
       <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
