@@ -261,7 +261,7 @@ class MatchScheduleController extends Controller {
 
       $model->delete();
 
-      session()->flash('message', "Schedule successfully deleted");
+      session()->flash('message', "Schedule {$stateText} successfully deleted");
       return response()->json([
         "status" => true,
         "message" => null

@@ -15,6 +15,7 @@ use App\Http\Controllers\Admin\SportTypeController;
 use App\Http\Controllers\Admin\StadiumController;
 use App\Http\Controllers\Admin\TeamTypeController;
 use App\Http\Controllers\Admin\AssociationController;
+use App\Http\Controllers\Admin\BannerController;
 use App\Http\Controllers\Admin\FederationController;
 use App\Http\Controllers\Admin\SocmedAccountController;
 use App\Http\Controllers\Admin\SocmedController;
@@ -96,3 +97,5 @@ Route::get('/match-schedule/news/list', [MatchScheduleController::class, 'newsLi
 Route::get('/match-schedule/latest-video', [MatchScheduleController::class, 'latestVideoAPI']);
 Route::get('/match-schedule/scores', [MatchScheduleController::class, 'scoreAPI']);
 
+Route::get('/banner/list', [BannerController::class, 'list']);
+Route::get('/banner/listDatatable', [BannerController::class, 'listDatatable']);

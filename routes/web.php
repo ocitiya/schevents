@@ -18,6 +18,7 @@ use App\Http\Controllers\Admin\MatchScheduleController;
 use App\Http\Controllers\Admin\StadiumController;
 use App\Http\Controllers\Admin\TeamTypeController;
 use App\Http\Controllers\Admin\AssociationController;
+use App\Http\Controllers\Admin\BannerController;
 use App\Http\Controllers\Admin\FederationController;
 use App\Http\Controllers\Admin\SocmedController;
 use App\Http\Controllers\Admin\SocmedAccountController;
@@ -60,6 +61,18 @@ Route::middleware(['haveInstalled'])->group(function () {
       Route::get('my-account/change-password', [AdminDashboardController::class, 'myAccountChangePassword'])->name('my-account.change-password');
       
       Route::get('/', [AdminDashboardController::class, 'index'])->name('dashboard');
+
+      Route::group(['prefix' => 'app', 'as' => 'app.'], function () {
+        Route::group(['prefix' => 'banner', 'as' => 'banner.'], function () {
+          Route::get('/', [BannerController::class, 'index'])->name('index');
+          Route::get('/create', [BannerController::class, 'create'])->name('create');
+          Route::get('/update/{id}', [BannerController::class, 'update'])->name('update');
+          Route::get('/detail/{id}', [BannerController::class, 'detail'])->name('detail');
+
+          Route::post('/store', [BannerController::class, 'store'])->name('store');
+          Route::post('/delete', [BannerController::class, 'delete'])->name('delete');
+        });
+      });
 
       // admin.location
       Route::group(['prefix' => 'location', 'as' => 'location.'], function () {

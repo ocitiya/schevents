@@ -179,9 +179,9 @@
               </a>
             </li>
             <li
-              class="{{ str_contains(Request::route()->getName(), 'admin.sport.type') ? 'active' : null }}"
+              class="{{ str_contains(Request::route()->getName(), 'admin.app.banner') ? 'active' : null }}"
             >
-              <a href="{{ route('admin.sport.type.index') }}">
+              <a href="{{ route('admin.app.banner.index') }}">
                 Banner
               </a>
             </li>

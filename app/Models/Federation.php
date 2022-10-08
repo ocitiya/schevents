@@ -30,4 +30,8 @@ class Federation extends Model {
 	public function matchSchedule () {
 		return $this->hasMany(MatchSchedule::class);
 	}
+
+	public function schools () {
+		return $this->hasMany(School::class);
+	}
 }

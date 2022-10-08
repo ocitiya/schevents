@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Federation;
 use App\Models\User;
 use App\Models\UserDetail;
 use Illuminate\Http\Request;
@@ -15,7 +16,10 @@ use Intervention\Image\Facades\Image;
 
 class DashboardController extends Controller {
   public function index () {
-    return view('admin.dashboard.index');
+    $federations = Federation::withCount("schools")->get();
+
+    $data = ["federations" => $federations];
+    return view('admin.dashboard.index', $data);
   }
 
   public function changePassword () {
