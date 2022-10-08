@@ -90,7 +90,12 @@
               },
               {data: 'id', title: 'Aksi', orderable: false, searchable: false,
                 "render": function ( data, type, row, meta ) {
+                  const updateRoute = `/admin/app/banner/update/${data}`
                   return `
+                    <a href="${updateRoute}" class="btn btn-sm unrounded btn-primary">
+                      <small>Edit Olahraga</small>
+                    </a>
+                    
                     <button
                       data-id="${data}"
                       class="btn btn-sm btn-danger unrounded delete"

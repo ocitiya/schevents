@@ -49,6 +49,15 @@
           <input type="hidden" name="id" value="{{ isset($data) ? $data->id : null }}">
 
           <div class="col-6">
+            @if (isset($data))
+              <div class="row">
+                <div class="col-5"></div>
+                <div class="col-7">
+                  <img src="{{"/storage/banner/image/{$data->image}" }}" style="width: 100%">
+                </div>
+              </div>
+            @endif
+
             <div class="row">
               <div class="col-5">
                 <label for="image">Gambar *</label>
