@@ -17,7 +17,7 @@ class AppController extends Controller {
       return response()->json([
         "status" => true,
         "message" => null,
-        "data" => App::first()
+        "data" => App::select("name", "description", "logo")->first()
       ]);
     } catch (QueryException $exception) {
 			return response()->json([

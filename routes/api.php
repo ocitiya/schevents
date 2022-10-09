@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\Admin\AppContactUsController;
+use App\Http\Controllers\Admin\AppFollowUsController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -99,3 +101,9 @@ Route::get('/match-schedule/scores', [MatchScheduleController::class, 'scoreAPI'
 
 Route::get('/banner/list', [BannerController::class, 'list']);
 Route::get('/banner/listDatatable', [BannerController::class, 'listDatatable']);
+
+Route::get('/app/contact_us/list', [AppContactUsController::class, 'list']);
+Route::get('/app/contact_us/listDatatable', [AppContactUsController::class, 'listDatatable']);
+
+Route::get('/app/follow_us/list', [AppFollowUsController::class, 'list']);
+Route::get('/app/follow_us/listDatatable', [AppFollowUsController::class, 'listDatatable']);

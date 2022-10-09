@@ -1,10 +1,10 @@
 @extends('layouts.admin.master')
 
 @section('content')
-  <div id="banner" class="content">
+  <div id="sport_types" class="content">
     <div class="title-container">
       <h4 class="text-primary">
-        Banner
+        App Contact Us
       </h4>
 
       <nav aria-label="breadcrumb">
@@ -16,8 +16,8 @@
 
     <div class="data-container">
       <div class="data-header">
-        <a href="{{ route('admin.app.banner.create') }}" class="btn btn-primary btn-sm unrounded">
-          Tambah Banner&nbsp;
+        <a href="{{ route('admin.app.contact_us.create') }}" class="btn btn-primary btn-sm unrounded">
+          Tambah Data&nbsp;
           <i class="fa-solid fa-plus"></i>
         </a>
       </div>
@@ -35,14 +35,15 @@
   <script>
     $('#datatable').on('click', '.delete', function () {
       const id = $(this).attr('data-id')
+      const name = $(this).attr('data-name')
 
-      const deleteURL = `/admin/app/banner/delete`
+      const deleteURL = `/admin/app/contact_us/delete`
       const formData = new FormData()
       formData.append('id', id)
       formData.append('_token', csrfToken)
 
       swal({
-        text: `Ingin menghapus banner`,
+        text: `Ingin menghapus data ${name}?`,
         icon: "warning",
         buttons: true,
         dangerMode: true,
@@ -58,7 +59,7 @@
               swal({
                 title: 'Deleted',
                 icon: 'success',
-                text: `Banner berhasil dihapus`
+                text: `Data ${name} berhasil dihapus`
               })
             } else {
               console.log(data.message)
@@ -75,32 +76,36 @@
             processing: true,
             serverSide: true,
             ajax: {
-              url: "/api/banner/listDatatable",
-              method: 'GET'
+              url: "/api/app/contact_us/listDatatable",
+              method: 'GET',
             },
             columns: [
-              {data: 'image', title: 'Gambar', name: 'image',
+              {data: 'name', title: 'Name', name: 'name' },
+              {data: 'info', title: 'Info', name: 'info'},
+              {data: 'logo', title: 'Gambar', name: 'logo',
                 "render": function ( data, type, row, meta ) {
                   return `
-                    <a href="/storage/banner/image/${data}" target="_blank">
-                      <img src="/storage/banner/image/${data}" style="width: 75px" class="mb-3">
+                    <a href="/storage/app_contact_us/image/${data}" target="_blank">
+                      <img src="/storage/app_contact_us/image/${data}" style="width: 75px" class="mb-3">
                     </a>
                   `
                 }
               },
               {data: 'id', title: 'Aksi', orderable: false, searchable: false,
                 "render": function ( data, type, row, meta ) {
-                  const updateRoute = `/admin/app/banner/update/${data}`
+                  const updateRoute = `/admin/app/contact_us/update/${data}`
+
                   return `
                     <a href="${updateRoute}" class="btn btn-sm unrounded btn-primary">
-                      <small>Edit Banner</small>
+                      <small>Edit Data</small>
                     </a>
-                    
+
                     <button
                       data-id="${data}"
+                      data-name="${row.name}"
                       class="btn btn-sm btn-danger unrounded delete"
                     >
-                      <small>Hapus Banner</small>
+                      <small>Hapus Data</small>
                     </button>
                   `;
                 }

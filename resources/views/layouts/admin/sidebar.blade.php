@@ -156,25 +156,25 @@
       <div class="menu-group">
         <div class="dropdown-group">
           <a data-bs-target="#appSetting" data-bs-toggle="collapse"
-            aria-expanded="{{ str_contains(Request::route()->getName(), 'admin.masterdata') ? 'true' : 'false' }}"
+            aria-expanded="{{ str_contains(Request::route()->getName(), 'admin.app') ? 'true' : 'false' }}"
             class="dropdown-toggle">
             Pengaturan Aplikasi
           </a>
           <ul
-            class="collapse list-unstyled {{ str_contains(Request::route()->getName(), 'admin.location') ? 'show' : null }}"
+            class="collapse list-unstyled {{ str_contains(Request::route()->getName(), 'admin.app') ? 'show' : null }}"
             id="appSetting"
           >
             <li
               class="{{ str_contains(Request::route()->getName(), 'admin.location.counties') ? 'active' : null }}"
             >
-              <a href="{{ route('admin.location.counties.index') }}">
+              <a href="{{ route('admin.app.profile.detail') }}">
                 Profile
               </a>
             </li>
             <li
-              class="{{ str_contains(Request::route()->getName(), 'admin.sport.type') ? 'active' : null }}"
+              class="{{ str_contains(Request::route()->getName(), 'admin.app.contact_us') ? 'active' : null }}"
             >
-              <a href="{{ route('admin.sport.type.index') }}">
+              <a href="{{ route('admin.app.contact_us.index') }}">
                 Kontak
               </a>
             </li>
@@ -186,10 +186,10 @@
               </a>
             </li>
             <li
-              class="{{ str_contains(Request::route()->getName(), 'admin.school.index') ? 'active' : null }}"
+              class="{{ str_contains(Request::route()->getName(), 'admin.app.follow_us') ? 'active' : null }}"
             >
               <a
-                href="{{ route('admin.school.index') }}"
+                href="{{ route('admin.app.follow_us.index') }}"
               >Follow Us</a>
             </li>
           </ul>

@@ -1,5 +1,8 @@
 <?php
 
+use App\Http\Controllers\Admin\AppContactUsController;
+use App\Http\Controllers\Admin\AppController;
+use App\Http\Controllers\Admin\AppFollowUsController;
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\DashboardController;
@@ -71,6 +74,34 @@ Route::middleware(['haveInstalled'])->group(function () {
 
           Route::post('/store', [BannerController::class, 'store'])->name('store');
           Route::post('/delete', [BannerController::class, 'delete'])->name('delete');
+        });
+
+        Route::group(['prefix' => 'profile', 'as' => 'profile.'], function () {
+          Route::get('/', [AppController::class, 'index'])->name('index');
+          Route::get('/update', [AppController::class, 'update'])->name('update');
+          Route::get('/detail', [AppController::class, 'detail'])->name('detail');
+
+          Route::post('/store', [AppController::class, 'store'])->name('store');
+        });
+
+        Route::group(['prefix' => 'contact_us', 'as' => 'contact_us.'], function () {
+          Route::get('/', [AppContactUsController::class, 'index'])->name('index');
+          Route::get('/create', [AppContactUsController::class, 'create'])->name('create');
+          Route::get('/update/{id}', [AppContactUsController::class, 'update'])->name('update');
+          Route::get('/detail/{id}', [AppContactUsController::class, 'detail'])->name('detail');
+
+          Route::post('/store', [AppContactUsController::class, 'store'])->name('store');
+          Route::post('/delete', [AppContactUsController::class, 'delete'])->name('delete');
+        });
+
+        Route::group(['prefix' => 'follow_us', 'as' => 'follow_us.'], function () {
+          Route::get('/', [AppFollowUsController::class, 'index'])->name('index');
+          Route::get('/create', [AppFollowUsController::class, 'create'])->name('create');
+          Route::get('/update/{id}', [AppFollowUsController::class, 'update'])->name('update');
+          Route::get('/detail/{id}', [AppCoAppFollowUsControllerntactUsController::class, 'detail'])->name('detail');
+
+          Route::post('/store', [AppFollowUsController::class, 'store'])->name('store');
+          Route::post('/delete', [AppFollowUsController::class, 'delete'])->name('delete');
         });
       });
 
