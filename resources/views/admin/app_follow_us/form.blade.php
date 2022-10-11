@@ -64,7 +64,7 @@
                 <label for="link">Link *</label>
               </div>
               <div class="col-7">
-                <input type="url" class="form-control" name="link" id="link" rows="3" required value="{{ old('info', isset($data) ? $data->info : null) }}">
+                <input type="url" class="form-control" name="link" id="link" rows="3" required value="{{ old('link', isset($data) ? $data->link : null) }}">
               </div>
             </div>
 
@@ -113,4 +113,14 @@
       </div>
     </div>
   </div>
+@endsection
+
+@section('script')
+  <script>
+    const typeSelected = "<?php echo old('type', isset($data) ? $data->type : null) ?>";
+
+    document.addEventListener('DOMContentLoaded', async function () {
+      $('#type').val(typeSelected).change()
+    })
+  </script>
 @endsection

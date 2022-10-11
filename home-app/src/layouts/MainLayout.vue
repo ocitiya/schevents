@@ -65,8 +65,12 @@
     <q-footer class="bg-primary text-white q-py-xl q-px-md text-body1">
       <div class="row q-col-gutter-xl">
         <div class="col-6 col-md-4">
-          Logo App
-          <div>schevents</div>
+          <div>
+            <q-avatar v-if="logo !== null">
+              <img :src="`${$host}/storage/app/image/${logo}`" width="40px" />
+            </q-avatar>
+            <div class="q-mt-sm">{{ title }}</div>
+          </div>
         </div>
 
         <div class="col-6 col-md-4">
@@ -81,22 +85,22 @@
 
         <div class="col-12 col-md-4">
           <div class="text-bold q-mb-md">Contact</div>
-          <div>email:
-            <a href="mailto:admin@schsports.com">
-              admin@schsports.com
-            </a>
-          </div>
-          <div>website: 
-            <a href="https://live.schsports.com" target="_blank">
-              https://live.schsports.com
-            </a>
+          <div v-for="item in contact_us" :key="item.id" class="text-justify">
+            <q-img
+              :src="`${$host}/storage/app_contact_us/image/${item.logo}`"
+              width="40px" height="40px"
+              fit="contain"
+              class="q-mr-md"
+            />
+            <span class="text-bold">{{ item.name }}:&nbsp;</span>
+            <span>{{ item.info }}</span>
           </div>
 
           <div class="text-bold q-my-md">Follow us</div>
           <div class="flex items-center q-gutter-md">
-            <q-img :src="`${$host}/images/ig-logo.png`" :ratio="1" width="20px" />
-            <q-img :src="`${$host}/images/fb-logo.png`" :ratio="1" width="20px" />
-            <q-img :src="`${$host}/images/twitter-logo.png`" :ratio="1" width="20px" />
+            <a v-for="item in follow_us" :key="item.id" :href="`${item.link}`" target="_blank" noopener noreferrer>
+              <q-img :src="`${$host}/storage/app_follow_us/image/${item.logo}`" :ratio="1" width="30px" />
+            </a>
           </div>
         </div>
       </div>
@@ -148,16 +152,57 @@ export default defineComponent({
   data: () => {
     return {
       title: null,
+      logo: null,
       essentialLinks: linksList,
-      leftDrawerOpen: ref(false)
+      leftDrawerOpen: ref(false),
+      contact_us: [],
+      follow_us: []
     }
   },
 
   mounted: function () {
     this.getAppData()
+    this.getContactUs(),
+    this.getFollowUs()
   },
 
   methods: {
+    getContactUs: function () {
+      return new Promise((resolve, reject) => {
+
+        const endpoint = 'app/contact_us/list?showall=true'
+        this.$api.get(endpoint).then((response) => {
+          const { data, message, status } = response.data
+
+          if (status) {
+            this.contact_us = [...data.list]
+
+            resolve()
+          } else {
+            reject()
+          }
+        })
+      })
+    },
+
+    getFollowUs: function () {
+      return new Promise((resolve, reject) => {
+
+        const endpoint = 'app/follow_us/list?showall=true'
+        this.$api.get(endpoint).then((response) => {
+          const { data, message, status } = response.data
+
+          if (status) {
+            this.follow_us = [...data.list]
+
+            resolve()
+          } else {
+            reject()
+          }
+        })
+      })
+    },
+
     toggleLeftDrawer () {
       this.leftDrawerOpen = !this.leftDrawerOpen
     },
@@ -167,6 +212,7 @@ export default defineComponent({
         const { data, message, status } = response.data
 
         this.title = data.name
+        this.logo = data.logo
       })
     }
   }
