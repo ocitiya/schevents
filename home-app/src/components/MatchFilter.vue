@@ -7,6 +7,20 @@
         </q-card-section>
 
         <q-card-section class="q-pt-none">
+          <q-input v-model="filter.date" mask="date" readonly label="Date">
+            <template v-slot:append>
+              <q-icon name="event" class="cursor-pointer">
+                <q-popup-proxy cover transition-show="scale" transition-hide="scale">
+                  <q-date v-model="filter.date">
+                    <div class="row items-center justify-end">
+                      <q-btn v-close-popup label="Close" color="primary" flat />
+                    </div>
+                  </q-date>
+                </q-popup-proxy>
+              </q-icon>
+            </template>
+          </q-input>
+
           <q-select use-input map-options emit-value
             label="Federation"
             input-debounce="0"
@@ -59,7 +73,8 @@ import Helper from 'src/services/helper'
 const defaultFilter = {
   school_id: null,
   federation_id: null,
-  sport_id: null
+  sport_id: null,
+  date: null
 }
 
 export default {

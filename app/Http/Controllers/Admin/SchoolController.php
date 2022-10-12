@@ -267,4 +267,16 @@ class SchoolController extends Controller {
       ]
     ]);
   }
+
+  function random () {
+    $model = School::inRandomOrder()->limit(30)
+      ->select("id", "name", "nickname", "name", "logo")
+      ->get();
+
+    return response()->json([
+      "status" => true,
+      "message" => null,
+      "data" => $model
+    ]);
+  }
 }

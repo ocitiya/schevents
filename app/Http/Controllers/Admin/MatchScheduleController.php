@@ -428,6 +428,7 @@ class MatchScheduleController extends Controller {
     $school_id = $request->has('school_id') ? $request->school_id : null;
     $federation_id = $request->has('federation_id') ? $request->federation_id : null;
     $sport_id = $request->has('sport_id') ? $request->sport_id : null;
+    $date = $request->has('date') ? $request->date : null;
 
     $page = $request->has('page') ? $request->page : 1;
     if (empty($page)) $page = 1; 
@@ -457,6 +458,8 @@ class MatchScheduleController extends Controller {
       return $query->where('federation_id', $federation_id);
     })->when($sport_id != null, function ($query) use ($sport_id) {
       return $query->where('sport_type_id', $sport_id);
+    })->when($date != null, function ($query) use ($date) {
+      return $query->whereDate('datetime', $date);
     })
       ->orderBy('datetime')
       ->orderBy('created_at');

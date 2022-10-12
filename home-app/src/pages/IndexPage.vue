@@ -214,7 +214,8 @@ export default defineComponent({
         data: {
           school_id: typeof this.$route.query.school_id !== 'undefined' ? this.$route.query.school_id : null,
           federation_id: null,
-          sport_id: null
+          sport_id: null,
+          date: null
         }
       },
       loadingSchedule: true,
@@ -268,6 +269,7 @@ export default defineComponent({
 
     onFilter: async function (filter) {
       this.filter.data = { ...filter }
+      if (this.filter.data.date !== null) this.tab = null
       await this.getSchedule(1)
       this.hideFilterDialog()
     },
