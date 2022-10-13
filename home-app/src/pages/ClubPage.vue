@@ -14,6 +14,7 @@
             :options="options.schools"
             @filter="filterSchool"
             @update:model-value="getData"
+            ref="inputClub"
           >
             <template v-slot:append>
               <q-icon name="search" />
@@ -102,7 +103,9 @@
       </div>
 
       <div class="flex flex-center">
-        <q-btn label="Find and Stream Your Favorite Team" unelevated color="primary" icon="search" />
+        <q-btn label="Find and Stream Your Favorite Team" unelevated color="primary" icon="search"
+          @click="toInputClub"
+        />
       </div>
     </div>
   </div>
@@ -113,8 +116,10 @@ import Helper from 'src/services/helper'
 import 'moment-timezone'
 import moment from 'moment'
 import { useMeta } from 'quasar'
+import { scroll } from 'quasar'
 
 let searchTimeout
+
 export default {
   data: function () {
     return {
@@ -141,6 +146,13 @@ export default {
   },
 
   methods: {
+    toInputClub: function () {
+      const inputClub = this.$refs.inputClub
+      inputClub.focus()
+
+      Helper.scrollToElement(inputClub.$el, 100)
+    },
+
     redirect: function (url) {
       setTimeout(() => {
         window.open(url)
