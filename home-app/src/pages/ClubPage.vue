@@ -76,30 +76,39 @@
       </div>
 
       <div class="q-my-lg">
-        <div class="flex items-center q-gutter-lg q-pb-lg q-my-xl q-px-md" style="overflow-x: auto; flex-flow: row">
-          <q-card
-            v-for="data in randomSchool"
-            :key="data.id"
-          >
-            <q-card-section>
-              <q-img v-if="data.logo !== null" class="logo"
-                :src="`${$host}/storage/school/logo/${data.logo}`"
-                :ratio="1"
-                style="width: 200px; height: 200px"
-                fit="contain"
-              >
-                <template v-slot:error>
-                  <img :src="`${$host}/images/no-logo-1.png`" style="width: 100%; height: 100%;">
-                </template>
-              </q-img>
+        <!-- <div class="flex items-center q-gutter-lg q-pb-lg q-my-xl q-px-md" style="overflow-x: auto; flex-flow: row"> -->
+          <Carousel :settings="settings" :breakpoints="breakpoints">
+            <Slide
+              v-for="data in randomSchool"
+              :key="data.id"
+            >
+              <div class="q-px-md">
+                <q-card class="q-mx-md">
+                  <q-card-section>
+                    <q-img v-if="data.logo !== null" class="logo"
+                      :src="`${$host}/storage/school/logo/${data.logo}`"
+                      :ratio="1"
+                      style="width: 200px; height: 200px"
+                      fit="contain"
+                    >
+                      <template v-slot:error>
+                        <img :src="`${$host}/images/no-logo-1.png`" style="width: 100%; height: 100%;">
+                      </template>
+                    </q-img>
+      
+                    <q-img v-else class="logo"
+                      :src="`${$host}/images/no-logo-1.png`"
+                      :ratio="1"
+                    />
+                  </q-card-section>
+                </q-card>
+              </div>
+            </Slide>
 
-              <q-img v-else class="logo"
-                :src="`${$host}/images/no-logo-1.png`"
-                :ratio="1"
-              />
-            </q-card-section>
-          </q-card>
-        </div>
+            <navigation />
+            <pagination />
+          </Carousel>
+        <!-- </div> -->
       </div>
 
       <div class="flex flex-center">
@@ -118,11 +127,38 @@ import moment from 'moment'
 import { useMeta } from 'quasar'
 import { scroll } from 'quasar'
 
+import { Carousel, Pagination, Slide } from 'vue3-carousel'
+import 'vue3-carousel/dist/carousel.css'
+
 let searchTimeout
 
 export default {
+  components: {
+    Carousel,
+    Slide,
+    Pagination,
+  },
+
   data: function () {
     return {
+      settings: {
+        itemsToShow: 2.5,
+        wrapAround: true,
+        itemsToScroll: 1,
+        autoplay: 4000
+      },
+      breakpoints: {
+        // 700px and up
+        700: {
+          itemsToShow: 4.5,
+          snapAlign: 'center',
+        },
+        // 1024 and up
+        1024: {
+          itemsToShow: 6.5,
+          snapAlign: 'start',
+        },
+      },
       search: null,
       loadingSchedule: true,
       data: {},
@@ -326,5 +362,9 @@ export default {
 
 .card-schedule-container {
   width: 300px;
+}
+
+.carousel__slide {
+  padding: 70px;
 }
 </style>
