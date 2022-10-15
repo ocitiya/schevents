@@ -439,13 +439,15 @@ class MatchScheduleController extends Controller {
     $model = MatchSchedule::with([
       "county",
       "school1" => function ($subQuery) {
-        return $subQuery->with(['county', 'municipality']);
+        $subQuery->with(['county', 'municipality']);
       },
       "school2" => function ($subQuery) {
-        return $subQuery->with(['county', 'municipality']);
+        $subQuery->with(['county', 'municipality']);
       },
       "team_type",
-      "sport_type",
+      "sport_type" => function ($subQuery) {
+        $subQuery->with(["sport"]);
+      },
       "federation",
       "stadium"
     ]);
@@ -502,7 +504,9 @@ class MatchScheduleController extends Controller {
         return $query->with(["municipality", "county"]);
       },
       "team_type",
-      "sport_type",
+      "sport_type" => function ($q) {
+        $q->with(["sport"]);
+      },
       "federation",
       "createdBy" => function ($query) {
         return $query->select("id", "username");

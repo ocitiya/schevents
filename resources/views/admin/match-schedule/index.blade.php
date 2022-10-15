@@ -303,7 +303,11 @@
             },
             {data: 'sport_type', title: 'Olahraga', name: 'team_type',
               "render": function ( data, type, row, meta ) {
-                return data.name
+                if (data.sport !== null) {
+                  return data.sport.name
+                } else {
+                  return data.name
+                }
               }
             },
             {data: 'datetime', title: 'Tanggal Main', name: 'datetime',

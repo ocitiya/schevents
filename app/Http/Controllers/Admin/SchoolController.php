@@ -65,7 +65,7 @@ class SchoolController extends Controller {
     return response()->json([
       "status" => true,
       "message" => null,
-      "data" => School::with(["county", "federation"])->find($school_id)
+      "data" => School::with(["county", "federation", "municipality"])->find($school_id)
     ]);
   }
 

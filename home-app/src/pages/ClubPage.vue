@@ -38,25 +38,29 @@
         <div class="card-schedule-container">
           <q-card v-ripple class="event-card" @click="() => toMatchSchedule(data.id)">
             <q-card-section>
-              <q-img v-if="data.logo !== null" class="logo"
-                :src="`${$host}/storage/school/logo/${data.logo}`"
-                :ratio="1"
-              >
-                <template v-slot:error>
-                  <img :src="`${$host}/images/no-logo-1.png`" style="width: 100%; height: 100%;">
-                </template>
-              </q-img>
-  
-              <q-img v-else class="logo"
-                :src="`${$host}/images/no-logo-1.png`"
-                :ratio="1"
-              />
-  
-              <div class="text-bold text-primary q-mt-md">
-                {{ data.name }}
+              <div class="flex flex-center">
+                <q-img v-if="data.logo !== null" class="logo"
+                  :src="`${$host}/storage/school/logo/${data.logo}`"
+                  :ratio="1"
+                >
+                  <template v-slot:error>
+                    <img :src="`${$host}/images/no-logo-1.png`" style="width: 100%; height: 100%;">
+                  </template>
+                </q-img>
+    
+                <q-img v-else class="logo"
+                  :src="`${$host}/images/no-logo-1.png`"
+                  :ratio="1"
+                />
               </div>
-              <div>
-                {{ data.county.name }} {{ data.federation.abbreviation }}
+  
+              <div class="text-center q-mt-lg">
+                <div class="text-bold text-primary q-mt-md">
+                  {{ data.name }}
+                </div>
+                <div>
+                  {{ data.municipality.name }}, {{ data.county.abbreviation }}
+                </div>
               </div>
             </q-card-section>
   
