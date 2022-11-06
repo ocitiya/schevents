@@ -90,6 +90,11 @@
                 }
               },
               {data: 'level', title: 'Role', name: 'level'},
+              {data: 'user', title: 'Active', name: 'active',
+                "render": function ( data, type, row, meta ) {
+                  return data.is_active == 1 ? 'Aktif' : 'Tidak Aktif'
+                }
+              },
               {data: 'id', title: 'Aksi', orderable: false, searchable: false,
                 "render": function ( data, type, row, meta ) {
                   updateRoute = `/admin/user/update/${data}`

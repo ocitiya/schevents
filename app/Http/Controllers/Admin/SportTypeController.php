@@ -6,12 +6,14 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
-use Intervention\Image\Facades\Image;
 use Illuminate\Database\QueryException;
 use Yajra\DataTables\Datatables;
 
 use App\Models\SportType;
 use App\Models\Federation;
+use Illuminate\Foundation\Auth\User;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Session;
 
 class SportTypeController extends Controller {
 	public function index (Request $request) {
@@ -59,57 +61,20 @@ class SportTypeController extends Controller {
 			'stream_url' => 'required|url',
 			'federation_id' => 'required|uuid'
 		];
-		
-		if ($isCreate) {
-			array_push($validation, [
-				'image' => 'required|mimes:jpg,png'
-			]);
-		} else {
-			array_push($validation, [
-				'image' => 'mimes:jpg,png'
-			]);
-		}
 			
 		$validated = $request->validate($validation);
-
-		// Upload Image
-		if ($request->hasFile('image')) {
-			if(!Storage::exists("/public/sport/image")) Storage::makeDirectory("/public/sport/image");
-			$file = $request->file('image');
-
-			$filenameWithExt = $request->file('image')->getClientOriginalName();
-			$filename = pathinfo($filenameWithExt, PATHINFO_FILENAME);
-			$extension = $request->file('image')->getClientOriginalExtension();
-
-			$filename = $filename.'_'.time().'.'.$extension;
-			$path = storage_path('app/public/sport/image/').$filename;
-			$file->storeAs('public/sport/image', $filename);
-
-			// Resize image
-			$img = Image::make($file->getRealPath())
-				->resize(1024, 1024, function ($constraint) {
-					$constraint->aspectRatio();
-				})
-				->save($path, 80);
-		}
 
 		$types = null;
 		if ($isCreate) {
 			$types = new SportType;
 			$types->id = Str::uuid();
+			$types->created_by = Auth::id();
 		} else {
 			$types = SportType::find($request->id);
-			if ($request->hasFile('image')) {
-				$oldPath = storage_path('app/public/sport/image/').$types->image;
-				if (file_exists($oldPath)) {
-					unlink($oldPath);
-				}
-			}
 		}
 		
 		try {
 			$types->sport_id = ucwords($request->sport_id);
-			if ($request->hasFile('image')) $types->image = $filename;
 			$types->federation_id = $request->federation_id;
 			$types->stream_url = $request->stream_url;
 			$types->save();
@@ -125,7 +90,6 @@ class SportTypeController extends Controller {
 			}
 
 		} catch (QueryException $exception) {
-			if ($request->hasFile('image')) unlink($path);
 			return redirect()->back()
 				->withErrors($exception->getMessage());
 		}
@@ -157,6 +121,7 @@ class SportTypeController extends Controller {
 		$search = $request->has('search') ? $request->search : null;
 		$showAll = $request->has('showall') ? (boolean) $request->showall : false;
 		$federation_id = $request->has('federation_id') ? $request->federation_id : null;
+		$user_id = $request->has('user_id') ? $request->user_id : null;
 
 		$page = $request->has('page') ? $request->page : 1;
 		if (empty($page)) $page = 1; 
@@ -166,6 +131,8 @@ class SportTypeController extends Controller {
 			$query->where('name', 'LIKE', '%'.$search.'%');
 		})->when($federation_id != null, function ($query) use ($federation_id) {
 			$query->where("federation_id", $federation_id);
+		})->when($user_id != null, function ($query) use ($user_id) {
+			$query->where("created_by", $user_id);
 		})->with(["federation", "sport"]);
 
 		$types = clone($model)->when(!$showAll, function ($query) use ($limit, $page) {
@@ -191,9 +158,12 @@ class SportTypeController extends Controller {
 	}
 
 	public function listDatatable(Request $request) {
-		$data = SportType::with(["federation", "sport"])
+		$data = SportType::with(["federation", "sport", "user"])
 			->when($request->federation_id != null, function ($query) use ($request) {
 				$query->where("federation_id", $request->federation_id);
+			})
+			->when(Session::get("role") == "user", function ($q) {
+				$q->where("created_by", Auth::id());
 			})
 			->get();
 		

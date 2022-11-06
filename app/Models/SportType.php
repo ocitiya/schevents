@@ -26,4 +26,8 @@ class SportType extends Model {
 	public function sport () {
 		return $this->belongsTo(Sport::class);
 	}
+
+	public function user () {
+		return $this->belongsTo(User::class, "created_by");
+	}
 }

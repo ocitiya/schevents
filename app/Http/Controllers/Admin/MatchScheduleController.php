@@ -23,6 +23,7 @@ use App\Models\Stadium;
 use App\Models\County;
 use App\Models\TeamType;
 use App\Models\Federation;
+use Illuminate\Support\Facades\Session;
 
 class MatchScheduleController extends Controller {
   protected $now;
@@ -509,14 +510,17 @@ class MatchScheduleController extends Controller {
       },
       "federation",
       "createdBy" => function ($query) {
-        return $query->select("id", "username");
+        return $query->select("id", "username", "name");
       },
       "updatedBy" => function ($query) {
-        return $query->select("id", "username");
+        return $query->select("id", "username", "name");
       }
     ])
       ->when($request->federation_id != null, function ($query) use ($request) {
         $query->where("federation_id", $request->federation_id);
+      })
+      ->when(Session::get("role") == "user", function ($q) {
+        $q->where("created_by", Auth::id());
       });
 
     $model = $this->_scheduleType($model, $state);

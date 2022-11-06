@@ -71,22 +71,6 @@
 
             <div class="row">
               <div class="col-5">
-                <label for="image">Gambar *</label>
-              </div>
-              <div class="col-7">
-                <input type="file" name="image" id="image" class="form-control" accept=".png, .jpg">
-                <div class="">
-                  @if (isset($data))
-                    <small>Masukkan gambar untuk mengganti gambar | File type: .jpg, .png</small><br><br>
-                  @else
-                    <small>File type: .jpg, .png</small><br><br>
-                  @endif
-                </div>
-              </div>
-            </div>
-
-            <div class="row">
-              <div class="col-5">
                 <label for="federation_id">Federasi *</label>
               </div>
               <div class="col-7">
@@ -96,6 +80,15 @@
                     <option value="{{ $item->id }}">{{ $item->abbreviation }}</option>
                   @endforeach
                 </select>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-5">
+                <label for="stream_url">Nama Pemilik</label>
+              </div>
+              <div class="col-7">
+                <input type="text" class="form-control" value="{{ Auth::user()->name }}" disabled>
               </div>
             </div>
 

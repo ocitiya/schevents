@@ -53,7 +53,7 @@
             </li>
           @endif
 
-          @if (inRole(["superadmin"]))
+          @if (inRole(["superadmin", "admin", "user"]))
             <li
               class="{{ str_contains(Request::route()->getName(), 'admin.sport.type') ? 'active' : null }}"
             >

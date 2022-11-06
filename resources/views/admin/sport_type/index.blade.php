@@ -20,16 +20,18 @@
 
     <div class="data-container">
       <div class="data-header">
-        @if ($default_federation != null)
-          <a href="{{ route('admin.sport.type.create')."?federation_id={$default_federation}" }}" class="btn btn-primary btn-sm unrounded">
-            Tambah Olahraga&nbsp;
-            <i class="fa-solid fa-plus"></i>
-          </a>
-        @else
-          <a href="{{ route('admin.sport.type.create') }}" class="btn btn-primary btn-sm unrounded">
-            Tambah Olahraga&nbsp;
-            <i class="fa-solid fa-plus"></i>
-          </a>
+        @if (inRole(["user"]))
+          @if ($default_federation != null)
+            <a href="{{ route('admin.sport.type.create')."?federation_id={$default_federation}" }}" class="btn btn-primary btn-sm unrounded">
+              Tambah Olahraga&nbsp;
+              <i class="fa-solid fa-plus"></i>
+            </a>
+          @else
+            <a href="{{ route('admin.sport.type.create') }}" class="btn btn-primary btn-sm unrounded">
+              Tambah Olahraga&nbsp;
+              <i class="fa-solid fa-plus"></i>
+            </a>
+          @endif
         @endif
       </div>
 
@@ -45,7 +47,6 @@
 @section('script')
   <script>
     const isFederationDefault = "<?php echo $default_federation ? 1 : 0 ?>";
-
     const data = {
       federation_id: "<?php echo $default_federation ?>"
     };
@@ -118,11 +119,13 @@
                   return data.abbreviation
                 }
               },
-              {data: 'image', title: 'Gambar', name: 'image',
+              {data: 'user', title: 'Nama Pemilik', name: 'user',
                 "render": function ( data, type, row, meta ) {
-                  return `
-                    <img src="/storage/sport/image/${data}" style="width: 75px" class="mb-3">
-                  `
+                  if (data === null) {
+                    return '-'
+                  } else {
+                    return data.name || '-'
+                  }
                 }
               },
               {data: 'id', title: 'Aksi', orderable: false, searchable: false,

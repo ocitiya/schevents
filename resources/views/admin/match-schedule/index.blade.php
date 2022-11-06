@@ -26,22 +26,24 @@
 
     <div class="data-container">
       <div class="data-header">
-        @if ($federation_id != null)
-          <a
-            href="{{ route('admin.match-schedule.create', ["federation_id" => $federation_id]) }}"
-            class="btn btn-primary btn-sm unrounded"
-          >
-            Create New&nbsp;
-            <i class="fa-solid fa-plus"></i>
-          </a>
-        @else
-          <a
-            href="{{ route('admin.match-schedule.create') }}"
-            class="btn btn-primary btn-sm unrounded"
-          >
-            Create New&nbsp;
-            <i class="fa-solid fa-plus"></i>
-          </a>
+        @if (inRole(["user"]))
+          @if ($federation_id != null)
+            <a
+              href="{{ route('admin.match-schedule.create', ["federation_id" => $federation_id]) }}"
+              class="btn btn-primary btn-sm unrounded"
+            >
+              Create New&nbsp;
+              <i class="fa-solid fa-plus"></i>
+            </a>
+          @else
+            <a
+              href="{{ route('admin.match-schedule.create') }}"
+              class="btn btn-primary btn-sm unrounded"
+            >
+              Create New&nbsp;
+              <i class="fa-solid fa-plus"></i>
+            </a>
+          @endif
         @endif
       </div>
 
@@ -370,9 +372,9 @@
                 const date = moment(data).format('DD-MM-Y')
                 const time = moment(data).format('hh:mm:ss ZZ')
 
-                const username = row.created_by === null ? '' : row.created_by.username
+                const name = row.created_by === null ? '' : row.created_by.name
 
-                return `${date} <br/> ${time} <br/> ${username}`
+                return `${date} <br/> ${time} <br/> ${name}`
               }
             },
             {data: 'updated_at', title: 'Diubah', orderable: false, searchable: false,
@@ -383,9 +385,9 @@
                 } else {
                   const date = moment(data).format('DD-MM-Y')
                   const time = moment(data).format('hh:mm:ss ZZ')
-                  const username = row.updated_by === null ? '-' : row.updated_by.username
+                  const name = row.updated_by === null ? '-' : row.updated_by.name
 
-                  return `${date} <br/> ${time} <br/> ${username}`
+                  return `${date} <br/> ${time} <br/> ${name}`
                 }
               }
             },
@@ -410,15 +412,32 @@
                       <small>Hapus</small>
                     </button>
                   `;
+                } else {
+                  if (['have-played', 'last-week', 'old-data'].includes(data.state)) {
+                    deleteButton = `
+                      <button
+                        class="btn btn-sm unrounded btn-danger delete"
+                        data-id="${d}"
+                      >
+                        <small>Hapus</small>
+                      </button>
+                    `;
+                  }
                 }
 
-                return `
-                  <a href="${updateRoute}" class="btn btn-sm unrounded btn-primary">
-                    <small>Edit</small>
-                  </a>
+                if (role === 'user') {
+                  return `
+                    <a href="${updateRoute}" class="btn btn-sm unrounded btn-primary">
+                      <small>Edit</small>
+                    </a>
 
-                  ${deleteButton}
-                `;
+                    ${deleteButton}
+                  `;
+                } else {
+                  return `
+                    ${deleteButton}
+                  `;
+                }
               }
             },
           ]

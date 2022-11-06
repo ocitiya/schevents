@@ -4,12 +4,14 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Federation;
+use App\Models\MatchSchedule;
 use App\Models\User;
 use App\Models\UserDetail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
 use Intervention\Image\Facades\Image;
@@ -17,8 +19,19 @@ use Intervention\Image\Facades\Image;
 class DashboardController extends Controller {
   public function index () {
     $federations = Federation::withCount("schools")->get();
+    $match = Federation::withCount("matchSchedule")
+      ->when(Session::get("role") == "user", function ($q) {
+        $q->whereHas("matchSchedule", function ($q2) {
+          $q2->where("created_by", Auth::id());
+        });
+      })
+      ->get();
 
-    $data = ["federations" => $federations];
+    $data = [
+      "federations" => $federations,
+      "match" => $match
+    ];
+
     return view('admin.dashboard.index', $data);
   }
 

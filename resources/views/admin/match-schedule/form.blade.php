@@ -185,17 +185,6 @@
               </div>
             @endif
 
-            @if (isset($_GET['sudah-bermain']) || isset($_GET['minggu-lalu']))
-              <div class="row">
-                <div class="col-5">
-                  <label for="youtube_link">Link Youtube</label>
-                </div>
-                <div class="col-7">
-                  <input type="text" name="youtube_link" class="form-control" >
-                </div>
-              </div>
-            @endif
-
             <div class="row">
               <div class="col-5">
                 <label for="name">Tipe Tim *</label>
@@ -305,6 +294,8 @@
     const matchSystem2Selected = "<?php echo old('match_system2', isset($data) ? $data->match_system2 : null) ?>";
     const stadiumSelected = "<?php echo old('stadium_id', isset($data) ? $data->stadium_id : null) ?>";
 
+    const userid = "<?php echo Auth::id() ?>";
+
     const getList = (endpoint) => {
       return new Promise((resolve, reject) => {
         fetch(endpoint)
@@ -321,7 +312,7 @@
     }
 
     const generateSelectSport = async (federation_id) => {
-      const sports = await getList(`/api/sport-type/list?showall=true&federation_id=${federation_id}`)
+      const sports = await getList(`/api/sport-type/list?showall=true&federation_id=${federation_id}&user_id=${userid}`)
       $('#sport_type_id').empty()
 
       $('#sport_type_id').append('<option disabled selected value>Please select ...</option')
