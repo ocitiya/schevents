@@ -103,6 +103,7 @@ class UserDetailController extends Controller {
     if ($isCreate) {
       $user = new User();
       $user->id = Str::uuid();
+      $user->is_reset = 0;
       $user->is_default = 1;
       $user->is_active = 1;
       $user->password = $request->password;
