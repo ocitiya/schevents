@@ -179,10 +179,10 @@
             @if (!isset($data))
               <div class="row">
                 <div class="col-5">
-                  <label for="password">Password *</label>
+                  <label for="password">Password Default *</label>
                 </div>
                 <div class="col-7">
-                  <input type="password" name="password" id="password" class="form-control" required>
+                  <input type="text" name="password" id="password" class="form-control" value="password1" required disabled>
                 </div>
               </div>
             @endif

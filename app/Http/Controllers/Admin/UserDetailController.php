@@ -41,11 +41,11 @@ class UserDetailController extends Controller {
     $user = User::find($userDetail->user_id);
     $user->is_reset = 0;
     $user->is_default = 1;
-    $user->password = "user1234";
+    $user->password = "password1";
     $user->save();
 
     return redirect()->route("admin.user.index")
-      ->with("success", "Password {$user->name} telah berhasil di reset");
+      ->with("success", "Password {$user->name} telah berhasil di reset ke 'password1'");
   }
 
   public function detail ($id) {
