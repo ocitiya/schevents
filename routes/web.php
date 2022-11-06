@@ -53,6 +53,7 @@ Route::middleware(['haveInstalled'])->group(function () {
     Route::get('forgot-password', [LoginController::class, 'forgotPassword'])->name('forgot-password');
     Route::get('logout', [LoginController::class, 'logout'])->name('logout');
     
+    Route::post('reset-request', [LoginController::class, 'resetRequest'])->name('reset.request');
     Route::post('login-auth', [LoginController::class, 'loginAuth'])->name('login.auth');
     
     Route::middleware('auth')->group(function () {
@@ -278,6 +279,7 @@ Route::middleware(['haveInstalled'])->group(function () {
       Route::get('/', [UserDetailController::class, 'index'])->name('index');
       Route::get('/create', [UserDetailController::class, 'create'])->name('create');
       Route::get('/update/{id}', [UserDetailController::class, 'update'])->name('update');
+      Route::get('/reset/{id}', [UserDetailController::class, 'reset'])->name('reset');
       Route::get('/detail/{id}', [UserDetailController::class, 'detail'])->name('detail');
 
       Route::post('/store', [UserDetailController::class, 'store'])->name('store');

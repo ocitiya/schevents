@@ -22,16 +22,14 @@
           </div>
 
           <form
-            action="{{ route('admin.login.auth') }}"
+            action="{{ route('admin.reset.request') }}"
             method="POST"
             class="my-login-validation"
           >
+            {{ csrf_field() }}
             <div class="mb-3">
-              <label for="email" class="form-label">Email address</label>
-              <input id="email" type="email" class="form-control" name="email" value="" required autofocus>
-              <small>
-                By clicking "Reset Password" we will send a password reset link
-              </small>
+              <label for="email" class="form-label">username</label>
+              <input id="username" type="text" class="form-control" name="username" value="" required autofocus>
             </div>
 
             <div class="mb-4 text-end">

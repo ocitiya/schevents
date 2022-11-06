@@ -63,4 +63,18 @@ class LoginController extends Controller {
     return redirect()->route('admin.login')
 			->with('success', 'You have successfully logout');
 	}
+
+	public function resetRequest (Request $request) {
+		$user = User::where("username", $request->username)->first();
+		if ($user) {
+			$user->is_reset = 1;
+			$user->save();
+	
+			return redirect()->route('admin.login')
+				->with('success', 'Password reset has been requested to admin');
+		} else {
+			return redirect()->route('admin.login')
+				->withErrors(['Username does not exist!']);
+		}
+	}
 }

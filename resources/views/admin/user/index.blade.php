@@ -14,6 +14,22 @@
       </nav>
     </div>
 
+    @if ($errors->any())
+      <div class="alert alert-danger">
+        <ul>
+          @foreach ($errors->all() as $error)
+            <li>{{ $error }}</li>
+          @endforeach
+        </ul>
+      </div>
+    @endif
+
+    @if (session('success'))
+      <div class="alert alert-success">
+        {{ session('success') }}
+      </div>
+    @endif
+
     <div class="data-container">
       <div class="data-header">
         <a href="{{ route('admin.user.create') }}" class="btn btn-primary btn-sm unrounded">
@@ -98,12 +114,26 @@
               {data: 'id', title: 'Aksi', orderable: false, searchable: false,
                 "render": function ( data, type, row, meta ) {
                   updateRoute = `/admin/user/update/${data}`
+                  resetRoute = `/admin/user/reset/${data}`
+                  
+                  const is_reset = row.user.is_reset
+
+                  let reset = ''
+                  if (is_reset == 1) {
+                    reset = `
+                      <a href="${resetRoute}" class="btn btn-sm unrounded btn-info text-white">
+                        <small>Reset Password</small>
+                      </a>
+                    `;
+                  }
 
                   if (row.level !== 'superadmin') {
                     return `
                     <a href="${updateRoute}" class="btn btn-sm unrounded btn-primary">
                       <small>Edit User</small>
                     </a>
+
+                    ${reset}
 
                     <button
                       data-id="${data}"

@@ -35,6 +35,19 @@ class UserDetailController extends Controller {
     return view('admin.user.form', $data);
   }
 
+  public function reset ($id) {
+    $userDetail = UserDetail::find($id);
+
+    $user = User::find($userDetail->user_id);
+    $user->is_reset = 0;
+    $user->is_default = 1;
+    $user->password = "user1234";
+    $user->save();
+
+    return redirect()->route("admin.user.index")
+      ->with("success", "Password {$user->name} telah berhasil di reset");
+  }
+
   public function detail ($id) {
     $types = UserDetail::find($id);
     $data = [ "data" => $types ];
