@@ -506,7 +506,7 @@ class MatchScheduleController extends Controller {
       },
       "team_type",
       "sport_type" => function ($q) {
-        $q->with(["sport"]);
+        $q->withTrashed()->with(["sport"]);
       },
       "federation",
       "createdBy" => function ($query) {
@@ -617,7 +617,9 @@ class MatchScheduleController extends Controller {
         return $subQuery->with(['county']);
       },
       "team_type",
-      "sport_type"
+      "sport_type" => function ($q) {
+        $q->withTrashed();
+      }
     ])
       ->find($id);
 

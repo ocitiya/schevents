@@ -99,7 +99,7 @@
             </li>
           @endif
 
-          @if (inRole(["superadmin", "admin"]))
+          @if (inRole(["superadmin", "admin", "user"]))
             <li
               class="{{ str_contains(Request::route()->getName(), 'admin.masterdata.association') ? 'active' : null }}"
             >
@@ -197,7 +197,7 @@
       </div>
     @endif
 
-    @if(inRole(["superadmin"]))
+    @if(inRole(["superadmin", "admin"]))
       <div class="menu-group">
         <div class="title">ADMIN USER</div>
         <li
