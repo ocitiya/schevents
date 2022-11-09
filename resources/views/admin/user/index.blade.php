@@ -146,7 +146,7 @@
                   }
 
                   return `
-                    ${row.created_name.name}<br>
+                    ${row.created_name.name || '-'}<br>
                     ${created_at}<br><br>
                   `;
                 }
@@ -166,7 +166,7 @@
                   }
 
                   return `
-                    ${row.updated_name.name}<br>
+                    ${row.updated_name.name || '-'}<br>
                     ${updated_at}<br><br>
                   `;
                 }
