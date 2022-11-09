@@ -145,8 +145,10 @@
                     created_at = `${date} <br> ${time} ${timezone}`;
                   }
 
+                  const name = row.created_name !== null ? row.created_name.name : '-';
+
                   return `
-                    ${row.created_name.name || '-'}<br>
+                    ${name}<br>
                     ${created_at}<br><br>
                   `;
                 }
@@ -164,9 +166,10 @@
 
                     updated_at = `${date} <br> ${time} ${timezone}`;
                   }
+                  const name = row.updated_name !== null ? row.updated_name.name : '-';
 
                   return `
-                    ${row.updated_name.name || '-'}<br>
+                    ${name}<br>
                     ${updated_at}<br><br>
                   `;
                 }
