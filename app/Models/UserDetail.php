@@ -21,4 +21,12 @@ class UserDetail extends Model {
 	public function user () {
 		return $this->belongsTo(User::class);
 	}
+
+	public function created_name () {
+		return $this->belongsTo(User::class, "created_by");
+	}
+
+	public function updated_name () {
+		return $this->belongsTo(User::class, "updated_by");
+	}
 }

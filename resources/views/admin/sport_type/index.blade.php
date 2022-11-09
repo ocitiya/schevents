@@ -108,7 +108,7 @@
               {data: 'name', title: 'Name', name: 'name',
                 "render": function ( data, type, row, meta ) {
                   if (data === null) {
-                     return row.sport.name
+                     return row.sport === null ? 'Not Found' : row.sport.name
                   } else {
                     return data
                   }

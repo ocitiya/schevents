@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 use App\Models\User;
+use App\Models\UserDetail;
+use Illuminate\Support\Carbon;
 
 class LoginController extends Controller {
 	public function username(){
@@ -47,6 +49,10 @@ class LoginController extends Controller {
 				);
 		}
 		
+		$userDetail = UserDetail::where("user_id", Auth::id())->first();
+		$userDetail->last_login = Carbon::now();
+		$userDetail->save();
+
 		$request->session()->put('role', $user->user_detail->level);
 		if ($user->is_default == 1) {
 			return redirect()->route('admin.change-password');

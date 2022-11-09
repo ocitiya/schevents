@@ -59,7 +59,8 @@ a:focus {
 
 .wrapper {
 	display: flex;
-	width: 100%;
+	width: 100vw;
+	overflow-x: hidden;
 	align-items: stretch;
 }
 
@@ -183,8 +184,12 @@ a.article:hover {
     CONTENT STYLE
 ----------------------------------------------------- */
 
-#content-navbar {
+#sidebar.active + #content-navbar {
 	width: 100%;
+}
+
+#content-navbar {
+	width: calc(100% - 250px);
 	padding: 20px;
 	min-height: 100vh;
 	transition: all 0.3s;
@@ -195,12 +200,12 @@ a.article:hover {
 ----------------------------------------------------- */
 
 @media (max-width: 768px) {
-    #sidebar {
+    /* #sidebar {
 			margin-left: -250px;
-    }
-    #sidebar.active {
+    } */
+    /* #sidebar.active {
 			margin-left: 0;
-    }
+    } */
     #sidebarCollapse span {
 			display: none;
     }
@@ -222,7 +227,7 @@ a.article:hover {
 
 #content-navbar .data-container {
 	margin-top: 40px;
-	border: 1px solid #dedede;
+	/* border: 1px solid #dedede; */
 	padding: 20px 20px;
 	background-color: rgba(var(--bs-light-rgb),var(--bs-bg-opacity))!important;
 }
@@ -376,4 +381,35 @@ a.article:hover {
 
 .dropdown-item.active, .dropdown-item:active {
 	background-color: #ec7505;
+}
+
+.dt-top {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	margin-bottom: 10px;
+}
+
+.dt-top .dataTables_filter > label {
+	display: flex;
+	align-items: center;
+	gap: 20px;
+}
+
+.dt-t {
+	width: 100%;
+	overflow-x: scroll;
+}
+
+.dt-bottom {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	margin-top: 10px;
+}
+
+.dt-bottom .dataTables_length > label {
+	display: flex;
+	align-items: center;
+	gap: 10px;
 }

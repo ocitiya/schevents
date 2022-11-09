@@ -212,7 +212,7 @@ class UserDetailController extends Controller {
   }
 
   public function listDatatable(Request $request) {
-    $data = UserDetail::with(["user"])
+    $data = UserDetail::with(["user", "created_name", "updated_name"])
       ->whereHas("user")
       ->get();
     

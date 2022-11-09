@@ -60,15 +60,6 @@
               </div>
             </div>
 
-            @if (isset($data))
-              <div class="row">
-                <div class="col-5"></div>
-                <div class="col-7">
-                  <img src="{{"/storage/sport/image/{$data->image}" }}" style="width: 100%">
-                </div>
-              </div>
-            @endif
-
             <div class="row">
               <div class="col-5">
                 <label for="federation_id">Federasi *</label>

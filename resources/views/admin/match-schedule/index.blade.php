@@ -261,6 +261,7 @@
 
       $(function () {
         table = $('#datatable').DataTable({
+          dom: '<"dt-top"if><"dt-t"rt><"dt-bottom"lp><"clear">',
           processing: true,
           serverSide: true,
           ajax: {

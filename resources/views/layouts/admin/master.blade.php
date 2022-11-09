@@ -105,12 +105,19 @@
       }
 
       document.addEventListener('DOMContentLoaded', function () {
-        const sidebarCollapse = document.querySelector('#sidebarCollapse')
-        const sidebar = document.querySelector('#sidebar')
+        const sidebarCollapse = document.querySelector('#sidebarCollapse');
+        const sidebar = document.querySelector('#sidebar');
+        const contentNavbar = document.querySelector('#content-navbar');
 
         sidebarCollapse.addEventListener('click', function () {
-          sidebar.classList.toggle('active')
-        })
+          if (sidebar.classList.contains('active')) {
+            // contentNavbar.style.width = 'calc(100% - 250px)';
+            sidebar.classList.remove('active');
+          } else {
+            // contentNavbar.style.width = '100%';
+            sidebar.classList.add('active');
+          }
+        });
 
         $('.select2').select2({
           theme: 'bootstrap-5'

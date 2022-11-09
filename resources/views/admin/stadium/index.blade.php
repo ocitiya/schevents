@@ -85,8 +85,6 @@
             },
             columns: [
               {data: 'name', title: 'Nama', name: 'name'},
-              {data: 'nickname', title: 'Nickname', name: 'nickname'},
-              {data: 'address', title: 'Alamat', name: 'address'},
               {data: 'county', title: 'State', name: 'county',
                 "render": function ( data, type, row, meta ) {
                   return data.name

@@ -40,7 +40,7 @@
 
       <div class="data-center">
         <div id="type-items">
-          <table id="datatable" class="table table-bordered"></table>
+          <table id="datatable" class="table table-bordered" style="font-size: small"></table>
         </div>
       </div>
     </div>
@@ -89,6 +89,7 @@
     document.addEventListener('DOMContentLoaded', async function () {
       $(function () {
         table = $('#datatable').DataTable({
+            dom: '<"dt-top"if><"dt-t"rt><"dt-bottom"lp><"clear">',
             processing: true,
             serverSide: true,
             ajax: {
@@ -106,12 +107,71 @@
                 }
               },
               {data: 'level', title: 'Role', name: 'level'},
-              {data: 'user', title: 'Active', name: 'active',
+              {data: 'user', title: 'Status Akun', name: 'active', className: 'no-wrap',
                 "render": function ( data, type, row, meta ) {
-                  return data.is_active == 1 ? 'Aktif' : 'Tidak Aktif'
+                  return data.is_active == 1 ? 'Aktif' : 'Tidak Aktif';
                 }
               },
-              {data: 'id', title: 'Aksi', orderable: false, searchable: false,
+              {data: 'id', title: 'Login Terakhir', name: 'last_login', className: 'no-wrap',
+                "render": function ( data, type, row, meta ) {
+                  const timezone = moment().tz(moment.tz.guess()).format('z')
+
+                  let last_login = row.last_login;
+                  if (last_login === null) {
+                    last_login = '-';
+                  } else {
+                    const date = moment.utc(last_login).local().format('k MMM YYYY');
+                    const time = moment.utc(last_login).local().format('H:mm:ss');
+
+                    last_login = `${date} <br> ${time} ${timezone}`;
+                  }
+
+                  return `
+                    ${last_login}
+                  `;
+                }
+              },
+              {data: 'id', title: 'Dibuat', name: 'created', className: 'no-wrap',
+                "render": function ( data, type, row, meta ) {
+                  const timezone = moment().tz(moment.tz.guess()).format('z')
+                  let created_at = row.created_at;
+
+                  if (created_at === null) {
+                    created_at = '-';
+                  } else {
+                    const date = moment.utc(created_at).local().format('k MMM YYYY');
+                    const time = moment.utc(created_at).local().format('H:mm:ss');
+
+                    created_at = `${date} <br> ${time} ${timezone}`;
+                  }
+
+                  return `
+                    ${row.created_name.name}<br>
+                    ${created_at}<br><br>
+                  `;
+                }
+              },
+              {data: 'id', title: 'Diubah', name: 'updated', className: 'no-wrap',
+                "render": function ( data, type, row, meta ) {
+                  const timezone = moment().tz(moment.tz.guess()).format('z')
+
+                  let updated_at = row.updated_at;
+                  if (updated_at === null) {
+                    updated_at = '-';
+                  } else {
+                    const date = moment.utc(updated_at).local().format('k MMM YYYY');
+                    const time = moment.utc(updated_at).local().format('H:mm:ss');
+
+                    updated_at = `${date} <br> ${time} ${timezone}`;
+                  }
+
+                  return `
+                    ${row.updated_name.name}<br>
+                    ${updated_at}<br><br>
+                  `;
+                }
+              },
+              {data: 'id', title: 'Aksi', orderable: false, searchable: false, className: 'no-wrap',
                 "render": function ( data, type, row, meta ) {
                   updateRoute = `/admin/user/update/${data}`
                   resetRoute = `/admin/user/reset/${data}`
