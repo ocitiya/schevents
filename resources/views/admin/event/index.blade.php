@@ -114,7 +114,14 @@
                 const zone_name = moment.tz.guess();
                 const timezone = moment.tz(zone_name).zoneAbbr();
 
-                const text = encodeURIComponent(`New Event ${row.name}!! \nEvent will be available on ${start_date} to ${end_date}! \nWatch on link below: \n${row.link}`);
+                let message = '';
+                if (row.end_date !== null) {
+                  message = `New Event ${row.name}!! \nEvent will be available on ${start_date} to ${end_date}! \nWatch on link below: \n${row.link}`;
+                } else {
+                  message = `New Event ${row.name}!! \nEvent will be available on ${start_date}! \nWatch on link below: \n${row.link}`;
+                }
+
+                const text = encodeURIComponent(message);
                 const shareURLTW = `https://twitter.com/intent/tweet?text=${text}`;
 
                 return `
