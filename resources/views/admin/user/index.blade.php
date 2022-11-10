@@ -120,7 +120,7 @@
                   if (last_login === null) {
                     last_login = '-';
                   } else {
-                    const date = moment.utc(last_login).local().format('k MMM YYYY');
+                    const date = moment.utc(last_login).local().format('D MMM YYYY');
                     const time = moment.utc(last_login).local().format('H:mm:ss');
 
                     last_login = `${date} <br> ${time} ${timezone}`;
@@ -139,7 +139,7 @@
                   if (created_at === null) {
                     created_at = '-';
                   } else {
-                    const date = moment.utc(created_at).local().format('k MMM YYYY');
+                    const date = moment.utc(created_at).local().format('D MMM YYYY');
                     const time = moment.utc(created_at).local().format('H:mm:ss');
 
                     created_at = `${date} <br> ${time} ${timezone}`;
@@ -161,8 +161,8 @@
                   if (updated_at === null) {
                     updated_at = '-';
                   } else {
-                    const date = moment.utc(updated_at).local().format('k MMM YYYY');
-                    const time = moment.utc(updated_at).local().format('H:mm:ss');
+                    const date = moment.utc(updated_at).local().format('D MMM YYYY');
+                    const time = moment.utc(updated_at).local().format('HH:mm:ss');
 
                     updated_at = `${date} <br> ${time} ${timezone}`;
                   }

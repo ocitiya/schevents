@@ -109,6 +109,10 @@
         const sidebar = document.querySelector('#sidebar');
         const contentNavbar = document.querySelector('#content-navbar');
 
+        if (window.innerWidth < 576) {
+          sidebar.classList.add('active');
+        }
+
         sidebarCollapse.addEventListener('click', function () {
           if (sidebar.classList.contains('active')) {
             // contentNavbar.style.width = 'calc(100% - 250px)';

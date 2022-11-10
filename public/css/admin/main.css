@@ -59,7 +59,6 @@ a:focus {
 
 .wrapper {
 	display: flex;
-	width: 100vw;
 	overflow-x: hidden;
 	align-items: stretch;
 }
@@ -412,4 +411,8 @@ a.article:hover {
 	display: flex;
 	align-items: center;
 	gap: 10px;
+}
+
+.dataTable {
+	width: 100% !important;
 }

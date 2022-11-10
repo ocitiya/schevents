@@ -128,6 +128,16 @@
               >Akun Sosmed</a>
             </li>
           @endif
+
+          @if (inRole(["superadmin", "admin"]))
+            <li
+              class="{{ str_contains(Request::route()->getName(), 'admin.masterdata.event') ? 'active' : null }}"
+            >
+              <a
+                href="{{ route('admin.masterdata.event.index') }}"
+              >Event</a>
+            </li>
+          @endif
         </ul>
       </div>
     </div>

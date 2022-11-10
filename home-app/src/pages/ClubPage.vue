@@ -316,28 +316,10 @@ export default {
   margin: auto;
 }
 
-.list-container {
-  margin-top: 100px;
-}
-
-.title-waves {
-  margin-top: -10px;
-}
-
-.schedule-list .q-card__section {
-  width: 100%;
-}
-
 .logo {
   text-align: center;
   max-height: 75px;
   max-width: 75px;
-}
-
-.page-title {
-  padding: 50px 20px 20px;
-  min-height: 300px;
-  flex-direction: column;
 }
 
 .event-card {
@@ -352,12 +334,6 @@ export default {
   }
 }
 
-.vs-section {
-  grid-template-columns: 7fr 1fr 7fr;
-  grid-auto-flow: column;
-  display: grid;
-}
-
 @media only screen and (max-width: 599px) {
   .card-schedule-container {
     width: 100% !important;
@@ -366,9 +342,5 @@ export default {
 
 .card-schedule-container {
   width: 300px;
-}
-
-.carousel__slide {
-  padding: 70px;
 }
 </style>

@@ -241,22 +241,18 @@
         return string.charAt(0).toUpperCase() + string.slice(1);
       }
 
-      const sharetoFB = (shareURL) => {
-        window.open(shareURL, '_blank', 'location=yes,height=570,width=520,scrollbars=yes,status=yes');
-      }
-
-      const shareToTw = (shareURL) => {
+      const windowShare = (shareURL) => {
         window.open(shareURL, '_blank', 'location=yes,height=570,width=520,scrollbars=yes,status=yes');
       }
 
       $('#datatable').on('click', '.share-to-fb', function () {
         const shareURL = $(this).attr('data-share')
-        sharetoFB(shareURL)
+        windowShare(shareURL)
       });
 
       $('#datatable').on('click', '.share-to-twitter', function () {
         const shareURL = $(this).attr('data-share')
-        sharetoFB(shareURL)
+        windowShare(shareURL)
       });
 
       $(function () {

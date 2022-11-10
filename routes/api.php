@@ -18,6 +18,7 @@ use App\Http\Controllers\Admin\StadiumController;
 use App\Http\Controllers\Admin\TeamTypeController;
 use App\Http\Controllers\Admin\AssociationController;
 use App\Http\Controllers\Admin\BannerController;
+use App\Http\Controllers\Admin\EventController;
 use App\Http\Controllers\Admin\FederationController;
 use App\Http\Controllers\Admin\SocmedAccountController;
 use App\Http\Controllers\Admin\SocmedController;
@@ -72,6 +73,12 @@ Route::get('/socmed/list', [SocmedController::class, 'list']);
 Route::get('/socmed/listDatatable', [SocmedController::class, 'listDatatable']);
 Route::post('/socmed/validate', [SocmedController::class, 'validateName']);
 
+// /api/event
+Route::get('/event/list', [EventController::class, 'list']);
+Route::get('/event/listDatatable', [EventController::class, 'listDatatable']);
+Route::post('/event/validate', [EventController::class, 'validateName']);
+
+// /api/socmed-account
 Route::get('/socmed-account/list', [SocmedAccountController::class, 'list']);
 Route::get('/socmed-account/listDatatable', [SocmedAccountController::class, 'listDatatable']);
 Route::post('/socmed-account/validate', [SocmedAccountController::class, 'validateName']);

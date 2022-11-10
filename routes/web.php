@@ -22,6 +22,7 @@ use App\Http\Controllers\Admin\StadiumController;
 use App\Http\Controllers\Admin\TeamTypeController;
 use App\Http\Controllers\Admin\AssociationController;
 use App\Http\Controllers\Admin\BannerController;
+use App\Http\Controllers\Admin\EventController;
 use App\Http\Controllers\Admin\FederationController;
 use App\Http\Controllers\Admin\SocmedController;
 use App\Http\Controllers\Admin\SocmedAccountController;
@@ -201,7 +202,21 @@ Route::middleware(['haveInstalled'])->group(function () {
       // Route::get('/incity/update/{id}', [MatchScheduleController::class, 'inCityUpdate'])->name('incity.update');
     });
 
+    // /admin/masterdata
     Route::group(['prefix' => 'masterdata', 'as' => 'masterdata.'], function () {
+      
+      // Event Route
+      // /admin/masterdata/event
+      Route::group(['prefix' => 'event', 'as' => 'event.'], function () {
+        Route::get('/', [EventController::class, 'index'])->name('index');
+        Route::get('/create', [EventController::class, 'create'])->name('create');
+        Route::get('/update/{id}', [EventController::class, 'update'])->name('update');
+        Route::get('/detail/{id}', [EventController::class, 'detail'])->name('detail');
+
+        Route::post('/store', [EventController::class, 'store'])->name('store');
+        Route::post('/delete', [EventController::class, 'delete'])->name('delete');
+      });
+
       // Socmed Route
       Route::group(['prefix' => 'socmed', 'as' => 'socmed.'], function () {
         Route::get('/', [SocmedController::class, 'index'])->name('index');
