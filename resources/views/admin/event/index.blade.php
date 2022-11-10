@@ -96,7 +96,11 @@
           columns: [
             {data: 'name', title: 'Nama Event', name: 'name'},
             {data: 'start_date', title: 'Tanggal Awal', name: 'start_date'},
-            {data: 'end_date', title: 'Tanggal Akhir', name: 'end_date'},
+            {data: 'end_date', title: 'Tanggal Akhir', name: 'end_date', 
+              "render": function ( data, type, row, meta ) {
+                return data || '-';
+              }
+            },
             {data: 'id', title: 'Share', orderable: false, searchable: false, className: 'd-inline-flex',
               "render": function ( data, type, row, meta ) {
                 const shareURL = `https://www.facebook.com/sharer/sharer.php?u=${row.link}`;

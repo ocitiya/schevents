@@ -77,10 +77,10 @@
 
             <div class="row">
               <div class="col-5">
-                <label for="end_date">Tanggal Akhir Event *</label>
+                <label for="end_date">Tanggal Akhir Event</label>
               </div>
               <div class="col-7">
-                <input required type="date" name="end_date" id="end_date" class="form-control" value="{{ old('end_date', isset($data) ? $data->end_date : null) }}">
+                <input type="date" name="end_date" id="end_date" class="form-control" value="{{ old('end_date', isset($data) ? $data->end_date : null) }}">
               </div>
             </div>
 

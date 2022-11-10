@@ -44,7 +44,7 @@ class EventController extends Controller {
 		$validation = [
 			'name' => 'required|string|max:255',
       'start_date' => 'required|date',
-      'end_date' => 'required|date',
+      'end_date' => 'nullable|date',
       'description' => 'nullable|string|max:255',
       'link' => 'required|url',
 			'image' => 'nullable|mimes:jpg,png',

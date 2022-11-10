@@ -36,8 +36,12 @@
       
                 <q-separator />
       
-                <q-card-section class="text-center q-px-md bg-primary text-white">
+                <q-card-section v-if="item.end_date !== null" class="text-center q-px-md bg-primary text-white">
                   {{ parseDate(item.start_date) }} - {{ parseDate(item.end_date) }}
+                </q-card-section>
+
+                <q-card-section v-else class="text-center q-px-md bg-primary text-white">
+                  {{ parseDate(item.start_date) }}
                 </q-card-section>
               </q-card>
             </div>
@@ -78,7 +82,13 @@ export default {
     },
 
     parseDate: function (date) {
-      return moment(date).format('ddd, DD MMM YYYY')
+      const mdate = moment(date);
+
+      if (mdate.isValid()) {
+        return mdate.format('ddd, DD MMM YYYY')
+      } else {
+        return '-'
+      }
     },
 
     getEvents: function (search) {
