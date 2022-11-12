@@ -20,6 +20,8 @@ use App\Http\Controllers\Admin\AssociationController;
 use App\Http\Controllers\Admin\BannerController;
 use App\Http\Controllers\Admin\EventController;
 use App\Http\Controllers\Admin\FederationController;
+use App\Http\Controllers\Admin\MovieController;
+use App\Http\Controllers\Admin\MovieTypeController;
 use App\Http\Controllers\Admin\SocmedAccountController;
 use App\Http\Controllers\Admin\SocmedController;
 use App\Http\Controllers\Admin\SportController;
@@ -72,6 +74,16 @@ Route::post('/sport/validate', [SportController::class, 'validateName']);
 Route::get('/socmed/list', [SocmedController::class, 'list']);
 Route::get('/socmed/listDatatable', [SocmedController::class, 'listDatatable']);
 Route::post('/socmed/validate', [SocmedController::class, 'validateName']);
+
+// /api/movie
+Route::get('/movie/list', [MovieController::class, 'list']);
+Route::get('/movie/listDatatable', [MovieController::class, 'listDatatable']);
+Route::post('/movie/validate', [MovieController::class, 'validateName']);
+
+// /api/movie/type
+Route::get('/movie/type/list', [MovieTypeController::class, 'list']);
+Route::get('/movie/type/listDatatable', [MovieTypeController::class, 'listDatatable']);
+Route::post('/movie/type/validate', [MovieTypeController::class, 'validateName']);
 
 // /api/event
 Route::get('/event/list', [EventController::class, 'list']);

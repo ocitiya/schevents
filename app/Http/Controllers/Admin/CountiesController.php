@@ -8,11 +8,13 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
 use Intervention\Image\Facades\Image;
 
-use DataTables;
+// use DataTables;
 
 use App\Models\Province;
 use App\Models\Country;
 use App\Models\County;
+use Exception;
+use Yajra\DataTables\Facades\DataTables;
 
 class CountiesController extends Controller {
 	public function index (Request $request) {
@@ -91,7 +93,7 @@ class CountiesController extends Controller {
 			return redirect()
 				->route("admin.location.counties.index")
 				->with('success', 'Data successfully saved');
-		} catch (QueryException $exception) {
+		} catch (Exception $exception) {
 			return redirect()->back()
 				->withErrors($exception->getMessage());
 		}
@@ -139,7 +141,7 @@ class CountiesController extends Controller {
 					]
 				]
 			]);
-		} catch (QueryException $exception) {
+		} catch (Exception $exception) {
 			return response()->json([
 				"status" => false,
 				"message" => $exception->getMessage()

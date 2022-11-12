@@ -129,7 +129,7 @@
             </li>
           @endif
 
-          @if (inRole(["superadmin", "admin"]))
+          @if (inRole(["superadmin", "admin", "user"]))
             <li
               class="{{ str_contains(Request::route()->getName(), 'admin.masterdata.event') ? 'active' : null }}"
             >
@@ -217,6 +217,45 @@
             href="{{ route('admin.user.index') }}"
           >List</a>
         </li>
+      </div>
+    @endif
+
+    @if(inRole(["superadmin", "admin"]))
+      <div class="menu-group">
+        <div class="title">Movie</div>
+        <div class="menu-group mt-0">
+          <div class="dropdown-group">
+            <a data-bs-target="#masterDataMovie" data-bs-toggle="collapse"
+              aria-expanded="{{ str_contains(Request::route()->getName(), 'admin.movie.masterdata') ? 'true' : 'false' }}"
+              class="dropdown-toggle">
+              Master Data
+            </a>
+            <ul
+              class="collapse list-unstyled {{ str_contains(Request::route()->getName(), 'admin.movie.masterdata') ? 'show' : null }}"
+              id="masterDataMovie"
+            >
+              @if (inRole(["superadmin", "admin"]))
+                <li
+                  class="{{ str_contains(Request::route()->getName(), 'admin.movie.masterdata.type') ? 'active' : null }}"
+                >
+                  <a
+                    href="{{ route('admin.movie.masterdata.type.index') }}"
+                  >Jenis Film</a>
+                </li>
+              @endif
+
+              @if (inRole(["superadmin", "admin"]))
+                <li
+                  class="{{ Request::route()->getName() == 'admin.movie.index' ? 'active' : null }}"
+                >
+                  <a
+                    href="{{ route('admin.movie.index') }}"
+                  >Film</a>
+                </li>
+              @endif
+            </ul>
+          </div>
+        </div>
       </div>
     @endif
   </ul>

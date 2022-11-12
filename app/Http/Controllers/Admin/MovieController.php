@@ -10,61 +10,73 @@ use Intervention\Image\Facades\Image;
 use Illuminate\Database\QueryException;
 use Yajra\DataTables\Datatables;
 
-use App\Models\Event;
+use App\Models\Movie;
+use App\Models\MovieType;
 use Exception;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Session;
 
-class EventController extends Controller {
+class MovieController extends Controller {
 	public function index (Request $request) {
-		return view('admin.event.index');
+		return view('admin.movie.index');
 	}
 
 	public function create (Request $request) {
-		return view('admin.event.form');
+		$data = [
+			"movieTypes" => MovieType::get()
+		];
+
+		return view('admin.movie.form', $data);
 	}
 
 	public function update (Request $request, $id) {
-		$event = Event::find($id);
+		$movie = Movie::find($id);
 		$data = [
-			"data" => $event
+			"data" => $movie,
+			"movieTypes" => MovieType::get()
 		];
 
-		return view('admin.event.form', $data);
+		return view('admin.movie.form', $data);
 	}
 
 	public function detail ($id) {
-		$event = Event::find($id);
-		$data = [ "data" => $event ];
+		$movie = Movie::find($id);
+		$data = [ "data" => $movie ];
 
-		return view('admin.event.detail', $data);
+		return view('admin.movie.detail', $data);
 	}
 
 	public function store (Request $request) {
 		$isCreate = $request->id == null ? true : false;
 		$validation = [
 			'name' => 'required|string|max:255',
-      'start_date' => 'required|date',
-      'end_date' => 'nullable|date',
+			'movie_type_id' => 'required|numeric',
+      'director' => 'nullable|string|max:255',
+      'produced_by' => 'nullable|string|max:255',
+      'cast' => 'nullable|string|max:255',
+      'filmmaker' => 'nullable|string|max:255',
+      'music_director' => 'nullable|string|max:255',
       'description' => 'nullable|string|max:255',
-      'link' => 'required|url',
+      'duration' => 'nullable|string|max:255',
 			'image' => 'nullable|mimes:jpg,png',
+      'release_date' => 'nullable|date|max:255'
 		];
 
 		$validated = $request->validate($validation);
 
 		// Upload Image
 		if ($request->hasFile('image')) {
-			if(!Storage::exists("/public/event/image")) Storage::makeDirectory("/public/event/image");
+			if(!Storage::exists("/public/movie/image")) Storage::makeDirectory("/public/movie/image");
 			$file = $request->file('image');
 
 			$filenameWithExt = $request->file('image')->getClientOriginalName();
 			$filename = pathinfo($filenameWithExt, PATHINFO_FILENAME);
+			$filename = preg_replace('/\s+/', '', $filename);
 			$extension = $request->file('image')->getClientOriginalExtension();
 
 			$filename = $filename.'_'.time().'.'.$extension;
-			$path = storage_path('app/public/event/image/').$filename;
-			$file->storeAs('public/event/image', $filename);
+			$path = storage_path('app/public/movie/image/').$filename;
+			$file->storeAs('public/movie/image', $filename);
 
 			// Resize image
 			$img = Image::make($file->getRealPath())
@@ -74,16 +86,16 @@ class EventController extends Controller {
 				->save($path, 80);
 		}
 		
-		$event = null;
+		$movie = null;
 		if ($isCreate) {
-			$event = new Event;
-      $event->created_by = Auth::id();
+			$movie = new Movie();
+      $movie->created_by = Auth::id();
 		} else {
-			$event = Event::find($request->id);
-      $event->updated_by = Auth::id();
+			$movie = Movie::find($request->id);
+      $movie->updated_by = Auth::id();
 
 			if ($request->hasFile('image')) {
-				$oldPath = storage_path('app/public/event/image/').$event->image;
+				$oldPath = storage_path('app/public/movie/image/').$movie->image;
 				if (file_exists($oldPath) && !is_dir($oldPath)) {
 					unlink($oldPath);
 				}
@@ -91,17 +103,22 @@ class EventController extends Controller {
 		}
 		
 		try {
-			$event->name = ucwords($request->name);
-			$event->start_date = $request->start_date;
-			$event->end_date = $request->end_date;
-			$event->description = $request->description;
-			if ($request->hasFile('image')) $event->image = $filename;
-		  $event->link = $request->link;
-			$event->save();
+			$movie->name = ucwords($request->name);
+			$movie->movie_type_id = $request->movie_type_id;
+			$movie->director = $request->director;
+			$movie->produced_by = $request->produced_by;
+			$movie->cast = $request->cast;
+			$movie->filmmaker = $request->filmmaker;
+			$movie->music_director = $request->music_director;
+			$movie->description = $request->description;
+			$movie->duration = $request->duration;
+			if ($request->hasFile('image')) $movie->image = $filename;
+			$movie->release_date = $request->release_date;
+			$movie->save();
 
 			return redirect()
-				->route("admin.masterdata.event.index")
-				->with('success', 'Data successfully saved');
+				->route("admin.movie.index")
+				->with('success', "Film {$movie->name} berhasil disimpan");
 
 		} catch (QueryException $exception) {
 			if ($request->hasFile('image')) {
@@ -114,18 +131,12 @@ class EventController extends Controller {
 
 	public function delete (Request $request) {
 		try {
-			$event = Event::find($request->id);
+			$movie = Movie::find($request->id);
+			$movie->deleted_at = Carbon::now();
+			$movie->deleted_by = Auth::id();
+			$movie->save();
 
-			if (!empty($event->image)) {
-				$oldPath = storage_path('app/public/event/image/').$event->image;
-				if (file_exists($oldPath) && !is_dir($oldPath)) {
-					unlink($oldPath);
-				}
-			}
-
-			$event->delete();
-
-			session()->flash('message', "{$event->name} successfully deleted");
+			session()->flash('message', "Film {$movie->name} berhasil dihapus");
 			return response()->json([
 				"status" => true,
 				"message" => null
@@ -146,11 +157,11 @@ class EventController extends Controller {
 		if (empty($page)) $page = 1; 
 		$limit = 10;
 
-		$model = Event::when($search != null, function ($query) use ($search) {
+		$model = Movie::when($search != null, function ($query) use ($search) {
 			$query->where('name', 'LIKE', '%'.$search.'%');
 		});
 
-		$event = clone($model)->when(!$showAll, function ($query) use ($limit, $page) {
+		$movie = clone($model)->when(!$showAll, function ($query) use ($limit, $page) {
 			$query->take($limit)->skip(($page - 1) * $limit);
 		})->get();
 
@@ -160,7 +171,7 @@ class EventController extends Controller {
 			"status" => true,
 			"message" => null,
 			"data" => [
-				"list" => $event,
+				"list" => $movie,
 				"pagination" => [
 					"total" => $total,
 					"search" => $search,
@@ -173,17 +184,16 @@ class EventController extends Controller {
 	}
 
 	public function listDatatable(Request $request) {
-		$data = Event::when(Session::get("role") == "user", function ($q) {
-			$q->where("created_by", Auth::id());
-		})
-		->with(["created_name", "updated_name"])
-		->get();
+		$data = Movie::with(["movie_type"])
+			->get();
 		
-		return Datatables::of($data)->make(true);
+		return Datatables::of($data)
+			->addIndexColumn()
+			->make(true);
 	}
 
 	public function validateName (Request $request) {
-		$data = Event::where('name', $request->name)->first();
+		$data = Movie::where('name', $request->name)->first();
 
 		if ($data) {
 			return response()->json([

@@ -68,6 +68,8 @@ a:focus {
 	max-width: 250px;
 	color: #fff;
 	transition: all 0.3s;
+	height: 100vh;
+	overflow-y: scroll;
 }
 
 #sidebar.active {
@@ -192,6 +194,8 @@ a.article:hover {
 	padding: 20px;
 	min-height: 100vh;
 	transition: all 0.3s;
+	height: 100vh;
+	overflow-y: scroll;
 }
 
 /* ---------------------------------------------------

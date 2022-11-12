@@ -24,7 +24,7 @@
 
       <div class="data-center">
         <div id="type-items">
-          <table id="datatable" class="table table-bordered"></table>
+          <table id="datatable" class="table table-bordered" style="font-size: small"></table>
         </div>
       </div>
     </div>
@@ -135,6 +135,50 @@
                     <img src="/images/twitter-logo-2.png" alt="Twitter Logo" style="height: 20px; width: 20px">
                   </button>
                 `
+              }
+            },
+            {data: 'id', title: 'Dibuat', name: 'created', orderable: false, searchable: false, className: 'no-wrap',
+              "render": function ( data, type, row, meta ) {
+                const timezone = moment().tz(moment.tz.guess()).format('z')
+                  let created_at = row.created_at;
+
+                  if (created_at === null) {
+                    created_at = '-';
+                  } else {
+                    const date = moment.utc(created_at).local().format('D MMM YYYY');
+                    const time = moment.utc(created_at).local().format('H:mm:ss');
+
+                    created_at = `${date} <br> ${time} ${timezone}`;
+                  }
+
+                  const name = row.created_name !== null ? row.created_name.name : '-';
+
+                  return `
+                    ${name}<br>
+                    ${created_at}
+                  `;
+              }
+            },
+            {data: 'id', title: 'Diubah', name: 'updated', orderable: false, searchable: false, className: 'no-wrap',
+              "render": function ( data, type, row, meta ) {
+                const timezone = moment().tz(moment.tz.guess()).format('z')
+                  let updated_at = row.updated_at;
+
+                  if (updated_at === null) {
+                    updated_at = '-';
+                  } else {
+                    const date = moment.utc(updated_at).local().format('D MMM YYYY');
+                    const time = moment.utc(updated_at).local().format('H:mm:ss');
+
+                    updated_at = `${date} <br> ${time} ${timezone}`;
+                  }
+
+                  const name = row.updated_name !== null ? row.updated_name.name : '-';
+
+                  return `
+                    ${name}<br>
+                    ${updated_at}
+                  `;
               }
             },
             {data: 'id', title: 'Aksi', name: 'action', orderable: false, searchable: false,
