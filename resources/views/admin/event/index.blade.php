@@ -162,23 +162,23 @@
             {data: 'id', title: 'Diubah', name: 'updated', orderable: false, searchable: false, className: 'no-wrap',
               "render": function ( data, type, row, meta ) {
                 const timezone = moment().tz(moment.tz.guess()).format('z')
-                  let updated_at = row.updated_at;
+                let updated_at = row.updated_at;
 
-                  if (updated_at === null) {
-                    updated_at = '-';
-                  } else {
-                    const date = moment.utc(updated_at).local().format('D MMM YYYY');
-                    const time = moment.utc(updated_at).local().format('H:mm:ss');
+                if (updated_at === null) {
+                  updated_at = '-';
+                } else {
+                  const date = moment.utc(updated_at).local().format('D MMM YYYY');
+                  const time = moment.utc(updated_at).local().format('H:mm:ss');
 
-                    updated_at = `${date} <br> ${time} ${timezone}`;
-                  }
+                  updated_at = `${date} <br> ${time} ${timezone}`;
+                }
 
-                  const name = row.updated_name !== null ? row.updated_name.name : '-';
+                const name = row.updated_name !== null ? row.updated_name.name : '-';
 
-                  return `
-                    ${name}<br>
-                    ${updated_at}
-                  `;
+                return `
+                  ${name}<br>
+                  ${updated_at}
+                `;
               }
             },
             {data: 'id', title: 'Aksi', name: 'action', orderable: false, searchable: false,

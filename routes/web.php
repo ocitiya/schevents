@@ -25,6 +25,7 @@ use App\Http\Controllers\Admin\BannerController;
 use App\Http\Controllers\Admin\EventController;
 use App\Http\Controllers\Admin\FederationController;
 use App\Http\Controllers\Admin\MovieController;
+use App\Http\Controllers\Admin\MovieScheduleController;
 use App\Http\Controllers\Admin\MovieTypeController;
 use App\Http\Controllers\Admin\SocmedController;
 use App\Http\Controllers\Admin\SocmedAccountController;
@@ -204,6 +205,7 @@ Route::middleware(['haveInstalled'])->group(function () {
       // Route::get('/incity/update/{id}', [MatchScheduleController::class, 'inCityUpdate'])->name('incity.update');
     });
 
+    // MOVIE ROUTE
     // /admin/movie/
     Route::group(['prefix' => 'movie', 'as' => 'movie.'], function () {
     
@@ -222,6 +224,18 @@ Route::middleware(['haveInstalled'])->group(function () {
         });
       });
 
+      // /admin/movie/schedule
+      Route::group(['prefix' => 'schedule', 'as' => 'schedule.'], function () {
+        Route::get('/', [MovieScheduleController::class, 'index'])->name('index');
+        Route::get('/create', [MovieScheduleController::class, 'create'])->name('create');
+        Route::get('/update/{id}', [MovieScheduleController::class, 'update'])->name('update');
+        Route::get('/detail/{id}', [MovieScheduleController::class, 'detail'])->name('detail');
+
+        Route::post('/store', [MovieScheduleController::class, 'store'])->name('store');
+        Route::post('/delete', [MovieScheduleController::class, 'delete'])->name('delete');
+        Route::post('/delete-all', [MovieScheduleController::class, 'deleteAll'])->name('delete-all');
+      });
+
       Route::get('/', [MovieController::class, 'index'])->name('index');
       Route::get('/create', [MovieController::class, 'create'])->name('create');
       Route::get('/update/{id}', [MovieController::class, 'update'])->name('update');
@@ -230,6 +244,7 @@ Route::middleware(['haveInstalled'])->group(function () {
       Route::post('/store', [MovieController::class, 'store'])->name('store');
       Route::post('/delete', [MovieController::class, 'delete'])->name('delete');
     });
+    // END MOVIE ROUTE
 
     // /admin/masterdata
     Route::group(['prefix' => 'masterdata', 'as' => 'masterdata.'], function () {

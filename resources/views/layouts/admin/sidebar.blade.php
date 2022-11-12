@@ -256,6 +256,16 @@
             </ul>
           </div>
         </div>
+
+        @if(inRole(["superadmin", "admin", "user"]))
+          <li
+            class="{{ str_contains(Request::route()->getName(), 'admin.movie.schedule.index') ? 'active' : null }}"
+          >
+            <a
+              href="{{ route('admin.movie.schedule.index') }}"
+            >Jadwal Film</a>
+          </li>
+        @endif
       </div>
     @endif
   </ul>

@@ -125,31 +125,6 @@
                 }
               }
             },
-            // {data: 'id', title: 'Share', orderable: false, searchable: false, className: 'd-inline-flex',
-            //   "render": function ( data, type, row, meta ) {
-            //     let release_date = moment.utc(row.release_date).local();
-            //     release_date = release_date.format('ddd, D MMMM Y');
-
-            //     const zone_name = moment.tz.guess();
-            //     const timezone = moment.tz(zone_name).zoneAbbr();
-
-            //     let message = '';
-            //     if (row.release_date !== null) {
-            //       message = `New Movie ${row.name}!! \Movie will be released on ${release_date}! \nWatch on link below: \n${row.link}`;
-            //     } else {
-            //       message = `Coming Soon!! Movie ${row.name} will be released later, please stand by `;
-            //     }
-
-            //     const text = encodeURIComponent(message);
-            //     const shareURLTW = `https://twitter.com/intent/tweet?text=${text}`;
-
-            //     return `
-            //       <button class="share-to-twitter btn btn-sm" data-share="${shareURLTW}">
-            //         <img src="/images/twitter-logo-2.png" alt="Twitter Logo" style="height: 20px; width: 20px">
-            //       </button>
-            //     `
-            //   }
-            // },
             {data: 'id', title: 'Aksi', name: 'action', orderable: false, searchable: false,
               "render": function ( data, type, row, meta ) {
                 let updateRoute

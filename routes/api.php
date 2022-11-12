@@ -21,6 +21,7 @@ use App\Http\Controllers\Admin\BannerController;
 use App\Http\Controllers\Admin\EventController;
 use App\Http\Controllers\Admin\FederationController;
 use App\Http\Controllers\Admin\MovieController;
+use App\Http\Controllers\Admin\MovieScheduleController;
 use App\Http\Controllers\Admin\MovieTypeController;
 use App\Http\Controllers\Admin\SocmedAccountController;
 use App\Http\Controllers\Admin\SocmedController;
@@ -84,6 +85,10 @@ Route::post('/movie/validate', [MovieController::class, 'validateName']);
 Route::get('/movie/type/list', [MovieTypeController::class, 'list']);
 Route::get('/movie/type/listDatatable', [MovieTypeController::class, 'listDatatable']);
 Route::post('/movie/type/validate', [MovieTypeController::class, 'validateName']);
+
+// /api/movie/schedule
+Route::get('/movie/schedule/list', [MovieScheduleController::class, 'list']);
+Route::get('/movie/schedule/listDatatable', [MovieScheduleController::class, 'listDatatable']);
 
 // /api/event
 Route::get('/event/list', [EventController::class, 'list']);
