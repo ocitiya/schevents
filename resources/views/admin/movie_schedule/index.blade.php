@@ -188,13 +188,15 @@
 
                 const zone_name = moment.tz.guess();
                 const timezone = moment.tz(zone_name).zoneAbbr();
+                const link = row.link;
+                const title = data.name;
+                const description = data.description;
 
-                let message = '';
-                if (data.release_date !== null) {
-                  message = `New Movie!! \n${data.name} \n\nMovie will be released on ${release_date}! \n\nWatch on link below: \n${row.link}`;
-                } else {
-                  message = `Coming Soon!! Movie ${data.name} will be released later, please stand by `;
-                }
+                const types = [];
+                data.movie_type.map(item => types.push(item.movie_type.name));
+                const genre = types.join(', ');
+
+                let message = `Live Streaming Movie - ${title}\n\nDescription\n\tRelease Date: ${release_date}\n\tGenre: ${genre}\n\tLink: ${link}\n\tSinopsis: ${description || '-'}`;
 
                 const text = encodeURIComponent(message);
                 const shareURLTW = `https://twitter.com/intent/tweet?text=${text}`;

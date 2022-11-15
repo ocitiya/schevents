@@ -144,7 +144,16 @@ class MovieScheduleController extends Controller {
 	}
 
 	public function listDatatable(Request $request) {
-		$data = MovieSchedule::with(["movie", "created_name", "updated_name"])
+		$data = MovieSchedule::with([
+			"created_name", "updated_name",
+			"movie" => function ($query) {
+				$query->with([
+					"movie_type" => function ($query) {
+						$query->with(["movie_type"]);
+					}
+				]);
+			}
+		])
 			->get();
 		
 		return Datatables::of($data)
