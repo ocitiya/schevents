@@ -296,7 +296,7 @@ export default defineComponent({
     redirect: function (id) {
       setTimeout(() => {
         window.open(`${this.$host}/schedule/${id}`)
-      }, 500)
+      }, 300)
     },
 
     refresh: async function (done) {

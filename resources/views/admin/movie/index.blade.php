@@ -98,7 +98,10 @@
             {data: 'name', title: 'Nama', name: 'name'},
             {data: 'movie_type', title: 'Jenis Film', name: 'movie_type', 
               "render": function ( data, type, row, meta ) {
-                return data.name;
+                const types = []
+                data.map(item => types.push(item.movie_type.name))
+
+                return types.join(', ')
               }
             },
             {data: 'release_date', title: 'Tanggal Rilis', name: 'release_date', 

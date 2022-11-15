@@ -114,7 +114,12 @@ class MovieScheduleController extends Controller {
 
 		$model = MovieSchedule::when($search != null, function ($query) use ($search) {
 			$query->where('name', 'LIKE', '%'.$search.'%');
-		});
+		})
+			->with(["movie" => function ($query) {
+				$query->with(["movie_type" => function ($query) {
+					$query->with(["movie_type"]);
+				}]);
+			}]);
 
 		$movieSchedule = clone($model)->when(!$showAll, function ($query) use ($limit, $page) {
 			$query->take($limit)->skip(($page - 1) * $limit);
@@ -145,5 +150,31 @@ class MovieScheduleController extends Controller {
 		return Datatables::of($data)
 			->addIndexColumn()
 			->make(true);
+	}
+
+	public function schedulePreview (Request $request, $id) {
+		$model = MovieSchedule::with([
+			"movie" => function ($query) {
+				$query->with([
+					"movie_type" => function ($query) {
+						$query->with(["movie_type"]);
+					}
+				]);
+			}
+		])
+			->find($id);
+
+		if ($model) {
+			$types = [];
+			foreach ($model->movie->movie_type as $item) {
+				array_push($types, $item->movie_type->name);
+			}
+
+			$model->movie->types = implode(", ", $types);
+			$data = ["data" => $model];
+			return view("movie.schedule-preview", $data);
+		} else {
+			return abort(404);
+		}
 	}
 }

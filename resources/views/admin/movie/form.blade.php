@@ -71,8 +71,7 @@
                 <label for="name">Jenis Film *</label>
               </div>
               <div class="col-7">
-                <select name="movie_type_id" class="form-select select2" id="movie_type_id" required>
-                  <option disabled selected value>Please select ...</option>
+                <select name="movie_type_id[]" class="form-select select2" id="movie_type_id" multiple required>
                   @foreach ($movieTypes as $item)
                     <option value="{{ $item->id }}">{{ $item->name }}</option>
                   @endforeach
@@ -201,7 +200,10 @@
     let is_create = "<?php echo !isset($data) ? 1 : 0 ?>"
     is_create = !!parseInt(is_create)
 
-    const movieTypeSelected = "<?php echo old('movie_type_id', isset($data) ? $data->movie_type_id : null) ?>";
+    let movieTypeSelected = `<?php echo old('movie_type_id', isset($data) ? $data->movie_type_id : null) ?>`;
+    movieTypeSelected = JSON.parse(movieTypeSelected)
+
+    console.log(movieTypeSelected)
 
     document.addEventListener('DOMContentLoaded', async function () {
       if (!is_create) $('#submit').removeClass('disabled')

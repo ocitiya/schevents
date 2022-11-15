@@ -11,10 +11,12 @@ use Illuminate\Database\QueryException;
 use Yajra\DataTables\Datatables;
 
 use App\Models\Movie;
+use App\Models\MovieMovieType;
 use App\Models\MovieType;
 use Exception;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class MovieController extends Controller {
 	public function index (Request $request) {
@@ -31,6 +33,11 @@ class MovieController extends Controller {
 
 	public function update (Request $request, $id) {
 		$movie = Movie::find($id);
+		$types = MovieMovieType::where("movie_id", $id)
+			->pluck("movie_type_id");
+
+		$movie->movie_type_id = json_encode($types);
+		
 		$data = [
 			"data" => $movie,
 			"movieTypes" => MovieType::get()
@@ -40,17 +47,22 @@ class MovieController extends Controller {
 	}
 
 	public function detail ($id) {
-		$movie = Movie::find($id);
-		$data = [ "data" => $movie ];
-
-		return view('admin.movie.detail', $data);
+		$movie = Movie::with(["movie_type" => function ($query) {
+			$query->with(["movie_type"]);
+		}])->find($id);
+		
+		return response()->json([
+			"status" => true,
+			"message" => false,
+			"data" => $movie
+		]);
 	}
 
 	public function store (Request $request) {
 		$isCreate = $request->id == null ? true : false;
 		$validation = [
 			'name' => 'required|string|max:255',
-			'movie_type_id' => 'required|numeric',
+			'movie_type_id' => 'required|array',
       'director' => 'nullable|string|max:255',
       'produced_by' => 'nullable|string|max:255',
       'cast' => 'nullable|string|max:255',
@@ -103,8 +115,9 @@ class MovieController extends Controller {
 		}
 		
 		try {
+			DB::beginTransaction();
+
 			$movie->name = ucwords($request->name);
-			$movie->movie_type_id = $request->movie_type_id;
 			$movie->director = $request->director;
 			$movie->produced_by = $request->produced_by;
 			$movie->cast = $request->cast;
@@ -116,14 +129,28 @@ class MovieController extends Controller {
 			$movie->release_date = $request->release_date;
 			$movie->save();
 
+			$types = MovieMovieType::where("movie_id", $movie->id)->get();
+			foreach($types as $item) {
+				$item->delete();
+			}
+
+			foreach ($request->movie_type_id as $item) {
+				$movie_type_list = new MovieMovieType;
+				$movie_type_list->movie_id = $movie->id;
+				$movie_type_list->movie_type_id = $item;
+				$movie_type_list->save();
+			}
+
+			DB::commit();
+
 			return redirect()
 				->route("admin.movie.index")
 				->with('success', "Film {$movie->name} berhasil disimpan");
 
 		} catch (QueryException $exception) {
-			if ($request->hasFile('image')) {
-				unlink($path);
-			}
+			DB::rollBack();
+
+			if ($request->hasFile('image')) unlink($path);
 			return redirect()->back()
 				->withErrors($exception->getMessage());
 		}
@@ -159,7 +186,13 @@ class MovieController extends Controller {
 
 		$model = Movie::when($search != null, function ($query) use ($search) {
 			$query->where('name', 'LIKE', '%'.$search.'%');
-		});
+		})
+			->orderBy("release_date", "DESC")
+			->with([
+				"movie_type" => function ($query) {
+					$query->with(["movie_type"]);
+				}
+			]);
 
 		$movie = clone($model)->when(!$showAll, function ($query) use ($limit, $page) {
 			$query->take($limit)->skip(($page - 1) * $limit);
@@ -184,7 +217,9 @@ class MovieController extends Controller {
 	}
 
 	public function listDatatable(Request $request) {
-		$data = Movie::with(["movie_type"])
+		$data = Movie::with(["movie_type" => function ($q) {
+			$q->with(["movie_type"]);
+		}])
 			->get();
 		
 		return Datatables::of($data)

@@ -14,16 +14,48 @@
 
         <q-toolbar-title>
           {{ title }}
+          <span v-if="is_sub_module">
+            {{ ` - ${sub_module_name}` }}
+          </span>
         </q-toolbar-title>
 
         <q-tabs align="right" class="md" dense arrow-indicator>
           <q-route-tab :to="{ name: 'home' }" label="Home" icon="home" />
           <q-route-tab :to="{ name: 'club' }" label="Club" icon="groups" />
-          <q-route-tab :to="{ name: 'event' }" label="Events" icon="event" />
           <q-route-tab :to="{ name: 'news' }" label="News" icon="newspaper" />
           <!-- <q-route-tab :to="{ name: 'video' }" label="Videos" icon="videocam" />
           <q-route-tab :to="{ name: 'scores' }" label="Scores" icon="scoreboard" /> -->
           <q-route-tab :to="{ name: 'about' }" label="About" icon="description" />
+
+          <div class="q-ml-md">
+            <q-btn icon="widgets" round>
+              <q-menu style="min-width: 200px" class="bg-primary text-white">
+                <q-item-label header class="text-grey-2">Another Schedules</q-item-label>
+
+                <q-list>
+                  <q-item clickable v-close-popup v-ripple @click="$router.push({ name: 'movie' })">
+                    <q-item-section avatar>
+                      <q-icon name="movie" />
+                    </q-item-section>
+                    
+                    <q-item-section class="text-bold">
+                      Movies
+                    </q-item-section>
+                  </q-item>
+
+                  <q-item clickable v-close-popup v-ripple @click="$router.push({ name: 'event' })">
+                    <q-item-section avatar>
+                      <q-icon name="event" />
+                    </q-item-section>
+                    
+                    <q-item-section class="text-bold">
+                      Events
+                    </q-item-section>
+                  </q-item>
+                </q-list>
+              </q-menu>
+            </q-btn>
+          </div>
         </q-tabs>
       </q-toolbar>
     </q-header>
@@ -163,14 +195,44 @@ export default defineComponent({
       essentialLinks: linksList,
       leftDrawerOpen: ref(false),
       contact_us: [],
-      follow_us: []
+      follow_us: [],
+      route_name: null,
+      is_sub_module: false,
+      sub_module_name: null
     }
   },
 
   mounted: function () {
     this.getAppData()
     this.getContactUs(),
-    this.getFollowUs()
+    this.getFollowUs(),
+
+    this.route_name = this.$route.name
+  },
+
+  watch: {
+    '$route.name': function (val) {
+      this.route_name = val
+    },
+
+    route_name: function (val) {
+      switch (val) {
+        case 'event':
+          this.is_sub_module = true
+          this.sub_module_name = 'Event'
+          break
+        
+        case 'movie':
+          this.is_sub_module = true
+          this.sub_module_name = 'Movie'
+          break
+
+        default:
+          this.is_sub_module = false
+          this.sub_module_name = null
+          break
+      }
+    }
   },
 
   methods: {

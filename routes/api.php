@@ -79,6 +79,7 @@ Route::post('/socmed/validate', [SocmedController::class, 'validateName']);
 // /api/movie
 Route::get('/movie/list', [MovieController::class, 'list']);
 Route::get('/movie/listDatatable', [MovieController::class, 'listDatatable']);
+Route::get('/movie/detail/{id}', [MovieController::class, 'detail']);
 Route::post('/movie/validate', [MovieController::class, 'validateName']);
 
 // /api/movie/type

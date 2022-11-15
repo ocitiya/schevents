@@ -10,8 +10,9 @@ class Movie extends Model {
 	use HasFactory, SoftDeletes;
 
 	protected $table = "movies";
+	protected $hidden = ["deleted_at", "deleted_by"];
 
 	function movie_type () {
-		return $this->belongsTo(MovieType::class);
+		return $this->hasMany(MovieMovieType::class);
 	}
 }
