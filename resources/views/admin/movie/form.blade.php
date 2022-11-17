@@ -203,8 +203,6 @@
     let movieTypeSelected = `<?php echo old('movie_type_id', isset($data) ? $data->movie_type_id : null) ?>`;
     movieTypeSelected = JSON.parse(movieTypeSelected)
 
-    console.log(movieTypeSelected)
-
     document.addEventListener('DOMContentLoaded', async function () {
       if (!is_create) $('#submit').removeClass('disabled')
       $('#movie_type_id').val(movieTypeSelected).change()

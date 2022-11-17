@@ -27,6 +27,8 @@ use App\Http\Controllers\Admin\FederationController;
 use App\Http\Controllers\Admin\MovieController;
 use App\Http\Controllers\Admin\MovieScheduleController;
 use App\Http\Controllers\Admin\MovieTypeController;
+use App\Http\Controllers\Admin\OfferBannerController;
+use App\Http\Controllers\Admin\OfferCampaignController;
 use App\Http\Controllers\Admin\SocmedController;
 use App\Http\Controllers\Admin\SocmedAccountController;
 use App\Http\Controllers\Admin\UserDetailController;
@@ -203,6 +205,39 @@ Route::middleware(['haveInstalled'])->group(function () {
       // Route::get('/incity', [MatchScheduleController::class, 'indexInCity'])->name('incity.index');
       // Route::get('/incity/create', [MatchScheduleController::class, 'inCityCreate'])->name('incity.create');
       // Route::get('/incity/update/{id}', [MatchScheduleController::class, 'inCityUpdate'])->name('incity.update');
+    });
+
+    // OFFER ROUTE
+    // /admin/offer/campaign
+    Route::group(['prefix' => 'offer', 'as' => 'offer.'], function () {
+
+      // /admin/offer/campaign/masterdata
+      Route::group(['prefix' => 'masterdata', 'as' => 'masterdata.'], function () {
+
+        // /admin/movie/masterdata/campaign
+        Route::group(['prefix' => 'campaign', 'as' => 'campaign.'], function () {
+          Route::get('/', [OfferCampaignController::class, 'index'])->name('index');
+          Route::get('/create', [OfferCampaignController::class, 'create'])->name('create');
+          Route::get('/update/{id}', [OfferCampaignController::class, 'update'])->name('update');
+          Route::get('/detail/{id}', [OfferCampaignController::class, 'detail'])->name('detail');
+
+          Route::post('/store', [OfferCampaignController::class, 'store'])->name('store');
+          Route::post('/delete', [OfferCampaignController::class, 'delete'])->name('delete');
+        });
+
+        // /admin/movie/masterdata/banner
+        Route::group(['prefix' => 'banner', 'as' => 'banner.'], function () {
+          Route::get('/', [OfferBannerController::class, 'index'])->name('index');
+          Route::get('/create', [OfferBannerController::class, 'create'])->name('create');
+          Route::get('/update/{id}', [OfferBannerController::class, 'update'])->name('update');
+          Route::get('/detail/{id}', [OfferBannerController::class, 'detail'])->name('detail');
+
+          Route::post('/store', [OfferBannerController::class, 'store'])->name('store');
+          Route::post('/delete', [OfferBannerController::class, 'delete'])->name('delete');
+        });
+
+      });
+
     });
 
     // MOVIE ROUTE

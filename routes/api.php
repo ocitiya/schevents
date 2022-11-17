@@ -23,6 +23,8 @@ use App\Http\Controllers\Admin\FederationController;
 use App\Http\Controllers\Admin\MovieController;
 use App\Http\Controllers\Admin\MovieScheduleController;
 use App\Http\Controllers\Admin\MovieTypeController;
+use App\Http\Controllers\Admin\OfferBannerController;
+use App\Http\Controllers\Admin\OfferCampaignController;
 use App\Http\Controllers\Admin\SocmedAccountController;
 use App\Http\Controllers\Admin\SocmedController;
 use App\Http\Controllers\Admin\SportController;
@@ -75,6 +77,16 @@ Route::post('/sport/validate', [SportController::class, 'validateName']);
 Route::get('/socmed/list', [SocmedController::class, 'list']);
 Route::get('/socmed/listDatatable', [SocmedController::class, 'listDatatable']);
 Route::post('/socmed/validate', [SocmedController::class, 'validateName']);
+
+// /api/offer/campaign
+Route::get('/offer/campaign/list', [OfferCampaignController::class, 'list']);
+Route::get('/offer/campaign/listDatatable', [OfferCampaignController::class, 'listDatatable']);
+Route::post('/offer/campaign/validate', [OfferCampaignController::class, 'validateName']);
+
+// /api/offer/banner
+Route::get('/offer/banner/list', [OfferBannerController::class, 'list']);
+Route::get('/offer/banner/listDatatable', [OfferBannerController::class, 'listDatatable']);
+Route::post('/offer/banner/validate', [OfferBannerController::class, 'validateName']);
 
 // /api/movie
 Route::get('/movie/list', [MovieController::class, 'list']);

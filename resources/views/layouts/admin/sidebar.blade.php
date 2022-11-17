@@ -268,5 +268,54 @@
         @endif
       </div>
     @endif
+
+    @if(inRole(["superadmin", "admin"]))
+      <div class="menu-group">
+        <div class="title">Promosi</div>
+        <div class="menu-group mt-0">
+          <div class="dropdown-group">
+            <a data-bs-target="#masterDataCampaign" data-bs-toggle="collapse"
+              aria-expanded="{{ str_contains(Request::route()->getName(), 'admin.offer.masterdata') ? 'true' : 'false' }}"
+              class="dropdown-toggle">
+              Master Data
+            </a>
+            <ul
+              class="collapse list-unstyled {{ str_contains(Request::route()->getName(), 'admin.offer.masterdata') ? 'show' : null }}"
+              id="masterDataCampaign"
+            >
+              @if (inRole(["superadmin", "admin"]))
+                <li
+                  class="{{ str_contains(Request::route()->getName(), 'admin.offer.masterdata.campaign') ? 'active' : null }}"
+                >
+                  <a
+                    href="{{ route('admin.offer.masterdata.campaign.index') }}"
+                  >Tipe Campaign</a>
+                </li>
+              @endif
+
+              @if (inRole(["superadmin", "admin"]))
+                <li
+                  class="{{ str_contains(Request::route()->getName(), 'admin.offer.masterdata.banner') ? 'active' : null }}"
+                >
+                  <a
+                    href="{{ route('admin.offer.masterdata.banner.index') }}"
+                  >Tipe Banner</a>
+                </li>
+              @endif
+            </ul>
+          </div>
+        </div>
+
+        @if(inRole(["superadmin", "admin", "user"]))
+          <li
+            class="{{ str_contains(Request::route()->getName(), 'admin.movie.schedule.index') ? 'active' : null }}"
+          >
+            <a
+              href="{{ route('admin.movie.schedule.index') }}"
+            >Jadwal Film</a>
+          </li>
+        @endif
+      </div>
+    @endif
   </ul>
 </nav>
