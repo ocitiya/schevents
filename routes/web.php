@@ -29,6 +29,8 @@ use App\Http\Controllers\Admin\MovieScheduleController;
 use App\Http\Controllers\Admin\MovieTypeController;
 use App\Http\Controllers\Admin\OfferBannerController;
 use App\Http\Controllers\Admin\OfferCampaignController;
+use App\Http\Controllers\Admin\OfferChannelController;
+use App\Http\Controllers\Admin\OffersController;
 use App\Http\Controllers\Admin\SocmedController;
 use App\Http\Controllers\Admin\SocmedAccountController;
 use App\Http\Controllers\Admin\UserDetailController;
@@ -214,7 +216,7 @@ Route::middleware(['haveInstalled'])->group(function () {
       // /admin/offer/campaign/masterdata
       Route::group(['prefix' => 'masterdata', 'as' => 'masterdata.'], function () {
 
-        // /admin/movie/masterdata/campaign
+        // /admin/offer/masterdata/campaign
         Route::group(['prefix' => 'campaign', 'as' => 'campaign.'], function () {
           Route::get('/', [OfferCampaignController::class, 'index'])->name('index');
           Route::get('/create', [OfferCampaignController::class, 'create'])->name('create');
@@ -225,7 +227,7 @@ Route::middleware(['haveInstalled'])->group(function () {
           Route::post('/delete', [OfferCampaignController::class, 'delete'])->name('delete');
         });
 
-        // /admin/movie/masterdata/banner
+        // /admin/offer/masterdata/banner
         Route::group(['prefix' => 'banner', 'as' => 'banner.'], function () {
           Route::get('/', [OfferBannerController::class, 'index'])->name('index');
           Route::get('/create', [OfferBannerController::class, 'create'])->name('create');
@@ -236,8 +238,25 @@ Route::middleware(['haveInstalled'])->group(function () {
           Route::post('/delete', [OfferBannerController::class, 'delete'])->name('delete');
         });
 
+        // /admin/offer/masterdata/channel
+        Route::group(['prefix' => 'channel', 'as' => 'channel.'], function () {
+          Route::get('/', [OfferChannelController::class, 'index'])->name('index');
+          Route::get('/create', [OfferChannelController::class, 'create'])->name('create');
+          Route::get('/update/{id}', [OfferChannelController::class, 'update'])->name('update');
+          Route::get('/detail/{id}', [OfferChannelController::class, 'detail'])->name('detail');
+
+          Route::post('/store', [OfferChannelController::class, 'store'])->name('store');
+          Route::post('/delete', [OfferChannelController::class, 'delete'])->name('delete');
+        });
       });
 
+      Route::get('/', [OffersController::class, 'index'])->name('index');
+      Route::get('/create', [OffersController::class, 'create'])->name('create');
+      Route::get('/update/{id}', [OffersController::class, 'update'])->name('update');
+      Route::get('/detail/{id}', [OffersController::class, 'detail'])->name('detail');
+
+      Route::post('/store', [OffersController::class, 'store'])->name('store');
+      Route::post('/delete', [OffersController::class, 'delete'])->name('delete');
     });
 
     // MOVIE ROUTE

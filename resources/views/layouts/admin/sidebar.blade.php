@@ -302,17 +302,27 @@
                   >Tipe Banner</a>
                 </li>
               @endif
+
+              @if (inRole(["superadmin", "admin"]))
+                <li
+                  class="{{ str_contains(Request::route()->getName(), 'admin.offer.masterdata.channel') ? 'active' : null }}"
+                >
+                  <a
+                    href="{{ route('admin.offer.masterdata.channel.index') }}"
+                  >Channel</a>
+                </li>
+              @endif
             </ul>
           </div>
         </div>
 
         @if(inRole(["superadmin", "admin", "user"]))
           <li
-            class="{{ str_contains(Request::route()->getName(), 'admin.movie.schedule.index') ? 'active' : null }}"
+            class="{{ str_contains(Request::route()->getName(), 'admin.offer.index') ? 'active' : null }}"
           >
             <a
-              href="{{ route('admin.movie.schedule.index') }}"
-            >Jadwal Film</a>
+              href="{{ route('admin.offer.index') }}"
+            >Promosi</a>
           </li>
         @endif
       </div>

@@ -1,14 +1,14 @@
 @extends('layouts.admin.master')
 
 @section('content')
-  <div id="event" class="content">
+  <div id="channel" class="content">
     <div class="title-container">
-      <h4 class="text-primary">Tipe Campaign</h4>
+      <h4 class="text-primary">Channel</h4>
 
       <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
           <li class="breadcrumb-item" aria-current="page">
-            <a href="{{ route('admin.offer.masterdata.campaign.index') }}">Index</a>
+            <a href="{{ route('admin.offer.masterdata.channel.index') }}">Index</a>
           </li>
           <li class="breadcrumb-item active" aria-current="page">Form</li>
         </ol>
@@ -19,9 +19,9 @@
       <div class="data-header">
         <h5 class="text-primary">
           @if(!isset($data))
-            <span>Tambah Tipe Campaign</span>
+            <span>Tambah Channel</span>
           @else
-            <span>Ubah Tipe Campaign {{ $data->name }}</span>
+            <span>Ubah Channel {{ $data->name }}</span>
           @endisset
         </h5>
       </div>
@@ -38,7 +38,7 @@
         @endif
 
         <form
-          action="{{ route('admin.offer.masterdata.campaign.store') }}"
+          action="{{ route('admin.offer.masterdata.channel.store') }}"
           method="POST"
           autocomplete="off"
           enctype="multipart/form-data"
@@ -47,43 +47,42 @@
           {{ csrf_field() }}
 
           <input type="hidden" name="id" value="{{ isset($data) ? $data->id : null }}">
-
           <div class="col-8">
             <div class="row">
               <div class="col-5">
-                <label for="name">Nama Campaign *</label>
+                <label for="name">Nama Channel *</label>
               </div>
               <div class="col-7">
                 <input type="text" class="form-control" name="name" id="name" value="{{ old('name', isset($data) ? $data->name : null) }}">
+                <div class="invalid-feedback">
+                  Channel sudah terdaftar
+                </div>
+                <div class="valid-feedback">
+                  Channel bisa didaftarkan
+                </div>
               </div>
             </div>
 
-            @if (isset($data))
-              <div class="row">
-                <div class="col-5"></div>
-                <div class="col-7">
-                  @if (empty($data->image))
-                    <img src="/images/no-logo-1.png" style="width: 100%">
-                  @else
-                    <img src="{{ "/storage/campaign/image/{$data->image}" }}" style="width: 100%">
-                  @endif
-                </div>
+            <div class="row">
+              <div class="col-5">
+                <label for="code">Code *</label>
               </div>
-            @endif
+              <div class="col-7">
+                <input type="text" class="form-control" name="code" id="code" value="{{ old('code', isset($data) ? $data->code : null) }}">
+              </div>
+            </div>
 
             <div class="row">
               <div class="col-5">
-                <label for="image">Gambar</label>
+                <label for="user_id">User *</label>
               </div>
               <div class="col-7">
-                <input type="file" name="image" id="image" class="form-control" accept=".png, .jpg">
-                <div class="">
-                  @if (isset($data))
-                    <small>Upload again to change image | File type: .jpg, .png</small><br><br>
-                  @else
-                    <small>File type: .jpg, .png</small><br><br>
-                  @endif
-                </div>
+                <select name="user_id" class="form-select select2" id="user_id" required>
+                  <option disabled selected value>Please select ...</option>
+                  @foreach ($users as $item)
+                    <option value="{{ $item->id }}">{{ $item->name }}</option>
+                  @endforeach
+                </select>
               </div>
             </div>
 
@@ -107,7 +106,10 @@
     let is_create = "<?php echo !isset($data) ? 1 : 0 ?>"
     is_create = !!parseInt(is_create)
     
+    const userSelected = "<?php echo old('user_id', isset($data) ? $data->user_id : null) ?>";
+
     document.addEventListener('DOMContentLoaded', async function () {
+      $('#user_id').val(userSelected).change();
       if (!is_create) $('#submit').removeClass('disabled')
 
       let validationTimeout
@@ -119,7 +121,7 @@
           const formData = new FormData()
           formData.append('name', val)
 
-          fetch(`/api/movie/validate`, {
+          fetch(`/api/offer/channel/validate`, {
             method: 'POST',
             body: formData
           })

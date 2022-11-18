@@ -88,6 +88,9 @@
 
 @section('script')
   <script>
+    let is_create = "<?php echo !isset($data) ? 1 : 0 ?>"
+    is_create = !!parseInt(is_create)
+    
     const campaignSelected = "<?php echo old('campaign_id', isset($data) ? $data->campaign_id : null) ?>";
 
     document.addEventListener('DOMContentLoaded', async function () {

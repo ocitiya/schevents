@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\OfferChannel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
@@ -10,68 +11,69 @@ use Intervention\Image\Facades\Image;
 use Illuminate\Database\QueryException;
 use Yajra\DataTables\Datatables;
 
-use App\Models\OfferBanner;
-use App\Models\OfferCampaign;
+use App\Models\User;
 use Exception;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 
-class OfferBannerController extends Controller {
+class OfferChannelController extends Controller {
 	public function index (Request $request) {
-		return view('admin.offer_banner.index');
+		return view('admin.offer_channel.index');
 	}
 
 	public function create (Request $request) {
 		$data = [
-			"campaign" => OfferCampaign::get()
+			"users" => User::get()
 		];
 
-		return view('admin.offer_banner.form', $data);
+		return view('admin.offer_channel.form', $data);
 	}
 
 	public function update (Request $request, $id) {
-		$offerBanner= OfferBanner::find($id);
+		$offerChannel = OfferChannel::find($id);
 		$data = [
-			"data" => $offerBanner,
-			"campaign" => OfferCampaign::get()
+			"data" => $offerChannel,
+			"users" => User::get()
 		];
 
-		return view('admin.offer_banner.form', $data);
+		return view('admin.offer_channel.form', $data);
 	}
 
 	public function detail ($id) {
-		$offerBanner= OfferBanner::find($id);
+		$offerBanner= OfferChannel::find($id);
 		$data = [ "data" => $offerBanner];
 
-		return view('admin.offer_banner.detail', $data);
+		return view('admin.offer_channel.detail', $data);
 	}
 
 	public function store (Request $request) {
 		$isCreate = $request->id == null ? true : false;
 		$validation = [
-			'campaign_id' => 'required|int',
-			'name' => 'required|string|max:255'
+      'name' => 'required|string|max:255',
+      'code' => 'required|string',
+			'user_id' => 'required|uuid'
 		];
 
 		$validated = $request->validate($validation);
 
-		$offerBanner= null;
+		$offerChannel= null;
 		if ($isCreate) {
-			$offerBanner= new OfferBanner();
-      $offerBanner->created_by = Auth::id();
+			$offerChannel= new OfferChannel();
+      $offerChannel->created_by = Auth::id();
 		} else {
-			$offerBanner= OfferBanner::find($request->id);
-      $offerBanner->updated_by = Auth::id();
+			$offerChannel= OfferChannel::find($request->id);
+      $offerChannel->updated_by = Auth::id();
 		}
 		
 		try {
-			$offerBanner->campaign_id = $request->campaign_id;
-			$offerBanner->name = ucwords($request->name);
-			$offerBanner->save();
+      $offerChannel->name = ucwords($request->name);
+			$offerChannel->code = $request->code;
+			$offerChannel->user_id = $request->user_id;
+			$offerChannel->save();
 
 			return redirect()
-				->route("admin.offer.masterdata.banner.index")
-				->with('success', "Banner {$request->name} berhasil dibuat");
+				->route("admin.offer.masterdata.channel.index")
+				->with('success', "Channel {$request->name} berhasil dibuat");
 
 		} catch (QueryException $exception) {
 			return redirect()->back()
@@ -81,10 +83,10 @@ class OfferBannerController extends Controller {
 
 	public function delete (Request $request) {
 		try {
-			$offerBanner= OfferBanner::find($request->id);
-			$offerBanner->delete();
+			$offerChannel= OfferChannel::find($request->id);
+			$offerChannel->delete();
 
-			session()->flash('message', "{$offerBanner->name} berhasil dihapus");
+			session()->flash('message', "{$offerChannel->name} berhasil dihapus");
 			return response()->json([
 				"status" => true,
 				"message" => null
@@ -100,19 +102,16 @@ class OfferBannerController extends Controller {
 	public function list (Request $request) {
 		$search = $request->has('search') ? $request->search : null;
 		$showAll = $request->has('showall') ? (boolean) $request->showall : false;
-		$campaignId = $request->has('campaign_id') ? $request->campaignId : null;
 
 		$page = $request->has('page') ? $request->page : 1;
 		if (empty($page)) $page = 1; 
 		$limit = 10;
 
-		$model = OfferBanner::when($search != null, function ($query) use ($search) {
+		$model = OfferChannel::when($search != null, function ($query) use ($search) {
 			$query->where('name', 'LIKE', '%'.$search.'%');
-		})->when(!empty($campaignId), function ($query) use ($campaignId) {
-			$query->where("campaign_id", $campaignId);
 		});
 
-		$offerBanner = clone($model)->when(!$showAll, function ($query) use ($limit, $page) {
+		$offerChannel = clone($model)->when(!$showAll, function ($query) use ($limit, $page) {
 			$query->take($limit)->skip(($page - 1) * $limit);
 		})->get();
 
@@ -122,7 +121,7 @@ class OfferBannerController extends Controller {
 			"status" => true,
 			"message" => null,
 			"data" => [
-				"list" => $offerBanner,
+				"list" => $offerChannel,
 				"pagination" => [
 					"total" => $total,
 					"search" => $search,
@@ -135,7 +134,7 @@ class OfferBannerController extends Controller {
 	}
 
 	public function listDatatable(Request $request) {
-		$data = OfferBanner::with(["campaign"])->get();
+		$data = OfferChannel::with(["user"])->get();
 		
 		return Datatables::of($data)
 			->addIndexColumn()
@@ -143,7 +142,7 @@ class OfferBannerController extends Controller {
 	}
 
 	public function validateName (Request $request) {
-		$data = OfferBanner::where('name', $request->name)->first();
+		$data = OfferChannel::where('name', $request->name)->first();
 
 		if ($data) {
 			return response()->json([
