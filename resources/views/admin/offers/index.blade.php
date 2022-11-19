@@ -90,9 +90,9 @@
                 return data.name || '-'
               }
             },
-            { data: 'channel', title: 'User', name: 'channel',
+            { data: 'channel', title: 'Channel', name: 'channel',
               "render": function ( data, type, row, meta ) {
-                return data.user.name || '-'
+                return data.name || '-'
               }
             },
             {data: 'id', title: 'Aksi', name: 'action', orderable: false, searchable: false,

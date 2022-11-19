@@ -9,7 +9,10 @@
         <div v-if="data.length > 0" class="flex flex-center" style="gap: 40px">
           <div v-for="item in data" :key="item.id">
             <div class="card-event-container">
-              <q-card v-ripple class="event-card" @click="e => openPage(item.link)">
+              <q-card v-ripple
+                :class="'event-card '+(item.offer === null ? 'disabled' : null)"
+                @click="e => openPage(item.offer.short_link)"
+              >
                 <q-card-section>
                   <div class="flex flex-center">
                     <q-img v-if="item.image !== null" class="logo"
@@ -127,6 +130,10 @@ export default {
   cursor: pointer;
   width: 300px;
   max-width: 100%;
+}
+
+.event-card.disabled {
+  cursor: unset;
 }
 
 @media only screen and (max-width: 599px) {

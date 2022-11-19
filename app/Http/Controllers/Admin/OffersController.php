@@ -155,4 +155,29 @@ class OffersController extends Controller {
 			->addIndexColumn()
 			->make(true);
 	}
+
+	public function validateOffer (Request $request) {
+		$campaign_id = $request->campaign_id;
+		$banner_id = $request->banner_id;
+		$channel_id = $request->channel_id;
+
+		$data = Offers::where("campaign_id", $campaign_id)
+			->where("banner_id", $banner_id)
+			->where("channel_id", $channel_id)
+			->first();
+
+		if ($data) {
+			return response()->json([
+				"status" => true,
+				"message" => null,
+				"data" => null
+			]);
+		} else {
+			return response()->json([
+				"status" => false,
+				"message" => "Link Promosi tidak ditemukan untuk data campaign, banner dan channel saat ini.",
+				"data" => null
+			]);
+		}
+	}
 }

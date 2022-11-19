@@ -11,23 +11,41 @@ use Illuminate\Database\QueryException;
 use Yajra\DataTables\Datatables;
 
 use App\Models\Event;
+use App\Models\OfferCampaign;
+use App\Models\OfferChannel;
 use Exception;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 
 class EventController extends Controller {
+	protected $now;
+  public function __construct(Request $request) {
+    if ($request->header('Timezone') != null) {
+      $this->now = Carbon::now($request->header('Timezone'))->setTimezone('UTC');
+    } else {
+      $this->now = Carbon::now();
+    }
+  }
+
 	public function index (Request $request) {
 		return view('admin.event.index');
 	}
 
 	public function create (Request $request) {
-		return view('admin.event.form');
+		$data = [
+			"campaign" => OfferCampaign::get(),
+			"channels" => OfferChannel::get()
+		];
+
+		return view('admin.event.form', $data);
 	}
 
 	public function update (Request $request, $id) {
-		$event = Event::find($id);
 		$data = [
-			"data" => $event
+			"data" => Event::find($id),
+			"campaign" => OfferCampaign::get(),
+			"channels" => OfferChannel::get()
 		];
 
 		return view('admin.event.form', $data);
@@ -44,10 +62,12 @@ class EventController extends Controller {
 		$isCreate = $request->id == null ? true : false;
 		$validation = [
 			'name' => 'required|string|max:255',
+      'campaign_id' => 'required|int',
+      'banner_id' => 'required|int',
+      'channel_id' => 'required|int',
       'start_date' => 'required|date',
       'end_date' => 'nullable|date',
       'description' => 'nullable|string|max:255',
-      'link' => 'required|url',
 			'image' => 'nullable|mimes:jpg,png',
 		];
 
@@ -92,11 +112,13 @@ class EventController extends Controller {
 		
 		try {
 			$event->name = ucwords($request->name);
+		  $event->campaign_id = $request->campaign_id;
+		  $event->banner_id = $request->banner_id;
+		  $event->channel_id = $request->channel_id;
 			$event->start_date = $request->start_date;
-			$event->end_date = $request->end_date;
+			$event->end_date = empty($request->end_date) ? $request->start_date : $request->end_date;
 			$event->description = $request->description;
 			if ($request->hasFile('image')) $event->image = $filename;
-		  $event->link = $request->link;
 			$event->save();
 
 			return redirect()
@@ -173,13 +195,17 @@ class EventController extends Controller {
 	}
 
 	public function listDatatable(Request $request) {
-		$data = Event::when(Session::get("role") == "user", function ($q) {
+    $state = $request->state;
+
+		$model = Event::when(Session::get("role") == "user", function ($q) {
 			$q->where("created_by", Auth::id());
 		})
-		->with(["created_name", "updated_name"])
-		->get();
+		->with(["created_name", "updated_name", "campaign", "banner", "channel"]);
+
+		$model = $this->_scheduleType($model, $state);
+		$model = $model->get();
 		
-		return Datatables::of($data)->make(true);
+		return Datatables::of($model)->make(true);
 	}
 
 	public function validateName (Request $request) {
@@ -199,4 +225,63 @@ class EventController extends Controller {
 			]);
 		}
 	}
+
+	private function _scheduleType($model, $type) {
+    switch ($type) {
+      case "all":
+        return $model;
+
+      case "live":
+        $date = clone($this->now);
+
+				$model->whereDate("start_date", "<=", $date);
+				$model->whereDate("end_date", ">=", $date);
+
+        return $model;
+
+      case "upcoming":
+        $date = clone($this->now);
+
+        $model->whereDate("start_date", ">", $date);
+				return $model;
+
+      case "closed":
+        $date = clone($this->now);
+
+        $model->whereDate("end_date", "<", $date);
+				return $model;
+
+      default:
+        return $model;
+    }
+  }
+	
+	public function deleteAll (Request $request) {
+    $validated = $request->validate([
+      'state' => 'required|in:closed'
+    ]);
+
+    try {
+      $stateText = null;
+      if ($request->state == 'closed') {
+        $stateText = 'Sudah Selesai';
+      }
+      
+      $model = Event::select("*");
+      $model = $this->_scheduleType($model, $request->state);
+
+      $model->delete();
+
+      session()->flash('message', "Jadwal event {$stateText} berhasil dihpapus");
+      return response()->json([
+        "status" => true,
+        "message" => null
+      ]);
+    } catch (QueryException $exception) {
+      return response()->json([
+        "status" => false,
+        "message" => $exception->getMessage()
+      ]);
+    }
+  }
 }

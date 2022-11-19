@@ -312,6 +312,7 @@ Route::middleware(['haveInstalled'])->group(function () {
 
         Route::post('/store', [EventController::class, 'store'])->name('store');
         Route::post('/delete', [EventController::class, 'delete'])->name('delete');
+        Route::post('/delete-all', [EventController::class, 'deleteAll'])->name('delete');
       });
 
       // Socmed Route

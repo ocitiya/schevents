@@ -93,6 +93,7 @@ Route::post('/offer/channel/validate', [OfferChannelController::class, 'validate
 // /api/offer
 Route::get('/offer/list', [OffersController::class, 'list']);
 Route::get('/offer/listDatatable', [OffersController::class, 'listDatatable']);
+Route::post('/offer/validateOffer', [OffersController::class, 'validateOffer']);
 
 // /api/offer/banner
 Route::get('/offer/banner/list', [OfferBannerController::class, 'list']);
@@ -116,7 +117,7 @@ Route::get('/movie/schedule/listDatatable', [MovieScheduleController::class, 'li
 
 // /api/event
 Route::get('/event/list', [EventController::class, 'list']);
-Route::get('/event/listDatatable', [EventController::class, 'listDatatable']);
+Route::post('/event/listDatatable', [EventController::class, 'listDatatable']);
 Route::post('/event/validate', [EventController::class, 'validateName']);
 
 // /api/socmed-account
