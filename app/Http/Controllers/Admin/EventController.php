@@ -123,7 +123,7 @@ class EventController extends Controller {
 
 			return redirect()
 				->route("admin.masterdata.event.index")
-				->with('success', 'Data successfully saved');
+				->with('success', 'Event {$event->name} berhasil disimpan');
 
 		} catch (QueryException $exception) {
 			if ($request->hasFile('image')) {

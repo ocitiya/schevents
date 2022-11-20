@@ -22,7 +22,20 @@
         </a>
       </div>
 
-      <div class="data-center">
+      <ul class="nav nav-tabs" id="myTab" role="tablist">      
+        <li class="nav-item" role="presentation">
+          <button class="nav-link tab-item active" type="button" role="tab" data-state="streaming">
+            Streaming
+          </button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link tab-item" type="button" role="tab" data-state="upcoming">
+            Akan Datang
+          </button>
+        </li>
+      </ul>
+
+      <div class="data-center mt-3">
         <div id="type-items">
           <table id="datatable" class="table table-bordered" style="font-size: small"></table>
         </div>
@@ -33,6 +46,14 @@
 
 @section('script')
   <script>
+    let table;
+
+    const data = { state: "streaming" };
+
+    const getData = (params) => {
+      return data[params]
+    }
+
     $('#datatable').on('click', '.delete', function () {
       const id = $(this).attr('data-id');
       const name = $(this).attr('data-name');
@@ -86,6 +107,21 @@
       windowShare(shareURL)
     });
 
+    $('.tab-item').on('click', function (e) {
+      e.preventDefault()
+
+      data.state = $(this).attr('data-state')
+      table.ajax.reload()
+
+      $('.tab-item').each(function (i, obj) {
+        if ($(obj).attr('data-state') === data.state) {
+          $(obj).addClass('active')
+        } else {
+          $(obj).removeClass('active')
+        }
+      });
+    });
+
     document.addEventListener('DOMContentLoaded', async function () {
       $(function () {
         table = $('#datatable').DataTable({
@@ -93,7 +129,11 @@
           processing: true,
           serverSide: true,
           ajax: {
-            url: "/api/movie/schedule/listDatatable"
+            url: "/api/movie/schedule/listDatatable",
+            method: 'POST',
+            data: function (data) {
+              data.state = getData('state');
+            }
           },
           columns: [
             { data: 'DT_RowIndex', name: 'DT_RowIndex', title: 'No',  orderable: false, searchable: false },
@@ -102,12 +142,19 @@
                 return data.name;
               }
             },
-            {data: 'show_date', title: 'Tanggal Tayang', name: 'show_date',
-              "render": function (data, type, row, meta) {
-                let show_date = moment.utc(data).local();
-                show_date = show_date.format('ddd, D MMMM Y');
-
-                return show_date;
+            {data: 'campaign', title: 'Campaign', name: 'campaign', 
+              "render": function ( data, type, row, meta ) {
+                return data === null ? '-' : data.name;
+              }
+            },
+            {data: 'banner', title: 'Banner', name: 'banner', 
+              "render": function ( data, type, row, meta ) {
+                return data === null ? '-' : data.name;
+              }
+            },
+            {data: 'channel', title: 'Channel', name: 'channel', 
+              "render": function ( data, type, row, meta ) {
+                return data === null ? '-' : data.name;
               }
             },
             {data: 'created_at', title: 'Dibuat', orderable: false, searchable: false,
@@ -172,7 +219,7 @@
                     <button
                       data-id="${data}"
                       data-name="${row.movie.name}"
-                      data-show_date="${row.show_date}"
+                      data-show_date="${row.release_date}"
                       class="btn btn-sm btn-danger unrounded delete"
                     >
                       <small>Hapus Jadwal Film</small>
@@ -181,37 +228,41 @@
                 `;
               }
             },
-            {data: 'movie', title: 'Share', orderable: false, searchable: false, className: 'd-inline-flex',
+            {data: 'offer', title: 'Share', orderable: false, searchable: false, className: 'd-inline-flex',
               "render": function ( data, type, row, meta ) {
-                let release_date = moment.utc(data.release_date).local();
-                release_date = release_date.format('ddd, D MMMM Y');
+                if (data === null) {
+                  return '-';
+                } else {
+                  let release_date = moment.utc(row.release_date).local();
+                  release_date = release_date.format('ddd, D MMMM Y');
 
-                const zone_name = moment.tz.guess();
-                const timezone = moment.tz(zone_name).zoneAbbr();
-                const link = row.link;
-                const title = data.name;
-                const description = data.description;
+                  const zone_name = moment.tz.guess();
+                  const timezone = moment.tz(zone_name).zoneAbbr();
+                  const link = data.short_link;
+                  const title = row.movie.name;
+                  const description = row.movie.description;
 
-                const types = [];
-                data.movie_type.map(item => types.push(item.movie_type.name));
-                const genre = types.join(', ');
+                  const types = [];
+                  row.movie.movie_type.map(item => types.push(item.movie_type.name));
+                  const genre = types.join(', ');
 
-                let message = `Live Streaming Movie - ${title}\n\nDescription\n\tRelease Date: ${release_date}\n\tGenre: ${genre}\n\tLink: ${link}\n\tSinopsis: ${description || '-'}`;
+                  let message = `Live Streaming Movie - ${title}\n\nDescription\n\tRelease Date: ${release_date}\n\tGenre: ${genre}\n\tLink: ${link}\n\tSinopsis: ${description || '-'}`;
 
-                const text = encodeURIComponent(message);
-                const shareURLTW = `https://twitter.com/intent/tweet?text=${text}`;
+                  const text = encodeURIComponent(message);
+                  const shareURLTW = `https://twitter.com/intent/tweet?text=${text}`;
 
-                return `
-                  <button class="share-to-fb btn btn-sm" data-share="${row.link}">
-                    <img src="/images/fb-logo-2.png" alt="Facebook Logo" style="height: 20px; width: 20px">
-                  </button>
+                  return `
+                    <button class="share-to-fb btn btn-sm" data-share="${row.link}">
+                      <img src="/images/fb-logo-2.png" alt="Facebook Logo" style="height: 20px; width: 20px">
+                    </button>
 
-                  <br />
+                    <br />
 
-                  <button class="share-to-twitter btn btn-sm" data-share="${shareURLTW}">
-                    <img src="/images/twitter-logo-2.png" alt="Twitter Logo" style="height: 20px; width: 20px">
-                  </button>
-                `;
+                    <button class="share-to-twitter btn btn-sm" data-share="${shareURLTW}">
+                      <img src="/images/twitter-logo-2.png" alt="Twitter Logo" style="height: 20px; width: 20px">
+                    </button>
+                  `;
+                }
               }
             },
           ]

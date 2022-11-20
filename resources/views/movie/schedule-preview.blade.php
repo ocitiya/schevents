@@ -117,9 +117,9 @@
   <script>
     const title = "<?php echo $data->movie->name ?>";
     const description = "<?php echo $data->movie->description ?>";
-    const release_date = "<?php echo $data->show_date ?>";
+    const release_date = "<?php echo $data->release_date ?>";
     const genre = "<?php echo $data->movie->types ?>";
-    const link = "<?php echo $data->link ?>";
+    const link = "<?php echo $data->offer->short_link ?>";
 
     document.addEventListener('DOMContentLoaded', function () {
       const selfURL = window.location.href;

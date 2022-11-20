@@ -9,7 +9,10 @@
         <div v-if="data.length > 0" class="flex flex-center" style="gap: 40px">
           <div v-for="item in data" :key="item.id">
             <div class="card-movie-container">
-              <q-card v-ripple class="movie-card" @click="e => openDetailPage(item.movie.id)">
+              <q-card v-ripple
+                :class="'movie-card '+(item.offer === null ? 'disabled' : null)"
+                @click="e => openDetailPage(item)"
+              >
                 <q-card-section>
                   <div class="flex flex-center">
                     <q-img v-if="item.movie.image !== null" class="logo"
@@ -37,7 +40,12 @@
                 <q-separator />
 
                 <q-card-section class="text-center q-px-md bg-primary text-white">
-                  {{ parseDate(item.show_date) }}
+                  <span v-if="item.release_date === null">
+                    Coming Soon
+                  </span>
+                  <span v-else>
+                    {{ parseDate(item.release_date) }}
+                  </span>
                 </q-card-section>
               </q-card>
             </div>
@@ -77,10 +85,14 @@ export default {
   },
 
   methods: {
-    openDetailPage: function (id) {
-      setTimeout(() => {
-        window.open(`${this.$host}/movie/schedule/${id}`)
-      }, 300)
+    openDetailPage: function (item) {
+      if (item.offer === null) {
+        return false
+      } else {
+        setTimeout(() => {
+          window.open(`${this.$host}/movie/schedule/${item.id}`)
+        }, 300)
+      }
     },
 
     parseDate: function (date) {
@@ -129,6 +141,10 @@ export default {
   cursor: pointer;
   width: 300px;
   max-width: 100%;
+}
+
+.movie-card.disabled {
+  cursor: unset;
 }
 
 @media only screen and (max-width: 599px) {

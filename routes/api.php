@@ -113,7 +113,7 @@ Route::post('/movie/type/validate', [MovieTypeController::class, 'validateName']
 
 // /api/movie/schedule
 Route::get('/movie/schedule/list', [MovieScheduleController::class, 'list']);
-Route::get('/movie/schedule/listDatatable', [MovieScheduleController::class, 'listDatatable']);
+Route::post('/movie/schedule/listDatatable', [MovieScheduleController::class, 'listDatatable']);
 
 // /api/event
 Route::get('/event/list', [EventController::class, 'list']);

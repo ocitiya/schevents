@@ -12,28 +12,42 @@ use Yajra\DataTables\Datatables;
 
 use App\Models\Movie;
 use App\Models\MovieSchedule;
+use App\Models\OfferCampaign;
+use App\Models\OfferChannel;
 use Exception;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 
 class MovieScheduleController extends Controller {
+	protected $now;
+  public function __construct(Request $request) {
+    if ($request->header('Timezone') != null) {
+      $this->now = Carbon::now($request->header('Timezone'))->setTimezone('UTC');
+    } else {
+      $this->now = Carbon::now();
+    }
+  }
+
 	public function index (Request $request) {
 		return view('admin.movie_schedule.index');
 	}
 
 	public function create (Request $request) {
 		$data = [
-			"movies" => Movie::get()
+			"movies" => Movie::get(),
+			"campaign" => OfferCampaign::get(),
+			"channels" => OfferChannel::get()
 		];
 
 		return view('admin.movie_schedule.form', $data);
 	}
 
 	public function update (Request $request, $id) {
-		$movieSchedule = MovieSchedule::find($id);
 		$data = [
-			"data" => $movieSchedule,
-			"movies" => Movie::get()
+			"data" => MovieSchedule::find($id),
+			"movies" => Movie::get(),
+			"campaign" => OfferCampaign::get(),
+			"channels" => OfferChannel::get()
 		];
 
 		return view('admin.movie_schedule.form', $data);
@@ -50,8 +64,9 @@ class MovieScheduleController extends Controller {
 		$isCreate = $request->id == null ? true : false;
 		$validation = [
 			'movie_id' => 'required|numeric',
-      'show_date' => 'required|date',
-      'link' => 'required|url'
+      'campaign_id' => 'required|int',
+      'banner_id' => 'required|int',
+      'channel_id' => 'required|int'
 		];
 
 		$validated = $request->validate($validation);
@@ -64,11 +79,15 @@ class MovieScheduleController extends Controller {
 			$movieSchedule = MovieSchedule::find($request->id);
       $movieSchedule->updated_by = Auth::id();
 		}
+
+		$movie = Movie::find($request->movie_id);
 		
 		try {
 			$movieSchedule->movie_id = $request->movie_id;
-			$movieSchedule->show_date = $request->show_date;
-			$movieSchedule->link = $request->link;
+			$movieSchedule->release_date = $movie->release_date;
+			$movieSchedule->campaign_id = $request->campaign_id;
+		  $movieSchedule->banner_id = $request->banner_id;
+		  $movieSchedule->channel_id = $request->channel_id;
 			$movieSchedule->save();
 
 			$movie = Movie::find($request->movie_id);
@@ -144,7 +163,9 @@ class MovieScheduleController extends Controller {
 	}
 
 	public function listDatatable(Request $request) {
-		$data = MovieSchedule::with([
+    $state = $request->state;
+
+		$model = MovieSchedule::with([
 			"created_name", "updated_name",
 			"movie" => function ($query) {
 				$query->with([
@@ -152,11 +173,14 @@ class MovieScheduleController extends Controller {
 						$query->with(["movie_type"]);
 					}
 				]);
-			}
-		])
-			->get();
+			},
+			"campaign", "banner", "channel"
+		]);
+
+		$model = $this->_scheduleType($model, $state);
+		$model = $model->get();
 		
-		return Datatables::of($data)
+		return Datatables::of($model)
 			->addIndexColumn()
 			->make(true);
 	}
@@ -186,4 +210,27 @@ class MovieScheduleController extends Controller {
 			return abort(404);
 		}
 	}
+
+	private function _scheduleType($model, $type) {
+    switch ($type) {
+      case "all":
+        return $model;
+
+      case "streaming":
+        $date = clone($this->now);
+
+				$model->whereDate("release_date", "<=", $date);
+
+        return $model;
+
+      case "upcoming":
+        $date = clone($this->now);
+
+        $model->whereDate("release_date", ">", $date);
+				return $model;
+
+      default:
+        return $model;
+    }
+  }
 }
