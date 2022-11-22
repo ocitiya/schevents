@@ -20,6 +20,9 @@ use App\Http\Controllers\Admin\AssociationController;
 use App\Http\Controllers\Admin\BannerController;
 use App\Http\Controllers\Admin\EventController;
 use App\Http\Controllers\Admin\FederationController;
+use App\Http\Controllers\Admin\LPMovieController;
+use App\Http\Controllers\Admin\LPSportController;
+use App\Http\Controllers\Admin\LPTypeController;
 use App\Http\Controllers\Admin\MovieController;
 use App\Http\Controllers\Admin\MovieScheduleController;
 use App\Http\Controllers\Admin\MovieTypeController;
@@ -114,6 +117,21 @@ Route::post('/movie/type/validate', [MovieTypeController::class, 'validateName']
 // /api/movie/schedule
 Route::get('/movie/schedule/list', [MovieScheduleController::class, 'list']);
 Route::post('/movie/schedule/listDatatable', [MovieScheduleController::class, 'listDatatable']);
+
+// /api/lp/type
+Route::get('/lp/type/list', [LPTypeController::class, 'list']);
+Route::get('/lp/type/listDatatable', [LPTypeController::class, 'listDatatable']);
+Route::post('/lp/type/validate', [LPTypeController::class, 'validateName']);
+
+// /api/lp/movie
+Route::get('/lp/movie/list', [LPMovieController::class, 'list']);
+Route::get('/lp/movie/listDatatable', [LPMovieController::class, 'listDatatable']);
+Route::post('/lp/movie/validate', [LPMovieController::class, 'validateName']);
+
+// /api/lp/sport
+Route::get('/lp/sport/list', [LPSportController::class, 'list']);
+Route::get('/lp/sport/listDatatable', [LPSportController::class, 'listDatatable']);
+Route::post('/lp/sport/validate', [LPSportController::class, 'validateName']);
 
 // /api/event
 Route::get('/event/list', [EventController::class, 'list']);

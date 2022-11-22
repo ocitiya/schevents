@@ -327,5 +327,54 @@
         @endif
       </div>
     @endif
+
+    @if(inRole(["superadmin", "admin"]))
+      <div class="menu-group">
+        <div class="title">LP</div>
+        <div class="menu-group mt-0">
+          <div class="dropdown-group">
+            <a data-bs-target="#masterDataLP" data-bs-toggle="collapse"
+              aria-expanded="{{ str_contains(Request::route()->getName(), 'admin.lp.masterdata') ? 'true' : 'false' }}"
+              class="dropdown-toggle">
+              Master Data
+            </a>
+            <ul
+              class="collapse list-unstyled {{ str_contains(Request::route()->getName(), 'admin.lp.masterdata') ? 'show' : null }}"
+              id="masterDataLP"
+            >
+              @if (inRole(["superadmin", "admin"]))
+                <li
+                  class="{{ str_contains(Request::route()->getName(), 'admin.offer.masterdata.campaign') ? 'active' : null }}"
+                >
+                  <a
+                    href="{{ route('admin.lp.masterdata.type.index') }}"
+                  >Tipe LP</a>
+                </li>
+              @endif
+            </ul>
+          </div>
+        </div>
+
+        @if(inRole(["superadmin", "admin", "user"]))
+          <li
+            class="{{ str_contains(Request::route()->getName(), 'admin.lp.movie') ? 'active' : null }}"
+          >
+            <a
+              href="{{ route('admin.lp.movie.index') }}"
+            >LP Movie</a>
+          </li>
+        @endif
+
+        @if(inRole(["superadmin", "admin", "user"]))
+          <li
+            class="{{ str_contains(Request::route()->getName(), 'admin.lp.sport') ? 'active' : null }}"
+          >
+            <a
+              href="{{ route('admin.lp.sport.index') }}"
+            >LP Olahraga</a>
+          </li>
+        @endif
+      </div>
+    @endif
   </ul>
 </nav>

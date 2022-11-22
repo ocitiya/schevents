@@ -24,6 +24,9 @@ use App\Http\Controllers\Admin\AssociationController;
 use App\Http\Controllers\Admin\BannerController;
 use App\Http\Controllers\Admin\EventController;
 use App\Http\Controllers\Admin\FederationController;
+use App\Http\Controllers\Admin\LPMovieController;
+use App\Http\Controllers\Admin\LPSportController;
+use App\Http\Controllers\Admin\LPTypeController;
 use App\Http\Controllers\Admin\MovieController;
 use App\Http\Controllers\Admin\MovieScheduleController;
 use App\Http\Controllers\Admin\MovieTypeController;
@@ -207,6 +210,48 @@ Route::middleware(['haveInstalled'])->group(function () {
       // Route::get('/incity', [MatchScheduleController::class, 'indexInCity'])->name('incity.index');
       // Route::get('/incity/create', [MatchScheduleController::class, 'inCityCreate'])->name('incity.create');
       // Route::get('/incity/update/{id}', [MatchScheduleController::class, 'inCityUpdate'])->name('incity.update');
+    });
+
+    // LP ROUTE
+    // /admin/lp
+    Route::group(['prefix' => 'lp', 'as' => 'lp.'], function () {
+
+      // /admin/lp/masterdata
+      Route::group(['prefix' => 'masterdata', 'as' => 'masterdata.'], function () {
+        
+        // /admin/lp/masterdata/type
+        Route::group(['prefix' => 'type', 'as' => 'type.'], function () {
+          Route::get('/', [LPTypeController::class, 'index'])->name('index');
+          Route::get('/create', [LPTypeController::class, 'create'])->name('create');
+          Route::get('/update/{id}', [LPTypeController::class, 'update'])->name('update');
+          Route::get('/detail/{id}', [LPTypeController::class, 'detail'])->name('detail');
+
+          Route::post('/store', [LPTypeController::class, 'store'])->name('store');
+          Route::post('/delete', [LPTypeController::class, 'delete'])->name('delete');
+        });
+      });
+
+      // /admin/lp/movie
+      Route::group(['prefix' => 'movie', 'as' => 'movie.'], function () {
+        Route::get('/', [LPMovieController::class, 'index'])->name('index');
+        Route::get('/create', [LPMovieController::class, 'create'])->name('create');
+        Route::get('/update/{id}', [LPMovieController::class, 'update'])->name('update');
+        Route::get('/detail/{id}', [LPMovieController::class, 'detail'])->name('detail');
+
+        Route::post('/store', [LPMovieController::class, 'store'])->name('store');
+        Route::post('/delete', [LPMovieController::class, 'delete'])->name('delete');
+      });
+      
+      // /admin/lp/sport
+      Route::group(['prefix' => 'sport', 'as' => 'sport.'], function () {
+        Route::get('/', [LPSportController::class, 'index'])->name('index');
+        Route::get('/create', [LPSportController::class, 'create'])->name('create');
+        Route::get('/update/{id}', [LPSportController::class, 'update'])->name('update');
+        Route::get('/detail/{id}', [LPSportController::class, 'detail'])->name('detail');
+
+        Route::post('/store', [LPSportController::class, 'store'])->name('store');
+        Route::post('/delete', [LPSportController::class, 'delete'])->name('delete');
+      });
     });
 
     // OFFER ROUTE
