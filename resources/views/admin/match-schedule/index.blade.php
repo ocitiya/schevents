@@ -324,43 +324,48 @@
             },
             {data: 'id', title: 'Share', orderable: false, searchable: false,
               "render": function ( data, type, row, meta ) {
-                const origin = window.location.origin
-                const shareURL = `https://www.facebook.com/sharer/sharer.php?u=${origin}/schedule/${data}`;
+                if (row.lpsport !== null) {
+                  const origin = window.location.origin;
+                  const shareURL = `https://www.facebook.com/sharer/sharer.php?u=${row.lpsport.short_link}`;
 
-                let hashtag = row.keywords.split(',');
-                hashtag = hashtag.filter((a) => a);
-                hashtag.map((item, i) => {
-                  const a = item.replace(/ /g, '');
-                  hashtag[i] = `#${a}`
-                })
+                  let hashtag = row.keywords.split(',');
+                  hashtag = hashtag.filter((a) => a);
+                  hashtag.map((item, i) => {
+                    const a = item.replace(/ /g, '');
+                    hashtag[i] = `#${a}`
+                  })
 
-                hashtag = hashtag.join(' ');
+                  hashtag = hashtag.join(' ');
 
-                const datetime = row.datetime
-                
-                const datelocal = moment.utc(datetime, 'YYYY-MM-DD hh:mm').local()
-                const formatDate = datelocal.format('ddd, D MMMM Y | hh:mm');
-                const zone_name = moment.tz.guess();
-                const timezone = moment.tz(zone_name).zoneAbbr()
+                  const datetime = row.datetime
+                  
+                  const datelocal = moment.utc(datetime, 'YYYY-MM-DD hh:mm').local()
+                  const formatDate = datelocal.format('ddd, D MMMM Y | hh:mm');
+                  const zone_name = moment.tz.guess();
+                  const timezone = moment.tz(zone_name).zoneAbbr()
 
-                const team_type = row.team_type === null ? null : row.team_type.name
-                const gender = row.team_gender !== null ? `${capitalizeFirstLetter(row.team_gender)} ` : ''
-                const sport = row.sport_type === null ? null : row.sport_type.name
-                
-                const text = encodeURIComponent(`${row.federation.abbreviation}\n${team_type} ${gender}${sport} | ${formatDate} ${timezone}\n${row.school1.name} (${row.school1.county.abbreviation}) vs ${row.school2.name} (${row.school2.county.abbreviation})\nWatch on\n${origin}/schedule/${data}\n${hashtag}`);
-                const shareURLTW = `https://twitter.com/intent/tweet?text=${text}`;
+                  const team_type = row.team_type === null ? null : row.team_type.name
+                  const gender = row.team_gender !== null ? `${capitalizeFirstLetter(row.team_gender)} ` : ''
+                  const sport = row.sport_type === null ? '' : row.sport_type.sport.name || ''
 
-                return `
-                  <button class="share-to-fb btn btn-sm" data-share="${shareURL}">
-                    <img src="/images/fb-logo-2.png" alt="Facebook Logo" style="height: 20px; width: 20px">
-                  </button>
+                  
+                  const text = encodeURIComponent(`${row.federation.abbreviation}\n${team_type} ${gender}${sport} | ${formatDate} ${timezone}\n${row.school1.name} (${row.school1.county.abbreviation}) vs ${row.school2.name} (${row.school2.county.abbreviation})\nWatch on\n${row.lpsport.short_link}\n${hashtag}`);
+                  const shareURLTW = `https://twitter.com/intent/tweet?text=${text}`;
 
-                  <br />
+                  return `
+                    <button class="share-to-fb btn btn-sm" data-share="${shareURL}">
+                      <img src="/images/fb-logo-2.png" alt="Facebook Logo" style="height: 20px; width: 20px">
+                    </button>
 
-                  <button class="share-to-twitter btn btn-sm" data-share="${shareURLTW}">
-                    <img src="/images/twitter-logo-2.png" alt="Twitter Logo" style="height: 20px; width: 20px">
-                  </button>
-                `
+                    <br />
+
+                    <button class="share-to-twitter btn btn-sm" data-share="${shareURLTW}">
+                      <img src="/images/twitter-logo-2.png" alt="Twitter Logo" style="height: 20px; width: 20px">
+                    </button>
+                  `;
+                } else {
+                  return '-';
+                }
               }
             },
             {data: 'created_at', title: 'Dibuat', orderable: false, searchable: false,

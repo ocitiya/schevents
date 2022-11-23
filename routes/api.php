@@ -132,6 +132,7 @@ Route::post('/lp/movie/validate', [LPMovieController::class, 'validateName']);
 Route::get('/lp/sport/list', [LPSportController::class, 'list']);
 Route::get('/lp/sport/listDatatable', [LPSportController::class, 'listDatatable']);
 Route::post('/lp/sport/validate', [LPSportController::class, 'validateName']);
+Route::post('/lp/sport/validateLP', [LPSportController::class, 'validateLP']);
 
 // /api/event
 Route::get('/event/list', [EventController::class, 'list']);

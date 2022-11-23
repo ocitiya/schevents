@@ -9,9 +9,11 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class MatchSchedule extends Model {
 	use HasFactory, SoftDeletes;
 
+	public $timestamps = false;
+
 	protected $table = "match_schedule";
 	protected $primaryKey = "id";
-	public $timestamps = false;
+	protected $appends = ['lpsport'];
 
 	protected $casts = [
 		'id' => 'string'
@@ -58,5 +60,19 @@ class MatchSchedule extends Model {
 
 	public function updatedBy () {
 		return $this->belongsTo(User::class, "updated_by");
+	}
+
+	public function lp_type () {
+		return $this->belongsTo(LPTypes::class, "lp_type_id");
+	}
+
+	public function channel () {
+		return $this->belongsTo(OfferChannel::class, "channel_id");
+	}
+
+	public function getLpsportAttribute () {
+		return LPSports::where("lp_type_id", $this->lp_type_id)
+			->where("channel_id", $this->channel_id)
+			->first();
 	}
 }

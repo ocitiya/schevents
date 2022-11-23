@@ -226,6 +226,42 @@
               </div>
             </div>
 
+            <div class="row">
+              <div class="col-5">
+                <label for="lp_type_id">Nama LP *</label>
+              </div>
+              <div class="col-7">
+                <select name="lp_type_id" class="form-select select2" id="lp_type_id" required>
+                  <option disabled selected value>Please select ...</option>
+                  @foreach ($types as $item)
+                    <option value="{{ $item->id }}">{{ $item->name }}</option>
+                  @endforeach
+                </select>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-5">
+                <label for="channel_id">Nama Channel *</label>
+              </div>
+              <div class="col-7">
+                <select name="channel_id" class="form-select select2" id="channel_id" required>
+                  <option disabled selected value>Please select ...</option>
+                  @foreach ($channels as $item)
+                    <option value="{{ $item->id }}">{{ $item->name }}</option>
+                  @endforeach
+                </select>
+              </div>
+            </div>
+
+            <div id="lp-invalidate" class="alert alert-warning mt-3 align-items-center" role="alert" style="display: none">
+              <i class="fas fa-exclamation-circle"></i>        
+              
+              <div class="message ms-3">
+                {{-- Dynamic Data --}}
+              </div>
+            </div>
+
             <div class="border p-3 my-3">
               <small class="">
                 <i class="fa-solid fa-triangle-exclamation"></i>&nbsp;
@@ -293,8 +329,37 @@
     const matchSystemSelected = "<?php echo old('match_system', isset($data) ? $data->match_system : null) ?>";
     const matchSystem2Selected = "<?php echo old('match_system2', isset($data) ? $data->match_system2 : null) ?>";
     const stadiumSelected = "<?php echo old('stadium_id', isset($data) ? $data->stadium_id : null) ?>";
-
+    const channelSelected = "<?php echo old('channel_id', isset($data) ? $data->channel_id : null) ?>";
+    const typeSelected = "<?php echo old('lp_type_id', isset($data) ? $data->lp_type_id : null) ?>";
+    
     const userid = "<?php echo Auth::id() ?>";
+
+    const validateLP = () => {
+      const lp_type_id = $('#lp_type_id').val();
+      const channel_id = $('#channel_id').val();
+
+      $('#lp-invalidate').hide();
+
+      if (!lp_type_id || !channel_id) {
+        return false;
+      }
+
+      const formData = new FormData();
+      formData.append('lp_type_id', lp_type_id);
+      formData.append('channel_id', channel_id);
+
+      fetch('/api/lp/sport/validateLP', {
+        method: 'POST',
+        body: formData
+      })
+        .then(res => res.json())
+        .then(res => {
+          if (!res.status) {
+            $('#lp-invalidate').css('display', 'flex');
+            $('#lp-invalidate .message').text(res.message);
+          }
+        });
+    }
 
     const getList = (endpoint) => {
       return new Promise((resolve, reject) => {
@@ -345,6 +410,14 @@
 
         generateSelectSport(val)
       })
+
+      $('#lp_type_id').on('change', async function () {
+        validateLP();
+      });
+
+      $('#channel_id').on('change', async function () {
+        validateLP();
+      });
       
       $('#federation_id').val(federationSelected).change()
       $('#team_gender').val(teamGenderSelected).change()
@@ -352,6 +425,8 @@
       $('#time_minute').val(timeMinuteSelected).change()
       $('#team_type_id').val(teamTypeSelected).change()
       $('#stadium_id').val(stadiumSelected).change()
+      $('#channel_id').val(channelSelected).change();
+      $('#lp_type_id').val(typeSelected).change();
 
       if (matchSystemSelected !== null) {
         $(`#match_system_${matchSystemSelected}`).prop("checked", true);

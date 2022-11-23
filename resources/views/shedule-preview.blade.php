@@ -5,7 +5,7 @@
   $team = "{$team_type} {$data->team_gender} {$data->sport_type->name}";
   $school1 = $data->school1->name;
   $school2 = $data->school2->name;
-  $stream_url = $data->sport_type->stream_url;
+  $stream_url = $data->lpsport->short_link;
   $federation = $data->federation->abbreviation;
 @endphp
 
@@ -120,7 +120,7 @@
       </div>
 
       <div class="mt-5">
-        <a class="btn btn-light" id="stream" href="{{ $data->sport_type->stream_url }}"><b>
+        <a class="btn btn-light" id="stream" href="{{ $stream_url }}"><b>
           <i class="fa-solid fa-video"></i>
           &nbsp;Watch Online
         </b></a>
@@ -192,7 +192,7 @@
       // }
 
       document.querySelector('#share-to-fb').addEventListener('click', function(){
-        const shareURL = `https://www.facebook.com/sharer/sharer.php?u=${selfURL}`;
+        const shareURL = `https://www.facebook.com/sharer/sharer.php?u=${stream_url}`;
         window.open(shareURL, '_blank', 'location=yes,height=570,width=520,scrollbars=yes,status=yes');
       });
 

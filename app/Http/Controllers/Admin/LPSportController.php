@@ -144,4 +144,27 @@ class LPSportController extends Controller {
 			->addIndexColumn()
 			->make(true);
 	}
+
+	public function validateLP(Request $request) {
+		$lp_type_id = $request->lp_type_id;
+		$channel_id = $request->channel_id;
+
+		$data = LPSports::where("lp_type_id", $lp_type_id)
+			->where("channel_id", $channel_id)
+			->first();
+
+		if ($data) {
+			return response()->json([
+				"status" => true,
+				"message" => null,
+				"data" => null
+			]);
+		} else {
+			return response()->json([
+				"status" => false,
+				"message" => "Link Promosi tidak ditemukan untuk data LP dan channel saat ini.",
+				"data" => null
+			]);
+		}
+	}
 }

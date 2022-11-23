@@ -23,6 +23,8 @@ use App\Models\Stadium;
 use App\Models\County;
 use App\Models\TeamType;
 use App\Models\Federation;
+use App\Models\LPTypes;
+use App\Models\OfferChannel;
 use Illuminate\Support\Facades\Session;
 
 class MatchScheduleController extends Controller {
@@ -59,15 +61,13 @@ class MatchScheduleController extends Controller {
   public function create (Request $request) {
     $federation_id = $request->has('federation_id') ? $request->federation_id : null;
 
-    $team_types = TeamType::get();
-    $federations = Federation::get();
-    $stadiums = Stadium::get();
-
     $data = [
-      "team_types" => $team_types,
-      "federations" => $federations,
+      "types" => LPTypes::get(),
+      "channels" => OfferChannel::get(),
+      "team_types" => TeamType::get(),
+      "federations" => Federation::get(),
       "federation_id" => $federation_id,
-      "stadiums" => $stadiums
+      "stadiums" => Stadium::get()
     ];
 
     return view('admin.match-schedule.form', $data);
@@ -75,10 +75,6 @@ class MatchScheduleController extends Controller {
 
   public function update (Request $request, $id) {
     $federation_id = $request->has('federation_id') ? $request->federation_id : null;
-
-    $federations = Federation::get();
-    $team_types = TeamType::get();
-    $stadiums = Stadium::get();
 
     $schedule = MatchSchedule::find($id);
     $dt = new DateTime($schedule->datetime);
@@ -88,10 +84,12 @@ class MatchScheduleController extends Controller {
 
     $data = [
       "data" => $schedule,
-      "federations" => $federations,
-      "stadiums" => $stadiums,
-      "team_types" => $team_types,
+      "types" => LPTypes::get(),
+      "channels" => OfferChannel::get(),
+      "team_types" => TeamType::get(),
+      "federations" => Federation::get(),
       "federation_id" => $federation_id,
+      "stadiums" => Stadium::get()
     ];
 
     return view('admin.match-schedule.form', $data);
@@ -121,7 +119,9 @@ class MatchScheduleController extends Controller {
       'team_type_id' => 'uuid',
       'date' => 'required|date',
       'time_hour' => 'required|min:0|max:59',
-      'time_minute' => 'required|min:0|max:23'
+      'time_minute' => 'required|min:0|max:23',
+      'lp_type_id' => 'nullable|int',
+      'channel_id' => 'nullable|int'
     ]);
 
     $isCreate = $request->id == null ? true : false;
@@ -202,6 +202,8 @@ class MatchScheduleController extends Controller {
       $schedule->team_type_id = $team_type->id;
       $schedule->datetime = $datetime;
       $schedule->keywords = $keywords;
+      $schedule->lp_type_id = $request->lp_type_id;
+      $schedule->channel_id = $request->channel_id;
       $schedule->save();
 
       if (isset($request->isDefaultFederation)) {
@@ -213,7 +215,6 @@ class MatchScheduleController extends Controller {
           ->route("admin.match-schedule.index")
           ->with('success', 'Schedule successfully saved');
       }
-
     } catch (QueryException $exception) {
       return redirect()->back()
         ->withErrors($exception->getMessage());
@@ -508,13 +509,13 @@ class MatchScheduleController extends Controller {
       "sport_type" => function ($q) {
         $q->withTrashed()->with(["sport"]);
       },
-      "federation",
       "createdBy" => function ($query) {
         return $query->select("id", "username", "name");
       },
       "updatedBy" => function ($query) {
         return $query->select("id", "username", "name");
-      }
+      },
+      "federation", "lp_type", "channel"
     ])
       ->when($request->federation_id != null, function ($query) use ($request) {
         $query->where("federation_id", $request->federation_id);
