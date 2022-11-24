@@ -233,8 +233,8 @@
               <div class="col-7">
                 <select name="lp_type_id" class="form-select select2" id="lp_type_id" required>
                   <option disabled selected value>Please select ...</option>
-                  @foreach ($types as $item)
-                    <option value="{{ $item->id }}">{{ $item->name }}</option>
+                  @foreach ($lp_sports as $item)
+                    <option value="{{ $item->type->id }}">{{ $item->type->name }}</option>
                   @endforeach
                 </select>
               </div>
@@ -247,8 +247,8 @@
               <div class="col-7">
                 <select name="channel_id" class="form-select select2" id="channel_id" required>
                   <option disabled selected value>Please select ...</option>
-                  @foreach ($channels as $item)
-                    <option value="{{ $item->id }}">{{ $item->name }}</option>
+                  @foreach ($lp_sports as $item)
+                    <option value="{{ $item->channel->id }}">{{ $item->channel->name }}</option>
                   @endforeach
                 </select>
               </div>

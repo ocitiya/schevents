@@ -97,7 +97,7 @@
                 <select name="channel_id" class="form-select select2" id="channel_id" required>
                   <option disabled selected value>Please select ...</option>
                   @foreach ($channels as $item)
-                    <option value="{{ $item->id }}">{{ $item->name }}</option>
+                    <option value="{{ $item->channel->id }}">{{ $item->channel->name }}</option>
                   @endforeach
                 </select>
               </div>

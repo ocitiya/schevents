@@ -23,6 +23,7 @@ use App\Models\Stadium;
 use App\Models\County;
 use App\Models\TeamType;
 use App\Models\Federation;
+use App\Models\LPSports;
 use App\Models\LPTypes;
 use App\Models\OfferChannel;
 use Illuminate\Support\Facades\Session;
@@ -62,8 +63,7 @@ class MatchScheduleController extends Controller {
     $federation_id = $request->has('federation_id') ? $request->federation_id : null;
 
     $data = [
-      "types" => LPTypes::get(),
-      "channels" => OfferChannel::get(),
+      "lp_sports" => LPSports::with(["channel", "type"])->get(),
       "team_types" => TeamType::get(),
       "federations" => Federation::get(),
       "federation_id" => $federation_id,
@@ -84,8 +84,7 @@ class MatchScheduleController extends Controller {
 
     $data = [
       "data" => $schedule,
-      "types" => LPTypes::get(),
-      "channels" => OfferChannel::get(),
+      "lp_sports" => LPSports::with(["channel", "type"])->get(),
       "team_types" => TeamType::get(),
       "federations" => Federation::get(),
       "federation_id" => $federation_id,

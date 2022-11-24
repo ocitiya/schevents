@@ -82,7 +82,7 @@
             { data: 'DT_RowIndex', name: 'DT_RowIndex', title: 'No',  orderable: false, searchable: false },
             { data: 'type', name: 'type', title: 'Nama LP',
               "render": function ( data, type, row, meta ) {
-                return data.name || '-';
+                return data !== null ? data.name || '-' : '-';
               }
             },
             { data: 'channel', name: 'channel', title: 'Channel',
@@ -95,6 +95,8 @@
                 let updateRoute;
                 updateRoute = `/admin/lp/movie/update/${data}`;
 
+                const lp_type = row.type !== null ? row.type.name || '-' : '-';
+
                 return `
                   <div>
                     <a href="${updateRoute}" class="btn btn-sm unrounded btn-primary">
@@ -105,7 +107,7 @@
                   <div class="mt-2">
                     <button
                       data-id="${data}"
-                      data-name="${row.type.name}"
+                      data-name="${lp_type}"
                       class="btn btn-sm btn-danger unrounded delete"
                     >
                       <small>Hapus LP Movie</small>

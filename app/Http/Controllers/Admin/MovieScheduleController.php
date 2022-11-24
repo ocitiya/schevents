@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\LPMovies;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
@@ -36,7 +37,7 @@ class MovieScheduleController extends Controller {
 		$data = [
 			"movies" => Movie::get(),
 			"campaign" => OfferCampaign::get(),
-			"channels" => OfferChannel::get()
+			"channels" => LPMovies::with("channel")->get()
 		];
 
 		return view('admin.movie_schedule.form', $data);
@@ -47,7 +48,7 @@ class MovieScheduleController extends Controller {
 			"data" => MovieSchedule::find($id),
 			"movies" => Movie::get(),
 			"campaign" => OfferCampaign::get(),
-			"channels" => OfferChannel::get()
+			"channels" => LPMovies::with("channel")->get()
 		];
 
 		return view('admin.movie_schedule.form', $data);
