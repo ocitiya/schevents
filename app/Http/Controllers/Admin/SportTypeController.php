@@ -8,6 +8,7 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Database\QueryException;
 use Yajra\DataTables\Datatables;
+use Intervention\Image\Facades\Image;
 
 use App\Models\SportType;
 use App\Models\Federation;
@@ -58,11 +59,32 @@ class SportTypeController extends Controller {
 		$isCreate = $request->id == null ? true : false;
 		$validation = [
 			'sport_id' => 'required|uuid',
-			'stream_url' => 'required|url',
+			'stream_url' => 'mimes:jpg,png',
 			'federation_id' => 'required|uuid'
 		];
 			
 		$validated = $request->validate($validation);
+
+		// Upload Image
+		if ($request->hasFile('image')) {
+			if(!Storage::exists("/public/link_stream/image")) Storage::makeDirectory("/public/link_stream/image");
+			$file = $request->file('image');
+
+			$filenameWithExt = $request->file('image')->getClientOriginalName();
+			$filename = pathinfo($filenameWithExt, PATHINFO_FILENAME);
+			$extension = $request->file('image')->getClientOriginalExtension();
+
+			$filename = $filename.'_'.time().'.'.$extension;
+			$path = storage_path('app/public/link_stream/image/').$filename;
+			$file->storeAs('public/link_stream/image', $filename);
+
+			// Resize image
+			$img = Image::make($file->getRealPath())
+				->resize(1024, 1024, function ($constraint) {
+					$constraint->aspectRatio();
+				})
+				->save($path, 80);
+		}
 
 		$types = null;
 		if ($isCreate) {
@@ -71,12 +93,18 @@ class SportTypeController extends Controller {
 			$types->created_by = Auth::id();
 		} else {
 			$types = SportType::find($request->id);
+			if ($request->hasFile('image')) {
+				$oldPath = storage_path('app/public/link_stream/image/').$types->image;
+				if (file_exists($oldPath) && !is_dir($oldPath)) {
+					unlink($oldPath);
+				}
+			}
 		}
 		
 		try {
 			$types->sport_id = ucwords($request->sport_id);
 			$types->federation_id = $request->federation_id;
-			$types->stream_url = $request->stream_url;
+			if ($request->hasFile('image')) $types->image = $filename;
 			$types->save();
 
 			if ($request->is_default_federation == 1) {
@@ -90,6 +118,9 @@ class SportTypeController extends Controller {
 			}
 
 		} catch (QueryException $exception) {
+			if ($request->hasFile('image')) {
+				unlink($path);
+			}
 			return redirect()->back()
 				->withErrors($exception->getMessage());
 		}
@@ -102,7 +133,13 @@ class SportTypeController extends Controller {
 
 		try {
 			$type = SportType::find($request->id);
-			$type->delete();
+
+			$path = storage_path('app/public/link_stream/image/').$type->image;
+			if (file_exists($path) && !is_dir($path)) {
+				unlink($path);
+			}
+
+			$type->forceDelete();
 
 			session()->flash('message', "{$type->name} successfully deleted");
 			return response()->json([

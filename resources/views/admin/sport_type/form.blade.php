@@ -83,12 +83,32 @@
               </div>
             </div>
 
+            @if (isset($data))
+              <div class="row">
+                <div class="col-5"></div>
+                <div class="col-7">
+                  @if (empty($data->image))
+                    <img src="/images/no-logo-1.png" style="width: 100%">
+                  @else
+                    <img src="{{"/storage/link_stream/image/{$data->image}" }}" style="width: 100%">
+                  @endif
+                </div>
+              </div>
+            @endif
+
             <div class="row">
               <div class="col-5">
-                <label for="stream_url">Link Stream *</label>
+                <label for="image">Banner</label>
               </div>
               <div class="col-7">
-                <input type="url" name="stream_url" id="stream_url" class="form-control" required value="{{ old('stream_url', isset($data) ? $data->stream_url : null) }}">
+                <input type="file" name="image" id="image" class="form-control" accept=".png, .jpg">
+                <div class="">
+                  @if (isset($data))
+                    <small>Masukkan file untuk mengganti gambar | File type: .jpg, .png</small><br><br>
+                  @else
+                    <small>File type: .jpg, .png</small><br><br>
+                  @endif
+                </div>
               </div>
             </div>
 

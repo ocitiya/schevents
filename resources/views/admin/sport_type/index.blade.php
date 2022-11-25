@@ -119,12 +119,16 @@
                   return data.abbreviation
                 }
               },
-              {data: 'user', title: 'Nama Pemilik', name: 'user',
+              {data: 'image', title: 'Banner', name: 'banner',
                 "render": function ( data, type, row, meta ) {
                   if (data === null) {
-                    return '-'
+                    return `
+                      <img src="/images/no-logo-1.png" style="width: 75px" class="mb-3">
+                    `
                   } else {
-                    return data.name || '-'
+                    return `
+                      <img src="/storage/link_stream/image/${data}" style="width: 75px" class="mb-3">
+                    `
                   }
                 }
               },
@@ -137,6 +141,13 @@
                     updateRoute = `/admin/sport/type/update/${data}?federation_id=${data.federation_id}`
                   }
 
+                  let name = row.name;
+                  if (row.name === null) {
+                     name = row.sport === null ? 'Not Found' : row.sport.name
+                  }
+
+                  name += ` - ${row.federation.abbreviation}`;
+
                   return `
                     <a href="${updateRoute}" class="btn btn-sm unrounded btn-primary">
                       <small>Edit Olahraga</small>
@@ -144,14 +155,14 @@
 
                     <button
                       data-id="${data}"
-                      data-name="${row.name}"
+                      data-name="${name}"
                       class="btn btn-sm btn-danger unrounded delete"
                     >
                       <small>Hapus Olahraga</small>
                     </button>
                   `;
                 }
-              },
+              }
             ]
         });
       });

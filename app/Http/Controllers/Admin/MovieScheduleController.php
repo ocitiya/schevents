@@ -18,6 +18,7 @@ use App\Models\OfferChannel;
 use Exception;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Session;
 
 class MovieScheduleController extends Controller {
 	protected $now;
@@ -176,7 +177,9 @@ class MovieScheduleController extends Controller {
 				]);
 			},
 			"campaign", "banner", "channel"
-		]);
+		])->when(Session::get("role") == "user", function ($q) {
+			$q->where("created_by", Auth::id());
+		});
 
 		$model = $this->_scheduleType($model, $state);
 		$model = $model->get();

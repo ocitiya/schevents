@@ -16,10 +16,12 @@
 
     <div class="data-container">
       <div class="data-header">
-        <a href="{{ route('admin.offer.masterdata.channel.create') }}" class="btn btn-primary btn-sm unrounded">
-          Tambah Channel&nbsp;
-          <i class="fa-solid fa-plus"></i>
-        </a>
+        @if(inRole(["superadmin", "admin"]))
+          <a href="{{ route('admin.offer.masterdata.channel.create') }}" class="btn btn-primary btn-sm unrounded">
+            Tambah Channel&nbsp;
+            <i class="fa-solid fa-plus"></i>
+          </a>
+        @endif
       </div>
 
       <div class="data-center">
@@ -89,26 +91,30 @@
             },
             {data: 'id', title: 'Aksi', name: 'action', orderable: false, searchable: false,
               "render": function ( data, type, row, meta ) {
-                let updateRoute;
-                updateRoute = `/admin/offer/masterdata/channel/update/${data}`;
+                if (["superadmin", "admin"].includes(role)) {
+                  let updateRoute;
+                  updateRoute = `/admin/offer/masterdata/channel/update/${data}`;
 
-                return `
-                  <div>
-                    <a href="${updateRoute}" class="btn btn-sm unrounded btn-primary">
-                      <small>Edit Channel</small>
-                    </a>
-                  </div>
+                  return `
+                    <div>
+                      <a href="${updateRoute}" class="btn btn-sm unrounded btn-primary">
+                        <small>Edit Channel</small>
+                      </a>
+                    </div>
 
-                  <div class="mt-2">
-                    <button
-                      data-id="${data}"
-                      data-name="${row.name}"
-                      class="btn btn-sm btn-danger unrounded delete"
-                    >
-                      <small>Hapus Channel</small>
-                    </button>
-                  </div>
-                `;
+                    <div class="mt-2">
+                      <button
+                        data-id="${data}"
+                        data-name="${row.name}"
+                        class="btn btn-sm btn-danger unrounded delete"
+                      >
+                        <small>Hapus Channel</small>
+                      </button>
+                    </div>
+                  `;
+                } else {
+                  return '-';
+                }
               }
             }
           ]

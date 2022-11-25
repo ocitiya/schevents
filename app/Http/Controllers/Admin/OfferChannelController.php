@@ -15,6 +15,7 @@ use App\Models\User;
 use Exception;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Session;
 
 class OfferChannelController extends Controller {
 	public function index (Request $request) {
@@ -134,7 +135,11 @@ class OfferChannelController extends Controller {
 	}
 
 	public function listDatatable(Request $request) {
-		$data = OfferChannel::with(["user"])->get();
+		$data = OfferChannel::with(["user"])
+			->when(Session::get("role") == "user", function ($q) {
+				$q->where("user_id", Auth::id());
+			})
+			->get();
 		
 		return Datatables::of($data)
 			->addIndexColumn()
