@@ -104,10 +104,11 @@ class CountiesController extends Controller {
 		return Datatables::of($data)->make(true);
 	}
 
-	public function list (Request $request) {
+	public function list (Request $request, $countryId = null) {
 		try {
 			$showAll = $request->has('showall') ? (boolean) $request->showall : false;
 			$search = $request->has('search') ? $request->search : null;
+			$countryId = $request->has('country_id') ? $request->country_id : null;
 
 			$page = $request->has('page') ? $request->page : 1;
 			if (empty($page)) $page = 1; 
@@ -116,6 +117,9 @@ class CountiesController extends Controller {
 			$model = County::with(['province'])
 				->when($search != null, function ($query) use ($search) {
 					$query->where('name', 'LIKE', '%'.$search.'%');
+				})
+				->when(!empty($countryId), function ($q) use ($countryId) {
+					$q->where("country_id", $countryId);
 				});
 
 			$model2 = $model;

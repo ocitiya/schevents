@@ -55,14 +55,26 @@
           <div class="col-6">
             <div class="row">
               <div class="col-5">
+                <label for="name">Negara *</label>
+              </div>
+              <div class="col-7">
+                <select name="country_id" class="select2 form-select" id="country_id">
+                  <option disabled selected value>Please select ...</option>
+                  @foreach ($countries as $item)
+                    <option value="{{ $item->id }}">{{ $item->name }}</option>
+                  @endforeach
+                </select>
+              </div>
+            </div>
+
+            <div class="row" id="state-container" style="display: none">
+              <div class="col-5">
                 <label for="name">State *</label>
               </div>
               <div class="col-7">
-                <select name="county_id" class="select2 form-select" id="county_id">
-                  <option disabled selected value>Please select ...</option>
-                  @foreach ($counties as $item)
-                    <option value="{{ $item->id }}">{{  $item->abbreviation}} - {{ $item->name }}</option>
-                  @endforeach
+                <select required name="county_id" class="form-select select2" id="county_id">
+                  <option disabled selected value>Silahkan pilih ...</option>
+                  {{-- Dynamic Data --}}
                 </select>
               </div>
             </div>
@@ -94,12 +106,28 @@
 @section('script')
   <script>
     const state_id = "<?php echo $state_id ?>";
+    const countrySelected = "<?php echo old('country_id', isset($data) ? $data->country_id : null) ?>";
     const countySelected = "<?php echo old('county_id', isset($data) ? $data->county_id : $state_id) ?>";
 
     let is_error = "<?php echo $errors->any() ? 1 : 0 ?>";
     is_error = !!parseInt(is_error);
 
     document.addEventListener('DOMContentLoaded', function() {
+      const getList = (endpoint) => {
+        return new Promise((resolve, reject) => {
+          fetch(endpoint)
+            .then(res => res.json())
+            .then(data => {
+              if (data.status) {
+                resolve(data.data.list)
+              } else {
+                alert(data.message)
+                reject()
+              }
+            })
+        })
+      }
+      
       if (is_error) {
         $('#submit').prop('disabled', true);
       }
@@ -111,6 +139,27 @@
         }
       });
 
+      $('#country_id').on('change', async function () {
+        const val = $(this).val()
+
+        await fetch(`/api/country/hasState/${val}`).then((res) => res.json())
+          .then(data => {
+            if (!data.status) {
+              $('#county_id').val('').change()
+              $('#county_id').prop('required', false);
+              $('#state-container').css('display', 'none');
+            } else {
+              $('#state-container').css('display', 'flex');
+              $('#county_id').prop('required', true);
+            }
+          })
+
+        const counties = await getList(`/api/county/list?showall=true&country_id=${val}`)
+        generateSelect('#county_id', counties, false)
+        $('#county_id').val(countySelected).change()
+      })
+
+      $('#country_id').val(countrySelected).change()
       $('#county_id').val(countySelected).change()
 
       if (state_id !== "") {

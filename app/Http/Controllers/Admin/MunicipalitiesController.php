@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Country;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
@@ -12,6 +13,7 @@ use DataTables;
 
 use App\Models\County;
 use App\Models\Municipality;
+use Illuminate\Database\QueryException;
 
 class MunicipalitiesController extends Controller {
 	public function index (Request $request) {
@@ -28,10 +30,10 @@ class MunicipalitiesController extends Controller {
 
 	public function create (Request $request) {
 		$state_id = $request->has('state_id') ? $request->state_id : null;
-    $counties = County::get();
+    $countries = Country::get();
     
     $data = [
-			"counties" => $counties,
+			"countries" => $countries,
 			"state_id" => $state_id
 		];
 
@@ -40,12 +42,12 @@ class MunicipalitiesController extends Controller {
 
 	public function update (Request $request, $id) {
 		$state_id = $request->has('state_id') ? $request->state_id : null;
-    $counties = County::get();
+    $countries = Country::get();
 		$municipality = Municipality::find($id);
 
 		$data = [
 			"data" => $municipality,
-			"counties" => $counties,
+			"countries" => $countries,
 			"state_id" => $state_id
 		];
 
@@ -63,7 +65,8 @@ class MunicipalitiesController extends Controller {
 		$isCreate = $request->id == null ? true : false;
 		
 		$validated = $request->validate([
-      'county_id' => 'required|uuid',
+      'country_id' => 'required|uuid',
+      'county_id' => 'nullable|uuid',
 			'name' => 'required|max:255',
 			'logo' => 'nullable|mimes:jpg,png'
 		]);
@@ -90,6 +93,7 @@ class MunicipalitiesController extends Controller {
 		}
 		
 		try {
+			$municipality->country_id = $request->country_id;
 			$municipality->county_id = $request->county_id;
 			$municipality->name = ucwords($request->name);
 			$municipality->save();
@@ -103,7 +107,6 @@ class MunicipalitiesController extends Controller {
 					->route("admin.location.municipalities.index")
 					->with('success', 'Data successfully saved');
 			}
-
 		} catch (QueryException $exception) {
 			return redirect()->back()
 				->withErrors($exception->getMessage());
@@ -119,6 +122,7 @@ class MunicipalitiesController extends Controller {
 				$subQuery->where('county_id', $stateId);
 			})
 			->get();
+			
 		return Datatables::of($data)->make(true);
 	}
 

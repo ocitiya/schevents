@@ -41,6 +41,7 @@
           action="{{ route('admin.location.countries.store') }}"
           method="POST"
           autocomplete="off"
+          enctype="multipart/form-data"
           class="form-container row"
         >
           {{ csrf_field() }}
@@ -53,7 +54,7 @@
                 <label for="name">Nama Negara *</label>
               </div>
               <div class="col-7">
-                <input type="text" id="name" name="name" class="form-control"
+                <input type="text" id="name" name="name" class="form-control" required
                   value="{{ old('name', isset($data) ? $data->name : null) }}"
                 >
               </div>
@@ -61,29 +62,51 @@
 
             <div class="row">
               <div class="col-5">
-                <label for="alpha2_code">Kode Negara *</label>
+                <label for="alpha3_code">Singkatan *</label>
               </div>
               <div class="col-7">
-                <input type="text" id="alpha2_code" name="alpha2_code" class="form-control"
-                  value="{{ old('alpha2_code', isset($data) ? $data->alpha2_code : null) }}"
+                <input type="text" id="alpha3_code" name="alpha3_code" class="form-control" required
+                  value="{{ old('alpha3_code', isset($data) ? $data->alpha3_code : null) }}"
                 >
                 <div class="text-secondary">
-                  <small>Gunakan dua karakter kode negara.</small><br/>
-                  <small>ISO 3166-1 alpha-2</small>
+                  <small>Gunakan tiga karakter singkatan.</small><br/>
+                  {{-- <small>ISO 3166-1 alpha-2</small> --}}
+                </div>
+              </div>
+            </div>
+
+            @if (isset($data) && !empty($data->image))
+              <div class="row">
+                <div class="col-5"></div>
+                <div class="col-7">
+                  <img src="{{"/storage/countries/image/{$data->image}" }}" style="width: 100%">
+                </div>
+              </div>
+            @endif
+
+            <div class="row">
+              <div class="col-5">
+                <label for="image">Gambar</label>
+              </div>
+              <div class="col-7">
+                <input type="file" name="image" id="image" class="form-control" accept=".png, .jpg">
+                <div class="">
+                  @if (isset($data))
+                    <small>Upload again to change image | File type: .jpg, .png</small><br><br>
+                  @else
+                    <small>File type: .jpg, .png</small><br><br>
+                  @endif
                 </div>
               </div>
             </div>
 
             <div class="row">
               <div class="col-5">
-                <label for="dial_code">Kode Telepon *</label>
-              </div>
-              <div class="col-7">
-                <input type="text" id="dial_code" name="dial_code" class="form-control"
-                  value="{{ old('dial_code', isset($data) ? $data->dial_code : null) }}"
-                >
-                <div class="text-secondary">
-                  <small>Ex. +62</small><br/>
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" value="" id="has_state" name="has_state">
+                  <label class="form-check-label" for="has_state">
+                    Punya State ?
+                  </label>
                 </div>
               </div>
             </div>
@@ -101,4 +124,14 @@
       </div>
     </div>
   </div>
+@endsection
+
+@section('script')
+  <script>
+    const hasState = "<?php echo old('has_state', isset($data) ? $data->has_state : 0) ?>";
+
+    document.addEventListener('DOMContentLoaded', function () {
+      if (hasState == 1) { $('#has_state').prop('checked', true); }
+    });
+  </script>
 @endsection

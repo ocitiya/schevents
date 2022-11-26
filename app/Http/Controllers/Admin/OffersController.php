@@ -45,7 +45,7 @@ class OffersController extends Controller {
 	}
 
 	public function detail ($id) {
-		$offers= Offers::find($id);
+		$offers= Offers::with(["campaign", "banner", "channel"])->find($id);
 		$data = [ "data" => $offers];
 
 		return view('admin.offers.detail', $data);

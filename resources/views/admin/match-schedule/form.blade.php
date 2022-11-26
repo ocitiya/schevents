@@ -377,7 +377,7 @@
     }
 
     const generateSelectSport = async (federation_id) => {
-      const sports = await getList(`/api/sport-type/list?showall=true&federation_id=${federation_id}&user_id=${userid}`)
+      const sports = await getList(`/api/sport-type/list?showall=true&federation_id=${federation_id}`)
       $('#sport_type_id').empty()
 
       $('#sport_type_id').append('<option disabled selected value>Please select ...</option')
@@ -400,6 +400,10 @@
 
       $('#federation_id').on('change', async function () {
         const val = $(this).val()
+
+        $('#sport_type_id').append('<option disabled selected value>Loading ...</option')
+        $('#school1_id').append('<option disabled selected value>Loading ...</option')
+        $('#school2_id').append('<option disabled selected value>Loading ...</option')
 
         const schools = await getList(`/api/school/list?showall=true&federation_id=${val}`)
         generateSelect('#school1_id', schools, false)

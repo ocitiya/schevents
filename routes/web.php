@@ -148,6 +148,17 @@ Route::middleware(['haveInstalled'])->group(function () {
           Route::post('/store', [CountiesController::class, 'store'])->name('store');
         });
 
+        // admin.location.countries
+        Route::group(['prefix' => 'countries', 'as' => 'countries.'], function () {
+          Route::get('/', [CountriesController::class, 'index'])->name('index');
+          Route::get('/create', [CountriesController::class, 'create'])->name('create');
+          Route::get('/update/{id}', [CountriesController::class, 'update'])->name('update');
+          Route::get('/detail/{id}', [CountriesController::class, 'detail'])->name('detail');
+
+          Route::post('/store', [CountriesController::class, 'store'])->name('store');
+          Route::post('/delete', [CountriesController::class, 'delete'])->name('delete');
+        });
+
         // admin.location.municipalities
         Route::group(['prefix' => 'municipalities', 'as' => 'municipalities.'], function () {
           Route::get('/', [MunicipalitiesController::class, 'index'])->name('index');

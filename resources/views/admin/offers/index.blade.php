@@ -97,26 +97,42 @@
             },
             {data: 'id', title: 'Aksi', name: 'action', orderable: false, searchable: false,
               "render": function ( data, type, row, meta ) {
-                let updateRoute;
-                updateRoute = `/admin/offer/update/${data}`;
+                const updateRoute = `/admin/offer/update/${data}`;
+                const detailRoute = `/admin/offer/detail/${data}`;
 
-                return `
-                  <div>
-                    <a href="${updateRoute}" class="btn btn-sm unrounded btn-primary">
-                      <small>Edit Promosi</small>
-                    </a>
-                  </div>
+                if (['user'].includes(role)) {
+                  return `
+                    <div>
+                      <a href="${detailRoute}" class="btn btn-sm unrounded btn-primary">
+                        <small>Detail Promosi</small>
+                      </a>
+                    </div>
+                  `;
+                } else if (['admin', 'superadmin'].includes(role)) {
+                  return `
+                    <div>
+                      <a href="${detailRoute}" class="btn btn-sm unrounded btn-primary">
+                        <small>Detail Promosi</small>
+                      </a>
+                    </div>
 
-                  <div class="mt-2">
-                    <button
-                      data-id="${data}"
-                      data-campaign="${row.campaign.name}"
-                      class="btn btn-sm btn-danger unrounded delete"
-                    >
-                      <small>Hapus Promosi</small>
-                    </button>
-                  </div>
-                `;
+                    <div class="mt-2">
+                      <a href="${updateRoute}" class="btn btn-sm unrounded btn-primary">
+                        <small>Edit Promosi</small>
+                      </a>
+                    </div>
+
+                    <div class="mt-2">
+                      <button
+                        data-id="${data}"
+                        data-campaign="${row.campaign.name}"
+                        class="btn btn-sm btn-danger unrounded delete"
+                      >
+                        <small>Hapus Promosi</small>
+                      </button>
+                    </div>
+                  `;
+                }
               }
             }
           ]

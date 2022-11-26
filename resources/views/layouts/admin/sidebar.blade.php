@@ -25,6 +25,16 @@
         >
           @if (inRole(["superadmin"]))
             <li
+              class="{{ str_contains(Request::route()->getName(), 'admin.location.countries') ? 'active' : null }}"
+            >
+              <a href="{{ route('admin.location.countries.index') }}">
+                Negara
+              </a>
+            </li>
+          @endif
+
+          @if (inRole(["superadmin"]))
+            <li
               class="{{ str_contains(Request::route()->getName(), 'admin.location.counties') ? 'active' : null }}"
             >
               <a href="{{ route('admin.location.counties.index') }}">
@@ -318,7 +328,7 @@
           </div>
         </div>
 
-        @if(inRole(["superadmin", "admin"]))
+        @if(inRole(["superadmin", "admin", "user"]))
           <li
             class="{{ str_contains(Request::route()->getName(), 'admin.offer.index') ? 'active' : null }}"
           >

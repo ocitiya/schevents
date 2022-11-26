@@ -5,76 +5,148 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Storage;
+use Intervention\Image\Facades\Image;
 
+use DataTables;
+
+// use App\Models\County;
 use App\Models\Country;
+use Illuminate\Database\QueryException;
+use Yajra\DataTables\Contracts\DataTable;
 
-class CountriesController extends Controller {
+class countriesController extends Controller {
 	public function index (Request $request) {
-		return view('admin.countries.index');
+		$state_id = $request->has('state_id') ? $request->state_id : null;
+
+    $data = [ "state_id" => $state_id ];
+    if ($state_id != null) {
+      $stateName = Country::find($state_id)->name;
+      $data["state_name"] = $stateName;
+    }
+
+		return view('admin.countries.index', $data);
 	}
 
-	public function create () {
-		return view('admin.countries.form');
+	public function create (Request $request) {
+    $counties = Country::get();
+    
+    $data = [
+			"counties" => $counties
+		];
+
+		return view('admin.countries.form', $data);
 	}
 
-	public function update ($id) {
-		$countries = Country::find($id);
-		$data = [ "data" => $countries ];
+	public function update (Request $request, $id) {
+		$data = [
+			"data" => Country::find($id)
+		];
 
 		return view('admin.countries.form', $data);
 	}
 
 	public function detail ($id) {
-		$countries = Country::find($id);
-		$data = [ "data" => $countries ];
+		$country = Country::with(['county'])->find($id);
+		$data = [ "data" => $country ];
 
 		return view('admin.countries.detail', $data);
 	}
 
 	public function store (Request $request) {
+		$isCreate = $request->id == null ? true : false;
+		
 		$validated = $request->validate([
 			'name' => 'required|max:255',
-			'alpha2_code' => 'required|size:2',
-			'dial_code' => 'required'
+			'alpha3_code' => 'nullable|min:3|max:3',
+			'image' => 'nullable|file|mimes:jpg,png'
 		]);
 
-		$isCreate = $request->id == null ? true : false;
-
-		$countries = null;
+		$country = null;
 		if ($isCreate) {
-			$countries = new Country;
-			$countries->id = Str::uuid();
+			$country = new Country;
+			$country->id = Str::uuid();
 		} else {
-			$countries = Country::find($request->id);
+			$country = Country::find($request->id);
+			if ($request->hasFile('image')) {
+				$oldPath = storage_path('app/public/countries/image/').$country->image;
+				if (file_exists($oldPath) && is_file($oldPath)) {
+					unlink($oldPath);
+				}
+			}
+		}
+
+		if ($request->hasFile('image')) {
+			if(!Storage::exists("/public/countries/image")) Storage::makeDirectory("/public/countries/image");
+			$file = $request->file('image');
+
+			$filenameWithExt = $request->file('image')->getClientOriginalName();
+			$filename = pathinfo($filenameWithExt, PATHINFO_FILENAME);
+			$extension = $request->file('image')->getClientOriginalExtension();
+
+			$filename = $filename.'_'.time().'.'.$extension;
+			$path = storage_path('app/public/countries/image/').$filename;
+			$file->storeAs('public/countries/image', $filename);
+
+			// Resize image
+			$img = Image::make($file->getRealPath())
+				->resize(512, 512, function ($constraint) {
+					$constraint->aspectRatio();
+				})
+				->save($path, 80);
 		}
 		
 		try {
-			$countries->name = $request->name;
-			$countries->alpha2_code = $request->alpha2_code;
-			$countries->dial_code = $request->dial_code;
-			$countries->save();
+			$country->name = ucwords($request->name);
+			$country->alpha3_code = $request->alpha3_code;
+			$country->has_state = $request->has('has_state') ? 1 : 0;
+			if ($request->hasFile('image')) $country->image = $filename;
+			$country->save();
 
 			return redirect()
 				->route("admin.location.countries.index")
 				->with('success', 'Data successfully saved');
+
 		} catch (QueryException $exception) {
+			unlink($path);
 			return redirect()->back()
 				->withErrors($exception->getMessage());
 		}
 	}
 
+	public function listDatatable(Request $request) {
+		$stateId = isset($request->state_id) ? $request->state_id : null;
+		
+		$data = Country::get();
+			
+		return Datatables::of($data)->make(true);
+	}
+
 	public function list (Request $request) {
 		try {
+			$showAll = $request->has('showall') ? (boolean) $request->showall : false;
+			$search = $request->has('search') ? $request->search : null;
+			$id = $request->has('id') ? $request->id : null;
+			
 			$page = $request->has('page') ? $request->page : 1;
 			if (empty($page)) $page = 1; 
-			$search = $request->has('search') ? $request->search : null;
-			$limit = $request->has('limit') ? $request->limit : 10;
+			
+			$limit = 10;
 
-			$countries = Country::when($search != null, function ($query) use ($search) {
-				$query->where('name', 'LIKE', '%'.$search.'%');
+			$model = Country::when($search != null, function ($query) use ($search) {
+					$query->where('name', 'LIKE', '%'.$search.'%');
+				})
+				->when($id != null, function ($query) use ($id) {
+					$query->where('id', $id);
+				});
+
+			$model2 = $model;
+			$total = $model2->count();
+
+			$countries = $model->when(!$showAll, function ($query) use ($limit, $page) {
+				$query->take($limit)->skip(($page - 1) * $limit);
 			})
-				->take($limit)
-				->skip(($page - 1) * $limit)
+				->orderBy('name')
 				->get();
 
 			$total = Country::when($search != null, function ($query) use ($search) {
@@ -94,6 +166,50 @@ class CountriesController extends Controller {
 						"total_page" => ceil($total / $limit)
 					]
 				]
+			]);
+		} catch (QueryException $exception) {
+			return response()->json([
+				"status" => false,
+				"message" => $exception->getMessage()
+			]);
+		}
+	}
+
+	public function delete (Request $request) {
+		$validated = $request->validate([
+			'id' => 'required|uuid'
+		]);
+
+		try {
+			$country= Country::find($request->id);
+
+			// $oldPath = storage_path('app/public/countries/image/').$country->image;
+			// if (file_exists($oldPath) && !is_dir($oldPath)) {
+			// 	unlink($oldPath);
+			// }
+
+			$country->delete();
+
+			$request->session()->flash('message', "{$country->name} successfully deleted");
+			return response()->json([
+				"status" => true,
+				"message" => null
+			]);
+		} catch (QueryException $exception) {
+			return response()->json([
+				"status" => false,
+				"message" => $exception->getMessage()
+			]);
+		}
+	}
+
+	public function hasState ($id) {
+		try {
+			$data = Country::find($id);
+			
+			return response()->json([
+				"status" => $data->has_state == 1 ? true : false,
+				"message" => null
 			]);
 		} catch (QueryException $exception) {
 			return response()->json([

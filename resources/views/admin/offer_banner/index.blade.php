@@ -68,7 +68,7 @@
           })
         }
       });
-    })
+    });
 
     document.addEventListener('DOMContentLoaded', async function () {
       $(function () {

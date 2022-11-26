@@ -64,9 +64,14 @@
           {data: 'schools_count', title: 'Jumlah Sekolah', name: 'schools_count'},
           {data: 'county', title: 'State', name: 'county', 
             "render": function ( data, type, row, meta ) {
-              return `${row.county.abbreviation} - ${data.name}`
+              if (row.county === null) {
+                return '-';
+              } else {
+                return `${row.county.abbreviation} - ${data.name}`
+              }
             }
           },
+          
           {data: 'id', title: 'Aksi', orderable: false, searchable: false,
             "render": function ( data, type, row, meta ) {
               let updateRoute

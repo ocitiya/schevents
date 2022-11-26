@@ -54,8 +54,13 @@ Route::get('/app/detail', [AppController::class, 'detail']);
 Route::get('/country/list', [CountriesController::class, 'list']);
 Route::get('/province/list/{country_id?}', [ProvincesController::class, 'list']);
 
-Route::get('/county/list/{province_id?}', [CountiesController::class, 'list']);
+Route::get('/county/list', [CountiesController::class, 'list']);
 Route::post('/county/validate', [CountiesController::class, 'validateCounty']);
+
+// /api/country
+Route::get('/country/list', [CountriesController::class, 'list']);
+Route::get('/country/listDatatable', [CountriesController::class, 'listDatatable']);
+Route::get('/country/hasState/{id}', [CountriesController::class, 'hasState']);
 
 Route::get('/municipality/list/{county_id?}', [MunicipalitiesController::class, 'list']);
 
