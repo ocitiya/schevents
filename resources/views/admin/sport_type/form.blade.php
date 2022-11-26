@@ -74,14 +74,14 @@
               </div>
             </div>
 
-            <div class="row">
+            {{-- <div class="row">
               <div class="col-5">
                 <label for="stream_url">Nama Pemilik</label>
               </div>
               <div class="col-7">
                 <input type="text" class="form-control" value="{{ Auth::user()->name }}" disabled>
               </div>
-            </div>
+            </div> --}}
 
             @if (isset($data))
               <div class="row">

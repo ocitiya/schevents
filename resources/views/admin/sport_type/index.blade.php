@@ -20,18 +20,16 @@
 
     <div class="data-container">
       <div class="data-header">
-        @if (inRole(["user"]))
-          @if ($default_federation != null)
-            <a href="{{ route('admin.sport.type.create')."?federation_id={$default_federation}" }}" class="btn btn-primary btn-sm unrounded">
-              Tambah Olahraga&nbsp;
-              <i class="fa-solid fa-plus"></i>
-            </a>
-          @else
-            <a href="{{ route('admin.sport.type.create') }}" class="btn btn-primary btn-sm unrounded">
-              Tambah Olahraga&nbsp;
-              <i class="fa-solid fa-plus"></i>
-            </a>
-          @endif
+        @if ($default_federation != null)
+          <a href="{{ route('admin.sport.type.create')."?federation_id={$default_federation}" }}" class="btn btn-primary btn-sm unrounded">
+            Tambah Link Stream&nbsp;
+            <i class="fa-solid fa-plus"></i>
+          </a>
+        @else
+          <a href="{{ route('admin.sport.type.create') }}" class="btn btn-primary btn-sm unrounded">
+            Tambah Link Stream&nbsp;
+            <i class="fa-solid fa-plus"></i>
+          </a>
         @endif
       </div>
 
