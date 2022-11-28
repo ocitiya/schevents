@@ -54,6 +54,20 @@
           <div class="col-7">
             <div class="row">
               <div class="col-5">
+                <label for="name">Kejuaraan</label>
+              </div>
+              <div class="col-7">
+                <select name="championship_id" class="form-select select2" id="championship_id">
+                  <option selected value>Please select ...</option>
+                  @foreach ($championships as $item)
+                    <option value="{{ $item->id }}">{{ $item->name }}</option>
+                  @endforeach
+                </select>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-5">
                 <label for="name">Federasi *</label>
               </div>
               <div class="col-7">
@@ -80,7 +94,7 @@
 
             <div class="row">
               <div class="col-5">
-                <label for="name">Sekolah *</label>
+                <label for="name">Tim *</label>
               </div>
               <div class="col-7">
                 <select required name="school1_id" class="form-select select2" id="school1_id">
@@ -138,7 +152,7 @@
 
             <div class="row">
               <div class="col-5">
-                <label for="name">Sekolah 2 *</label>
+                <label for="name">Tim 2 *</label>
               </div>
               <div class="col-7">
                 <select required name="school2_id" class="form-select select2" id="school2_id">
@@ -318,6 +332,7 @@
   <script>
     const defaultFederation = "<?php echo $federation_id ?>";
 
+    const championshipSelected = "<?php echo old('championship_id', isset($data) ? $data->championship_id : null) ?>";
     const federationSelected = "<?php echo old('federation_id', isset($data) ? $data->federation_id : $federation_id) ?>";
     const sportSelected = "<?php echo old('sport_type_id', isset($data) ? $data->sport_type_id : null) ?>";
     const school1Selected = "<?php echo old('school1_id', isset($data) ? $data->school1_id : null) ?>";
@@ -423,12 +438,13 @@
         validateLP();
       });
       
-      $('#federation_id').val(federationSelected).change()
-      $('#team_gender').val(teamGenderSelected).change()
-      $('#time_hour').val(timeHourSelected).change()
-      $('#time_minute').val(timeMinuteSelected).change()
-      $('#team_type_id').val(teamTypeSelected).change()
-      $('#stadium_id').val(stadiumSelected).change()
+      $('#championship_id').val(championshipSelected).change();
+      $('#federation_id').val(federationSelected).change();
+      $('#team_gender').val(teamGenderSelected).change();
+      $('#time_hour').val(timeHourSelected).change();
+      $('#time_minute').val(timeMinuteSelected).change();
+      $('#team_type_id').val(teamTypeSelected).change();
+      $('#stadium_id').val(stadiumSelected).change();
       $('#channel_id').val(channelSelected).change();
       $('#lp_type_id').val(typeSelected).change();
 

@@ -262,6 +262,6 @@
         $('#country_id').val(countrySelected).change()
         $('#county_id').val(stateSelected).change()
       }
-    })
+    });
   </script>
 @endsection

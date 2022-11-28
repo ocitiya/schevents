@@ -21,7 +21,7 @@
     <div class="data-container">
       <div class="data-header">
         @if ($default_city != null)
-          <a href="{{ route('admin.school.create')."?state_id={$default_state}&city_id={$default_city}" }}" class="btn btn-primary btn-sm unrounded">
+          <a href="{{ route('admin.school.create')."?country_id=${default_country}&state_id={$default_state}&city_id={$default_city}" }}" class="btn btn-primary btn-sm unrounded">
             Tambah Sekolah&nbsp;
             <i class="fa-solid fa-plus"></i>
           </a>
@@ -87,85 +87,87 @@
 
       $(function () {
         table = $('#datatable').DataTable({
-            processing: true,
-            serverSide: true,
-            ajax: {
-              url: "/api/school/listDatatable",
-              type: 'POST',
-              data: {
-                city_id
+          dom: '<"dt-top"if><"dt-t"rt><"dt-bottom"lp><"clear">',
+          processing: true,
+          serverSide: true,
+          ajax: {
+            url: "/api/school/listDatatable",
+            type: 'POST',
+            data: {
+              city_id
+            }
+          },
+          columns: [
+            {data: 'name', title: 'Name', name: 'name'},
+            {data: 'federation', title: 'Singkatan Federasi', name: 'federation',
+              "render": function ( data, type, row, meta ) {
+                return `
+                  ${data.abbreviation}
+                `
               }
             },
-            columns: [
-              {data: 'name', title: 'Name', name: 'name'},
-              {data: 'federation', title: 'Singkatan Federasi', name: 'federation',
-                "render": function ( data, type, row, meta ) {
+            {data: 'municipality', title: 'Kota', name: 'municipality',
+              "render": function ( data, type, row, meta ) {
+                return `
+                  ${data.name}
+                `
+              }
+            },
+            {data: 'logo', title: 'Logo', name: 'logo',
+              "render": function ( data, type, row, meta ) {
+                if (data === null) {
                   return `
-                    ${data.abbreviation}
+                    <img src="/images/no-logo-1.png" style="width: 75px" class="mb-3">
+                  `
+                } else {
+                  return `
+                    <img src="/storage/school/logo/${data}" style="width: 75px" class="mb-3">
                   `
                 }
-              },
-              {data: 'municipality', title: 'Kota', name: 'municipality',
-                "render": function ( data, type, row, meta ) {
-                  return `
-                    ${data.name}
-                  `
+              }
+            },
+            {data: 'county', title: 'State', name: 'county',
+              "render": function ( data, type, row, meta ) {
+                if (data === null) {
+                  return '-';
+                } else {
+                  return `${row.county.abbreviation} - ${data.name}`;
                 }
-              },
-              {data: 'logo', title: 'Logo', name: 'logo',
-                "render": function ( data, type, row, meta ) {
-                  if (data === null) {
-                    return `
-                      <img src="/images/no-logo-1.png" style="width: 75px" class="mb-3">
-                    `
-                  } else {
-                    return `
-                      <img src="/storage/school/logo/${data}" style="width: 75px" class="mb-3">
-                    `
-                  }
+              }
+            },
+            {data: 'id', title: 'Aksi', orderable: false, searchable: false,
+              "render": function ( data, type, row, meta ) {
+                let updateRoute
+                if (isCityDefault) {
+                  updateRoute = `/admin/school/update/${data}?state_id=${state_id}&city_id=${city_id}`
+                } else {
+                  updateRoute = `/admin/school/update/${data}`
                 }
-              },
-              {data: 'county', title: 'State', name: 'county',
-                "render": function ( data, type, row, meta ) {
-                  return `
-                    ${row.county.abbreviation} - ${data.name}
-                  `
-                }
-              },
-              {data: 'id', title: 'Aksi', orderable: false, searchable: false,
-                "render": function ( data, type, row, meta ) {
-                  let updateRoute
-                  if (isCityDefault) {
-                    updateRoute = `/admin/school/update/${data}?state_id=${state_id}&city_id=${city_id}`
-                  } else {
-                    updateRoute = `/admin/school/update/${data}`
-                  }
 
-                  let deleteButton = '';
-                  if (['admin', 'superadmin'].includes(role)) {
-                    deleteButton = `
-                      <button
-                        data-id="${data}"
-                        data-name="${row.name}"
-                        class="btn btn-sm btn-danger unrounded delete"
-                      >
-                        <small>Hapus Sekolah</small>
-                      </button>
-                    `;
-                  }
-
-                  return `
-                    <a href="${updateRoute}" class="btn btn-sm unrounded btn-primary">
-                      <small>Edit Sekolah</small>
-                    </a>
-
-                    ${deleteButton}
+                let deleteButton = '';
+                if (['admin', 'superadmin'].includes(role)) {
+                  deleteButton = `
+                    <button
+                      data-id="${data}"
+                      data-name="${row.name}"
+                      class="btn btn-sm btn-danger unrounded delete"
+                    >
+                      <small>Hapus Sekolah</small>
+                    </button>
                   `;
                 }
-              },
-            ]
-        });
 
+                return `
+                  <a href="${updateRoute}" class="btn btn-sm unrounded btn-primary">
+                    <small>Edit Sekolah</small>
+                  </a>
+
+                  ${deleteButton}
+                `;
+              }
+            },
+          ]
+        });
       });
     })
   </script>

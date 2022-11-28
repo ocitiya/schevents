@@ -19,10 +19,12 @@ use App\Models\Federation;
 
 class SchoolController extends Controller {
   public function index (Request $request) {
+    $defaultCountry = $request->has("country_id") ? $request->country_id : null;
     $defaultState = $request->has("state_id") ? $request->state_id : null;
     $defaultCity = $request->has("city_id") ? $request->city_id : null;
 
     $data = [
+      "default_country" => $defaultCountry,
       "default_state" => $defaultState,
       "default_city" => $defaultCity,
       "city_name" => ($defaultCity != null) ? Municipality::find($defaultCity)->name : null
@@ -32,9 +34,17 @@ class SchoolController extends Controller {
   }
 
   public function create (Request $request) {
+    $defaultCountry = $request->has("country_id") ? $request->country_id : null;
+    $defaultState = $request->has("state_id") ? $request->state_id : null;
+    $defaultCity = $request->has("city_id") ? $request->city_id : null;
+
+    if ($defaultState == "null") $defaultState = null;
+
     $data = [
-      "default_state" => $request->has("state_id") ? $request->state_id : null,
-      "default_city" => $request->has("city_id") ? $request->city_id : null,
+      "countries" => Country::get(),
+      "default_country" => $defaultCountry,
+      "default_state" => $defaultState,
+      "default_city" => $defaultCity,
       "federations" => Federation::get()
     ];
 
@@ -45,6 +55,7 @@ class SchoolController extends Controller {
     $types = School::find($id);
 
     $data = [
+      "countries" => Country::get(),
       "data" => $types,
       "default_state" => $request->has("state_id") ? $request->state_id : null,
       "default_city" => $request->has("city_id") ? $request->city_id : null,
@@ -72,8 +83,9 @@ class SchoolController extends Controller {
   public function store (Request $request) {
     $validation = [
       'name' => 'required|max:255',
-      'nickname' => 'required|string',
-      'county_id' => 'required|uuid',
+      'nickname' => 'nullable|string',
+      'country_id' => 'required|uuid',
+      'county_id' => 'nullable|uuid',
       'municipality_id' => 'required|uuid',
       'federation_id' => 'required|uuid',
       'association_id' => 'uuid',
@@ -140,7 +152,7 @@ class SchoolController extends Controller {
     try {
       $school->name = $request->name;
       $school->nickname = $request->nickname;
-      $school->country_id = Country::first()->id;
+      $school->country_id = $request->country_id;
       $school->county_id = $request->county_id;
       $school->municipality_id = $request->municipality_id;
       $school->federation_id = $request->federation_id;

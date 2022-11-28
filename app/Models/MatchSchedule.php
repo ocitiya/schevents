@@ -70,6 +70,10 @@ class MatchSchedule extends Model {
 		return $this->belongsTo(OfferChannel::class, "channel_id");
 	}
 
+	public function championship () {
+		return $this->belongsTo(Championships::class);
+	}
+
 	public function getLpsportAttribute () {
 		return LPSports::where("lp_type_id", $this->lp_type_id)
 			->where("channel_id", $this->channel_id)

@@ -22,6 +22,7 @@ use App\Http\Controllers\Admin\StadiumController;
 use App\Http\Controllers\Admin\TeamTypeController;
 use App\Http\Controllers\Admin\AssociationController;
 use App\Http\Controllers\Admin\BannerController;
+use App\Http\Controllers\Admin\ChampionshipController;
 use App\Http\Controllers\Admin\EventController;
 use App\Http\Controllers\Admin\FederationController;
 use App\Http\Controllers\Admin\LPMovieController;
@@ -358,6 +359,18 @@ Route::middleware(['haveInstalled'])->group(function () {
 
     // /admin/masterdata
     Route::group(['prefix' => 'masterdata', 'as' => 'masterdata.'], function () {
+
+      // /admin/masterdata/championship
+      Route::group(['prefix' => 'championship', 'as' => 'championship.'], function () {
+        Route::get('/', [ChampionshipController::class, 'index'])->name('index');
+        Route::get('/create', [ChampionshipController::class, 'create'])->name('create');
+        Route::get('/update/{id}', [ChampionshipController::class, 'update'])->name('update');
+        Route::get('/detail/{id}', [ChampionshipController::class, 'detail'])->name('detail');
+
+        Route::post('/store', [ChampionshipController::class, 'store'])->name('store');
+        Route::post('/delete', [ChampionshipController::class, 'delete'])->name('delete');
+        Route::post('/delete-all', [ChampionshipController::class, 'deleteAll'])->name('delete');
+      });
 
       // /admin/masterdata/event
       Route::group(['prefix' => 'event', 'as' => 'event.'], function () {

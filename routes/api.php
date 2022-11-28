@@ -18,6 +18,7 @@ use App\Http\Controllers\Admin\StadiumController;
 use App\Http\Controllers\Admin\TeamTypeController;
 use App\Http\Controllers\Admin\AssociationController;
 use App\Http\Controllers\Admin\BannerController;
+use App\Http\Controllers\Admin\ChampionshipController;
 use App\Http\Controllers\Admin\EventController;
 use App\Http\Controllers\Admin\FederationController;
 use App\Http\Controllers\Admin\LPMovieController;
@@ -70,8 +71,14 @@ Route::post('/school/validate', [SchoolController::class, 'validateSchool']);
 Route::get('/school/detail/{school_id?}', [SchoolController::class, 'detailApi']);
 Route::get('/school/random', [SchoolController::class, 'random']);
 
+// /api/stadium
 Route::get('/stadium/list', [StadiumController::class, 'list']);
 Route::get('/stadium/listDatatable', [StadiumController::class, 'listDatatable']);
+
+// /api/championship
+Route::get('/championship/list', [ChampionshipController::class, 'list']);
+Route::get('/championship/listDatatable', [ChampionshipController::class, 'listDatatable']);
+Route::post('/championship/validate', [ChampionshipController::class, 'validateName']);
 
 Route::get('/state/listDatatable', [CountiesController::class, 'listDatatable']);
 Route::post('/city/listDatatable', [MunicipalitiesController::class, 'listDatatable']);

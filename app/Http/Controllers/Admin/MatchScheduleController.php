@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Championships;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -67,7 +68,8 @@ class MatchScheduleController extends Controller {
       "team_types" => TeamType::get(),
       "federations" => Federation::get(),
       "federation_id" => $federation_id,
-      "stadiums" => Stadium::get()
+      "stadiums" => Stadium::get(),
+      "championships" => Championships::get()
     ];
 
     return view('admin.match-schedule.form', $data);
@@ -88,7 +90,8 @@ class MatchScheduleController extends Controller {
       "team_types" => TeamType::get(),
       "federations" => Federation::get(),
       "federation_id" => $federation_id,
-      "stadiums" => Stadium::get()
+      "stadiums" => Stadium::get(),
+      "championships" => Championships::get()
     ];
 
     return view('admin.match-schedule.form', $data);
@@ -104,6 +107,7 @@ class MatchScheduleController extends Controller {
 
   public function store (Request $request) {
     $validated = $request->validate([
+      'championship_id' => 'nullable|int',
       'federation_id' => 'required|uuid',
       'sport_type_id' => 'required|uuid',
       'school1_id' => 'required|uuid',
@@ -159,6 +163,7 @@ class MatchScheduleController extends Controller {
     $datetime = "{$request->date} {$request->time_hour}:{$request->time_minute}";
     $sport = SportType::find($request->sport_type_id);
 
+    $keywords = 
     $keywords = [
       $school1->name,
       $school2->name,
@@ -169,24 +174,30 @@ class MatchScheduleController extends Controller {
       $team_type->name
     ];
 
-    if (!empty($school1->association)) {
-      $abbr = str_replace("-", "", $school1->association->abbreviation);
-      $abbr = str_replace(" ", "", $abbr);
-      array_push($keywords, $abbr);
+    if (empty($request->championship_id)) {
+      if (!empty($school1->association)) {
+        $abbr = str_replace("-", "", $school1->association->abbreviation);
+        $abbr = str_replace(" ", "", $abbr);
+        array_push($keywords, $abbr);
+      }
+  
+      if (!empty($school2->association)) {
+        $abbr = str_replace("-", "", $school2->association->abbreviation);
+        $abbr = str_replace(" ", "", $abbr);
+        array_push($keywords, $abbr);
+      }
+  
+      array_push($keywords, "{$federation->abbreviation}{$sport->name}"); 
+    } else {
+      $championship = Championships::find($request->championship_id)->name;
+      array_push($keywords, $championship); 
     }
-
-    if (!empty($school2->association)) {
-      $abbr = str_replace("-", "", $school2->association->abbreviation);
-      $abbr = str_replace(" ", "", $abbr);
-      array_push($keywords, $abbr);
-    }
-
-    array_push($keywords, "{$federation->abbreviation}{$sport->name}");
 
     $keywords = array_unique($keywords);
     $keywords = implode(",", $keywords);
 
     try {
+      $schedule->championship_id = $request->championship_id;
       $schedule->federation_id = $request->federation_id;
       $schedule->sport_type_id = $request->sport_type_id;
       $schedule->school1_id = $request->school1_id;
@@ -514,7 +525,7 @@ class MatchScheduleController extends Controller {
       "updatedBy" => function ($query) {
         return $query->select("id", "username", "name");
       },
-      "federation", "lp_type", "channel"
+      "federation", "lp_type", "channel", "championship"
     ])
       ->when($request->federation_id != null, function ($query) use ($request) {
         $query->where("federation_id", $request->federation_id);

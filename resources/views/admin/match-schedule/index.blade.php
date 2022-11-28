@@ -348,8 +348,12 @@
                   const gender = row.team_gender !== null ? `${capitalizeFirstLetter(row.team_gender)} ` : ''
                   const sport = row.sport_type === null ? '' : row.sport_type.sport.name || ''
 
-                  
-                  const text = encodeURIComponent(`${row.federation.abbreviation}\n${team_type} ${gender}${sport} | ${formatDate} ${timezone}\n${row.school1.name} (${row.school1.county.abbreviation}) vs ${row.school2.name} (${row.school2.county.abbreviation})\nWatch on\n${row.lpsport.short_link}\n${hashtag}`);
+                  const federationAbbreviation = row.federation.abbreviation;
+                  const championship = row.championship !== null ? row.championship.name : null;
+
+                  const t1 = championship === null ? federationAbbreviation : championship;
+
+                  const text = encodeURIComponent(`${t1}\n${team_type} ${gender}${sport} | ${formatDate} ${timezone}\n${row.school1.name} (${row.school1.county.abbreviation}) vs ${row.school2.name} (${row.school2.county.abbreviation})\nWatch on\n${row.lpsport.short_link}\n${hashtag}`);
                   const shareURLTW = `https://twitter.com/intent/tweet?text=${text}`;
 
                   return `

@@ -52,6 +52,7 @@
 
     document.addEventListener('DOMContentLoaded', async function () {
       const table = $('#datatable').DataTable({
+        dom: '<"dt-top"if><"dt-t"rt><"dt-bottom"lp><"clear">',
         processing: true,
         serverSide: true,
         ajax: {
@@ -95,7 +96,7 @@
               }
 
               return `
-                <a href="/admin/school?state_id=${row.county_id}&city_id=${data}" class="btn btn-sm unrounded btn-primary">
+                <a href="/admin/school?country_id=${row.country_id}&state_id=${row.county_id}&city_id=${data}" class="btn btn-sm unrounded btn-primary">
                   <small>Daftar Sekolah</small>
                 </a>
 

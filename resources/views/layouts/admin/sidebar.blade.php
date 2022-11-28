@@ -101,6 +101,16 @@
 
           @if (inRole(["superadmin"]))
             <li
+              class="{{ str_contains(Request::route()->getName(), 'admin.masterdata.championship') ? 'active' : null }}"
+            >
+              <a
+                href="{{ route('admin.masterdata.championship.index') }}"
+              >Kejuaraan</a>
+            </li>
+          @endif
+
+          @if (inRole(["superadmin"]))
+            <li
               class="{{ str_contains(Request::route()->getName(), 'admin.masterdata.federation') ? 'active' : null }}"
             >
               <a
