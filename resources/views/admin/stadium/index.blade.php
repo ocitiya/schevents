@@ -40,13 +40,13 @@
     let table = null;
     document.addEventListener('DOMContentLoaded', async function () {
       $('#datatable').on('click', '.delete', function () {
-        const id = $(this).attr('data-id')
-        const name = $(this).attr('data-name')
+        const id = $(this).attr('data-id');
+        const name = $(this).attr('data-name');
 
-        const deleteURL = `/admin/masterdata/stadium/delete`
-        const formData = new FormData()
-        formData.append('id', id)
-        formData.append('_token', csrfToken)
+        const deleteURL = `/admin/masterdata/stadium/delete`;
+        const formData = new FormData();
+        formData.append('id', id);
+        formData.append('_token', csrfToken);
 
         swal({
           text: `Ingin menghapus lapangan / stadion ${name}?`,
@@ -61,14 +61,14 @@
               body: formData
             }).then(res => res.json()).then(data => {
               if (data.status) {
-                table.ajax.reload()
+                table.ajax.reload();
                 swal({
                   title: 'Deleted',
                   icon: 'success',
                   text: `Tipe ${name} berhasil dihapus`
                 })
               } else {
-                console.log(data.message)
+                console.log(data.message);
                 swal(data.message, { icon: 'error' });
               }
             })
@@ -78,65 +78,69 @@
 
       $(function () {
         table = $('#datatable').DataTable({
-            processing: true,
-            serverSide: true,
-            ajax: {
-              url: "/api/stadium/listDatatable"
+          dom: '<"dt-top"if><"dt-t"rt><"dt-bottom"lp><"clear">',
+          processing: true,
+          serverSide: true,
+          ajax: {
+            url: "/api/stadium/listDatatable"
+          },
+          columns: [
+            {data: 'name', title: 'Nama', name: 'name'},
+            {data: 'county', title: 'State', name: 'county',
+              "render": function ( data, type, row, meta ) {
+                if (data !== null) {
+                  return data.name;
+                } else {
+                  return '-';
+                }
+              }
             },
-            columns: [
-              {data: 'name', title: 'Nama', name: 'name'},
-              {data: 'county', title: 'State', name: 'county',
-                "render": function ( data, type, row, meta ) {
-                  return data.name
-                }
-              },
-              {data: 'municipality', title: 'Kota', name: 'municipality',
-                "render": function ( data, type, row, meta ) {
-                  return data.name
-                }
-              },
-              {data: 'image', title: 'Gambar', name: 'image',
-                "render": function ( data, type, row, meta ) {
-                  if (data === null) {
-                    return `
-                      <img src="/images/no-logo-1.png" style="width: 75px" class="mb-3">
-                    `
-                  } else {
-                    return `
-                      <img src="/storage/stadium/image/${data}" style="width: 75px" class="mb-3">
-                    `
-                  }
-                }
-              },
-              {data: 'id', title: 'Aksi', orderable: false, searchable: false,
-                "render": function ( data, type, row, meta ) {
-                  const updateRoute = `/admin/masterdata/stadium/update/${data}`
-
-                  let deleteButton = '';
-                  if (['admin', 'superadmin'].includes(role)) {
-                    deleteButton = `
-                      <button
-                        data-id="${data}"
-                        data-name="${row.name}"
-                        class="btn btn-sm btn-danger unrounded delete"
-                      >
-                        <small>Hapus Data</small>
-                      </button>
-                    `;
-                  }
-                  
+            {data: 'municipality', title: 'Kota', name: 'municipality',
+              "render": function ( data, type, row, meta ) {
+                return data.name;
+              }
+            },
+            {data: 'image', title: 'Gambar', name: 'image',
+              "render": function ( data, type, row, meta ) {
+                if (data === null) {
                   return `
-                    <a href="${updateRoute}" class="btn btn-sm unrounded btn-primary">
-                      <small>Edit Data</small>
-                    </a>
-
-                    ${deleteButton}
+                    <img src="/images/no-logo-1.png" style="width: 75px" class="mb-3">
+                  `;
+                } else {
+                  return `
+                    <img src="/storage/stadium/image/${data}" style="width: 75px" class="mb-3">
                   `;
                 }
-              },
-            ]
-        });
+              }
+            },
+            {data: 'id', title: 'Aksi', orderable: false, searchable: false,
+              "render": function ( data, type, row, meta ) {
+                const updateRoute = `/admin/masterdata/stadium/update/${data}`;
 
+                let deleteButton = '';
+                if (['admin', 'superadmin'].includes(role)) {
+                  deleteButton = `
+                    <button
+                      data-id="${data}"
+                      data-name="${row.name}"
+                      class="btn btn-sm btn-danger unrounded delete"
+                    >
+                      <small>Hapus Data</small>
+                    </button>
+                  `;
+                }
+                
+                return `
+                  <a href="${updateRoute}" class="btn btn-sm unrounded btn-primary">
+                    <small>Edit Data</small>
+                  </a>
+
+                  ${deleteButton}
+                `;
+              }
+            },
+          ]
+        });
       });
     })
   </script>

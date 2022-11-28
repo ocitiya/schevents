@@ -130,6 +130,7 @@ class MunicipalitiesController extends Controller {
 		try {
 			$showAll = $request->has('showall') ? (boolean) $request->showall : false;
 			$search = $request->has('search') ? $request->search : null;
+			$country_id = $request->has('country_id') ? $request->country_id : null;
 			$state_id = $request->has('state_id') ? $request->state_id : null;
 			$id = $request->has('id') ? $request->id : null;
 			
@@ -142,6 +143,9 @@ class MunicipalitiesController extends Controller {
 				->when($search != null, function ($query) use ($search) {
 					$query->where('name', 'LIKE', '%'.$search.'%');
 				})
+				->when($country_id != null, function ($query) use ($country_id) {
+					$query->where('country_id', $country_id);
+				})
 				->when($state_id != null, function ($query) use ($state_id) {
 					$query->where('county_id', $state_id);
 				})
@@ -149,7 +153,7 @@ class MunicipalitiesController extends Controller {
 					$query->where('id', $id);
 				});
 
-			$model2 = $model;
+			$model2 = clone($model);
 			$total = $model2->count();
 
 			$municipalities = $model->when(!$showAll, function ($query) use ($limit, $page) {
@@ -159,10 +163,6 @@ class MunicipalitiesController extends Controller {
 				->orderBy('name')
 				->get();
 
-			$total = Municipality::when($search != null, function ($query) use ($search) {
-				$query->where('name', 'LIKE', '%'.$search.'%');
-			})->count();
-
 			return response()->json([
 				"status" => true,
 				"message" => null,
@@ -170,10 +170,10 @@ class MunicipalitiesController extends Controller {
 					"list" => $municipalities,
 					"pagination" => [
 						"total" => $total,
-						"page" => (int) $page,
-						"search" => $search,
-						"limit" => $limit,
-						"total_page" => ceil($total / $limit)
+						"page" => !$showAll ? (int) $page : -1,
+						"limit" => !$showAll ? $limit : -1,
+						"total_page" => !$showAll ? ceil($total / $limit) : 1,
+						"search" => $search
 					]
 				]
 			]);

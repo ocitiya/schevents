@@ -62,10 +62,25 @@
 
             <div class="row">
               <div class="col-5">
-                <label for="county_id">State *</label>
+                <label for="name">Negara *</label>
               </div>
               <div class="col-7">
-                <select name="county_id" class="form-select select2" id="county_id">
+                <select name="country_id" class="select2 form-select" id="country_id">
+                  <option disabled selected value>Please select ...</option>
+                  @foreach ($countries as $item)
+                    <option value="{{ $item->id }}">{{ $item->name }}</option>
+                  @endforeach
+                </select>
+              </div>
+            </div>
+
+            <div class="row" id="state-container" style="display: none">
+              <div class="col-5">
+                <label for="name">State *</label>
+              </div>
+              <div class="col-7">
+                <select required name="county_id" class="form-select select2" id="county_id">
+                  <option disabled selected value>Silahkan pilih ...</option>
                   {{-- Dynamic Data --}}
                 </select>
               </div>
@@ -180,8 +195,12 @@
 
 @section('script')
   <script>
-    let stateSelected = "<?php echo old('county_id', isset($data) ? $data->county_id : null) ?>";
-    let citySelected = "<?php echo old('municipality_id', isset($data) ? $data->municipality_id : null) ?>";
+    let stateSelected = "<?php echo old('county_id', isset($data) ? $data->county_id : '') ?>";
+    let citySelected = "<?php echo old('municipality_id', isset($data) ? $data->municipality_id : '') ?>";
+    let countrySelected = "<?php echo old('country_id', isset($data) ? $data->country_id : '') ?>";
+
+    let is_create = "<?php echo !isset($data) ? 1 : 0 ?>"
+    is_create = !!parseInt(is_create)
 
     const getList = (endpoint) => {
       return new Promise((resolve, reject) => {
@@ -199,23 +218,50 @@
     }
 
     document.addEventListener('DOMContentLoaded', async function () {
-      const countries = await getList('/api/country/list')
-      const country = countries[0]
+      $('#country_id').on('change', async function () {
+        const val = $(this).val();
+        loadingSelect('#county_id');
+        loadingSelect('#municipality_id');
+
+        countrySelected = val;
+
+        await fetch(`/api/country/hasState/${val}`).then((res) => res.json())
+          .then(async (data) => {
+            if (!data.status) {
+              $('#county_id').val('').change()
+              $('#county_id').prop('required', false);
+              $('#state-container').css('display', 'none');
+
+              const municipalities = await getList(`/api/municipality/list?country_id=${countrySelected}&showall=true`);
+              generateSelect('#municipality_id', municipalities, false);
+              $('#municipality_id').val(citySelected).change();
+            } else {
+              $('#state-container').css('display', 'flex');
+              $('#county_id').prop('required', true);
+              const counties = await getList(`/api/county/list?showall=true&country_id=${val}`);
+              generateSelect('#county_id', counties, false);
+
+              $('#county_id').val(stateSelected).change();
+            }
+          });
+      });
 
       $('#county_id').on('change', async function () {
-        const val = $(this).val()
+        const val = $(this).val();
         if (val !== null) {
-          stateSelected = val
+          loadingSelect('#municipality_id');
+          stateSelected = val;
 
-          const municipalities = await getList(`/api/municipality/list?state_id=${stateSelected}&showall=true`)
-          generateSelect('#municipality_id', municipalities, false)
-          $('#municipality_id').val(citySelected).change()
+          const municipalities = await getList(`/api/municipality/list?state_id=${stateSelected}&showall=true`);
+          generateSelect('#municipality_id', municipalities, false);
+          $('#municipality_id').val(citySelected).change();
         }
       })
 
-      const cities = await getList(`/api/county/list?country_id=${country.id}&showall=true`)
-      generateSelect('#county_id', cities)
-      $('#county_id').val(stateSelected).change()
+      if (!is_create) {
+        $('#country_id').val(countrySelected).change()
+        $('#county_id').val(stateSelected).change()
+      }
     })
   </script>
 @endsection

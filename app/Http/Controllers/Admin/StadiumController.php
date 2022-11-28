@@ -21,6 +21,7 @@ class StadiumController extends Controller {
 
   public function create (Request $request) {
     $data = [
+      "countries" => Country::get(),
       "default_city" => $request->has("city_id") ? $request->city_id : null
     ];
 
@@ -28,9 +29,10 @@ class StadiumController extends Controller {
   }
 
   public function update ($id) {
-    $types = Stadium::find($id);
-
-    $data = [ "data" => $types ];
+    $data = [
+      "countries" => Country::get(),
+      "data" => Stadium::find($id)
+    ];
     return view('admin.stadium.form', $data);
   }
 
@@ -44,7 +46,8 @@ class StadiumController extends Controller {
   public function store (Request $request) {
     $validation = [
       'name' => 'required|max:255',
-      'county_id' => 'required|uuid',
+      'country_id' => 'required|uuid',
+      'county_id' => 'nullable|uuid',
       'municipality_id' => 'required|uuid',
       'nickname' => 'nullable|string',
       'address' => 'nullable|string',
@@ -109,7 +112,8 @@ class StadiumController extends Controller {
 
       return redirect()->route('admin.masterdata.stadium.index');
     } catch (QueryException $exception) {
-      unlink($path);
+      if ($request->hasFile('image')) unlink($path);
+      
       return redirect()->back()
         ->withErrors($exception->getMessage());
     }

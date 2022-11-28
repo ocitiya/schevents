@@ -104,6 +104,11 @@
         })
       }
 
+      const loadingSelect = (elem) => {
+        $(elem).empty();
+        $(elem).append('<option disabled selected value>Loading ...</option');
+      }
+
       document.addEventListener('DOMContentLoaded', function () {
         const sidebarCollapse = document.querySelector('#sidebarCollapse');
         const sidebar = document.querySelector('#sidebar');
