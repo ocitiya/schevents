@@ -26,13 +26,13 @@
 
     <div class="data-container">
       <div class="data-header">
-        @if (inRole(["user"]))
+        @if (inRole(["user", "admin", "superadmin"]))
           @if ($federation_id != null)
             <a
               href="{{ route('admin.match-schedule.create', ["federation_id" => $federation_id]) }}"
               class="btn btn-primary btn-sm unrounded"
             >
-              Create New&nbsp;
+              Tambah Jadwal&nbsp;
               <i class="fa-solid fa-plus"></i>
             </a>
           @else
@@ -40,7 +40,7 @@
               href="{{ route('admin.match-schedule.create') }}"
               class="btn btn-primary btn-sm unrounded"
             >
-              Create New&nbsp;
+            Tambah Jadwal&nbsp;
               <i class="fa-solid fa-plus"></i>
             </a>
           @endif
@@ -408,42 +408,22 @@
                   updateRoute += '&sudah-bermain'
                 }
 
-                let deleteButton = '';
-                if (['admin', 'superadmin'].includes(role)) {
-                  deleteButton = `
-                    <button
-                      class="btn btn-sm unrounded btn-danger delete"
-                      data-id="${d}"
-                    >
-                      <small>Hapus</small>
-                    </button>
-                  `;
-                } else {
-                  if (['have-played', 'last-week', 'old-data'].includes(data.state)) {
-                    deleteButton = `
-                      <button
-                        class="btn btn-sm unrounded btn-danger delete"
-                        data-id="${d}"
-                      >
-                        <small>Hapus</small>
-                      </button>
-                    `;
-                  }
-                }
+                const deleteButton = `
+                  <button
+                    class="btn btn-sm unrounded btn-danger delete"
+                    data-id="${d}"
+                  >
+                    <small>Hapus</small>
+                  </button>
+                `;
 
-                if (role === 'user') {
-                  return `
-                    <a href="${updateRoute}" class="btn btn-sm unrounded btn-primary">
-                      <small>Edit</small>
-                    </a>
+                return `
+                  <a href="${updateRoute}" class="btn btn-sm unrounded btn-primary">
+                    <small>Edit</small>
+                  </a>
 
-                    ${deleteButton}
-                  `;
-                } else {
-                  return `
-                    ${deleteButton}
-                  `;
-                }
+                  ${deleteButton}
+                `;
               }
             },
           ]

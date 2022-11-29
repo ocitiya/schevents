@@ -45,6 +45,7 @@ class ChampionshipController extends Controller {
 		];
 
 		$validated = $request->validate($validation);
+		$path = "";
 
 		if ($request->hasFile('image')) {
 			if(!Storage::exists("/public/championship/image")) Storage::makeDirectory("/public/championship/image");
