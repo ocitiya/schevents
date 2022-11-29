@@ -158,6 +158,8 @@ class SportTypeController extends Controller {
 		$search = $request->has('search') ? $request->search : null;
 		$showAll = $request->has('showall') ? (boolean) $request->showall : false;
 		$federation_id = $request->has('federation_id') ? $request->federation_id : null;
+		if ($federation_id == "null") $federation_id = null;
+
 		$user_id = $request->has('user_id') ? $request->user_id : null;
 
 		$page = $request->has('page') ? $request->page : 1;
@@ -166,7 +168,7 @@ class SportTypeController extends Controller {
 
 		$model = SportType::when($search != null, function ($query) use ($search) {
 			$query->where('name', 'LIKE', '%'.$search.'%');
-		})->when($federation_id != null, function ($query) use ($federation_id) {
+		})->when(!empty($federation_id), function ($query) use ($federation_id) {
 			$query->where("federation_id", $federation_id);
 		})->when($user_id != null, function ($query) use ($user_id) {
 			$query->where("created_by", $user_id);

@@ -71,8 +71,8 @@
                 <label for="name">Federasi *</label>
               </div>
               <div class="col-7">
-                <select required name="federation_id" class="form-select select2" id="federation_id">
-                  <option disabled selected value>Please select ...</option>
+                <select name="federation_id" class="form-select select2" id="federation_id">
+                  <option selected value>N/A</option>
                   @foreach ($federations as $item)
                     <option value="{{ $item->id }}">{{ $item->abbreviation }}</option>
                   @endforeach
@@ -85,7 +85,7 @@
                 <label for="name">Olahraga *</label>
               </div>
               <div class="col-7">
-                <select required name="sport_type_id" class="form-select select2" id="sport_type_id">
+                <select required name="sport_id" class="form-select select2" id="sport_id">
                   <option disabled selected value>Pilih Federasi Dulu</option>
                   {{-- Dynamic Data --}}
                 </select>
@@ -334,7 +334,7 @@
 
     const championshipSelected = "<?php echo old('championship_id', isset($data) ? $data->championship_id : null) ?>";
     const federationSelected = "<?php echo old('federation_id', isset($data) ? $data->federation_id : $federation_id) ?>";
-    const sportSelected = "<?php echo old('sport_type_id', isset($data) ? $data->sport_type_id : null) ?>";
+    const sportSelected = "<?php echo old('sport_id', isset($data) ? $data->sport_id : null) ?>";
     const school1Selected = "<?php echo old('school1_id', isset($data) ? $data->school1_id : null) ?>";
     const school2Selected = "<?php echo old('school2_id', isset($data) ? $data->school2_id : null) ?>";
     const teamTypeSelected = "<?php echo old('team_type_id', isset($data) ? $data->team_type_id : null) ?>";
@@ -392,19 +392,15 @@
     }
 
     const generateSelectSport = async (federation_id) => {
-      const sports = await getList(`/api/sport-type/list?showall=true&federation_id=${federation_id}`)
-      $('#sport_type_id').empty()
+      const sports = await getList(`/api/sport/list?showall=true&federation_id=${federation_id}`)
+      $('#sport_id').empty()
 
-      $('#sport_type_id').append('<option disabled selected value>Please select ...</option')
+      $('#sport_id').append('<option disabled selected value>Please select ...</option')
       sports.map(item => {
-        if (item.sport === null) {
-          $('#sport_type_id').append(`<option value="${item.id}">${item.name}</option>`)
-        } else {
-          $('#sport_type_id').append(`<option value="${item.id}">${item.sport.name}</option>`)
-        }
-      })
+        $('#sport_id').append(`<option value="${item.id}">${item.name}</option>`)
+      });
 
-      $('#sport_type_id').val(sportSelected).change()
+      $('#sport_id').val(sportSelected).change();
     }
 
     document.addEventListener('DOMContentLoaded', function() {
@@ -414,21 +410,22 @@
       }
 
       $('#federation_id').on('change', async function () {
-        const val = $(this).val()
+        let val = $(this).val();
+        if (val == '') val = 'n/a';
 
-        $('#sport_type_id').append('<option disabled selected value>Loading ...</option')
-        $('#school1_id').append('<option disabled selected value>Loading ...</option')
-        $('#school2_id').append('<option disabled selected value>Loading ...</option')
+        $('#sport_id').append('<option disabled selected value>Loading ...</option');
+        $('#school1_id').append('<option disabled selected value>Loading ...</option');
+        $('#school2_id').append('<option disabled selected value>Loading ...</option');
 
-        const schools = await getList(`/api/school/list?showall=true&federation_id=${val}`)
-        generateSelect('#school1_id', schools, false)
-        $('#school1_id').val(school1Selected).change()
+        const schools = await getList(`/api/school/list?showall=true&federation_id=${val}`);
+        generateSelect('#school1_id', schools, false);
+        $('#school1_id').val(school1Selected).change();
 
-        generateSelect('#school2_id', schools, false)
-        $('#school2_id').val(school2Selected).change()
+        generateSelect('#school2_id', schools, false);
+        $('#school2_id').val(school2Selected).change();
 
         generateSelectSport(val)
-      })
+      });
 
       $('#lp_type_id').on('change', async function () {
         validateLP();

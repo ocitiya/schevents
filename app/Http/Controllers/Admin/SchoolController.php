@@ -86,8 +86,8 @@ class SchoolController extends Controller {
       'nickname' => 'nullable|string',
       'country_id' => 'required|uuid',
       'county_id' => 'nullable|uuid',
-      'municipality_id' => 'required|uuid',
-      'federation_id' => 'required|uuid',
+      'municipality_id' => 'nullable|uuid',
+      'federation_id' => 'nullable|uuid',
       'association_id' => 'uuid',
       'logo' => 'mimes:jpg,png',
     ];
@@ -224,11 +224,11 @@ class SchoolController extends Controller {
     $federationId = isset($request->federation_id) ? $request->federation_id : null;
 
     $data = School::with(["municipality", "federation", "association", "county"])
-      ->when($cityId != null, function ($subQuery) use ($cityId) {
-        $subQuery->where('municipality_id', $cityId);
+      ->when($cityId != null, function ($query) use ($cityId) {
+        $query->where('municipality_id', $cityId);
       })
-      ->when($federationId != null, function ($subQuery) use ($federationId) {
-        $subQuery->where('federation_id', $federationId);
+      ->when($federationId != null, function ($query) use ($federationId) {
+        $query->where('federation_id', $federationId);
       })
       ->get();
 
@@ -252,8 +252,14 @@ class SchoolController extends Controller {
       ->when($county_id != null, function ($query) use ($county_id) {
         $query->where('county_id', $county_id);
       })
-      ->when($federation_id != null, function ($query) use ($federation_id) {
-        $query->where('federation_id', $federation_id);
+      ->when(!empty($federation_id), function ($query) use ($federation_id) {
+        $query->when($federation_id == "n/a", function ($query) use ($federation_id) {
+          $query->whereNull('federation_id');
+        });
+
+        $query->when($federation_id != "n/a", function ($query) use ($federation_id) {
+          $query->where('federation_id', $federation_id);
+        });
       });
 
     $schools = clone($model)->when(!$showAll, function ($query) use ($limit, $page) {

@@ -79,7 +79,7 @@
             >
               <a
                 href="{{ route('admin.school.index') }}"
-              >Sekolah</a>
+              >Tim</a>
             </li>
           @endif
 

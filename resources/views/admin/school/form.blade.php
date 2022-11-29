@@ -3,7 +3,7 @@
 @section('content')
   <div id="sport_type" class="content">
     <div class="title-container">
-      <h4 class="text-primary">Sekolah</h4>
+      <h4 class="text-primary">Tim</h4>
 
       <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
@@ -19,9 +19,9 @@
       <div class="data-header">
         <h5 class="text-primary">
           @if(!isset($data))
-            <span>Tambah Sekolah Baru</span>
+            <span>Tambah Tim Baru</span>
           @else
-            <span>Ubah Sekolah {{ $data->name }}</span>
+            <span>Ubah Tim {{ $data->name }}</span>
           @endisset
         </h5>
       </div>
@@ -52,7 +52,7 @@
           <div class="col-7">
             <div class="row">
               <div class="col-5">
-                <label for="name">Nama Sekolah *</label>
+                <label for="name">Nama Tim *</label>
               </div>
               <div class="col-7">
                 <input type="text" id="name" name="name" class="form-control capitalize"
@@ -77,8 +77,8 @@
                 <label for="name">Federasi *</label>
               </div>
               <div class="col-7">
-                <select class="form-select select2" id="federation_id" name="federation_id" required>
-                  <option disabled selected value>Please select ...</option>
+                <select class="form-select select2" id="federation_id" name="federation_id">
+                  <option selected value>N/A</option>
                   @foreach ($federations as $item)
                     <option value="{{ $item->id }}">{{ $item->abbreviation }}</option>
                   @endforeach
@@ -114,10 +114,10 @@
 
             <div class="row" id="state-container" style="display: none">
               <div class="col-5">
-                <label for="name">State *</label>
+                <label for="name">State</label>
               </div>
               <div class="col-7">
-                <select required name="county_id" class="form-select select2" id="county_id">
+                <select name="county_id" class="form-select select2" id="county_id">
                   <option disabled selected value>Silahkan pilih ...</option>
                   {{-- Dynamic Data --}}
                 </select>
@@ -126,7 +126,7 @@
 
             <div class="row">
               <div class="col-5">
-                <label for="name">Kota *</label>
+                <label for="name">Kota</label>
               </div>
               <div class="col-7">
                 <select name="municipality_id" class="form-select select2" id="municipality_id">
@@ -218,6 +218,8 @@
 
       $('#country_id').on('change', async function () {
         const val = $(this).val();
+        if (val == null) return false;
+
         loadingSelect('#county_id');
         loadingSelect('#municipality_id');
 
@@ -227,7 +229,7 @@
           .then(async (data) => {
             if (!data.status) {
               $('#county_id').val('').change()
-              $('#county_id').prop('required', false);
+              // $('#county_id').prop('required', false);
               $('#state-container').css('display', 'none');
 
               const municipalities = await getList(`/api/municipality/list?country_id=${countrySelected}&showall=true`);
@@ -235,7 +237,7 @@
               $('#municipality_id').val(citySelected).change();
             } else {
               $('#state-container').css('display', 'flex');
-              $('#county_id').prop('required', true);
+              // $('#county_id').prop('required', true);
               const counties = await getList(`/api/county/list?showall=true&country_id=${val}`);
               generateSelect('#county_id', counties, false);
 

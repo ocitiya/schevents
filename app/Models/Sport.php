@@ -18,4 +18,8 @@ class Sport extends Model {
 	protected $casts = [
 		'id' => 'string'
 	];
+
+	public function sport_types () {
+		return $this->hasMany(SportType::class);
+	}
 }

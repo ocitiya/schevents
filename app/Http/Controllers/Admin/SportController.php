@@ -124,6 +124,8 @@ class SportController extends Controller {
 	public function list (Request $request) {
 		$search = $request->has('search') ? $request->search : null;
 		$showAll = $request->has('showall') ? (boolean) $request->showall : false;
+		$federationId = $request->has('federation_id') ? $request->federation_id : null;
+		if ($federationId == "null") $federationId = null;
 
 		$page = $request->has('page') ? $request->page : 1;
 		if (empty($page)) $page = 1; 
@@ -131,6 +133,10 @@ class SportController extends Controller {
 
 		$model = Sport::when($search != null, function ($query) use ($search) {
 			$query->where('name', 'LIKE', '%'.$search.'%');
+		})->when(!empty($federationId) && $federationId != 'n/a', function ($query) use ($federationId) {
+			$query->whereHas("sport_types", function ($query) use ($federationId) {
+				$query->where("federation_id", $federationId);
+			});
 		});
 
 		$types = clone($model)->when(!$showAll, function ($query) use ($limit, $page) {

@@ -27,6 +27,7 @@ use App\Models\Federation;
 use App\Models\LPSports;
 use App\Models\LPTypes;
 use App\Models\OfferChannel;
+use App\Models\Sport;
 use Illuminate\Support\Facades\Session;
 
 class MatchScheduleController extends Controller {
@@ -108,8 +109,8 @@ class MatchScheduleController extends Controller {
   public function store (Request $request) {
     $validated = $request->validate([
       'championship_id' => 'nullable|int',
-      'federation_id' => 'required|uuid',
-      'sport_type_id' => 'required|uuid',
+      'federation_id' => 'nullable|uuid',
+      'sport_id' => 'required|uuid',
       'school1_id' => 'required|uuid',
       'match_system' => 'in:home,away,neutral',
       'school2_id' => 'required|uuid',
@@ -141,8 +142,12 @@ class MatchScheduleController extends Controller {
 
     $school1 = School::with(["county", "association"])->find($request->school1_id);
     $school2 = School::with(["county", "association"])->find($request->school2_id);
-    $federation = Federation::find($request->federation_id);
     $team_type = TeamType::find($request->team_type_id);
+
+    $federation = null;
+    if (!empty($request->federation_id)) {
+      $federation = Federation::find($request->federation_id);
+    }
 
     $level_of_education1 = explode(" ", $school1->level_of_education);
     $level_of_education2 = explode(" ", $school2->level_of_education);
@@ -161,7 +166,7 @@ class MatchScheduleController extends Controller {
     $level_of_education = implode(",", $level_of_education);
 
     $datetime = "{$request->date} {$request->time_hour}:{$request->time_minute}";
-    $sport = SportType::find($request->sport_type_id);
+    $sport = Sport::find($request->sport_id);
 
     $keywords = 
     $keywords = [
@@ -187,7 +192,9 @@ class MatchScheduleController extends Controller {
         array_push($keywords, $abbr);
       }
   
-      array_push($keywords, "{$federation->abbreviation}{$sport->name}"); 
+      if (!empty($federation)) {
+        array_push($keywords, "{$federation->abbreviation}{$sport->name}"); 
+      }
     } else {
       $championship = Championships::find($request->championship_id)->name;
       array_push($keywords, $championship); 
@@ -199,7 +206,7 @@ class MatchScheduleController extends Controller {
     try {
       $schedule->championship_id = $request->championship_id;
       $schedule->federation_id = $request->federation_id;
-      $schedule->sport_type_id = $request->sport_type_id;
+      $schedule->sport_id = $request->sport_id;
       $schedule->school1_id = $request->school1_id;
       $schedule->match_system = $request->match_system;
       $schedule->school2_id = $request->school2_id;
@@ -515,6 +522,7 @@ class MatchScheduleController extends Controller {
       "school2" => function ($query) {
         return $query->with(["municipality", "county"]);
       },
+      "sport",
       "team_type",
       "sport_type" => function ($q) {
         $q->withTrashed()->with(["sport"]);

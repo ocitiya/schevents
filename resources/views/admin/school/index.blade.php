@@ -5,9 +5,9 @@
     <div class="title-container">
       <h4 class="text-primary">
         @if ($default_city != null)
-          Sekolah di kota {{ $city_name }}
+          Tim di kota {{ $city_name }}
         @else
-          Sekolah
+          Tim
         @endif
       </h4>
 
@@ -22,12 +22,12 @@
       <div class="data-header">
         @if ($default_city != null)
           <a href="{{ route('admin.school.create')."?country_id=${default_country}&state_id={$default_state}&city_id={$default_city}" }}" class="btn btn-primary btn-sm unrounded">
-            Tambah Sekolah&nbsp;
+            Tambah Tim&nbsp;
             <i class="fa-solid fa-plus"></i>
           </a>
         @else
           <a href="{{ route('admin.school.create') }}" class="btn btn-primary btn-sm unrounded">
-            Tambah Sekolah&nbsp;
+            Tambah Tim&nbsp;
             <i class="fa-solid fa-plus"></i>
           </a>
         @endif
@@ -58,7 +58,7 @@
         formData.append('_token', csrfToken)
 
         swal({
-          text: `Ingin menghapus sekolah ${name}?`,
+          text: `Ingin menghapus tim ${name}?`,
           icon: "warning",
           buttons: true,
           dangerMode: true,
@@ -101,16 +101,21 @@
             {data: 'name', title: 'Name', name: 'name'},
             {data: 'federation', title: 'Singkatan Federasi', name: 'federation',
               "render": function ( data, type, row, meta ) {
-                return `
-                  ${data.abbreviation}
-                `
+                if (data === null) {
+                  return '-';
+                } else {
+                  return data.abbreviation;
+
+                }
               }
             },
             {data: 'municipality', title: 'Kota', name: 'municipality',
               "render": function ( data, type, row, meta ) {
-                return `
-                  ${data.name}
-                `
+                if (data === null) {
+                  return '-';
+                } else {
+                  return data.name;
+                }
               }
             },
             {data: 'logo', title: 'Logo', name: 'logo',
@@ -152,14 +157,14 @@
                       data-name="${row.name}"
                       class="btn btn-sm btn-danger unrounded delete"
                     >
-                      <small>Hapus Sekolah</small>
+                      <small>Hapus Tim</small>
                     </button>
                   `;
                 }
 
                 return `
                   <a href="${updateRoute}" class="btn btn-sm unrounded btn-primary">
-                    <small>Edit Sekolah</small>
+                    <small>Edit Tim</small>
                   </a>
 
                   ${deleteButton}

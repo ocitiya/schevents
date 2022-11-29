@@ -272,23 +272,23 @@
             {data: 'school1', title: 'Club 1', name: 'school1',
               "render": function ( data, type, row, meta ) {
                 if (data !== null) {
-                  if (row.score1 !== null) {
-                    return `${data.name} <span class="text-bg-success">(${row.score1})</span>`
+                  if (row.school1.county === null) {
+                    return data.name;
                   } else {
-                    return `<b>${row.school1.county.abbreviation}</b> <br/> ${data.name}`
+                    return `<b>${row.school1.county.abbreviation}</b> <br/> ${data.name}`;
                   }
                 } else {
-                  return 'Unknown School'
+                  return 'Unknown School';
                 }
               }
             },
             {data: 'school2', title: 'Club 2', name: 'school2',
               "render": function ( data, type, row, meta ) {
                 if (data !== null) {
-                  if (row.score2 !== null) {
-                    return `${data.name} <span class="text-bg-success">(${row.score2})</span>`
+                  if (row.school2.county === null) {
+                    return data.name;
                   } else {
-                    return `<b>${row.school2.county.abbreviation}</b> <br/> ${data.name}`
+                    return `<b>${row.school2.county.abbreviation}</b> <br/> ${data.name}`;
                   }
                 } else {
                   return 'Unknown School'
@@ -297,15 +297,25 @@
             },
             {data: 'federation', title: 'Federasi', name: 'federation',
               "render": function ( data, type, row, meta ) {
-                return data.abbreviation
+                if (data === null) {
+                  return '-';
+                } else {
+                  return data.abbreviation
+                }
               }
             },
-            {data: 'sport_type', title: 'Olahraga', name: 'team_type',
+            {data: 'sport', title: 'Olahraga', name: 'sport',
               "render": function ( data, type, row, meta ) {
-                if (data.sport !== null) {
-                  return data.sport.name
+                if (data !== null) {
+                  return data.name;
                 } else {
-                  return data.name
+                  if (row.sport_type !== null) {
+                    if (row.sport_type.sport !== null) {
+                      return row.sport_type.sport.name;
+                    } else {
+                      return row.sport_type.name;
+                    }
+                  }
                 }
               }
             },
@@ -346,14 +356,43 @@
 
                   const team_type = row.team_type === null ? null : row.team_type.name
                   const gender = row.team_gender !== null ? `${capitalizeFirstLetter(row.team_gender)} ` : ''
-                  const sport = row.sport_type === null ? '' : row.sport_type.sport.name || ''
+                  
+                  let sport = '';
+                  if (row.sport !== null) {
+                    sport = row.sport.name;
+                  } else {
+                    if (row.sport_type !== null) {
+                      if (row.sport_type.sport !== null) {
+                        sport = row.sport_type.sport.name;
+                      } else {
+                        sport = row.sport_type.name;
+                      }
+                    }
+                  }
 
-                  const federationAbbreviation = row.federation.abbreviation;
+                  const federationAbbreviation = row.federation !== null ? row.federation.abbreviation : null;
                   const championship = row.championship !== null ? row.championship.name : null;
 
                   const t1 = championship === null ? federationAbbreviation : championship;
 
-                  const text = encodeURIComponent(`${t1}\n${team_type} ${gender}${sport} | ${formatDate} ${timezone}\n${row.school1.name} (${row.school1.county.abbreviation}) vs ${row.school2.name} (${row.school2.county.abbreviation})\nWatch on\n${row.lpsport.short_link}\n${hashtag}`);
+                  let text = `${team_type} ${gender}${sport} | ${formatDate} ${timezone}\n${row.school1.name}`;
+                  if (t1 !== null) {
+                    text = `${t1}\n${text}`;
+                  }
+
+                  if (row.school1.county !== null) {
+                    text += ` (${row.school1.county.abbreviation})`;
+                  }
+
+                  text +=  ` vs ${row.school2.name}`;
+
+                  if (row.school2.county !== null) {
+                    text += ` (${row.school1.county.abbreviation})`;
+                  }
+
+                  text += `\nWatch on\n${row.lpsport.short_link}\n${hashtag}`;
+                  text = encodeURIComponent(text);
+
                   const shareURLTW = `https://twitter.com/intent/tweet?text=${text}`;
 
                   return `
