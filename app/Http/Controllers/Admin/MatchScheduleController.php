@@ -172,11 +172,8 @@ class MatchScheduleController extends Controller {
     $keywords = [
       $school1->name,
       $school2->name,
-      $level_of_education,
       $school1->nickname,
-      $school2->nickname,
-      $sport->name,
-      $team_type->name
+      $school2->nickname
     ];
 
     if (empty($request->championship_id)) {
@@ -186,11 +183,11 @@ class MatchScheduleController extends Controller {
         array_push($keywords, $abbr);
       }
   
-      if (!empty($school2->association)) {
-        $abbr = str_replace("-", "", $school2->association->abbreviation);
-        $abbr = str_replace(" ", "", $abbr);
-        array_push($keywords, $abbr);
-      }
+      // if (!empty($school2->association)) {
+      //   $abbr = str_replace("-", "", $school2->association->abbreviation);
+      //   $abbr = str_replace(" ", "", $abbr);
+      //   array_push($keywords, $abbr);
+      // }
   
       if (!empty($federation)) {
         array_push($keywords, "{$federation->abbreviation}{$sport->name}"); 
@@ -199,6 +196,8 @@ class MatchScheduleController extends Controller {
       $championship = Championships::find($request->championship_id)->name;
       array_push($keywords, $championship); 
     }
+
+    array_push($keywords, $sport->name); 
 
     $keywords = array_unique($keywords);
     $keywords = implode(",", $keywords);
@@ -524,6 +523,7 @@ class MatchScheduleController extends Controller {
       },
       "sport",
       "team_type",
+      "stadium",
       "sport_type" => function ($q) {
         $q->withTrashed()->with(["sport"]);
       },

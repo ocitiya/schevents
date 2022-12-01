@@ -315,6 +315,8 @@
                     } else {
                       return row.sport_type.name;
                     }
+                  } else {
+                    return '-';
                   }
                 }
               }
@@ -349,13 +351,23 @@
 
                   const datetime = row.datetime
                   
-                  const datelocal = moment.utc(datetime, 'YYYY-MM-DD hh:mm').local()
-                  const formatDate = datelocal.format('ddd, D MMMM Y | hh:mm');
+                  // const datelocal = moment.utc(datetime, 'YYYY-MM-DD hh:mm').local()
+                  const datelocal = moment.utc(datetime, 'YYYY-MM-DD hh:mm')
+
+                  const formatDate = datelocal.format('ddd, D MMMM Y');
+                  const formatTime = datelocal.format('hh:mm');
                   const zone_name = moment.tz.guess();
                   const timezone = moment.tz(zone_name).zoneAbbr()
 
                   const team_type = row.team_type === null ? null : row.team_type.name
                   const gender = row.team_gender !== null ? `${capitalizeFirstLetter(row.team_gender)} ` : ''
+                  
+                  let stadium = '';
+                  if (row.stadium !== null) {
+                    stadium = row.stadium.name;
+                  } else {
+                    stadium = '-';
+                  }
                   
                   let sport = '';
                   if (row.sport !== null) {
@@ -375,22 +387,30 @@
 
                   const t1 = championship === null ? federationAbbreviation : championship;
 
-                  let text = `${team_type} ${gender}${sport} | ${formatDate} ${timezone}\n${row.school1.name}`;
-                  if (t1 !== null) {
-                    text = `${t1}\n${text}`;
-                  }
+                  let text = `GAMEDAY\n${team_type} ${gender}${sport} Live Streaming HD\n`;
+                  text += `${row.school1.name} vs ${row.school2.name}\n`;
+                  text += `Watch Live: ${row.lpsport.short_link} or https://live.schsports.com\n`;
+                  text += `Date: ${formatDate}\n`;
+                  text += `Time: ${formatTime} UTC\n`;
+                  text += `Venue: ${stadium}\n\n`;
+                  text += hashtag;
+                  
+                  // let text = `${team_type} ${gender}${sport} | ${formatDate} ${timezone}\n${row.school1.name}`;
+                  // if (t1 !== null) {
+                  //   text = `${t1}\n${text}`;
+                  // }
 
-                  if (row.school1.county !== null) {
-                    text += ` (${row.school1.county.abbreviation})`;
-                  }
+                  // if (row.school1.county !== null) {
+                  //   text += ` (${row.school1.county.abbreviation})`;
+                  // }
 
-                  text +=  ` vs ${row.school2.name}`;
+                  // text +=  ` vs ${row.school2.name}`;
 
-                  if (row.school2.county !== null) {
-                    text += ` (${row.school1.county.abbreviation})`;
-                  }
+                  // if (row.school2.county !== null) {
+                  //   text += ` (${row.school1.county.abbreviation})`;
+                  // }
 
-                  text += `\nWatch on\n${row.lpsport.short_link}\n${hashtag}`;
+                  // text += `\nWatch on\n${row.lpsport.short_link}\n${hashtag}`;
                   text = encodeURIComponent(text);
 
                   const shareURLTW = `https://twitter.com/intent/tweet?text=${text}`;
