@@ -8,12 +8,12 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
 use Intervention\Image\Facades\Image;
 
-use DataTables;
-
 // use App\Models\County;
 use App\Models\Country;
+use App\Models\School;
 use Illuminate\Database\QueryException;
 use Yajra\DataTables\Contracts\DataTable;
+use Yajra\DataTables\Facades\DataTables;
 
 class countriesController extends Controller {
 	public function index (Request $request) {
@@ -103,6 +103,8 @@ class countriesController extends Controller {
 			if ($request->hasFile('image')) $country->image = $filename;
 			$country->save();
 
+			$this->generateNationalTeam($country);
+
 			return redirect()
 				->route("admin.location.countries.index")
 				->with('success', 'Data successfully saved');
@@ -114,11 +116,33 @@ class countriesController extends Controller {
 		}
 	}
 
+	public function generateNationalTeam($country) {
+		$check = School::where("country_id", $country->id)
+			->where("is_national_team", true)
+			->first();
+
+	if (!$check) {
+			$school = new School;
+			$school->id = Str::uuid();
+			$school->name = $country->name;
+			$school->is_national_team = true;
+			$school->country_id = $country->id;
+
+			$path = storage_path('app/public/countries/image/').$country->image;
+			$newPath = storage_path('app/public/school/logo/').$country->image;
+			if (file_exists($path) && !is_dir($path)) {
+					copy($path, $newPath);
+			}
+
+			$school->logo = $country->image;
+			$school->save();
+		}
+	}
+
 	public function listDatatable(Request $request) {
 		$stateId = isset($request->state_id) ? $request->state_id : null;
-		
 		$data = Country::get();
-			
+
 		return Datatables::of($data)->make(true);
 	}
 
@@ -181,7 +205,7 @@ class countriesController extends Controller {
 		]);
 
 		try {
-			$country= Country::find($request->id);
+			$country = Country::find($request->id);
 
 			// $oldPath = storage_path('app/public/countries/image/').$country->image;
 			// if (file_exists($oldPath) && !is_dir($oldPath)) {
@@ -189,6 +213,10 @@ class countriesController extends Controller {
 			// }
 
 			$country->delete();
+
+			$school = School::where("country_id", $country->id)
+				->where("is_national_team", true)
+				->delete();
 
 			$request->session()->flash('message', "{$country->name} successfully deleted");
 			return response()->json([
