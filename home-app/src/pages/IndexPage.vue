@@ -101,9 +101,9 @@
                       <div class="text-primary q-mt-md">
                         <div class="text-bold">{{ item.school1.name }}</div>
                         <div v-if="(item.school1.municipality !== null)">
-                          {{ item.school1.municipality.name }},&nbsp;
+                          {{ item.school1.municipality.name }}
                           <span class="text-bold" v-if="(item.school1.county !== null)">
-                            {{ item.school1.county.abbreviation }}
+                            ,&nbsp;{{ item.school1.county.abbreviation }}
                           </span>
                         </div>
                       </div>
@@ -135,9 +135,9 @@
                       <div class="text-primary q-mt-md">
                         <div class="text-bold">{{ item.school2.name }}</div>
                         <div v-if="(item.school2.municipality !== null)">
-                          {{ item.school2.municipality.name }},&nbsp;
+                          {{ item.school2.municipality.name }}
                           <span class="text-bold" v-if="(item.school2.county !== null)">
-                            {{ item.school2.county.abbreviation }}
+                            ,&nbsp;{{ item.school2.county.abbreviation }}
                           </span>
                         </div>
                       </div>
