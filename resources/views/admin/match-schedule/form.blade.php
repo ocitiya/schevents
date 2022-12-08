@@ -51,6 +51,10 @@
             <input type="hidden" name="isDefaultFederation" value="true">  
           @endif
 
+          @if ($is_national_team == "true")
+            <input type="hidden" name="is_national_team" value="true">  
+          @endif
+
           <div class="col-7">
             <div class="row">
               <div class="col-5">
@@ -66,7 +70,7 @@
               </div>
             </div>
 
-            <div class="row">
+            <div class="row" id="federation-container">
               <div class="col-5">
                 <label for="name">Federasi *</label>
               </div>
@@ -80,14 +84,27 @@
               </div>
             </div>
 
-            <div class="row">
+            {{-- <div class="row">
               <div class="col-5">
                 <label for="name">Olahraga *</label>
               </div>
               <div class="col-7">
                 <select required name="sport_id" class="form-select select2" id="sport_id">
                   <option disabled selected value>Pilih Federasi Dulu</option>
-                  {{-- Dynamic Data --}}
+                </select>
+              </div>
+            </div> --}}
+
+            <div class="row">
+              <div class="col-5">
+                <label for="name">Olahraga *</label>
+              </div>
+              <div class="col-7">
+                <select required name="sport_id" class="form-select select2" id="sport_id">
+                  <option disabled selected value>Silahkan pilih ...</option>
+                  @foreach ($sports as $item)
+                    <option value="{{ $item->id }}">{{ $item->name }}</option>
+                  @endforeach
                 </select>
               </div>
             </div>
@@ -331,6 +348,7 @@
 @section('script')
   <script>
     const defaultFederation = "<?php echo $federation_id ?>";
+    const isNationalTeam = "<?php echo $is_national_team ?>" == 'true' ? true : false;
 
     const championshipSelected = "<?php echo old('championship_id', isset($data) ? $data->championship_id : null) ?>";
     const federationSelected = "<?php echo old('federation_id', isset($data) ? $data->federation_id : $federation_id) ?>";
@@ -404,6 +422,8 @@
     }
 
     document.addEventListener('DOMContentLoaded', function() {
+      if (isNationalTeam) $('#federation-container').addClass('hide');
+
       if (defaultFederation !== null && defaultFederation) {
         $('#federation_id').prop('disabled', true);
         $(`<input type="hidden" name="federation_id" value="${defaultFederation}" />`).insertBefore('#federation_id');
@@ -413,18 +433,21 @@
         let val = $(this).val();
         if (val == '') val = 'n/a';
 
-        $('#sport_id').append('<option disabled selected value>Loading ...</option');
+        // $('#sport_id').append('<option disabled selected value>Loading ...</option');
         $('#school1_id').append('<option disabled selected value>Loading ...</option');
         $('#school2_id').append('<option disabled selected value>Loading ...</option');
 
-        const schools = await getList(`/api/school/list?showall=true&federation_id=${val}`);
+        let teamEndpoint = `/api/school/list?showall=true&federation_id=${val}`;
+        if (isNationalTeam) teamEndpoint += '&is_national_team=true';
+
+        const schools = await getList(teamEndpoint);
         generateSelect('#school1_id', schools, false);
         $('#school1_id').val(school1Selected).change();
 
         generateSelect('#school2_id', schools, false);
         $('#school2_id').val(school2Selected).change();
 
-        generateSelectSport(val)
+        // generateSelectSport(val)
       });
 
       $('#lp_type_id').on('change', async function () {
@@ -444,6 +467,7 @@
       $('#stadium_id').val(stadiumSelected).change();
       $('#channel_id').val(channelSelected).change();
       $('#lp_type_id').val(typeSelected).change();
+      $('#sport_id').val(sportSelected).change();
 
       if (matchSystemSelected !== null) {
         $(`#match_system_${matchSystemSelected}`).prop("checked", true);

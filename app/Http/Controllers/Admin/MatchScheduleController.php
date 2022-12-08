@@ -63,6 +63,7 @@ class MatchScheduleController extends Controller {
 
   public function create (Request $request) {
     $federation_id = $request->has('federation_id') ? $request->federation_id : null;
+    $is_national_team = $request->query("is_national_team") == "true" ? "true" : "false";
 
     $data = [
       "lp_sports" => LPSports::with(["channel", "type"])->get(),
@@ -70,7 +71,9 @@ class MatchScheduleController extends Controller {
       "federations" => Federation::get(),
       "federation_id" => $federation_id,
       "stadiums" => Stadium::get(),
-      "championships" => Championships::get()
+      "championships" => Championships::get(),
+      "sports" => Sport::get(),
+      "is_national_team" => $is_national_team
     ];
 
     return view('admin.match-schedule.form', $data);
@@ -78,6 +81,7 @@ class MatchScheduleController extends Controller {
 
   public function update (Request $request, $id) {
     $federation_id = $request->has('federation_id') ? $request->federation_id : null;
+    $is_national_team = $request->query("is_national_team") == "true" ? "true" : "false";
 
     $schedule = MatchSchedule::find($id);
     $dt = new DateTime($schedule->datetime);
@@ -92,7 +96,9 @@ class MatchScheduleController extends Controller {
       "federations" => Federation::get(),
       "federation_id" => $federation_id,
       "stadiums" => Stadium::get(),
-      "championships" => Championships::get()
+      "championships" => Championships::get(),
+      "sports" => Sport::get(),
+      "is_national_team" => $is_national_team
     ];
 
     return view('admin.match-schedule.form', $data);
@@ -183,12 +189,6 @@ class MatchScheduleController extends Controller {
         array_push($keywords, $abbr);
       }
   
-      // if (!empty($school2->association)) {
-      //   $abbr = str_replace("-", "", $school2->association->abbreviation);
-      //   $abbr = str_replace(" ", "", $abbr);
-      //   array_push($keywords, $abbr);
-      // }
-  
       if (!empty($federation)) {
         array_push($keywords, "{$federation->abbreviation}{$sport->name}"); 
       }
@@ -215,11 +215,12 @@ class MatchScheduleController extends Controller {
       $schedule->youtube_link = $request->youtube_link;
       $schedule->team_gender = $request->team_gender;
       $schedule->stadium_id = $request->stadium_id;
-      $schedule->team_type_id = $team_type->id;
+      $schedule->team_type_id = !empty($team_type) ? $team_type->id : null;
       $schedule->datetime = $datetime;
       $schedule->keywords = $keywords;
       $schedule->lp_type_id = $request->lp_type_id;
       $schedule->channel_id = $request->channel_id;
+      $schedule->is_national_team = $request->is_national_team == "true" ? 1 : 0;
       $schedule->save();
 
       if (isset($request->isDefaultFederation)) {
@@ -467,7 +468,9 @@ class MatchScheduleController extends Controller {
         $subQuery->with(["sport"]);
       },
       "federation",
-      "stadium"
+      "stadium",
+      "championship",
+      "sport"
     ]);
 
     $model = $this->_scheduleType($model, $type);

@@ -222,6 +222,7 @@ class SchoolController extends Controller {
   public function listDatatable(Request $request) {
     $cityId = isset($request->city_id) ? $request->city_id : null;
     $federationId = isset($request->federation_id) ? $request->federation_id : null;
+    $isNationalTeam = $request->is_national_team == "true" ? true : false;
 
     $data = School::with(["municipality", "federation", "association", "county"])
       ->when($cityId != null, function ($query) use ($cityId) {
@@ -229,6 +230,12 @@ class SchoolController extends Controller {
       })
       ->when($federationId != null, function ($query) use ($federationId) {
         $query->where('federation_id', $federationId);
+      })
+      ->when($isNationalTeam, function ($query) {
+        $query->where("is_national_team", 1);
+      })
+      ->when(!$isNationalTeam, function ($query) {
+        $query->where("is_national_team", 0);
       })
       ->get();
 
@@ -240,6 +247,7 @@ class SchoolController extends Controller {
     $search = $request->has('search') ? $request->search : null;
     $county_id = $request->has('county_id') ? $request->county_id : null;
     $federation_id = $request->has('federation_id') ? $request->federation_id : null;
+    $isNationalTeam = $request->is_national_team == "true" ? true : false;
     
     $page = $request->has('page') ? $request->page : 1;
     if (empty($page)) $page = 1; 
@@ -260,6 +268,11 @@ class SchoolController extends Controller {
         $query->when($federation_id != "n/a", function ($query) use ($federation_id) {
           $query->where('federation_id', $federation_id);
         });
+      })->when($isNationalTeam, function ($query) {
+        $query->where("is_national_team", 1);
+      })
+      ->when(!$isNationalTeam, function ($query) {
+        $query->where("is_national_team", 0);
       });
 
     $schools = clone($model)->when(!$showAll, function ($query) use ($limit, $page) {

@@ -3,7 +3,7 @@
 @section('content')
   <div id="championship" class="content">
     <div class="title-container">
-      <h4 class="text-primary">Kejuaraan</h4>
+      <h4 class="text-primary">Kejuaraan / Liga</h4>
 
       <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
@@ -19,9 +19,9 @@
       <div class="data-header">
         <h5 class="text-primary">
           @if(!isset($data))
-            <span>Tambah Kejuaraan</span>
+            <span>Tambah Kejuaraan / Liga</span>
           @else
-            <span>Ubah Kejuaraan {{ $data->name }}</span>
+            <span>Ubah Kejuaraan / Liga {{ $data->name }}</span>
           @endisset
         </h5>
       </div>
@@ -50,7 +50,7 @@
           <div class="col-8">
             <div class="row">
               <div class="col-5">
-                <label for="name">Nama Kejuaraan *</label>
+                <label for="name">Nama Kejuaraan / Liga *</label>
               </div>
               <div class="col-7">
                 <input type="text" class="form-control" name="name" id="name" value="{{ old('name', isset($data) ? $data->name : null) }}">
@@ -60,6 +60,15 @@
                 <div class="valid-feedback">
                   Nama bisa didaftarkan
                 </div>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-5">
+                <label for="name">Singkatan</label>
+              </div>
+              <div class="col-7">
+                <input type="text" class="form-control" name="abbreviation" id="abbreviation" value="{{ old('abbreviation', isset($data) ? $data->abbreviation : null) }}">
               </div>
             </div>
 

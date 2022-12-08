@@ -4,7 +4,7 @@
   <div id="championship" class="content">
     <div class="title-container">
       <h4 class="text-primary">
-        Kejuaraan
+        Kejuaraan / Liga
       </h4>
 
       <nav aria-label="breadcrumb">
@@ -17,7 +17,7 @@
     <div class="data-container">
       <div class="data-header">
         <a href="{{ route('admin.masterdata.championship.create') }}" class="btn btn-primary btn-sm unrounded">
-          Tambah Kejuaraan &nbsp;
+          Tambah Kejuaraan / Liga &nbsp;
           <i class="fa-solid fa-plus"></i>
         </a>
       </div>
@@ -81,6 +81,11 @@
           columns: [
             { data: 'DT_RowIndex', name: 'DT_RowIndex', title: 'No',  orderable: false, searchable: false },
             { data: 'name', name: 'name', title: 'Nama' },
+            { data: 'abbreviation', name: 'abbreviation', title: 'Singkatan', 
+              "render": function ( data, type, row, meta ) {
+                return data || '-';
+              }
+            },
             {data: 'image', title: 'Logo', name: 'image',
                 "render": function ( data, type, row, meta ) {
                   if (data === null) {

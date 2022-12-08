@@ -65,11 +65,17 @@
                   <div class="text-primary">
                     <span v-if="item.team_type !== null">{{ item.team_type.name }}&nbsp;</span>
                     <span class="capitalize" v-if="item.team_gender !== null">{{ item.team_gender }}&nbsp;</span>
-                    <span v-if="item.sport_type !== null">{{ item.sport_type.name }}</span>
+                    <span v-if="item.sport !== null">{{ item.sport.name }}</span>
+                    <span v-else-if="item.sport_type !== null">{{ item.sport_type.name }}</span>
                   </div>      
                   
                   <div class="text-primary text-bold">
-                    <span>{{ item.federation.abbreviation }}</span>
+                    <span v-if="(item.championship !== null)">
+                      {{ item.championship.abbreviation }}
+                    </span>
+                    <span v-else-if="(item.federation !== null)">
+                      {{ item.federation.abbreviation }}
+                    </span>
                   </div>
                 </q-card-section>
   
@@ -94,7 +100,8 @@
 
                       <div class="text-primary q-mt-md">
                         <div class="text-bold">{{ item.school1.name }}</div>
-                        <div>{{ item.school1.municipality.name }},&nbsp;
+                        <div v-if="(item.school1.municipality !== null)">
+                          {{ item.school1.municipality.name }},&nbsp;
                           <span class="text-bold">
                             {{ item.school1.county.abbreviation }}
                           </span>
@@ -127,7 +134,8 @@
 
                       <div class="text-primary q-mt-md">
                         <div class="text-bold">{{ item.school2.name }}</div>
-                        <div>{{ item.school2.municipality.name }},&nbsp;
+                        <div v-if="(item.school2.municipality !== null)">
+                          {{ item.school2.municipality.name }},&nbsp;
                           <span class="text-bold">
                             {{ item.school2.county.abbreviation }}
                           </span>

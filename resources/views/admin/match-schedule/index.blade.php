@@ -32,17 +32,27 @@
               href="{{ route('admin.match-schedule.create', ["federation_id" => $federation_id]) }}"
               class="btn btn-primary btn-sm unrounded"
             >
-              Tambah Jadwal&nbsp;
+              Pertandingan Tim&nbsp;
               <i class="fa-solid fa-plus"></i>
             </a>
           @else
-            <a
-              href="{{ route('admin.match-schedule.create') }}"
-              class="btn btn-primary btn-sm unrounded"
-            >
-            Tambah Jadwal&nbsp;
-              <i class="fa-solid fa-plus"></i>
-            </a>
+            <div>
+              <a
+                href="{{ route('admin.match-schedule.create') }}"
+                class="btn btn-primary btn-sm unrounded"
+              >
+                Pertandingan Tim&nbsp;
+                <i class="fa-solid fa-plus"></i>
+              </a>
+
+              <a
+                href="{{ route('admin.match-schedule.create', ["is_national_team" => "true"]) }}"
+                class="btn btn-primary btn-sm unrounded"
+              >
+                Pertandingan Negara&nbsp;
+                <i class="fa-solid fa-plus"></i>
+              </a>
+            </div>
           @endif
         @endif
       </div>
@@ -295,12 +305,12 @@
                 }
               }
             },
-            {data: 'federation', title: 'Federasi', name: 'federation',
+            {data: 'championship', title: 'Kejuaraan', name: 'championship',
               "render": function ( data, type, row, meta ) {
                 if (data === null) {
                   return '-';
                 } else {
-                  return data.abbreviation
+                  return data.abbreviation || '-'
                 }
               }
             },
@@ -351,15 +361,16 @@
 
                   const datetime = row.datetime
                   
-                  // const datelocal = moment.utc(datetime, 'YYYY-MM-DD hh:mm').local()
-                  const datelocal = moment.utc(datetime, 'YYYY-MM-DD hh:mm')
+                  const datelocal = moment.utc(datetime, 'YYYY-MM-DD hh:mm').local()
+                  // const datelocal = moment.utc(datetime, 'YYYY-MM-DD hh:mm')
 
                   const formatDate = datelocal.format('ddd, D MMMM Y');
                   const formatTime = datelocal.format('hh:mm');
                   const zone_name = moment.tz.guess();
                   const timezone = moment.tz(zone_name).zoneAbbr()
 
-                  const team_type = row.team_type === null ? null : row.team_type.name
+                  const team_type = row.team_type === null ? '' : `${row.team_type.name} `
+                  const championship = row.championship === null ? '' : `${row.championship.abbreviation} `
                   const gender = row.team_gender !== null ? `${capitalizeFirstLetter(row.team_gender)} ` : ''
                   
                   let stadium = '';
@@ -383,15 +394,13 @@
                   }
 
                   const federationAbbreviation = row.federation !== null ? row.federation.abbreviation : null;
-                  const championship = row.championship !== null ? row.championship.name : null;
-
                   const t1 = championship === null ? federationAbbreviation : championship;
 
-                  let text = `GAMEDAY\n${team_type} ${gender}${sport} Live Streaming HD\n`;
+                  let text = `GAMEDAY\n${championship}${gender}${sport} Live Streaming\n`;
                   text += `${row.school1.name} vs ${row.school2.name}\n`;
-                  text += `Watch Live: ${row.lpsport.short_link} or https://live.schsports.com\n`;
+                  text += `Watch Live: \n${row.lpsport.short_link}\nhttps://live.schsports.com\n`;
                   text += `Date: ${formatDate}\n`;
-                  text += `Time: ${formatTime} UTC\n`;
+                  text += `Time: ${formatTime} ${timezone}\n`;
                   text += `Venue: ${stadium}\n\n`;
                   text += hashtag;
                   
@@ -465,6 +474,10 @@
 
                 if (getData('state') == 'have-played') {
                   updateRoute += '&sudah-bermain'
+                }
+
+                if (row.is_national_team == 1) {
+                  updateRoute += '&is_national_team=true'
                 }
 
                 const deleteButton = `

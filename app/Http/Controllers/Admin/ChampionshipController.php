@@ -41,6 +41,7 @@ class ChampionshipController extends Controller {
 		$isCreate = $request->id == null ? true : false;
 		$validation = [
       'name' => 'required|string',
+      'abbreviation' => 'nullable|string',
 			'image' => 'nullable|mimes:jpg,png'
 		];
 
@@ -86,6 +87,7 @@ class ChampionshipController extends Controller {
 		
 		try {
       $championship->name = ucwords($request->name);
+      $championship->abbreviation = $request->abbreviation;
 			if ($request->hasFile('image')) $championship->image = $filename;
 			$championship->save();
 
