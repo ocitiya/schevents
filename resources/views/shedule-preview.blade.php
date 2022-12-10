@@ -1,14 +1,3 @@
-@php
-  $title = "{$data->federation->abbreviation} - {$data->school1->name} ({$data->school1->municipality->name}, {$data->school1->county->abbreviation}) vs {$data->school2->name} ({$data->school2->municipality->name}, {$data->school2->county->abbreviation})";
-  $team_type = empty($data->team_type) ? null : $data->team_type->name;
-  $description = "Watch online {$team_type} {$data->team_gender} {$data->sport_type->name}";
-  $team = "{$team_type} {$data->team_gender} {$data->sport_type->name}";
-  $school1 = $data->school1->name;
-  $school2 = $data->school2->name;
-  $stream_url = $data->lpsport->short_link;
-  $federation = $data->federation->abbreviation;
-@endphp
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -62,7 +51,13 @@
       Powered by
     </div>
     <div class="text-center mt-3">
-      <img src="{{ "/storage/federation/logo/{$data->federation->logo}" }}" style="width: 80px">
+      @if (!empty($championship))
+        @if ($championship->isFederation)
+          <img src="{{ "/storage/federation/logo/{$championship->logo}" }}" style="width: 80px">          
+        @else
+          <img src="{{ "/storage/championship/image/{$championship->image}" }}" style="width: 80px">          
+        @endif
+      @endif
       <img src="/images/playon.jpg" style="width: 80px">
     </div>
 
@@ -70,9 +65,11 @@
       <h5 class="mb-4"><b>
         {{ $team_type }}
         @if (!empty($data->team_gender))
-        {{ $data->team_gender }}
+          {{ $data->team_gender }}
         @endif
-        {{ $data->sport_type->name }}
+        @if (!empty($sport))
+          {{ $sport->name }}
+        @endif
       </b></h5>
 
       <div class="card-score">
@@ -87,8 +84,12 @@
             </div>
             <div>
               {{ $data->school1->name }}<br/>
-              {{ $data->school1->municipality->name }},
-              {{ $data->school1->county->abbreviation }}
+              @if (!empty($data->school1->municipality))
+                {{ $data->school1->municipality->name }},                  
+              @endif
+              @if (!empty($data->school1->county))
+                {{ $data->school1->county->abbreviation }}
+              @endif
             </div>
           </div>
 
@@ -104,8 +105,12 @@
             </div>
             <div>
               {{ $data->school2->name }}<br/>
-              {{ $data->school2->municipality->name }},
-              {{ $data->school2->county->abbreviation }}
+              @if (!empty($data->school2->municipality))
+                {{ $data->school2->municipality->name }},                  
+              @endif
+              @if (!empty($data->school2->county))
+                {{ $data->school2->county->abbreviation }}
+              @endif
             </div>
           </div>
         </div>
@@ -159,7 +164,8 @@
     const school1 = "<?php echo $school1 ?>";
     const school2 = "<?php echo $school2 ?>";
     const stream_url = "<?php echo $stream_url ?>";
-    const federation = "<?php echo $federation ?>";
+    let championship = '<?php echo json_encode($championship) ?>';
+    championship = JSON.parse(championship);
 
     let hashtag = keywords.split(',');
     hashtag = hashtag.filter((a) => a);
@@ -192,13 +198,13 @@
       // }
 
       document.querySelector('#share-to-fb').addEventListener('click', function(){
-        const shareURL = `https://www.facebook.com/sharer/sharer.php?u=${stream_url}`;
+        const shareURL = `https://www.facebook.com/sharer/sharer.php?u=${selfURL}`;
         window.open(shareURL, '_blank', 'location=yes,height=570,width=520,scrollbars=yes,status=yes');
       });
 
       document.querySelector('#share-to-twitter').addEventListener('click', function(){
         const desc = this.getAttribute('data-description');
-        const text = encodeURIComponent(`${federation}\n${team} | ${formatDate} ${timezone}\n${school1} vs ${school2}\nWatch on\n${selfURL}\nor\n${stream_url}\n\nShare this event to everyone and happy watching the game !`);
+        const text = encodeURIComponent(`${championship.abbreviation}\n${team} | ${formatDate} ${timezone}\n${school1} vs ${school2}\nWatch on\nhttps://live.schsports.com\nor\n${stream_url}\n\nShare this event to everyone and happy watching the game !`);
         const shareURL = `https://twitter.com/intent/tweet?text=${text}`;
         window.open(shareURL, '_blank', 'location=yes,height=570,width=520,scrollbars=yes,status=yes');
       });
