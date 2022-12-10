@@ -348,7 +348,7 @@
               "render": function ( data, type, row, meta ) {
                 if (row.lpsport !== null) {
                   const origin = window.location.origin;
-                  const shareURL = `https://www.facebook.com/sharer/sharer.php?u=${row.lpsport.short_link}`;
+                  const shareURL = `https://www.facebook.com/sharer/sharer.php?u=https://live.schsports.com/schedule/${row.id}`;
 
                   let hashtag = row.keywords.split(',');
                   hashtag = hashtag.filter((a) => a);
