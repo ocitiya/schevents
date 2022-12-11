@@ -19,10 +19,6 @@ class SocmedAccount extends Model {
 		'id' => 'string'
 	];
 
-	public function federation() {
-		return $this->belongsTo(Federation::class);
-	}
-
 	public function socmed () {
 		return $this->belongsTo(Socmed::class);
 	}

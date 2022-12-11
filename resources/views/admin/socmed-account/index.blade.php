@@ -73,56 +73,52 @@
     document.addEventListener('DOMContentLoaded', async function () {
       $(function () {
         table = $('#datatable').DataTable({
-            processing: true,
-            serverSide: true,
-            ajax: {
-              url: "/api/socmed-account/listDatatable"
-            },
-            columns: [
-              {data: 'created_by', title: 'Pemilik Akun', name: 'created_by',
-                "render": function ( data, type, row, meta ) {
-                  if (data === null) {
-                    return '-'
-                  } else {
-                    return data.name
-                  }
-                }
-              },
-              {data: 'socmed', title: 'Sosmed', name: 'socmed',
-                "render": function ( data, type, row, meta ) {
+          dom: '<"dt-top"if><"dt-t"rt><"dt-bottom"lp><"clear">',
+          processing: true,
+          serverSide: true,
+          ajax: {
+            url: "/api/socmed-account/listDatatable"
+          },
+          columns: [
+            {data: 'created_by', title: 'Pemilik Akun', name: 'created_by',
+              "render": function ( data, type, row, meta ) {
+                if (data === null) {
+                  return '-'
+                } else {
                   return data.name
                 }
-              },
-              {data: 'federation', title: 'Federasi', name: 'federation',
-                "render": function ( data, type, row, meta ) {
-                  return data.abbreviation
-                }
-              },
-              {data: 'account_profile', title: 'Nama Profile', name: 'account_profile'},
-              {data: 'username', title: 'username', name: 'username'},
-              {data: 'password', title: 'password', name: 'password'},
-
-              {data: 'id', title: 'Aksi', orderable: false, searchable: false,
-                "render": function ( data, type, row, meta ) {
-                  let updateRoute
-                  updateRoute = `/admin/masterdata/socmed-account/update/${data}`
-
-                  return `
-                    <a href="${updateRoute}" class="btn btn-sm unrounded btn-primary">
-                      <small>Edit Akun Sosmed</small>
-                    </a>
-
-                    <button
-                      data-id="${data}"
-                      data-name="${row.socmed.name}"
-                      class="btn btn-sm btn-danger unrounded delete"
-                    >
-                      <small>Hapus Akun Sosmed</small>
-                    </button>
-                  `;
-                }
               }
-            ]
+            },
+            {data: 'socmed', title: 'Sosmed', name: 'socmed',
+              "render": function ( data, type, row, meta ) {
+                return data.name
+              }
+            },
+            {data: 'account_profile', title: 'Nama Profile', name: 'account_profile'},
+            {data: 'username', title: 'username', name: 'username'},
+            {data: 'password', title: 'password', name: 'password'},
+
+            {data: 'id', title: 'Aksi', orderable: false, searchable: false,
+              "render": function ( data, type, row, meta ) {
+                let updateRoute
+                updateRoute = `/admin/masterdata/socmed-account/update/${data}`
+
+                return `
+                  <a href="${updateRoute}" class="btn btn-sm unrounded btn-primary">
+                    <small>Edit Akun Sosmed</small>
+                  </a>
+
+                  <button
+                    data-id="${data}"
+                    data-name="${row.socmed.name}"
+                    class="btn btn-sm btn-danger unrounded delete"
+                  >
+                    <small>Hapus Akun Sosmed</small>
+                  </button>
+                `;
+              }
+            }
+          ]
         });
       });
     })

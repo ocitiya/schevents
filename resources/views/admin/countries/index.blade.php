@@ -71,43 +71,44 @@
       
       $(function () {
         table = $('#datatable').DataTable({
-            processing: true,
-            serverSide: true,
-            ajax: "/api/country/listDatatable",
-            columns: [
-              {data: 'image', title: 'Logo', name: 'image',
-                "render": function ( data, type, row, meta ) {
-                  if (data === null) {
-                    return '<img src="/images/no-logo-1.png" style="width: 75px" class="mb-3">'
-                  } else {
-                    return `<img src="/storage/countries/image/${data}" style="width: 75px" class="mb-3">`
-                  }
-                },
-              },
-              {data: 'name', title: 'Name', name: 'name'},
-              {data: 'alpha3_code', title: 'Singkatan', name: 'alpha3_code'},
-              {data: 'id', title: 'Aksi', orderable: false, searchable: false,
-                "render": function ( data, type, row, meta ) {
-                  const updateRoute = `/admin/location/countries/update/${data}`
-
-                  return `
-                    <a href="${updateRoute}" class="btn btn-sm unrounded btn-primary">
-                      <small>Edit Negara</small>
-                    </a>
-
-                    <div class="mt-2">
-                      <button
-                        data-id="${data}"
-                        data-name="${row.name}"
-                        class="btn btn-sm btn-danger unrounded delete"
-                      >
-                        <small>Hapus Negara</small>
-                      </button>
-                    </div>
-                  `;
+          dom: '<"dt-top"if><"dt-t"rt><"dt-bottom"lp><"clear">',
+          processing: true,
+          serverSide: true,
+          ajax: "/api/country/listDatatable",
+          columns: [
+            {data: 'image', title: 'Logo', name: 'image',
+              "render": function ( data, type, row, meta ) {
+                if (data === null) {
+                  return '<img src="/images/no-logo-1.png" style="width: 75px" class="mb-3">'
+                } else {
+                  return `<img src="/storage/countries/image/${data}" style="width: 75px" class="mb-3">`
                 }
               },
-            ]
+            },
+            {data: 'name', title: 'Name', name: 'name'},
+            {data: 'alpha3_code', title: 'Singkatan', name: 'alpha3_code'},
+            {data: 'id', title: 'Aksi', orderable: false, searchable: false,
+              "render": function ( data, type, row, meta ) {
+                const updateRoute = `/admin/location/countries/update/${data}`
+
+                return `
+                  <a href="${updateRoute}" class="btn btn-sm unrounded btn-primary">
+                    <small>Edit Negara</small>
+                  </a>
+
+                  <div class="mt-2">
+                    <button
+                      data-id="${data}"
+                      data-name="${row.name}"
+                      class="btn btn-sm btn-danger unrounded delete"
+                    >
+                      <small>Hapus Negara</small>
+                    </button>
+                  </div>
+                `;
+              }
+            },
+          ]
         });
       });
     })

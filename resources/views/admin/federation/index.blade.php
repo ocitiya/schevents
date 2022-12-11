@@ -20,12 +20,6 @@
           Tambah Federasi&nbsp;
           <i class="fa-solid fa-plus"></i>
         </a>
-        
-        <div>
-          <form action="" autocomplete="off" method="POST">
-            <input class="form-control" placeholder="Search" type="text" id="search">
-          </form>
-        </div>
       </div>
 
       <div class="data-center">
@@ -78,53 +72,54 @@
 
       $(function () {
         table = $('#datatable').DataTable({
-            processing: true,
-            serverSide: true,
-            ajax: {
-              url: "/api/federation/listDatatable"
-            },
-            columns: [
-              {data: 'name', title: 'Name', name: 'name'},
-              {data: 'abbreviation', title: 'Abbreviation', name: 'abbreviation'},
-              {data: 'sports_count', title: 'Jumlah Olahraga', name: 'sports_count'},
-              {data: 'logo', title: 'Logo', name: 'logo',
-                "render": function ( data, type, row, meta ) {
-                  if (data === null) {
-                    return `
-                      <img src="/images/no-logo-1.png" style="width: 75px" class="mb-3">
-                    `
-                  } else {
-                    return `
-                      <img src="/storage/federation/logo/${data}" style="width: 75px" class="mb-3">
-                    `
-                  }
-                }
-              },
-              {data: 'id', title: 'Aksi', orderable: false, searchable: false,
-                "render": function ( data, type, row, meta ) {
-                  const updateRoute = `/admin/masterdata/federation/update/${data}`
-                  const sportRoute = `/admin/sport/type?federation_id=${row.id}`
-
+          dom: '<"dt-top"if><"dt-t"rt><"dt-bottom"lp><"clear">',
+          processing: true,
+          serverSide: true,
+          ajax: {
+            url: "/api/federation/listDatatable"
+          },
+          columns: [
+            {data: 'name', title: 'Name', name: 'name'},
+            {data: 'abbreviation', title: 'Abbreviation', name: 'abbreviation'},
+            {data: 'sports_count', title: 'Jumlah Olahraga', name: 'sports_count'},
+            {data: 'logo', title: 'Logo', name: 'logo',
+              "render": function ( data, type, row, meta ) {
+                if (data === null) {
                   return `
-                    <a href="${updateRoute}" class="btn btn-sm unrounded btn-primary">
-                      <small>Edit Federasi</small>
-                    </a>
-
-                    <a href="${sportRoute}" class="btn btn-sm unrounded btn-primary">
-                      <small>Data Olahraga</small>
-                    </a>
-
-                    <button
-                      data-id="${data}"
-                      data-name="${row.name}"
-                      class="btn btn-sm btn-danger unrounded delete"
-                    >
-                      <small>Hapus Federasi</small>
-                    </button>
-                  `;
+                    <img src="/images/no-logo-1.png" style="width: 75px" class="mb-3">
+                  `
+                } else {
+                  return `
+                    <img src="/storage/federation/logo/${data}" style="width: 75px" class="mb-3">
+                  `
                 }
-              },
-            ]
+              }
+            },
+            {data: 'id', title: 'Aksi', orderable: false, searchable: false,
+              "render": function ( data, type, row, meta ) {
+                const updateRoute = `/admin/masterdata/federation/update/${data}`
+                const sportRoute = `/admin/sport/type?federation_id=${row.id}`
+
+                return `
+                  <a href="${updateRoute}" class="btn btn-sm unrounded btn-primary">
+                    <small>Edit Federasi</small>
+                  </a>
+
+                  <a href="${sportRoute}" class="btn btn-sm unrounded btn-primary">
+                    <small>Data Olahraga</small>
+                  </a>
+
+                  <button
+                    data-id="${data}"
+                    data-name="${row.name}"
+                    class="btn btn-sm btn-danger unrounded delete"
+                  >
+                    <small>Hapus Federasi</small>
+                  </button>
+                `;
+              }
+            },
+          ]
         });
       });
     })

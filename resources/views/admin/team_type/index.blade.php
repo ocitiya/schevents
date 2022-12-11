@@ -78,33 +78,34 @@
 
       $(function () {
         table = $('#datatable').DataTable({
-            processing: true,
-            serverSide: true,
-            ajax: {
-              url: "/api/team_type/listDatatable"
+          dom: '<"dt-top"if><"dt-t"rt><"dt-bottom"lp><"clear">',
+          processing: true,
+          serverSide: true,
+          ajax: {
+            url: "/api/team_type/listDatatable"
+          },
+          columns: [
+            {data: 'name', title: 'Name', name: 'name'},
+            {data: 'id', title: 'Aksi', orderable: false, searchable: false,
+              "render": function ( data, type, row, meta ) {
+                const updateRoute = `/admin/masterdata/team_type/update/${data}`
+
+                return `
+                  <a href="${updateRoute}" class="btn btn-sm unrounded btn-primary">
+                    <small>Edit Tipe</small>
+                  </a>
+
+                  <button
+                    data-id="${data}"
+                    data-name="${row.name}"
+                    class="btn btn-sm btn-danger unrounded delete"
+                  >
+                    <small>Hapus Tipe</small>
+                  </button>
+                `;
+              }
             },
-            columns: [
-              {data: 'name', title: 'Name', name: 'name'},
-              {data: 'id', title: 'Aksi', orderable: false, searchable: false,
-                "render": function ( data, type, row, meta ) {
-                  const updateRoute = `/admin/masterdata/team_type/update/${data}`
-
-                  return `
-                    <a href="${updateRoute}" class="btn btn-sm unrounded btn-primary">
-                      <small>Edit Tipe</small>
-                    </a>
-
-                    <button
-                      data-id="${data}"
-                      data-name="${row.name}"
-                      class="btn btn-sm btn-danger unrounded delete"
-                    >
-                      <small>Hapus Tipe</small>
-                    </button>
-                  `;
-                }
-              },
-            ]
+          ]
         });
 
       });

@@ -20,12 +20,6 @@
           Tambah Asosiasi&nbsp;
           <i class="fa-solid fa-plus"></i>
         </a>
-        
-        <div>
-          <form action="" autocomplete="off" method="POST">
-            <input class="form-control" placeholder="Search" type="text" id="search">
-          </form>
-        </div>
       </div>
 
       <div class="data-center">
@@ -78,46 +72,47 @@
 
       $(function () {
         table = $('#datatable').DataTable({
-            processing: true,
-            serverSide: true,
-            ajax: {
-              url: "/api/association/listDatatable"
+          dom: '<"dt-top"if><"dt-t"rt><"dt-bottom"lp><"clear">',
+          processing: true,
+          serverSide: true,
+          ajax: {
+            url: "/api/association/listDatatable"
+          },
+          columns: [
+            {data: 'name', title: 'Name', name: 'name'},
+            {data: 'abbreviation', title: 'Abbreviation', name: 'abbreviation'},
+            {data: 'federation', title: 'Federasi', name: 'federation',
+              render: function ( data, type, row, meta ) {
+                return data.abbreviation
+              } 
             },
-            columns: [
-              {data: 'name', title: 'Name', name: 'name'},
-              {data: 'abbreviation', title: 'Abbreviation', name: 'abbreviation'},
-              {data: 'federation', title: 'Federasi', name: 'federation',
-                render: function ( data, type, row, meta ) {
-                  return data.abbreviation
-                } 
-              },
-              {data: 'logo', title: 'Logo', name: 'logo',
-                render: function ( data, type, row, meta ) {
-                  return `
-                    <img src="/storage/association/logo/${data}" style="width: 75px" class="mb-3">
-                  `
-                }
-              },
-              {data: 'id', title: 'Aksi', orderable: false, searchable: false,
-                render: function ( data, type, row, meta ) {
-                  const updateRoute = `/admin/masterdata/association/update/${data}`
+            {data: 'logo', title: 'Logo', name: 'logo',
+              render: function ( data, type, row, meta ) {
+                return `
+                  <img src="/storage/association/logo/${data}" style="width: 75px" class="mb-3">
+                `
+              }
+            },
+            {data: 'id', title: 'Aksi', orderable: false, searchable: false,
+              render: function ( data, type, row, meta ) {
+                const updateRoute = `/admin/masterdata/association/update/${data}`
 
-                  return `
-                    <a href="${updateRoute}" class="btn btn-sm unrounded btn-primary">
-                      <small>Edit Asosiasi</small>
-                    </a>
+                return `
+                  <a href="${updateRoute}" class="btn btn-sm unrounded btn-primary">
+                    <small>Edit Asosiasi</small>
+                  </a>
 
-                    <button
-                      data-id="${data}"
-                      data-name="${row.name}"
-                      class="btn btn-sm btn-danger unrounded delete"
-                    >
-                      <small>Hapus Asosiasi</small>
-                    </button>
-                  `;
-                }
-              },
-            ]
+                  <button
+                    data-id="${data}"
+                    data-name="${row.name}"
+                    class="btn btn-sm btn-danger unrounded delete"
+                  >
+                    <small>Hapus Asosiasi</small>
+                  </button>
+                `;
+              }
+            },
+          ]
         });
       });
     })

@@ -73,47 +73,48 @@
     document.addEventListener('DOMContentLoaded', async function () {
       $(function () {
         table = $('#datatable').DataTable({
-            processing: true,
-            serverSide: true,
-            ajax: {
-              url: "/api/sport/listDatatable"
-            },
-            columns: [
-              {data: 'name', title: 'Name', name: 'name'},
-              {data: 'image', title: 'Gambar', name: 'image',
-                "render": function ( data, type, row, meta ) {
-                  if (data === null) {
-                    return `
-                      <img src="/images/no-logo-1.png" style="width: 75px" class="mb-3">
-                    `
-                  } else {
-                    return `
-                      <img src="/storage/sport_type/image/${data}" style="width: 75px" class="mb-3">
-                    `
-                  }
-                }
-              },
-              {data: 'id', title: 'Aksi', orderable: false, searchable: false,
-                "render": function ( data, type, row, meta ) {
-                  let updateRoute
-                  updateRoute = `/admin/sport/update/${data}`
-
+          dom: '<"dt-top"if><"dt-t"rt><"dt-bottom"lp><"clear">',
+          processing: true,
+          serverSide: true,
+          ajax: {
+            url: "/api/sport/listDatatable"
+          },
+          columns: [
+            {data: 'name', title: 'Name', name: 'name'},
+            {data: 'image', title: 'Gambar', name: 'image',
+              "render": function ( data, type, row, meta ) {
+                if (data === null) {
                   return `
-                    <a href="${updateRoute}" class="btn btn-sm unrounded btn-primary">
-                      <small>Edit Olahraga</small>
-                    </a>
-
-                    <button
-                      data-id="${data}"
-                      data-name="${row.name}"
-                      class="btn btn-sm btn-danger unrounded delete"
-                    >
-                      <small>Hapus Olahraga</small>
-                    </button>
-                  `;
+                    <img src="/images/no-logo-1.png" style="width: 75px" class="mb-3">
+                  `
+                } else {
+                  return `
+                    <img src="/storage/sport_type/image/${data}" style="width: 75px" class="mb-3">
+                  `
                 }
-              },
-            ]
+              }
+            },
+            {data: 'id', title: 'Aksi', orderable: false, searchable: false,
+              "render": function ( data, type, row, meta ) {
+                let updateRoute
+                updateRoute = `/admin/sport/update/${data}`
+
+                return `
+                  <a href="${updateRoute}" class="btn btn-sm unrounded btn-primary">
+                    <small>Edit Olahraga</small>
+                  </a>
+
+                  <button
+                    data-id="${data}"
+                    data-name="${row.name}"
+                    class="btn btn-sm btn-danger unrounded delete"
+                  >
+                    <small>Hapus Olahraga</small>
+                  </button>
+                `;
+              }
+            },
+          ]
         });
       });
     })

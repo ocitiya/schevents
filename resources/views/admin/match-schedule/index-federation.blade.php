@@ -31,22 +31,23 @@
     document.addEventListener('DOMContentLoaded', async function () {
       $(function () {
         const table = $('#datatable').DataTable({
-            processing: true,
-            serverSide: true,
-            ajax: "/api/match-schedule/listOnFederation",
-            columns: [
-              {data: 'abbreviation', title: 'Nama Federasi', name: 'abbreviation'},
-              {data: 'match_schedule_count', title: 'Jumlah Pertandingan', name: 'match_schedule_count'},
-              {data: 'id', title: 'Aksi', orderable: false, searchable: false,
-                "render": function ( data, type, row, meta ) {
-                  return `
-                    <a href="/admin/match-schedule?federation_id=${data}" class="btn btn-sm unrounded btn-primary">
-                      <small>Daftar Pertandingan</small>
-                    </a>
-                  `;
-                }
-              },
-            ]
+          dom: '<"dt-top"if><"dt-t"rt><"dt-bottom"lp><"clear">',
+          processing: true,
+          serverSide: true,
+          ajax: "/api/match-schedule/listOnFederation",
+          columns: [
+            {data: 'abbreviation', title: 'Nama Federasi', name: 'abbreviation'},
+            {data: 'match_schedule_count', title: 'Jumlah Pertandingan', name: 'match_schedule_count'},
+            {data: 'id', title: 'Aksi', orderable: false, searchable: false,
+              "render": function ( data, type, row, meta ) {
+                return `
+                  <a href="/admin/match-schedule?federation_id=${data}" class="btn btn-sm unrounded btn-primary">
+                    <small>Daftar Pertandingan</small>
+                  </a>
+                `;
+              }
+            },
+          ]
         })
       })
     })

@@ -44,7 +44,6 @@ class SocmedAccountController extends Controller {
 		$isCreate = $request->id == null ? true : false;
 		$validation = [
 			'socmed_id' => 'required|uuid',
-			'federation_id' => 'required|uuid',
       'account_profile' => 'required|string|max:255',
       'username' => 'required|string|max:255',
       'email' => 'nullable|email|max:255',
@@ -65,7 +64,6 @@ class SocmedAccountController extends Controller {
 		
 		try {
 			$socmed->socmed_id = $request->socmed_id;
-			$socmed->federation_id = $request->federation_id;
 			$socmed->account_profile = $request->account_profile;
 			$socmed->username = $request->username;
 			$socmed->email = $request->email;
@@ -144,7 +142,7 @@ class SocmedAccountController extends Controller {
 	public function listDatatable(Request $request) {
 		$role = $request->session()->get('role');
 
-		$data = SocmedAccount::with(["socmed", "federation", "created_by"])
+		$data = SocmedAccount::with(["socmed", "created_by"])
 			->whereHas("created_by", function ($q) use ($role) {
 				$q->whereHas("user_detail", function ($sq) use ($role) {
 					$sq->when($role === "superadmin", function ($w) {

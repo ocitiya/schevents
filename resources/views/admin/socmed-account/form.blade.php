@@ -62,17 +62,6 @@
 
             <div class="row">
               <div class="col-5">
-                <label for="federation_id">Federasi *</label>
-              </div>
-              <div class="col-7">
-                <select name="federation_id" class="form-select select2" id="federation_id">
-                  {{-- Dynamic Data --}}
-                </select>
-              </div>
-            </div>
-
-            <div class="row">
-              <div class="col-5">
                 <label for="account_profile">Nama Profil *</label>
               </div>
               <div class="col-7">
@@ -134,7 +123,6 @@
 @section('script')
   <script>
     const socmedSelected = "<?php echo old('socmed_id', isset($data) ? $data->socmed_id : null) ?>";
-    const federationSelected = "<?php echo old('federation_id', isset($data) ? $data->federation_id : null) ?>";
 
     let is_create = "<?php echo !isset($data) ? 1 : 0 ?>"
     is_create = !!parseInt(is_create)
@@ -158,10 +146,6 @@
       const socmed = await getList(`/api/socmed/list?showall=true`)
       generateSelect('#socmed_id', socmed, false)
       $('#socmed_id').val(socmedSelected).change()
-
-      const federation = await getList(`/api/federation/list?showall=true`)
-      generateSelect('#federation_id', federation, true, true)
-      $('#federation_id').val(federationSelected).change()
 
       if (!is_create) $('#submit').removeClass('disabled')
 
