@@ -96,7 +96,11 @@
             if (abbreviationOnly) {
               $(elemId).append(`<option value="${item.id}">${item.abbreviation}</option>`)
             } else {
-              $(elemId).append(`<option value="${item.id}">${item.abbreviation} - ${item.name}</option>`)
+              if (item.abbreviation === null || item.abbreviation === '') {
+                $(elemId).append(`<option value="${item.id}">${item.name}</option>`)
+              } else {
+                $(elemId).append(`<option value="${item.id}">${item.abbreviation} - ${item.name}</option>`)
+              }
             }
           } else {
             $(elemId).append(`<option value="${item.id}">${item.name}</option>`)

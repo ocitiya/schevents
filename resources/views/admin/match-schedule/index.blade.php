@@ -282,26 +282,42 @@
             {data: 'school1', title: 'Club 1', name: 'school1',
               "render": function ( data, type, row, meta ) {
                 if (data !== null) {
-                  if (row.school1.county === null) {
-                    return data.name;
+                  if (row.is_national_team) {
+                    if (data.abbreviation === null || data.abbreviation === '') {
+                      return data.name;
+                    } else {
+                      return `${data.abbreviation} - ${data.name}`;
+                    }
                   } else {
-                    return `<b>${row.school1.county.abbreviation}</b> <br/> ${data.name}`;
+                    if (data.county === null) {
+                      return data.name;
+                    } else {
+                      return `<b>${data.county.abbreviation}</b> <br/> ${data.name}`;
+                    }
                   }
                 } else {
-                  return 'Unknown School';
+                  return 'Unknown Club';
                 }
               }
             },
             {data: 'school2', title: 'Club 2', name: 'school2',
               "render": function ( data, type, row, meta ) {
                 if (data !== null) {
-                  if (row.school2.county === null) {
-                    return data.name;
+                  if (row.is_national_team) {
+                    if (data.abbreviation === null || data.abbreviation === '') {
+                      return data.name;
+                    } else {
+                      return `${data.abbreviation} - ${data.name}`;
+                    }
                   } else {
-                    return `<b>${row.school2.county.abbreviation}</b> <br/> ${data.name}`;
+                    if (data.county === null) {
+                      return data.name;
+                    } else {
+                      return `<b>${data.county.abbreviation}</b> <br/> ${data.name}`;
+                    }
                   }
                 } else {
-                  return 'Unknown School'
+                  return 'Unknown Club';
                 }
               }
             },

@@ -9,10 +9,9 @@ use Illuminate\Support\Facades\Storage;
 use Intervention\Image\Facades\Image;
 use Illuminate\Database\QueryException;
 
-use DataTables;
-
 use App\Models\Country;
 use App\Models\Stadium;
+use Yajra\DataTables\Facades\DataTables;
 
 class StadiumController extends Controller {
   public function index (Request $request) {
@@ -142,7 +141,7 @@ class StadiumController extends Controller {
   }
 
   public function listDatatable(Request $request) {
-    $data = Stadium::with(["county", "municipality"])
+    $data = Stadium::with(["country", "county", "municipality"])
       ->get();
 
     return Datatables::of($data)->make(true);

@@ -121,22 +121,32 @@ class countriesController extends Controller {
 			->where("is_national_team", true)
 			->first();
 
-	if (!$check) {
+		$school = null;
+		if (!$check) {
 			$school = new School;
 			$school->id = Str::uuid();
-			$school->name = $country->name;
-			$school->is_national_team = true;
-			$school->country_id = $country->id;
+		} else {
+			$school = clone $check;
 
-			$path = storage_path('app/public/countries/image/').$country->image;
-			$newPath = storage_path('app/public/school/logo/').$country->image;
-			if (file_exists($path) && !is_dir($path)) {
-					copy($path, $newPath);
+			if (!empty($school->logo)) {
+				$oldPath = storage_path('app/public/school/logo/').$school->logo;
+				unlink($oldPath);
 			}
-
-			$school->logo = $country->image;
-			$school->save();
 		}
+
+		$school->name = $country->name;
+		$school->is_national_team = true;
+		$school->abbreviation = $country->alpha3_code;
+		$school->country_id = $country->id;
+
+		$path = storage_path('app/public/countries/image/').$country->image;
+		$newPath = storage_path('app/public/school/logo/').$country->image;
+		if (file_exists($path) && !is_dir($path)) {
+			copy($path, $newPath);
+		}
+
+		$school->logo = $country->image;
+		$school->save();
 	}
 
 	public function listDatatable(Request $request) {

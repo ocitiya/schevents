@@ -79,6 +79,19 @@
             url: "/api/stadium/listDatatable"
           },
           columns: [
+            {data: 'country', title: 'Negara', name: 'country',
+              "render": function ( data, type, row, meta ) {
+                if (data === null) {
+                  return '-';
+                } else {
+                  if (data.alpha3_code === null || data.alpha3_code === '') {
+                    return data.name
+                  } else {
+                    return `${data.alpha3_code} - ${data.name}`;
+                  }
+                }
+              }
+            },
             {data: 'name', title: 'Nama', name: 'name'},
             {data: 'county', title: 'State', name: 'county',
               "render": function ( data, type, row, meta ) {

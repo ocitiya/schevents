@@ -441,10 +441,11 @@
         if (isNationalTeam) teamEndpoint += '&is_national_team=true';
 
         const schools = await getList(teamEndpoint);
-        generateSelect('#school1_id', schools, false);
+        console.log(isNationalTeam)
+        generateSelect('#school1_id', schools, isNationalTeam);
         $('#school1_id').val(school1Selected).change();
 
-        generateSelect('#school2_id', schools, false);
+        generateSelect('#school2_id', schools, isNationalTeam);
         $('#school2_id').val(school2Selected).change();
 
         // generateSelectSport(val)

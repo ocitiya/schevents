@@ -19,6 +19,10 @@ class Municipality extends Model {
 	public $incrementing = false;
 	protected $keyType = 'string';
 
+	public function country () {
+		return $this->belongsTo(Country::class);
+	}
+
 	public function county () {
 		return $this->belongsTo(County::class);
 	}

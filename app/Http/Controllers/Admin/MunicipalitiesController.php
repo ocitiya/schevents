@@ -117,7 +117,7 @@ class MunicipalitiesController extends Controller {
 		$stateId = isset($request->state_id) ? $request->state_id : null;
 		
 		$data = Municipality::withCount(["schools"])
-			->with(["county"])
+			->with(["country", "county"])
 			->when($stateId != null, function ($subQuery) use ($stateId) {
 				$subQuery->where('county_id', $stateId);
 			})
