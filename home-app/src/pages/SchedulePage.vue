@@ -1,6 +1,6 @@
 <template>
   <q-page>
-    <div v-if="Object.keys(banners).length === 0">
+    <!-- <div v-if="Object.keys(banners).length === 0">
       <div class="text-white page-title flex flex-center title-container">
         <div class="text-h4">
           schevents.com
@@ -30,9 +30,9 @@
           />
         </q-carousel-slide>
       </q-carousel>
-    </div>
+    </div> -->
 
-    <div class="text-right bg-secondary q-pr-md">
+    <div class="text-right bg-secondary q-pr-md q-pt-lg">
       <q-btn label="filter" icon="filter_alt" unelevated color="primary"
         @click="showFilterDialog"
       >
@@ -221,7 +221,7 @@ export default defineComponent({
         dialog: false,
         data: {
           school_id: typeof this.$route.query.school_id !== 'undefined' ? this.$route.query.school_id : null,
-          federation_id: null,
+          champion_id: null,
           sport_id: null,
           date: null
         }

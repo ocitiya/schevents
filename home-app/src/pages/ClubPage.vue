@@ -202,7 +202,7 @@ export default {
     toMatchSchedule: function (school_id) {
       setTimeout(() => {
         if (searchTimeout) clearTimeout(searchTimeout)
-        this.$router.push({ name: 'home', query: { school_id } })
+        this.$router.push({ name: 'schedule', query: { school_id } })
       }, 300)
     },
 

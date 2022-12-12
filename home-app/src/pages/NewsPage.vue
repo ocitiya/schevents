@@ -443,7 +443,7 @@ export default {
   methods: {
     toHome: function (type) {
       setTimeout(() => {
-        this.$router.push({ name: 'home', query: { tab: type } })
+        this.$router.push({ name: 'schedule', query: { tab: type } })
       }, 500)
     },
     

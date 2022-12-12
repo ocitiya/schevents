@@ -163,12 +163,17 @@ class EventController extends Controller {
 	public function list (Request $request) {
 		$search = $request->has('search') ? $request->search : null;
 		$showAll = $request->has('showall') ? (boolean) $request->showall : false;
+		// $showAll = $request->has('showall') ? (boolean) $request->showall : false;
 
 		$page = $request->has('page') ? $request->page : 1;
 		if (empty($page)) $page = 1; 
-		$limit = 10;
+    $limit = $request->has('limit') ? $request->limit : 10;
 
-		$model = Event::when($search != null, function ($query) use ($search) {
+    $type = $request->has('type') ? $request->type : "all";
+
+		$model = Event::select("*");
+		$model = $this->_scheduleType($model, $type);
+		$model = $model->when($search != null, function ($query) use ($search) {
 			$query->where('name', 'LIKE', '%'.$search.'%');
 		});
 

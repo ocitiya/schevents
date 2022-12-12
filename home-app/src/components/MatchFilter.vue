@@ -22,12 +22,11 @@
           </q-input>
 
           <q-select use-input map-options emit-value
-            label="Federation"
+            label="Champions"
             input-debounce="0"
-            v-model="filter.federation_id"
-            :options="options.federations"
-            @filter="filterFederation"
-            @update:model-value="onFederationChange"
+            v-model="filter.champion_id"
+            :options="options.champions"
+            @filter="filterChampions"
           />
 
           <q-select use-input map-options emit-value
@@ -72,7 +71,7 @@ import Helper from 'src/services/helper'
 
 const defaultFilter = {
   school_id: null,
-  federation_id: null,
+  champion_id: null,
   sport_id: null,
   date: null
 }
@@ -91,12 +90,12 @@ export default {
       filter: {...defaultFilter},
       options: {
         schools: [],
-        federations: [],
+        champions: [],
         sports: []
       },
       master: {
         schools: [],
-        federations: [],
+        champions: [],
         sports: []
       }
     }
@@ -113,19 +112,11 @@ export default {
 
   mounted: function () {
     this.getSchools()
-    this.getFederations()
+    this.getChampions()
     this.getSports()
   },
 
   methods: {
-    onFederationChange: function (value) {
-      this.filter.school_id = null
-      this.filter.sport_id = null
-
-      this.getSchools(value)
-      this.getSports(value)
-    },
-
     clearFilter: function () {
       this.filter = {...defaultFilter}
       this.$emit('filter', this.filter)
@@ -139,10 +130,10 @@ export default {
       })
     },
 
-    filterFederation: function (val, update) {
+    filterChampions: function (val, update) {
       update(() => {
         const needle = val.toLowerCase()
-        this.options.federations = this.master.federations.filter(v => v.label.toLowerCase().indexOf(needle) > -1)
+        this.options.champions = this.master.champions.filter(v => v.label.toLowerCase().indexOf(needle) > -1)
       })
     },
 
@@ -153,7 +144,7 @@ export default {
       })
     },
 
-    getSchools: function (federation_id = null) {
+    getSchools: function (champion_id = null) {
       Helper.loading(this)
       
       this.options.schools = []
@@ -163,9 +154,6 @@ export default {
       let endpoint = 'school/list'
       endpoint = Helper.generateURLParams(endpoint, 'showall', true)
 
-      if (federation_id !== null) {
-        endpoint = Helper.generateURLParams(endpoint, 'federation_id', federation_id)
-      }
       this.$api.get(endpoint).then((response) => {
         const { data, message, status } = response.data
 
@@ -189,17 +177,17 @@ export default {
       })
     },
 
-    getSports: function (federation_id = null) {
+    getSports: function (champion_id = null) {
       this.options.sports = []
       this.master.sports = []
       window.localStorage.removeItem('masterdata_sports')
 
       Helper.loading(this)
 
-      let endpoint = 'sport-type/list'
+      let endpoint = 'sport/list'
       endpoint = Helper.generateURLParams(endpoint, 'showall', true)
-      if (federation_id !== null) {
-        endpoint = Helper.generateURLParams(endpoint, 'federation_id', federation_id)
+      if (champion_id !== null) {
+        endpoint = Helper.generateURLParams(endpoint, 'champion_id', champion_id)
       }
 
       this.$api.get(endpoint).then((response) => {
@@ -208,17 +196,10 @@ export default {
         if (status) {
           const sports = []
           data.list.map(item => {
-            if (item.sport !== null) {
-              sports.push({
-                label: `${item.federation.abbreviation} - ${item.sport.name}`, 
-                value: item.id
-              })
-            } else {
-              sports.push({
-                label: `${item.federation.abbreviation} - ${item.name}`, 
-                value: item.id
-              })
-            }
+            sports.push({
+              label: item.name, 
+              value: item.id
+            })
           })
 
           this.options.sports = [...sports]
@@ -230,31 +211,31 @@ export default {
       })
     },
 
-    getFederations: function () {
-      this.options.federations = []
-      this.master.federations = []
-      window.localStorage.removeItem('masterdata_federations')
+    getChampions: function () {
+      this.options.champions = []
+      this.master.champions = []
+      window.localStorage.removeItem('masterdata_champions')
 
       Helper.loading(this)
 
-      let endpoint = 'federation/list'
+      let endpoint = 'championship/list'
       endpoint = Helper.generateURLParams(endpoint, 'showall', true)
 
       this.$api.get(endpoint).then((response) => {
         const { data, message, status } = response.data
 
         if (status) {
-          const federations = []
+          const champions = []
           data.list.map(item => {
-            federations.push({
+            champions.push({
               label: item.abbreviation, 
               value: item.id
             })
           })
 
-          this.options.federations = [...federations]
-          this.master.federations = [...federations]
-          window.localStorage.setItem('masterdata_federations', JSON.stringify(federations))
+          this.options.champions = [...champions]
+          this.master.champions = [...champions]
+          window.localStorage.setItem('masterdata_champions', JSON.stringify(champions))
         }
       }).finally(() => {
         Helper.loading(this, false)

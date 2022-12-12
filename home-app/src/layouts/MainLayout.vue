@@ -20,7 +20,7 @@
         </q-toolbar-title>
 
         <q-tabs align="right" class="md" dense arrow-indicator>
-          <q-route-tab :to="{ name: 'home' }" label="Home" icon="home" />
+          <q-route-tab :to="{ name: 'schedule' }" label="Schedule" icon="schedule" />
           <q-route-tab :to="{ name: 'club' }" label="Club" icon="groups" />
           <q-route-tab :to="{ name: 'news' }" label="News" icon="newspaper" />
           <!-- <q-route-tab :to="{ name: 'video' }" label="Videos" icon="videocam" />
@@ -108,7 +108,7 @@
 
         <div class="col-6 col-md-4">
           <div class="text-bold q-mb-md">Quick Link</div>
-          <div class="link" @click="$router.push({ name: 'home' })">Home</div>
+          <div class="link" @click="$router.push({ name: 'schedule' })">Schedule</div>
           <div class="link" @click="$router.push({ name: 'club' })">Club</div>
           <div class="link" @click="$router.push({ name: 'event' })">Events</div>
           <div class="link" @click="$router.push({ name: 'news' })">News</div>
@@ -148,9 +148,9 @@ import EssentialLink from 'components/EssentialLink.vue'
 
 const linksList = [
   {
-    title: 'Home',
-    icon: 'home',
-    link_name: 'home'
+    title: 'Schedule',
+    icon: 'schedule',
+    link_name: 'schedule'
   },
   {
     title: 'Club',
@@ -160,7 +160,7 @@ const linksList = [
   {
     title: 'Events',
     icon: 'event',
-    link_name: 'events'
+    link_name: 'event'
   },
   {
     title: 'News',
@@ -219,12 +219,12 @@ export default defineComponent({
       switch (val) {
         case 'event':
           this.is_sub_module = true
-          this.sub_module_name = 'Event'
+          this.sub_module_name = 'Events'
           break
         
         case 'movie':
           this.is_sub_module = true
-          this.sub_module_name = 'Movie'
+          this.sub_module_name = 'Movies'
           break
 
         default:

@@ -1,55 +1,76 @@
 <template>
-  <div class="q-px-md q-py-xl page bg-accent" style="min-height: inherit">
+  <div class="page bg-accent" style="min-height: inherit">
     <div>
-      <div class="text-center text-h5 text-primary text-bold">
+      <div class="text-center text-h5 text-white text-bold bg-secondary q-py-xl">
         Events
       </div>
   
-      <div class="q-my-xl">
-        <div v-if="data.length > 0" class="flex flex-center" style="gap: 40px">
-          <div v-for="item in data" :key="item.id">
-            <div class="card-event-container">
-              <q-card v-ripple
-                :class="'event-card '+(item.offer === null ? 'disabled' : null)"
-                @click="e => openPage(item.offer.short_link)"
-              >
-                <q-card-section>
-                  <div class="flex flex-center">
-                    <q-img v-if="item.image !== null" class="logo"
-                      :src="`${$host}/storage/event/image/${item.image}`"
-                      :ratio="1"
-                    >
-                      <template v-slot:error>
-                        <img :src="`${$host}/images/no-logo-1.png`" style="width: 100%; height: 100%;">
-                      </template>
-                    </q-img>
-        
-                    <q-img v-else class="logo"
-                      :src="`${$host}/images/no-logo-1.png`"
-                      :ratio="1"
-                    />
-                  </div>
-      
-                  <div class="text-center q-mt-lg">
-                    <div class="text-bold text-primary q-mt-md">
-                      {{ item.name }}
-                    </div>
-                  </div>
-                </q-card-section>
-      
-                <q-separator />
-      
-                <q-card-section v-if="item.end_date !== null" class="text-center q-px-md bg-primary text-white">
-                  {{ parseDate(item.start_date) }} - {{ parseDate(item.end_date) }}
-                </q-card-section>
+      <div class="">
+        <q-tabs
+          v-model="tab"
+          inline-label
+          ref="tab"
+          class="bg-secondary text-primary"
+          active-class="text-white"
+          @update:model-value="() => getEvents(1)"
+        >
+          <q-tab name="upcoming" label="Upcoming" />
+          <q-tab name="live" label="Live" />
+        </q-tabs>
 
-                <q-card-section v-else class="text-center q-px-md bg-primary text-white">
-                  {{ parseDate(item.start_date) }}
-                </q-card-section>
-              </q-card>
+        <q-pull-to-refresh @refresh="refresh">
+          <div v-if="data.length > 0" class="flex flex-center" style="gap: 40px">
+            <div v-for="item in data" :key="item.id" class="q-my-xl">
+              <q-infinite-scroll @load="loadMore">
+                <div class="card-event-container">
+                  <q-card class="event-card">
+                    <q-card-section>
+                      <div class="flex flex-center q-my-lg">
+                        <q-img v-if="item.image !== null" class="logo"
+                          :src="`${$host}/storage/event/image/${item.image}`"
+                          :ratio="1"
+                        >
+                          <template v-slot:error>
+                            <img :src="`${$host}/images/no-logo-1.png`" style="width: 100%; height: 100%;">
+                          </template>
+                        </q-img>
+            
+                        <q-img v-else class="logo"
+                          :src="`${$host}/images/no-logo-1.png`"
+                          :ratio="1"
+                        />
+                      </div>
+
+                      <div v-if="item.end_date !== null" class="">
+                        {{ parseDate(item.start_date) }} - {{ parseDate(item.end_date) }}
+                      </div>
+
+                      <div v-else class="">
+                        {{ parseDate(item.start_date) }}
+                      </div>
+          
+                      <div class="">
+                        {{ item.name }}
+                      </div>
+
+                      <q-card-section class="text-center">
+                        <q-btn unelevated
+                          label="Join"
+                          color="black"
+                          :disable="item.offer === null"
+                          @click="e => openPage(item.offer.short_link)"
+                        />
+                      </q-card-section>
+                    </q-card-section>
+                  </q-card>
+                </div>
+              </q-infinite-scroll>
             </div>
           </div>
-        </div>
+          <div v-else class="text-center q-mt-xl text-body1">
+            No Data
+          </div>
+        </q-pull-to-refresh>
       </div>
     </div>
   </div>
@@ -67,7 +88,21 @@ export default {
   data: function () {
     return {
       loading: true,
-      data: []
+      data: [],
+      tab: 'upcoming',
+      has_filter: false,
+      schedules: [],
+      pagination: {
+        page: 1,
+        total_page: 1
+      },
+      filter: {
+        dialog: false,
+        data: {
+          name: null,
+          start_date: null
+        }
+      },
     }
   },
   
@@ -80,6 +115,22 @@ export default {
   },
 
   methods: {
+    loadMore: async function (index, done) {
+      const currentPage = this.pagination.page
+
+      if (currentPage < this.pagination.total_page) {
+        this.pagination.page = parseInt(currentPage) + 1
+        await this.getEvents()
+      }
+
+      done()
+    },
+
+    refresh: async function (done) {
+      await this.getEvents(1)
+      done()
+    },
+
     openPage: function (link) {
       window.open(link)
     },
@@ -94,13 +145,40 @@ export default {
       }
     },
 
-    getEvents: function (search) {
+    onFilter: async function (filter) {
+      this.filter.data = { ...filter }
+      if (this.filter.data.date !== null) this.tab = null
+      await this.getSchedule(1)
+      this.hideFilterDialog()
+    },
+
+    hideFilterDialog: function () {
+      this.filter.dialog = false
+    },
+
+    showFilterDialog: function () {
+      this.filter.dialog = true
+    },
+
+    getEvents: function (page = null) {
+      if (page !== null) this.pagination.page = page
       Helper.loading(this)
 
-      let endpoint = 'event/list'
-      endpoint = Helper.generateURLParams(endpoint, 'showall', true)
-
       return new Promise(resolve => {
+        const page = this.pagination.page
+
+        let endpoint = 'event/list'
+        endpoint = Helper.generateURLParams(endpoint, 'page', page)
+        endpoint = Helper.generateURLParams(endpoint, 'type', this.tab)
+
+        this.has_filter = false
+        Object.entries(this.filter.data).forEach(([key, value]) => {
+          if (value !== null) {
+            this.has_filter = true
+            endpoint = Helper.generateURLParams(endpoint, key, value)
+          }
+        })
+
         this.$api.get(endpoint).then((response) => {
           const { data, message, status } = response.data
 
