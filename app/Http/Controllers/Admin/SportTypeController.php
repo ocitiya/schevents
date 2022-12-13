@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Championships;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
@@ -31,7 +32,7 @@ class SportTypeController extends Controller {
 	public function create (Request $request) {
 		$data = [
 			"default_federation" => $request->has("federation_id") ? $request->federation_id : null,
-			"federations" => Federation::get()
+			"championships" => Championships::get()
 		];
 
 		return view('admin.sport_type.form', $data);
@@ -41,7 +42,7 @@ class SportTypeController extends Controller {
 		$types = SportType::find($id);
 		$data = [
 			"default_federation" => $request->has("federation_id") ? $request->federation_id : null,
-			"federations" => Federation::get(),
+			"championships" => Championships::get(),
 			"data" => $types
 		];
 
@@ -60,7 +61,7 @@ class SportTypeController extends Controller {
 		$validation = [
 			'sport_id' => 'required|uuid',
 			'stream_url' => 'mimes:jpg,png',
-			'federation_id' => 'required|uuid'
+			'championship_id' => 'required|numeric'
 		];
 			
 		$validated = $request->validate($validation);
@@ -103,7 +104,7 @@ class SportTypeController extends Controller {
 		
 		try {
 			$types->sport_id = ucwords($request->sport_id);
-			$types->federation_id = $request->federation_id;
+			$types->championship_id = $request->championship_id;
 			if ($request->hasFile('image')) $types->image = $filename;
 			$types->save();
 
@@ -157,8 +158,12 @@ class SportTypeController extends Controller {
 	public function list (Request $request) {
 		$search = $request->has('search') ? $request->search : null;
 		$showAll = $request->has('showall') ? (boolean) $request->showall : false;
+		
 		$federation_id = $request->has('federation_id') ? $request->federation_id : null;
 		if ($federation_id == "null") $federation_id = null;
+
+		$championship_id = $request->has('championship_id') ? $request->championship_id : null;
+		if ($championship_id == "null") $championship_id = null;
 
 		$user_id = $request->has('user_id') ? $request->user_id : null;
 
@@ -170,9 +175,11 @@ class SportTypeController extends Controller {
 			$query->where('name', 'LIKE', '%'.$search.'%');
 		})->when(!empty($federation_id), function ($query) use ($federation_id) {
 			$query->where("federation_id", $federation_id);
+		})->when(!empty($championship_id), function ($query) use ($championship_id) {
+			$query->where("championship_id", $championship_id);
 		})->when($user_id != null, function ($query) use ($user_id) {
 			$query->where("created_by", $user_id);
-		})->with(["federation", "sport"]);
+		})->with(["federation", "sport", "championship"]);
 
 		$types = clone($model)->when(!$showAll, function ($query) use ($limit, $page) {
 			$query->take($limit)->skip(($page - 1) * $limit);
@@ -197,9 +204,11 @@ class SportTypeController extends Controller {
 	}
 
 	public function listDatatable(Request $request) {
-		$data = SportType::with(["federation", "sport", "user"])
+		$data = SportType::with(["federation", "sport", "user", "championship"])
 			->when($request->federation_id != null, function ($query) use ($request) {
 				$query->where("federation_id", $request->federation_id);
+			})->when($request->championship_id != null, function ($query) use ($request) {
+				$query->where("championship_id", $request->championship_id);
 			})
 			->when(Session::get("role") == "user", function ($q) {
 				$q->where("created_by", Auth::id());

@@ -62,12 +62,12 @@
 
             <div class="row">
               <div class="col-5">
-                <label for="federation_id">Federasi *</label>
+                <label for="championship_id">Kejuaraan *</label>
               </div>
               <div class="col-7">
-                <select class="form-select select2" id="federation_id" name="federation_id">
+                <select class="form-select select2" id="championship_id" name="championship_id">
                   <option disabled selected value>Please select ...</option>
-                  @foreach ($federations as $item)
+                  @foreach ($championships as $item)
                     <option value="{{ $item->id }}">{{ $item->abbreviation }}</option>
                   @endforeach
                 </select>
@@ -133,7 +133,7 @@
 
 @section('script')
   <script>
-    const federationSelected = "<?php echo old('federation_id', isset($data) ? $data->federation_id : $default_federation) ?>";
+    const championshipSelected = "<?php echo old('championship_id', isset($data) ? $data->championship_id : null) ?>";
     const federationDefault = "<?php echo $default_federation ? 1 : 0 ?>"
     let sportSelected = "<?php echo old('sport_id', isset($data) ? $data->sport_id : null) ?>";
 
@@ -161,7 +161,7 @@
       $('#sport_id').val(sportSelected).change()
 
       if (!is_create) $('#submit').removeClass('disabled')
-      $('#federation_id').val(federationSelected).change()
+      $('#championship_id').val(championshipSelected).change()
       if (federationDefault == 1) {
         $('#federation_id').prop('disabled', true)
         $(`<input type="hidden" name="federation_id" value="${federationSelected}">`).insertBefore('#federation_id')

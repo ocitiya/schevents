@@ -5,7 +5,7 @@
     <div class="title-container">
       <h4 class="text-primary">
         @if ($default_federation != null)
-          Olahraga dalam federasi: {{ $federation_name }}
+        Link Stream dalam federasi: {{ $federation_name }}
         @else
           Link Stream
         @endif
@@ -63,7 +63,7 @@
       formData.append('_token', csrfToken)
 
       swal({
-        text: `Ingin menghapus olahraga ${name}?`,
+        text: `Ingin menghapus Link Stream ${name}?`,
         icon: "warning",
         buttons: true,
         dangerMode: true,
@@ -79,7 +79,7 @@
               swal({
                 title: 'Deleted',
                 icon: 'success',
-                text: `Olahraga ${name} berhasil dihapus`
+                text: `Link Stream ${name} berhasil dihapus`
               })
             } else {
               console.log(data.message)
@@ -112,9 +112,13 @@
                   }
                 }
               },
-              {data: 'federation', title: 'Singkatan Federasi', name: 'federation',
+              {data: 'championship', title: 'Singkatan Kejuaraan', name: 'championship',
                 "render": function ( data, type, row, meta ) {
-                  return data.abbreviation
+                  if (data === null) {
+                    return '-';
+                  } else {
+                    return data.abbreviation;
+                  } 
                 }
               },
               {data: 'image', title: 'Banner', name: 'banner',
@@ -144,11 +148,15 @@
                      name = row.sport === null ? 'Not Found' : row.sport.name
                   }
 
-                  name += ` - ${row.federation.abbreviation}`;
-
+                  if (row.championship !== null) {
+                    name += ` - ${row.championship.abbreviation}`;
+                  } else if (row.federation !== null) {
+                    name += ` - ${row.federation.abbreviation}`
+                  }
+            
                   return `
                     <a href="${updateRoute}" class="btn btn-sm unrounded btn-primary">
-                      <small>Edit Olahraga</small>
+                      <small>Edit Link Stream</small>
                     </a>
 
                     <button
@@ -156,7 +164,7 @@
                       data-name="${name}"
                       class="btn btn-sm btn-danger unrounded delete"
                     >
-                      <small>Hapus Olahraga</small>
+                      <small>Hapus Link Stream</small>
                     </button>
                   `;
                 }

@@ -19,6 +19,10 @@ class SportType extends Model {
 		'id' => 'string'
 	];
 
+	public function championship() {
+		return $this->belongsTo(Championships::class);
+	}
+
 	public function federation() {
 		return $this->belongsTo(Federation::class);
 	}

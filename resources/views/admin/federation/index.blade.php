@@ -100,13 +100,13 @@
                 const updateRoute = `/admin/masterdata/federation/update/${data}`
                 const sportRoute = `/admin/sport/type?federation_id=${row.id}`
 
+                // <a href="${sportRoute}" class="btn btn-sm unrounded btn-primary">
+                //   <small>Data Olahraga</small>
+                // </a>
+
                 return `
                   <a href="${updateRoute}" class="btn btn-sm unrounded btn-primary">
                     <small>Edit Federasi</small>
-                  </a>
-
-                  <a href="${sportRoute}" class="btn btn-sm unrounded btn-primary">
-                    <small>Data Olahraga</small>
                   </a>
 
                   <button
