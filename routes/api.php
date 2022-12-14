@@ -50,6 +50,7 @@ use App\Http\Controllers\Admin\UserDetailController;
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
+Route::get('/statistic/count/home', [AppController::class, 'countData']);
 
 Route::get('/app/detail', [AppController::class, 'detail']);
 Route::get('/country/list', [CountriesController::class, 'list']);

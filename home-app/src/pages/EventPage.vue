@@ -6,6 +6,14 @@
       </div>
   
       <div class="">
+        <div class="text-right bg-secondary q-pr-md q-pt-lg">
+          <q-btn label="filter" icon="filter_alt" unelevated color="primary"
+            @click="showFilterDialog"
+          >
+            <q-badge v-if="has_filter" floating color="white" rounded />
+          </q-btn>
+        </div>
+        
         <q-tabs
           v-model="tab"
           inline-label
@@ -71,6 +79,8 @@
             No Data
           </div>
         </q-pull-to-refresh>
+
+        <event-filter :show="filter.dialog" @hide="hideFilterDialog" @filter="onFilter" />
       </div>
     </div>
   </div>
@@ -81,10 +91,12 @@ import Helper from 'src/services/helper'
 import 'moment-timezone'
 import moment from 'moment'
 
+import EventFilter from 'src/components/EventFilter.vue'
 import { useMeta } from 'quasar'
 import 'vue3-carousel/dist/carousel.css'
 
 export default {
+  components: { EventFilter },
   data: function () {
     return {
       loading: true,
@@ -100,7 +112,7 @@ export default {
         dialog: false,
         data: {
           name: null,
-          start_date: null
+          date: null
         }
       },
     }
@@ -115,6 +127,21 @@ export default {
   },
 
   methods: {
+    onFilter: async function (filter) {
+      this.filter.data = { ...filter }
+      if (this.filter.data.date !== null) this.tab = 'all'
+      await this.getEvents(1)
+      this.hideFilterDialog()
+    },
+
+    hideFilterDialog: function () {
+      this.filter.dialog = false
+    },
+
+    showFilterDialog: function () {
+      this.filter.dialog = true
+    },
+
     loadMore: async function (index, done) {
       const currentPage = this.pagination.page
 
@@ -143,21 +170,6 @@ export default {
       } else {
         return '-'
       }
-    },
-
-    onFilter: async function (filter) {
-      this.filter.data = { ...filter }
-      if (this.filter.data.date !== null) this.tab = null
-      await this.getSchedule(1)
-      this.hideFilterDialog()
-    },
-
-    hideFilterDialog: function () {
-      this.filter.dialog = false
-    },
-
-    showFilterDialog: function () {
-      this.filter.dialog = true
     },
 
     getEvents: function (page = null) {

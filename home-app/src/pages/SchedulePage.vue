@@ -1,37 +1,5 @@
 <template>
   <q-page>
-    <!-- <div v-if="Object.keys(banners).length === 0">
-      <div class="text-white page-title flex flex-center title-container">
-        <div class="text-h4">
-          schevents.com
-        </div>
-      </div>
-    </div>
-
-    <div v-else class="bg-secondary q-pt-md">
-      <q-carousel
-        v-model="slide"
-        swipeable animated arrows
-        transition-prev="jump-right"
-        transition-next="jump-left"
-        control-color="white"
-        padding infinite autoplay
-        height="300px"
-        class="text-white bg-secondary animate__animated animate__fadeIn"
-      >
-        <q-carousel-slide
-          v-for="(item, i) in banners" :key="item.id" :name="i"
-        >
-          <q-img
-            :src="`${$host}/storage/banner/image/${item.image}`"
-            height="100%"
-            width="100%"
-            fit="contain"
-          />
-        </q-carousel-slide>
-      </q-carousel>
-    </div> -->
-
     <div class="text-right bg-secondary q-pr-md q-pt-lg">
       <q-btn label="filter" icon="filter_alt" unelevated color="primary"
         @click="showFilterDialog"
@@ -259,22 +227,6 @@ export default defineComponent({
   },
 
   methods: {
-    getBanners: function() {
-      return new Promise((resolve, reject) => {
-        let endpoint = 'banner/list?showall=true'
-        this.$api.get(endpoint).then((response) => {
-          const { data, message, status } = response.data
-
-          if (status) {
-            this.banners = [...data.list]
-            resolve()
-          } else {
-            reject()
-          }
-        })
-      })
-    },
-
     onFilter: async function (filter) {
       this.filter.data = { ...filter }
       if (this.filter.data.date !== null) this.tab = null
