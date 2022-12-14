@@ -206,8 +206,6 @@ export default defineComponent({
   },
 
   mounted: function () {
-    this.getBanners()
-
     const tab = this.$route.query.tab
     if (typeof tab !== 'undefined') {
       this.tab = tab
