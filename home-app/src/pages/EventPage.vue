@@ -27,8 +27,8 @@
         </q-tabs>
 
         <q-pull-to-refresh @refresh="refresh">
-          <div v-if="data.length > 0" class="flex flex-center" style="gap: 40px">
-            <div v-for="item in data" :key="item.id" class="q-my-xl">
+          <div v-if="data.length > 0" class="flex flex-center q-py-xl" style="gap: 40px">
+            <div v-for="item in data" :key="item.id">
               <q-infinite-scroll @load="loadMore">
                 <div class="card-event-container">
                   <q-card class="event-card">
