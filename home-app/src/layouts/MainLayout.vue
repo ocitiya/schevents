@@ -2,10 +2,7 @@
   <q-layout view="lhh lpR fff">
     <q-header elevated reveal height-hint="98">
       <q-toolbar>
-        <q-btn
-          flat
-          dense
-          round
+        <q-btn flat dense round
           icon="menu"
           aria-label="Menu"
           class="lt-md"
@@ -20,6 +17,7 @@
         </q-toolbar-title>
 
         <q-tabs align="right" class="md" dense arrow-indicator>
+          <q-route-tab :to="{ name: 'home' }" label="Home" icon="home" />
           <q-route-tab :to="{ name: 'schedule' }" label="Schedule" icon="schedule" />
           <q-route-tab :to="{ name: 'club' }" label="Club" icon="groups" />
           <q-route-tab :to="{ name: 'news' }" label="News" icon="newspaper" />
@@ -108,6 +106,7 @@
 
         <div class="col-6 col-md-4">
           <div class="text-bold q-mb-md">Quick Link</div>
+          <div class="link" @click="$router.push({ name: 'home' })">Home</div>
           <div class="link" @click="$router.push({ name: 'schedule' })">Schedule</div>
           <div class="link" @click="$router.push({ name: 'club' })">Club</div>
           <div class="link" @click="$router.push({ name: 'event' })">Events</div>
@@ -147,6 +146,11 @@ import { defineComponent, ref } from 'vue'
 import EssentialLink from 'components/EssentialLink.vue'
 
 const linksList = [
+  {
+    title: 'Home',
+    icon: 'home',
+    link_name: 'home'
+  },
   {
     title: 'Schedule',
     icon: 'schedule',

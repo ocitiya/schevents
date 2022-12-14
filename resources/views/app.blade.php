@@ -6,4 +6,4 @@
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
 
-      gtag('config', 'G-PNSR4GZMW0');</script><script defer src=/js/vendor.cf8d5131.js></script><script defer src=/js/app.c82dac15.js></script><link href=/css/vendor.a5b57815.css rel=stylesheet><link href=/css/app.c589a4fc.css rel=stylesheet></head><body><div id=q-app></div></body></html>
+      gtag('config', 'G-PNSR4GZMW0');</script><script defer src=/js/vendor.cf8d5131.js></script><script defer src=/js/app.6e311d76.js></script><link href=/css/vendor.a5b57815.css rel=stylesheet><link href=/css/app.c589a4fc.css rel=stylesheet></head><body><div id=q-app></div></body></html>
