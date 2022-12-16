@@ -95,28 +95,30 @@
 
     <q-footer class="bg-primary text-white q-py-xl q-px-md text-body1">
       <div class="row q-col-gutter-xl">
-        <div class="col-6 col-md-4">
-          <div>
-            <q-avatar v-if="logo !== null">
-              <img :src="`${$host}/storage/app/image/${logo}`" width="40px" />
-            </q-avatar>
-            <div class="q-mt-sm">{{ title }}</div>
-          </div>
+        <div class="col-12 col-sm-4 col-md-3 text-center">
+          <q-avatar v-if="logo !== null">
+            <img :src="`${$host}/storage/app/image/${logo}`" width="40px" />
+          </q-avatar>
+          <div class="q-mt-md">{{ title }}</div>
         </div>
 
-        <div class="col-6 col-md-4">
-          <div class="text-bold q-mb-md">Quick Link</div>
-          <div class="link" @click="$router.push({ name: 'home' })">Home</div>
-          <div class="link" @click="$router.push({ name: 'schedule' })">Schedule</div>
-          <div class="link" @click="$router.push({ name: 'club' })">Club</div>
-          <div class="link" @click="$router.push({ name: 'event' })">Events</div>
-          <div class="link" @click="$router.push({ name: 'news' })">News</div>
-          <!-- <div class="link" @click="$router.push({ name: 'video' })">Videos</div>
-          <div class="link" @click="$router.push({ name: 'scores' })">Scores</div> -->
-          <div class="link" @click="$router.push({ name: 'about' })">About</div>
+        <div class="col-6 col-sm-4 col-md-3">
+          <div class="text-bold q-mb-md">Browse</div>
+          <div class="link" @click="$router.push({ name: 'home' })">Ways to Watch</div>
+          <div class="link" @click="$router.push({ name: 'club' })">Find Your Teams</div>
+          <div class="link" @click="$router.push({ name: 'schedule' })">Live Streaming Sports</div>
+          <div class="link" @click="$router.push({ name: 'event' })">Live Streaming Events</div>
         </div>
 
-        <div class="col-12 col-md-4">
+        <div class="col-6 col-sm-4 col-md-3">
+          <div class="text-bold q-mb-md">About Us</div>
+          <div class="link">About schsport</div>
+          <div class="link">Help & Supports</div>
+          <div class="link">Privacy Policy</div>
+          <div class="link">Terms of Use</div>
+        </div>
+
+        <div class="col-12 col-md-3">
           <div class="text-bold q-mb-md">Contact</div>
           <div v-for="item in contact_us" :key="item.id" class="text-justify">
             <q-img

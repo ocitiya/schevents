@@ -29,63 +29,55 @@
           <q-infinite-scroll @load="loadMore">
             <div class="card-schedule-container">
               <q-card v-for="item in schedules" :key="item.id" v-ripple class="event-card" @click="() => redirect(item.id)">
-                <q-card-section class="flex justify-between items-center">
-                  <div class="text-primary">
-                    <span v-if="item.team_type !== null">{{ item.team_type.name }}&nbsp;</span>
-                    <span class="capitalize" v-if="item.team_gender !== null">{{ item.team_gender }}&nbsp;</span>
-                    <span v-if="item.sport !== null">{{ item.sport.name }}</span>
-                    <span v-else-if="item.sport_type !== null">{{ item.sport_type.name }}</span>
-                  </div>      
-                  
-                  <div class="text-primary text-bold">
-                    <span v-if="(item.championship !== null)">
-                      {{ item.championship.abbreviation }}
-                    </span>
-                    <span v-else-if="(item.federation !== null)">
-                      {{ item.federation.abbreviation }}
-                    </span>
+                <q-card-section class="q-py-lg schedule-team-logo">
+                  <div class="left">
+                    <q-img class="logo"
+                      :src="`${$host}/storage/school/logo/${item.school1.logo}`"
+                      :ratio="1"
+                    >
+                      <template v-slot:error>
+                        <img :src="`${$host}/images/no-logo-1.png`" style="width: 100%; height: 100%;">
+                      </template>
+                    </q-img>
                   </div>
-                </q-card-section>
-  
-                <q-separator />
 
-                <q-card-section class="q-py-lg">
-                  <div class="vs-section q-mb-md">
-                    <div v-if="item.school1 !== null" class="text-center q-mr-md">
-                      <q-img v-if="item.school1.logo !== null" class="logo"
-                        :src="`${$host}/storage/school/logo/${item.school1.logo}`"
-                        :ratio="1"
-                      >
-                        <template v-slot:error>
-                          <img :src="`${$host}/images/no-logo-1.png`" style="width: 100%; height: 100%;">
-                        </template>
-                      </q-img>
+                  <div class="right">
+                    <q-img class="logo"
+                      :src="`${$host}/storage/school/logo/${item.school2.logo}`"
+                      :ratio="1"
+                    >
+                      <template v-slot:error>
+                        <img :src="`${$host}/images/no-logo-1.png`" style="width: 100%; height: 100%;">
+                      </template>
+                    </q-img>
+                  </div>
 
-                      <q-img v-else class="logo"
-                        :src="`${$host}/images/no-logo-1.png`"
-                        :ratio="1"
-                      />
+                  <div class="top" v-if="loog !== null">
+                    <q-img class="logo"
+                      :src="`${$host}/storage/app/image/${logo}`"
+                      :ratio="1"
+                    >
+                      <template v-slot:error>
+                        <img :src="`${$host}/images/no-logo-1.png`" style="width: 100%; height: 100%;">
+                      </template>
+                    </q-img>
+                  </div>
 
-                      <div class="text-primary q-mt-md">
-                        <div class="text-bold">{{ item.school1.name }}</div>
-                        <div v-if="(item.school1.municipality !== null)">
-                          {{ item.school1.municipality.name }}
-                          <span class="text-bold" v-if="(item.school1.county !== null)">
-                            ,&nbsp;{{ item.school1.county.abbreviation }}
-                          </span>
-                        </div>
-                      </div>
-                    </div>
+                  <div class="bottom" v-if="item.championship !== null">
+                    <q-img class="logo"
+                      :src="`${$host}/storage/championship/image/${item.championship.image}`"
+                      :ratio="1"
+                    >
+                      <template v-slot:error>
+                        <img :src="`${$host}/images/no-logo-1.png`" style="width: 100%; height: 100%;">
+                      </template>
+                    </q-img>
+                  </div>
 
-                    <div v-else class="q-ml-md flex flex-center">
-                      <div class="text-red text-bold">Unknown School</div>
-                    </div>
+                  <!-- <div class="vs-section q-mb-md">
+                    
 
-                    <div class="text-body1 text-grey-7 flex flex-center">
-                      VS
-                    </div>
-
-                    <div v-if="item.school2 !== null" class="text-center q-ml-md">
+                    <div class="text-center q-ml-md">
                       <q-img v-if="item.school2.logo !== null" class="logo"
                         :src="`${$host}/storage/school/logo/${item.school2.logo}`"
                         :ratio="1"
@@ -99,45 +91,22 @@
                         :src="`${$host}/images/no-logo-1.png`"
                         :ratio="1"
                       />
-
-                      <div class="text-primary q-mt-md">
-                        <div class="text-bold">{{ item.school2.name }}</div>
-                        <div v-if="(item.school2.municipality !== null)">
-                          {{ item.school2.municipality.name }}
-                          <span class="text-bold" v-if="(item.school2.county !== null)">
-                            ,&nbsp;{{ item.school2.county.abbreviation }}
-                          </span>
-                        </div>
-                      </div>
                     </div>
-
-                    <div v-else class="q-ml-md flex flex-center">
-                      <div class="text-red text-bold">Unknown School</div>
-                    </div>
-                  </div>
-
-                  <div v-if="item.stadium_id !== null">
-                    <q-separator />
-
-                    <div class="flex items-center text-primary q-mt-md">
-                      <q-icon name="pin_drop" />&nbsp;
-                      {{ item.stadium.name }}
-                    </div>
-                  </div>
+                  </div> -->
                 </q-card-section>
 
                 <q-separator />
 
-                <q-card-section class="flex items-center justify-between q-px-md bg-secondary text-accent text-bold">
-                  <div class="flex flex-center">
-                    <q-icon name="calendar_month" />
-                    <span class="q-ml-sm">{{ scheduleDate(item.datetime) }}</span>
-                  </div>
-
-                  <div class="flex flex-center">
-                    <q-icon name="schedule" />
-                    <span class="q-ml-sm">{{ scheduleTime(item.datetime) }}</span>
-                  </div>
+                <q-card-section class="text-justify q-px-md bg-secondary text-accent text-bold">
+                  <span>
+                    Watch: {{ item.school1.name }} vs {{ item.school2.name }} - {{ scheduleTime(item.datetime) }} - {{ scheduleDate(item.datetime) }} -
+                  </span>
+                  <span class="capitalize" v-if="item.team_gender !== null">{{ item.team_gender }}&nbsp;</span>
+                  <span v-if="item.sport !== null">{{ item.sport.name }}</span>
+                  <span v-else-if="item.sport_type !== null">{{ item.sport_type.name }}</span>
+                  <span v-if="item.stadium !== null">
+                     - Live from {{ item.stadium.name }}
+                  </span>
                 </q-card-section>
               </q-card>
             </div>
@@ -183,6 +152,7 @@ export default defineComponent({
 
   data: function () {
     return {
+      logo: null,
       slide: 0,
       banners: [],
       filter: {
@@ -206,6 +176,8 @@ export default defineComponent({
   },
 
   mounted: function () {
+    this.getAppData()
+
     const tab = this.$route.query.tab
     if (typeof tab !== 'undefined') {
       this.tab = tab
@@ -276,6 +248,15 @@ export default defineComponent({
       return `${formatTime} ${timezone}`
     },
 
+    getAppData () {
+      this.$api.get('app/detail').then((response) => {
+        const { data, message, status } = response.data
+
+        // this.title = data.name
+        this.logo = data.logo
+      })
+    },
+
     getSchedule: function (page = null) {
       if (page !== null) this.pagination.page = page
 
@@ -323,12 +304,8 @@ export default defineComponent({
 })
 </script>
 
-<style scoped>
+<style scoped lang="scss">
   @media only screen and (max-width: 599px) {
-    .options-container {
-      padding-right: 20px !important;
-    }
-
     .page {
       padding-left: 20px !important;
       padding-right: 20px !important;
@@ -346,55 +323,18 @@ export default defineComponent({
     }
   }
 
-  @media only screen and (min-width: 1023px) {
-    .page-title {
-      min-height: 200px !important;
-    }
-  }
-
-  .options-container {
-    padding-right: 100px;
-  }
-
-  .title-waves {
-    margin-top: -10px;
-  }
-
   .page {
     padding-left: 70px;
     padding-right: 70px;
     min-height: 400px;
   }
 
-  .schedule-list .q-card__section {
-    width: 100%;
-  }
-
-  .logo {
-    text-align: center;
-    max-height: 75px;
-    max-width: 75px;
-  }
-
-  .page-title {
-    padding: 50px 20px 20px;
-    min-height: 300px;
-    flex-direction: column;
-    text-shadow: 2px 3px 0px rgb(120, 120, 120);
-  }
-
   .event-card {
     cursor: pointer;
     width: 300px;
-    border-radius: 20px;
+    border-bottom-right-radius: 20px;
+    border-bottom-left-radius: 20px;
   }
-
-  .vs-section {
-    grid-template-columns: 7fr 1fr 7fr;
-    grid-auto-flow: column;
-    display: grid;
-  }
-
   .card-schedule-container {
     display: flex;
     align-items: center;
@@ -403,7 +343,52 @@ export default defineComponent({
     gap: 20px;
   }
 
-  .title-container {
-    background-image: linear-gradient(to bottom, #080d13, #162d44, #194f7c, #1473b9, #0099fa);
+  .schedule-team-logo {
+    aspect-ratio: 16/9;
+    background-image: url('src/assets/cover_pertandingan_vs2.png');
+    background-size: cover;
+    position: relative;
+
+    .left {
+      position: absolute;
+      left: 20px;
+      width: 20%;
+      top: 0;
+      bottom: 0;
+      display: flex;
+      align-items: center;
+    }
+
+    .right {
+      position: absolute;
+      right: 20px;
+      width: 20%;
+      top: 0;
+      bottom: 0;
+      display: flex;
+      align-items: center;
+    }
+
+    .top {
+      position: absolute;
+      right: 0;
+      left: 0;
+      width: 10%;
+      top: 12px;
+      display: flex;
+      justify-content: center;
+      margin: 0 auto;
+    }
+
+    .bottom {
+      position: absolute;
+      right: 0;
+      left: 0;
+      width: 10%;
+      bottom: 25px;
+      display: flex;
+      justify-content: center;
+      margin: 0 auto;
+    }
   }
 </style>

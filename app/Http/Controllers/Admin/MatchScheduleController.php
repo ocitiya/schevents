@@ -682,11 +682,12 @@ class MatchScheduleController extends Controller {
       $title = "";
       if (!empty($model->championship)) {
         $title .= $model->championship->abbreviation;
-      } else {
+        $title .= " - ";
+      } else if (!empty($model->federation)) {
         $title .= $model->federation->abbreviation;
+        $title .= " - ";
       }
 
-      $title .= " - ";
       if (!empty($model->school1->municipality->name)) {
         $title .= "{$model->school1->name} ({$model->school1->municipality->name}";
       } else {

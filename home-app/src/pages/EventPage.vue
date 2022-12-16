@@ -26,7 +26,7 @@
           <q-tab name="live" label="Live" />
         </q-tabs>
 
-        <q-pull-to-refresh @refresh="refresh">
+        <q-pull-to-refresh @refresh="refresh" style="min-height: 200px;">
           <div v-if="data.length > 0" class="flex flex-center q-py-xl" style="gap: 40px">
             <div v-for="item in data" :key="item.id">
               <q-infinite-scroll @load="loadMore">
