@@ -95,30 +95,88 @@
 
     <q-footer class="bg-primary text-white q-py-xl q-px-md text-body1">
       <div class="row q-col-gutter-xl">
-        <div class="col-12 col-sm-4 col-md-3 text-center">
+        <div class="col-12 col-sm-4 col-md-4 text-center">
           <q-avatar v-if="logo !== null">
             <img :src="`${$host}/storage/app/image/${logo}`" width="40px" />
           </q-avatar>
           <div class="q-mt-md">{{ title }}</div>
         </div>
 
-        <div class="col-6 col-sm-4 col-md-3">
-          <div class="text-bold q-mb-md">Browse</div>
-          <div class="link" @click="$router.push({ name: 'home' })">Ways to Watch</div>
-          <div class="link" @click="$router.push({ name: 'club' })">Find Your Teams</div>
-          <div class="link" @click="$router.push({ name: 'schedule' })">Live Streaming Sports</div>
-          <div class="link" @click="$router.push({ name: 'event' })">Live Streaming Events</div>
+        <div class="col-6 col-sm-4 col-md-4">
+          <div class="text-bold q-mb-md">Help & Support</div>
+          <div class="link flex flex-center" @click="$router.push({ name: 'home' })">
+            <q-icon name="info" class="q-mr-sm" />
+            General Info
+          </div>
+          <div class="link flex flex-center" @click="$router.push({ name: 'home' })">
+            <q-icon name="info" class="q-mr-sm" />
+            About schsports
+          </div>
+          <div class="link" @click="$router.push({ name: 'schedule' })">
+            <q-icon name="sports_soccer" class="q-mr-sm" />
+            Streaming Your Sports
+          </div>
+          <div class="link" @click="$router.push({ name: 'event' })">
+            <q-icon name="event" class="q-mr-sm" />
+            Streaming Your Events
+          </div>
+          <div class="link">
+            <q-icon name="contacts" class="q-mr-sm" />
+            Contact Us
+          </div>
         </div>
 
-        <div class="col-6 col-sm-4 col-md-3">
+        <div class="col-6 col-sm-4 col-md-4">
           <div class="text-bold q-mb-md">About Us</div>
-          <div class="link">About schsport</div>
           <div class="link">Help & Supports</div>
-          <div class="link">Privacy Policy</div>
+          <div class="link" @click="$router.push({ name: 'privacy-policy' })">Privacy Policy</div>
           <div class="link">Terms of Use</div>
         </div>
 
-        <div class="col-12 col-md-3">
+        <div class="col-12 col-md-8">
+          <div class="q-mx-md">
+            <div class="text-bold">Ways to Watch</div>
+            <div class="row q-mt-md">
+              <q-card class="col-4 bg-primary" flat>
+                <q-card-section class="text-center">
+                  Smartphone
+                </q-card-section>
+    
+                <q-card-section class="text-center">
+                  <q-icon name="smartphone" size="lg" />
+                </q-card-section>
+              </q-card>
+
+              <q-card class="col-4 bg-primary" flat>
+                <q-card-section class="text-center">
+                  Tablet
+                </q-card-section>
+    
+                <q-card-section class="text-center">
+                  <q-icon name="tablet" size="lg" />
+                </q-card-section>
+              </q-card>
+
+              <q-card class="col-4 bg-primary" flat>
+                <q-card-section class="text-center">
+                  Computer
+                </q-card-section>
+    
+                <q-card-section class="text-center">
+                  <q-icon name="computer" size="lg" />
+                </q-card-section>
+              </q-card>
+            </div>
+
+            <div class="text-justify q-pt-md">
+              Watch schsports games or events live and on your laptop or desktop. Check out all the schsports.<br/>
+              To watch videos, sign in and subscribe, and select an event or sports game to watch, then signup.<br/>
+              Don't forget to support your teams!
+            </div>
+          </div>
+        </div>
+
+        <div class="col-12 col-md-4">
           <div class="text-bold q-mb-md">Contact</div>
           <div v-for="item in contact_us" :key="item.id" class="text-justify">
             <q-img
@@ -294,7 +352,7 @@ export default defineComponent({
 })
 </script>
 
-<style>
+<style lang="scss" scoped>
   .drawer-container {
     background-image: linear-gradient(
       185deg,

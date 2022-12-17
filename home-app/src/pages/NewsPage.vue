@@ -11,115 +11,64 @@
           <vue-horizontal responsive class="v-horizontal" :displacement="0.7" ref="horizontalToday">
             <section v-for="item in event.today" :key="item.id">
               <q-card v-ripple class="event-card" @click="() => toDetail(item.id)">
-                <q-card-section class="flex justify-between items-center">
-                  <div class="text-primary">
-                    <span v-if="item.team_type !== null">{{ item.team_type.name }}&nbsp;</span>
-                    <span class="capitalize" v-if="item.team_gender !== null">{{ item.team_gender }}&nbsp;</span>
-                    <span v-if="item.sport !== null">{{ item.sport.name }}</span>
-                    <span v-else-if="item.sport_type !== null">{{ item.sport_type.name }}</span>
-                  </div>      
-                  
-                  <div class="text-primary text-bold">
-                    <span v-if="(item.championship !== null)">
-                      {{ item.championship.abbreviation }}
-                    </span>
-                    <span v-else-if="(item.federation !== null)">
-                      {{ item.federation.abbreviation }}
-                    </span>
-                  </div>
-                </q-card-section>
-  
-                <q-separator />
-
-                <q-card-section class="q-py-lg">
-                  <div class="vs-section q-mb-md">
-                    <div v-if="item.school1 !== null" class="text-center q-mr-md">
-                      <q-img v-if="item.school1.logo !== null" class="logo"
-                        :src="`${$host}/storage/school/logo/${item.school1.logo}`"
-                        :ratio="1"
-                      >
-                        <template v-slot:error>
-                          <img :src="`${$host}/images/no-logo-1.png`" style="width: 100%; height: 100%;">
-                        </template>
-                      </q-img>
-
-                      <q-img v-else class="logo"
-                        :src="`${$host}/images/no-logo-1.png`"
-                        :ratio="1"
-                      />
-
-                      <div class="text-primary q-mt-md">
-                        <div class="text-bold">{{ item.school1.name }}</div>
-                        <div v-if="(item.school1.municipality !== null)">
-                          {{ item.school1.municipality.name }}
-                          <span class="text-bold" v-if="(item.school1.county !== null)">
-                            ,&nbsp;{{ item.school1.county.abbreviation }}
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div v-else class="q-ml-md flex flex-center">
-                      <div class="text-red text-bold">Unknown School</div>
-                    </div>
-
-                    <div class="text-body1 text-grey-7 flex flex-center">
-                      VS
-                    </div>
-
-                    <div v-if="item.school2 !== null" class="text-center q-ml-md">
-                      <q-img v-if="item.school2.logo !== null" class="logo"
-                        :src="`${$host}/storage/school/logo/${item.school2.logo}`"
-                        :ratio="1"
-                      >
-                        <template v-slot:error>
-                          <img :src="`${$host}/images/no-logo-1.png`" style="width: 100%; height: 100%;">
-                        </template>
-                      </q-img>
-
-                      <q-img v-else class="logo"
-                        :src="`${$host}/images/no-logo-1.png`"
-                        :ratio="1"
-                      />
-
-                      <div class="text-primary q-mt-md">
-                        <div class="text-bold">{{ item.school2.name }}</div>
-                        <div v-if="(item.school2.municipality !== null)">
-                          {{ item.school2.municipality.name }}
-                          <span class="text-bold" v-if="(item.school2.county !== null)">
-                            ,&nbsp;{{ item.school2.county.abbreviation }}
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div v-else class="q-ml-md flex flex-center">
-                      <div class="text-red text-bold">Unknown School</div>
-                    </div>
+                <q-card-section class="q-py-lg schedule-team-logo">
+                  <div class="left">
+                    <q-img class="logo"
+                      :src="`${$host}/storage/school/logo/${item.school1.logo}`"
+                      :ratio="1"
+                    >
+                      <template v-slot:error>
+                        <img :src="`${$host}/images/no-logo-1.png`" style="width: 100%; height: 100%;">
+                      </template>
+                    </q-img>
                   </div>
 
-                  <div v-if="item.stadium_id !== null">
-                    <q-separator />
+                  <div class="right">
+                    <q-img class="logo"
+                      :src="`${$host}/storage/school/logo/${item.school2.logo}`"
+                      :ratio="1"
+                    >
+                      <template v-slot:error>
+                        <img :src="`${$host}/images/no-logo-1.png`" style="width: 100%; height: 100%;">
+                      </template>
+                    </q-img>
+                  </div>
 
-                    <div class="flex items-center text-primary q-mt-md">
-                      <q-icon name="pin_drop" />&nbsp;
-                      {{ item.stadium.name }}
-                    </div>
+                  <div class="top" v-if="loog !== null">
+                    <q-img class="logo"
+                      :src="`${$host}/storage/app/image/${logo}`"
+                      :ratio="1"
+                    >
+                      <template v-slot:error>
+                        <img :src="`${$host}/images/no-logo-1.png`" style="width: 100%; height: 100%;">
+                      </template>
+                    </q-img>
+                  </div>
+
+                  <div class="bottom" v-if="item.championship !== null">
+                    <q-img class="logo"
+                      :src="`${$host}/storage/championship/image/${item.championship.image}`"
+                      :ratio="1"
+                    >
+                      <template v-slot:error>
+                        <img :src="`${$host}/images/no-logo-1.png`" style="width: 100%; height: 100%;">
+                      </template>
+                    </q-img>
                   </div>
                 </q-card-section>
 
                 <q-separator />
 
-                <q-card-section class="flex items-center justify-between q-px-md bg-secondary text-accent text-bold">
-                  <div class="flex flex-center">
-                    <q-icon name="calendar_month" />
-                    <span class="q-ml-sm">{{ scheduleDate(item.datetime) }}</span>
-                  </div>
-
-                  <div class="flex flex-center">
-                    <q-icon name="schedule" />
-                    <span class="q-ml-sm">{{ scheduleTime(item.datetime) }}</span>
-                  </div>
+                <q-card-section class="text-justify q-px-md bg-secondary text-accent text-bold">
+                  <span>
+                    Watch: {{ item.school1.name }} vs {{ item.school2.name }} - {{ scheduleTime(item.datetime) }} - {{ scheduleDate(item.datetime) }} -
+                  </span>
+                  <span class="capitalize" v-if="item.team_gender !== null">{{ item.team_gender }}&nbsp;</span>
+                  <span v-if="item.sport !== null">{{ item.sport.name }}</span>
+                  <span v-else-if="item.sport_type !== null">{{ item.sport_type.name }}</span>
+                  <span v-if="item.stadium !== null">
+                     - Live from {{ item.stadium.name }}
+                  </span>
                 </q-card-section>
               </q-card>
             </section>
@@ -141,115 +90,64 @@
           <vue-horizontal responsive class="v-horizontal" :displacement="0.7" ref="horizontalTomorrow">
             <section v-for="item in event.tomorrow" :key="item.id">
               <q-card v-ripple class="event-card" @click="() => toDetail(item.id)">
-                <q-card-section class="flex justify-between items-center">
-                  <div class="text-primary">
-                    <span v-if="item.team_type !== null">{{ item.team_type.name }}&nbsp;</span>
-                    <span class="capitalize" v-if="item.team_gender !== null">{{ item.team_gender }}&nbsp;</span>
-                    <span v-if="item.sport !== null">{{ item.sport.name }}</span>
-                    <span v-else-if="item.sport_type !== null">{{ item.sport_type.name }}</span>
-                  </div>      
-                  
-                  <div class="text-primary text-bold">
-                    <span v-if="(item.championship !== null)">
-                      {{ item.championship.abbreviation }}
-                    </span>
-                    <span v-else-if="(item.federation !== null)">
-                      {{ item.federation.abbreviation }}
-                    </span>
-                  </div>
-                </q-card-section>
-  
-                <q-separator />
-
-                <q-card-section class="q-py-lg">
-                  <div class="vs-section q-mb-md">
-                    <div v-if="item.school1 !== null" class="text-center q-mr-md">
-                      <q-img v-if="item.school1.logo !== null" class="logo"
-                        :src="`${$host}/storage/school/logo/${item.school1.logo}`"
-                        :ratio="1"
-                      >
-                        <template v-slot:error>
-                          <img :src="`${$host}/images/no-logo-1.png`" style="width: 100%; height: 100%;">
-                        </template>
-                      </q-img>
-
-                      <q-img v-else class="logo"
-                        :src="`${$host}/images/no-logo-1.png`"
-                        :ratio="1"
-                      />
-
-                      <div class="text-primary q-mt-md">
-                        <div class="text-bold">{{ item.school1.name }}</div>
-                        <div v-if="(item.school1.municipality !== null)">
-                          {{ item.school1.municipality.name }}
-                          <span class="text-bold" v-if="(item.school2.county !== null)">
-                            ,&nbsp;{{ item.school2.county.abbreviation }}
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div v-else class="q-ml-md flex flex-center">
-                      <div class="text-red text-bold">Unknown School</div>
-                    </div>
-
-                    <div class="text-body1 text-grey-7 flex flex-center">
-                      VS
-                    </div>
-
-                    <div v-if="item.school2 !== null" class="text-center q-ml-md">
-                      <q-img v-if="item.school2.logo !== null" class="logo"
-                        :src="`${$host}/storage/school/logo/${item.school2.logo}`"
-                        :ratio="1"
-                      >
-                        <template v-slot:error>
-                          <img :src="`${$host}/images/no-logo-1.png`" style="width: 100%; height: 100%;">
-                        </template>
-                      </q-img>
-
-                      <q-img v-else class="logo"
-                        :src="`${$host}/images/no-logo-1.png`"
-                        :ratio="1"
-                      />
-
-                      <div class="text-primary q-mt-md">
-                        <div class="text-bold">{{ item.school2.name }}</div>
-                        <div v-if="(item.school2.municipality !== null)">
-                          {{ item.school2.municipality.name }}
-                          <span class="text-bold" v-if="(item.school2.county !== null)">
-                            ,&nbsp;{{ item.school2.county.abbreviation }}
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div v-else class="q-ml-md flex flex-center">
-                      <div class="text-red text-bold">Unknown School</div>
-                    </div>
+                <q-card-section class="q-py-lg schedule-team-logo">
+                  <div class="left">
+                    <q-img class="logo"
+                      :src="`${$host}/storage/school/logo/${item.school1.logo}`"
+                      :ratio="1"
+                    >
+                      <template v-slot:error>
+                        <img :src="`${$host}/images/no-logo-1.png`" style="width: 100%; height: 100%;">
+                      </template>
+                    </q-img>
                   </div>
 
-                  <div v-if="item.stadium_id !== null">
-                    <q-separator />
+                  <div class="right">
+                    <q-img class="logo"
+                      :src="`${$host}/storage/school/logo/${item.school2.logo}`"
+                      :ratio="1"
+                    >
+                      <template v-slot:error>
+                        <img :src="`${$host}/images/no-logo-1.png`" style="width: 100%; height: 100%;">
+                      </template>
+                    </q-img>
+                  </div>
 
-                    <div class="flex items-center text-primary q-mt-md">
-                      <q-icon name="pin_drop" />&nbsp;
-                      {{ item.stadium.name }}
-                    </div>
+                  <div class="top" v-if="loog !== null">
+                    <q-img class="logo"
+                      :src="`${$host}/storage/app/image/${logo}`"
+                      :ratio="1"
+                    >
+                      <template v-slot:error>
+                        <img :src="`${$host}/images/no-logo-1.png`" style="width: 100%; height: 100%;">
+                      </template>
+                    </q-img>
+                  </div>
+
+                  <div class="bottom" v-if="item.championship !== null">
+                    <q-img class="logo"
+                      :src="`${$host}/storage/championship/image/${item.championship.image}`"
+                      :ratio="1"
+                    >
+                      <template v-slot:error>
+                        <img :src="`${$host}/images/no-logo-1.png`" style="width: 100%; height: 100%;">
+                      </template>
+                    </q-img>
                   </div>
                 </q-card-section>
 
                 <q-separator />
 
-                <q-card-section class="flex items-center justify-between q-px-md bg-secondary text-accent text-bold">
-                  <div class="flex flex-center">
-                    <q-icon name="calendar_month" />
-                    <span class="q-ml-sm">{{ scheduleDate(item.datetime) }}</span>
-                  </div>
-
-                  <div class="flex flex-center">
-                    <q-icon name="schedule" />
-                    <span class="q-ml-sm">{{ scheduleTime(item.datetime) }}</span>
-                  </div>
+                <q-card-section class="text-justify q-px-md bg-secondary text-accent text-bold">
+                  <span>
+                    Watch: {{ item.school1.name }} vs {{ item.school2.name }} - {{ scheduleTime(item.datetime) }} - {{ scheduleDate(item.datetime) }} -
+                  </span>
+                  <span class="capitalize" v-if="item.team_gender !== null">{{ item.team_gender }}&nbsp;</span>
+                  <span v-if="item.sport !== null">{{ item.sport.name }}</span>
+                  <span v-else-if="item.sport_type !== null">{{ item.sport_type.name }}</span>
+                  <span v-if="item.stadium !== null">
+                     - Live from {{ item.stadium.name }}
+                  </span>
                 </q-card-section>
               </q-card>
             </section>
@@ -271,115 +169,64 @@
           <vue-horizontal responsive class="v-horizontal" :displacement="0.7" ref="horizontalThisWeek">
             <section v-for="item in event.this_week" :key="item.id">
               <q-card v-ripple class="event-card" @click="() => toDetail(item.id)">
-                <q-card-section class="flex justify-between items-center">
-                  <div class="text-primary">
-                    <span v-if="item.team_type !== null">{{ item.team_type.name }}&nbsp;</span>
-                    <span class="capitalize" v-if="item.team_gender !== null">{{ item.team_gender }}&nbsp;</span>
-                    <span v-if="item.sport !== null">{{ item.sport.name }}</span>
-                    <span v-else-if="item.sport_type !== null">{{ item.sport_type.name }}</span>
-                  </div>      
-                  
-                  <div class="text-primary text-bold">
-                    <span v-if="(item.championship !== null)">
-                      {{ item.championship.abbreviation }}
-                    </span>
-                    <span v-else-if="(item.federation !== null)">
-                      {{ item.federation.abbreviation }}
-                    </span>
-                  </div>
-                </q-card-section>
-  
-                <q-separator />
-
-                <q-card-section class="q-py-lg">
-                  <div class="vs-section q-mb-md">
-                    <div v-if="item.school1 !== null" class="text-center q-mr-md">
-                      <q-img v-if="item.school1.logo !== null" class="logo"
-                        :src="`${$host}/storage/school/logo/${item.school1.logo}`"
-                        :ratio="1"
-                      >
-                        <template v-slot:error>
-                          <img :src="`${$host}/images/no-logo-1.png`" style="width: 100%; height: 100%;">
-                        </template>
-                      </q-img>
-
-                      <q-img v-else class="logo"
-                        :src="`${$host}/images/no-logo-1.png`"
-                        :ratio="1"
-                      />
-
-                      <div class="text-primary q-mt-md">
-                        <div class="text-bold">{{ item.school1.name }}</div>
-                        <div v-if="(item.school1.municipality !== null)">
-                          {{ item.school1.municipality.name }}
-                          <span class="text-bold" v-if="(item.school2.county !== null)">
-                            ,&nbsp;{{ item.school2.county.abbreviation }}
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div v-else class="q-ml-md flex flex-center">
-                      <div class="text-red text-bold">Unknown School</div>
-                    </div>
-
-                    <div class="text-body1 text-grey-7 flex flex-center">
-                      VS
-                    </div>
-
-                    <div v-if="item.school2 !== null" class="text-center q-ml-md">
-                      <q-img v-if="item.school2.logo !== null" class="logo"
-                        :src="`${$host}/storage/school/logo/${item.school2.logo}`"
-                        :ratio="1"
-                      >
-                        <template v-slot:error>
-                          <img :src="`${$host}/images/no-logo-1.png`" style="width: 100%; height: 100%;">
-                        </template>
-                      </q-img>
-
-                      <q-img v-else class="logo"
-                        :src="`${$host}/images/no-logo-1.png`"
-                        :ratio="1"
-                      />
-
-                      <div class="text-primary q-mt-md">
-                        <div class="text-bold">{{ item.school2.name }}</div>
-                        <div v-if="(item.school2.municipality !== null)">
-                          {{ item.school2.municipality.name }}
-                          <span class="text-bold" v-if="(item.school2.county !== null)">
-                            ,&nbsp;{{ item.school2.county.abbreviation }}
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div v-else class="q-ml-md flex flex-center">
-                      <div class="text-red text-bold">Unknown School</div>
-                    </div>
+                <q-card-section class="q-py-lg schedule-team-logo">
+                  <div class="left">
+                    <q-img class="logo"
+                      :src="`${$host}/storage/school/logo/${item.school1.logo}`"
+                      :ratio="1"
+                    >
+                      <template v-slot:error>
+                        <img :src="`${$host}/images/no-logo-1.png`" style="width: 100%; height: 100%;">
+                      </template>
+                    </q-img>
                   </div>
 
-                  <div v-if="item.stadium_id !== null">
-                    <q-separator />
+                  <div class="right">
+                    <q-img class="logo"
+                      :src="`${$host}/storage/school/logo/${item.school2.logo}`"
+                      :ratio="1"
+                    >
+                      <template v-slot:error>
+                        <img :src="`${$host}/images/no-logo-1.png`" style="width: 100%; height: 100%;">
+                      </template>
+                    </q-img>
+                  </div>
 
-                    <div class="flex items-center text-primary q-mt-md">
-                      <q-icon name="pin_drop" />&nbsp;
-                      {{ item.stadium.name }}
-                    </div>
+                  <div class="top" v-if="loog !== null">
+                    <q-img class="logo"
+                      :src="`${$host}/storage/app/image/${logo}`"
+                      :ratio="1"
+                    >
+                      <template v-slot:error>
+                        <img :src="`${$host}/images/no-logo-1.png`" style="width: 100%; height: 100%;">
+                      </template>
+                    </q-img>
+                  </div>
+
+                  <div class="bottom" v-if="item.championship !== null">
+                    <q-img class="logo"
+                      :src="`${$host}/storage/championship/image/${item.championship.image}`"
+                      :ratio="1"
+                    >
+                      <template v-slot:error>
+                        <img :src="`${$host}/images/no-logo-1.png`" style="width: 100%; height: 100%;">
+                      </template>
+                    </q-img>
                   </div>
                 </q-card-section>
 
                 <q-separator />
 
-                <q-card-section class="flex items-center justify-between q-px-md bg-secondary text-accent text-bold">
-                  <div class="flex flex-center">
-                    <q-icon name="calendar_month" />
-                    <span class="q-ml-sm">{{ scheduleDate(item.datetime) }}</span>
-                  </div>
-
-                  <div class="flex flex-center">
-                    <q-icon name="schedule" />
-                    <span class="q-ml-sm">{{ scheduleTime(item.datetime) }}</span>
-                  </div>
+                <q-card-section class="text-justify q-px-md bg-secondary text-accent text-bold">
+                  <span>
+                    Watch: {{ item.school1.name }} vs {{ item.school2.name }} - {{ scheduleTime(item.datetime) }} - {{ scheduleDate(item.datetime) }} -
+                  </span>
+                  <span class="capitalize" v-if="item.team_gender !== null">{{ item.team_gender }}&nbsp;</span>
+                  <span v-if="item.sport !== null">{{ item.sport.name }}</span>
+                  <span v-else-if="item.sport_type !== null">{{ item.sport_type.name }}</span>
+                  <span v-if="item.stadium !== null">
+                     - Live from {{ item.stadium.name }}
+                  </span>
                 </q-card-section>
               </q-card>
             </section>
@@ -523,7 +370,7 @@ export default {
 }
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 @media only screen and (max-width: 599px) {
   .page {
     padding-left: 20px !important;
@@ -594,5 +441,54 @@ section {
   grid-template-columns: 7fr 1fr 7fr;
   grid-auto-flow: column;
   display: grid;
+}
+
+.schedule-team-logo {
+  aspect-ratio: 16/9;
+  background-image: url('src/assets/cover_pertandingan_vs2.png');
+  background-size: cover;
+  position: relative;
+
+  .left {
+    position: absolute;
+    left: 20px;
+    width: 20%;
+    top: 0;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+  }
+
+  .right {
+    position: absolute;
+    right: 20px;
+    width: 20%;
+    top: 0;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+  }
+
+  .top {
+    position: absolute;
+    right: 0;
+    left: 0;
+    width: 10%;
+    top: 12px;
+    display: flex;
+    justify-content: center;
+    margin: 0 auto;
+  }
+
+  .bottom {
+    position: absolute;
+    right: 0;
+    left: 0;
+    width: 10%;
+    bottom: 25px;
+    display: flex;
+    justify-content: center;
+    margin: 0 auto;
+  }
 }
 </style>

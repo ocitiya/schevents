@@ -12,6 +12,8 @@ const routes = [
       { path: 'news', name: 'news', component: () => import('pages/NewsPage.vue') },
       { path: 'news/:id', name: 'news.detail', component: () => import('pages/NewsDetailPage.vue') },
       { path: 'video', name: 'video', component: () => import('pages/VideoPage.vue') },
+      { path: 'privacy-policy', name: 'privacy-policy', component: () => import('pages/PrivacyPolicyPage.vue') },
+      { path: 'video', name: 'video', component: () => import('pages/VideoPage.vue') },
 
       // sub app
       { path: 'event', name: 'event', component: () => import('pages/EventPage.vue') },

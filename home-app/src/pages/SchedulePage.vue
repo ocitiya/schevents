@@ -73,26 +73,6 @@
                       </template>
                     </q-img>
                   </div>
-
-                  <!-- <div class="vs-section q-mb-md">
-                    
-
-                    <div class="text-center q-ml-md">
-                      <q-img v-if="item.school2.logo !== null" class="logo"
-                        :src="`${$host}/storage/school/logo/${item.school2.logo}`"
-                        :ratio="1"
-                      >
-                        <template v-slot:error>
-                          <img :src="`${$host}/images/no-logo-1.png`" style="width: 100%; height: 100%;">
-                        </template>
-                      </q-img>
-
-                      <q-img v-else class="logo"
-                        :src="`${$host}/images/no-logo-1.png`"
-                        :ratio="1"
-                      />
-                    </div>
-                  </div> -->
                 </q-card-section>
 
                 <q-separator />
