@@ -5,11 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
 
-  <meta name="description" content="{{ $description }}" >
-  <meta name="keywords" content="{{ $data->keywords }}">
+  <meta name="description" content="{{ $data->description }}" >
   <meta name="robots" content="index,follow">
 
-  <title>{{ $title }}</title>
+  <title>{{ $data->name }}</title>
   <link href="{{ asset('css/bootstrap.min.css') }}" rel="stylesheet">
 
   <style>
@@ -47,48 +46,6 @@
       position: relative;
     }
 
-    .card-score .section.team-logo .left {
-      position: absolute;
-      left: 20px;
-      width: 25%;
-      top: 0;
-      bottom: 0;
-      display: flex;
-      align-items: center;
-    }
-
-    .card-score .section.team-logo .right {
-      position: absolute;
-      right: 20px;
-      width: 25%;
-      top: 0;
-      bottom: 0;
-      display: flex;
-      align-items: center;
-    }
-
-    .card-score .section.team-logo .top {
-      position: absolute;
-      right: 0;
-      left: 0;
-      width: 12%;
-      top: 7px;
-      display: flex;
-      justify-content: center;
-      margin: 0 auto;
-    }
-
-    .card-score .section.team-logo .bottom {
-      position: absolute;
-      right: 0;
-      left: 0;
-      width: 12%;
-      bottom: 25px;
-      display: flex;
-      justify-content: center;
-      margin: 0 auto;
-    }
-
     .card-score .section.footer {
       background: #0099fa;
       color: white;
@@ -102,44 +59,26 @@
     <div class="c2">
       <b>
         <span id="datetime">
-          {{ date("d M Y H:i", strtotime($data->datetime)) }}
+          {{ date("d M Y", strtotime($data->start_date)) }}
         </span>
       </b>
       
       <div class="card-score">
-        <div class="section team-logo" style="background-image: url('{{ $data->link_stream->image_link }}')">
-          <div class="left">
-            <img src="{{ asset("storage/school/logo/{$data->school1->logo}") }}" width="100%">
-          </div>
-
-          <div class="right">
-            <img src="{{ asset("storage/school/logo/{$data->school2->logo}") }}" width="100%">
-          </div>
-
-          <div class="top">
-            <img src="{{ asset("storage/championship/image/{$data->championship->image}") }}" width="100%">
-          </div>
-
-          <div class="bottom">
-            <img src="{{ asset("storage/app/image/{$app->logo}") }}" width="100%">
-          </div>
-        </div>
+        <div class="section team-logo" style="background-image: url('{{ $data->image_link }}')"></div>
         <div class="section footer">
-          Watch: {{ $data->school1->name }} vs {{ $data->school2->name }} - 
-          <span id="time"></span> - 
-          <span id="date"></span> - 
-          {{ @$data->sport->name }} <span class="text-capitalize">{{ @$data->team_gender }}</span>
+          {{ $data->name }}
+          <span id="date"></span>
         </div>
       </div>
 
       <div class="mt-5">
-        <a class="btn btn-primary" id="stream" href="{{ $stream_url }}"><b>
+        <a class="btn btn-primary" id="stream" href="{{ $data->offer->short_link }}"><b>
           <i class="fa-solid fa-video"></i>
-          &nbsp;Watch Gane
+          &nbsp;Watch Event
         </b></a>
         <a class="btn btn-primary" href="/"><b>
           <i class=""></i>
-          &nbsp;More Game
+          &nbsp;More Event
         </b></a>
       </div>
 
@@ -154,14 +93,14 @@
         </ul>
         <div class="tab-content" id="myTabContent">
           <div class="tab-pane fade show active" id="home-tab-pane" role="tabpanel" aria-labelledby="home-tab" tabindex="0">
-            <div class="mt-2">
+            <p class="mt-2">
               {{ $data->description }}
-            </div>
+            </p>
           </div>
           <div class="tab-pane fade" id="profile-tab-pane" role="tabpanel" aria-labelledby="profile-tab" tabindex="0">
             <p class="mt-2" style="text-align: justify">
               Watch schsports games or events live and on your laptop or desktop. Check out all the schsports. 
-              To watch videos, click <a href="{{ $stream_url }}"><b>Watch Game</b></a> button to watch. 
+              To watch videos, click <a href="{{ $data->offer->short_link }}"><b>Watch Game</b></a> button to watch. 
               Don't forget to support your teams!
             </p>
           </div>
@@ -176,53 +115,23 @@
   <script src="{{ asset('js/fontawesome-free-6.1.1-web.all.min.js') }}"></script>
 
   <script>
-    const title = "<?php echo $title ?>";
-    const description = "<?php echo $description ?>";
-    const keywords = "<?php echo $data->keywords ?>";
-    const team = "<?php echo $team ?>";
-    const school1 = "<?php echo $school1 ?>";
-    const school2 = "<?php echo $school2 ?>";
-    const stream_url = "<?php echo $stream_url ?>";
-    let championship = '<?php echo json_encode($championship) ?>';
-    championship = JSON.parse(championship);
-
-    let hashtag = keywords.split(',');
-    hashtag = hashtag.filter((a) => a);
-    hashtag.map((item, i) => {
-      const a = item.replace(/ /g, '');
-      hashtag[i] = `#${a}`
-    })
-
-    hashtag = hashtag.join(' ');
+    const title = "<?php echo $data->name ?>";
+    const description = "<?php echo $data->description ?>";
 
     let time = null;
-    let date = 
+    let date = null;
 
     document.addEventListener('DOMContentLoaded', function () {
       const selfURL = window.location.href;
       const datetimeElem = document.querySelector('#datetime')
       
       const datetime = datetimeElem.innerHTML;
-      const datelocal = moment.utc(datetime, 'D MMM YYYY hh:mm').local()
-      const formatDate = datelocal.format('ddd, D MMMM Y | hh:mm');
+      const datelocal = moment.utc(datetime, 'D MMM YYYY').local()
       
-      const zone_name = moment.tz.guess();
-      const timezone = moment.tz(zone_name).zoneAbbr();
-
       date = datelocal.format('D MMM YYYY');
-      time = datelocal.format('hh:mm') + ' ' + timezone;
       document.querySelector('#date').innerHTML = date;
-      document.querySelector('#time').innerHTML = time;
 
       datetimeElem.innerHTML = `${formatDate} ${timezone}`;
-
-      document.querySelector('meta[name="description"]').setAttribute("content", `${formatDate} ${timezone}, Watch online ${team}, ${title}`);
-
-      // if (datelocal.isSame(new Date(), 'day') || moment().add(3, 'hours').isAfter(datelocal)) {
-      //   // null
-      // } else {
-      //   document.querySelector('#stream').style.display = 'none';
-      // }
 
       document.querySelector('#share-to-fb').addEventListener('click', function(){
         const shareURL = `https://www.facebook.com/sharer/sharer.php?u=${selfURL}`;

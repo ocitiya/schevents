@@ -29,7 +29,11 @@
           <q-infinite-scroll @load="loadMore">
             <div class="card-schedule-container">
               <q-card v-for="item in schedules" :key="item.id" v-ripple class="event-card" @click="() => redirect(item.id)">
-                <q-card-section class="q-py-lg schedule-team-logo">
+                <q-card-section class="q-py-lg schedule-team-logo"
+                  :style="{
+                    backgroundImage: 'url(\'' + $host + '/storage/link_stream/image/' + item.link_stream.image + '\')'
+                  }"
+                >
                   <div class="left">
                     <q-img class="logo"
                       :src="`${$host}/storage/school/logo/${item.school1.logo}`"
@@ -52,7 +56,7 @@
                     </q-img>
                   </div>
 
-                  <div class="top" v-if="loog !== null">
+                  <div class="bottom" v-if="logo !== null">
                     <q-img class="logo"
                       :src="`${$host}/storage/app/image/${logo}`"
                       :ratio="1"
@@ -63,7 +67,7 @@
                     </q-img>
                   </div>
 
-                  <div class="bottom" v-if="item.championship !== null">
+                  <div class="top" v-if="item.championship !== null">
                     <q-img class="logo"
                       :src="`${$host}/storage/championship/image/${item.championship.image}`"
                       :ratio="1"
@@ -144,7 +148,7 @@ export default defineComponent({
           date: null
         }
       },
-      loadingSchedule: true,
+      loadingSchedule: false,
       tab: 'upcoming',
       has_filter: false,
       schedules: [],
@@ -325,14 +329,13 @@ export default defineComponent({
 
   .schedule-team-logo {
     aspect-ratio: 16/9;
-    background-image: url('src/assets/cover_pertandingan_vs2.png');
     background-size: cover;
     position: relative;
 
     .left {
       position: absolute;
       left: 20px;
-      width: 20%;
+      width: 25%;
       top: 0;
       bottom: 0;
       display: flex;
@@ -342,7 +345,7 @@ export default defineComponent({
     .right {
       position: absolute;
       right: 20px;
-      width: 20%;
+      width: 25%;
       top: 0;
       bottom: 0;
       display: flex;
@@ -353,8 +356,8 @@ export default defineComponent({
       position: absolute;
       right: 0;
       left: 0;
-      width: 10%;
-      top: 12px;
+      width: 12%;
+      top: 7px;
       display: flex;
       justify-content: center;
       margin: 0 auto;
@@ -364,7 +367,7 @@ export default defineComponent({
       position: absolute;
       right: 0;
       left: 0;
-      width: 10%;
+      width: 12%;
       bottom: 25px;
       display: flex;
       justify-content: center;

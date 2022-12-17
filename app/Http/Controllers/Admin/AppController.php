@@ -64,6 +64,7 @@ class AppController extends Controller {
 		}
 		
 		try {
+			$app->name = $request->name;
 			if ($request->hasFile('image')) $app->logo = $filename;
 			$app->description = $request->description;
 			$app->save();

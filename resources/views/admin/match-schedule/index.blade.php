@@ -286,7 +286,7 @@
                     if (data.abbreviation === null || data.abbreviation === '') {
                       return data.name;
                     } else {
-                      return `${data.abbreviation} - ${data.name}`;
+                      return data.name;
                     }
                   } else {
                     if (data.county === null) {
@@ -307,7 +307,7 @@
                     if (data.abbreviation === null || data.abbreviation === '') {
                       return data.name;
                     } else {
-                      return `${data.abbreviation} - ${data.name}`;
+                      return data.name;
                     }
                   } else {
                     if (data.county === null) {

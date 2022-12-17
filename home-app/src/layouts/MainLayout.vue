@@ -63,7 +63,7 @@
       v-model="leftDrawerOpen"
       show-if-above
       bordered
-      class="text-white drawer-container"
+      class="text-white drawer-container bg-primary"
     >
       <q-list>
         <q-item-label
@@ -103,98 +103,44 @@
         </div>
 
         <div class="col-6 col-sm-4 col-md-4">
-          <div class="text-bold q-mb-md">Help & Support</div>
-          <div class="link flex flex-center" @click="$router.push({ name: 'home' })">
-            <q-icon name="info" class="q-mr-sm" />
-            General Info
-          </div>
-          <div class="link flex flex-center" @click="$router.push({ name: 'home' })">
-            <q-icon name="info" class="q-mr-sm" />
-            About schsports
-          </div>
+          <div class="text-bold q-mb-md">Browse</div>
+          <div class="link" @click="$router.push({ name: 'ways-to-watch' })">Ways to Watch</div>
           <div class="link" @click="$router.push({ name: 'schedule' })">
-            <q-icon name="sports_soccer" class="q-mr-sm" />
             Streaming Your Sports
           </div>
           <div class="link" @click="$router.push({ name: 'event' })">
-            <q-icon name="event" class="q-mr-sm" />
             Streaming Your Events
-          </div>
-          <div class="link">
-            <q-icon name="contacts" class="q-mr-sm" />
-            Contact Us
           </div>
         </div>
 
         <div class="col-6 col-sm-4 col-md-4">
           <div class="text-bold q-mb-md">About Us</div>
-          <div class="link">Help & Supports</div>
-          <div class="link" @click="$router.push({ name: 'privacy-policy' })">Privacy Policy</div>
-          <div class="link">Terms of Use</div>
-        </div>
-
-        <div class="col-12 col-md-8">
-          <div class="q-mx-md">
-            <div class="text-bold">Ways to Watch</div>
-            <div class="row q-mt-md">
-              <q-card class="col-4 bg-primary" flat>
-                <q-card-section class="text-center">
-                  Smartphone
-                </q-card-section>
-    
-                <q-card-section class="text-center">
-                  <q-icon name="smartphone" size="lg" />
-                </q-card-section>
-              </q-card>
-
-              <q-card class="col-4 bg-primary" flat>
-                <q-card-section class="text-center">
-                  Tablet
-                </q-card-section>
-    
-                <q-card-section class="text-center">
-                  <q-icon name="tablet" size="lg" />
-                </q-card-section>
-              </q-card>
-
-              <q-card class="col-4 bg-primary" flat>
-                <q-card-section class="text-center">
-                  Computer
-                </q-card-section>
-    
-                <q-card-section class="text-center">
-                  <q-icon name="computer" size="lg" />
-                </q-card-section>
-              </q-card>
-            </div>
-
-            <div class="text-justify q-pt-md">
-              Watch schsports games or events live and on your laptop or desktop. Check out all the schsports.<br/>
-              To watch videos, sign in and subscribe, and select an event or sports game to watch, then signup.<br/>
-              Don't forget to support your teams!
-            </div>
+          <div class="link" @click="$router.push({ name: 'home' })">
+            About schsports
           </div>
+          <div class="link" @click="$router.push({ name: 'help-support' })">Help & Supports</div>
+          <div class="link" @click="$router.push({ name: 'privacy-policy' })">Privacy Policy</div>
+          <div class="link" @click="$router.push({ name: 'terms-of-use' })">Terms of Use</div>
+          <div class="link" @click="$router.push({ name: 'contact' })">Contact</div>
         </div>
+
+        <!-- <div class="col-12 col-md-8">
+          <div class="q-mx-md">
+            
+          </div>
+        </div> -->
 
         <div class="col-12 col-md-4">
-          <div class="text-bold q-mb-md">Contact</div>
-          <div v-for="item in contact_us" :key="item.id" class="text-justify">
-            <q-img
-              :src="`${$host}/storage/app_contact_us/image/${item.logo}`"
-              width="40px" height="40px"
-              fit="contain"
-              class="q-mr-md"
-            />
-            <span class="text-bold">{{ item.name }}:&nbsp;</span>
-            <span>{{ item.info }}</span>
-          </div>
-
           <div class="text-bold q-my-md">Follow us</div>
           <div class="flex items-center q-gutter-md">
             <a v-for="item in follow_us" :key="item.id" :href="`${item.link}`" target="_blank" noopener noreferrer>
               <q-img :src="`${$host}/storage/app_follow_us/image/${item.logo}`" :ratio="1" width="30px" />
             </a>
           </div>
+        </div>
+
+        <div class="col-12">
+          &copy; {{ year }} {{ title }}
         </div>
       </div>
     </q-footer>
@@ -204,6 +150,7 @@
 <script>
 import { defineComponent, ref } from 'vue'
 import EssentialLink from 'components/EssentialLink.vue'
+import moment from 'moment'
 
 const linksList = [
   {
@@ -245,6 +192,16 @@ const linksList = [
     title: 'About',
     icon: 'description',
     link_name: 'about'
+  },
+  {
+    title: 'Contact',
+    icon: 'contacts',
+    link_name: 'contact'
+  },
+  {
+    title: 'Help',
+    icon: 'contact_support',
+    link_name: 'help-support'
   }
 ]
 
@@ -262,7 +219,8 @@ export default defineComponent({
       follow_us: [],
       route_name: null,
       is_sub_module: false,
-      sub_module_name: null
+      sub_module_name: null,
+      year: null
     }
   },
 
@@ -272,6 +230,8 @@ export default defineComponent({
     this.getFollowUs(),
 
     this.route_name = this.$route.name
+
+    this.year = moment().format('YYYY')
   },
 
   watch: {

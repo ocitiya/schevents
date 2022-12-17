@@ -13,7 +13,7 @@ class MatchSchedule extends Model {
 
 	protected $table = "match_schedule";
 	protected $primaryKey = "id";
-	protected $appends = ['lpsport'];
+	protected $appends = ['lpsport', 'link_stream'];
 
 	protected $casts = [
 		'id' => 'string'
@@ -82,5 +82,22 @@ class MatchSchedule extends Model {
 		return LPSports::where("lp_type_id", $this->lp_type_id)
 			->where("channel_id", $this->channel_id)
 			->first();
+	}
+
+	public function getLinkStreamAttribute () {
+		if (empty($this->championship_id) || empty($this->sport_id)) {
+			return (object) ["image" => null];
+		} else {
+			$linkStream = SportType::where("championship_id", $this->championship_id)
+				->where("sport_id", $this->sport_id)
+				->first();
+
+			if (!$linkStream) {
+				return (object) ["image" => null];
+			} else {
+				$linkStream->image_link = asset("storage/link_stream/image/{$linkStream->image}");
+				return $linkStream;
+			}
+		}
 	}
 }

@@ -81,9 +81,7 @@ class SportTypeController extends Controller {
 
 			// Resize image
 			$img = Image::make($file->getRealPath())
-				->resize(1024, 1024, function ($constraint) {
-					$constraint->aspectRatio();
-				})
+				->resize(1280, 720)
 				->save($path, 80);
 		}
 

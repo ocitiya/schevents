@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\App;
 use App\Models\Championships;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
@@ -131,7 +132,8 @@ class MatchScheduleController extends Controller {
       'time_hour' => 'required|min:0|max:59',
       'time_minute' => 'required|min:0|max:23',
       'lp_type_id' => 'nullable|int',
-      'channel_id' => 'nullable|int'
+      'channel_id' => 'nullable|int',
+      'description' => 'nullable|string'
     ]);
 
     $isCreate = $request->id == null ? true : false;
@@ -176,10 +178,8 @@ class MatchScheduleController extends Controller {
 
     $keywords = 
     $keywords = [
-      $school1->name,
-      $school2->name,
-      $school1->nickname,
-      $school2->nickname
+      $school1->abbreviation,
+      $school2->abbreviation
     ];
 
     if (empty($request->championship_id)) {
@@ -220,6 +220,7 @@ class MatchScheduleController extends Controller {
       $schedule->keywords = $keywords;
       $schedule->lp_type_id = $request->lp_type_id;
       $schedule->channel_id = $request->channel_id;
+      $schedule->description = $request->description;
       $schedule->is_national_team = $request->is_national_team == "true" ? 1 : 0;
       $schedule->save();
 
@@ -724,7 +725,8 @@ class MatchScheduleController extends Controller {
         "school2" => $school2,
         "stream_url" => $stream_url,
         "championship" => $championship,
-        "sport" => $sport
+        "sport" => $sport,
+        "app" => App::first()
       ];
 
       return view("shedule-preview", $data);

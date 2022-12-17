@@ -3,155 +3,92 @@
     <div class="list-container page q-px-xl">
       <div class="q-my-xl">
         <div class="mb-4 flex justify-between items-center">
-          <div class="text-h5 text-primary text-bold">Event Today</div>
-          <q-btn v-if="event.today.length > 0" flat color="primary" label="See More" @click="toHome('today')" />
+          <div class="text-h5 text-primary text-bold">New Post</div>
         </div>
 
-        <div v-if="event.today.length > 0">
-          <vue-horizontal responsive class="v-horizontal" :displacement="0.7" ref="horizontalToday">
-            <section v-for="item in event.today" :key="item.id">
-              <q-card v-ripple class="event-card" @click="() => toDetail(item.id)">
-                <q-card-section class="q-py-lg schedule-team-logo">
-                  <div class="left">
-                    <q-img class="logo"
-                      :src="`${$host}/storage/school/logo/${item.school1.logo}`"
-                      :ratio="1"
-                    >
-                      <template v-slot:error>
-                        <img :src="`${$host}/images/no-logo-1.png`" style="width: 100%; height: 100%;">
-                      </template>
-                    </q-img>
+        <div v-if="event.recent.length > 0" class="q-mt-md">
+          <div class="event-card-container">
+            <q-card v-for="item in event.recent" :key="item.id" v-ripple class="event-card" @click="() => toDetail(item.id)">
+              <q-card-section class="q-py-lg schedule-team-logo">
+                <div class="left">
+                  <q-img class="logo"
+                    :src="`${$host}/storage/school/logo/${item.school1.logo}`"
+                    :ratio="1"
+                  >
+                    <template v-slot:error>
+                      <img :src="`${$host}/images/no-logo-1.png`" style="width: 100%; height: 100%;">
+                    </template>
+                  </q-img>
+                </div>
+
+                <div class="right">
+                  <q-img class="logo"
+                    :src="`${$host}/storage/school/logo/${item.school2.logo}`"
+                    :ratio="1"
+                  >
+                    <template v-slot:error>
+                      <img :src="`${$host}/images/no-logo-1.png`" style="width: 100%; height: 100%;">
+                    </template>
+                  </q-img>
+                </div>
+
+                <div class="top" v-if="logo !== null">
+                  <q-img class="logo"
+                    :src="`${$host}/storage/app/image/${logo}`"
+                    :ratio="1"
+                  >
+                    <template v-slot:error>
+                      <img :src="`${$host}/images/no-logo-1.png`" style="width: 100%; height: 100%;">
+                    </template>
+                  </q-img>
+                </div>
+
+                <div class="bottom" v-if="item.championship !== null">
+                  <q-img class="logo"
+                    :src="`${$host}/storage/championship/image/${item.championship.image}`"
+                    :ratio="1"
+                  >
+                    <template v-slot:error>
+                      <img :src="`${$host}/images/no-logo-1.png`" style="width: 100%; height: 100%;">
+                    </template>
+                  </q-img>
+                </div>
+              </q-card-section>
+
+              <q-separator />
+
+              <q-card-section class="text-justify q-px-md">
+                <div class="flex items-center justify-between">
+                  <div>
+                    <small>
+                      <q-icon name="calendar_month" />
+                      {{ scheduleDate(item.datetime) }}
+                    </small>
                   </div>
 
-                  <div class="right">
-                    <q-img class="logo"
-                      :src="`${$host}/storage/school/logo/${item.school2.logo}`"
-                      :ratio="1"
-                    >
-                      <template v-slot:error>
-                        <img :src="`${$host}/images/no-logo-1.png`" style="width: 100%; height: 100%;">
-                      </template>
-                    </q-img>
+                  <div>
+                    <small>
+                      <q-icon name="schedule" />
+                      {{ scheduleTime(item.datetime) }}
+                    </small>
                   </div>
+                </div>
+                <div class="text-body1 q-mt-sm">
+                  Watch: {{ item.school1.name }} vs {{ item.school2.name }} 
+                </div>
 
-                  <div class="top" v-if="loog !== null">
-                    <q-img class="logo"
-                      :src="`${$host}/storage/app/image/${logo}`"
-                      :ratio="1"
-                    >
-                      <template v-slot:error>
-                        <img :src="`${$host}/images/no-logo-1.png`" style="width: 100%; height: 100%;">
-                      </template>
-                    </q-img>
-                  </div>
+                <hr />
 
-                  <div class="bottom" v-if="item.championship !== null">
-                    <q-img class="logo"
-                      :src="`${$host}/storage/championship/image/${item.championship.image}`"
-                      :ratio="1"
-                    >
-                      <template v-slot:error>
-                        <img :src="`${$host}/images/no-logo-1.png`" style="width: 100%; height: 100%;">
-                      </template>
-                    </q-img>
-                  </div>
-                </q-card-section>
+                <div class="text-description">
+                  {{ item.description }}
+                </div>
+              </q-card-section>
+            </q-card>
+          </div>
 
-                <q-separator />
-
-                <q-card-section class="text-justify q-px-md bg-secondary text-accent text-bold">
-                  <span>
-                    Watch: {{ item.school1.name }} vs {{ item.school2.name }} - {{ scheduleTime(item.datetime) }} - {{ scheduleDate(item.datetime) }} -
-                  </span>
-                  <span class="capitalize" v-if="item.team_gender !== null">{{ item.team_gender }}&nbsp;</span>
-                  <span v-if="item.sport !== null">{{ item.sport.name }}</span>
-                  <span v-else-if="item.sport_type !== null">{{ item.sport_type.name }}</span>
-                  <span v-if="item.stadium !== null">
-                     - Live from {{ item.stadium.name }}
-                  </span>
-                </q-card-section>
-              </q-card>
-            </section>
-          </vue-horizontal>
-        </div>
-
-        <div v-else class="text-center text-body1 text-bold q-mt-md">
-          No Data Available
-        </div>
-      </div>
-
-      <div class="q-my-xl">
-        <div class="mb-4 flex justify-between items-center">
-          <div class="text-h5 text-primary text-bold">Tomorrow</div>
-          <q-btn v-if="event.tomorrow.length > 0" flat color="primary" label="See More" @click="toHome('tomorrow')" />
-        </div>
-
-        <div v-if="event.tomorrow.length > 0">
-          <vue-horizontal responsive class="v-horizontal" :displacement="0.7" ref="horizontalTomorrow">
-            <section v-for="item in event.tomorrow" :key="item.id">
-              <q-card v-ripple class="event-card" @click="() => toDetail(item.id)">
-                <q-card-section class="q-py-lg schedule-team-logo">
-                  <div class="left">
-                    <q-img class="logo"
-                      :src="`${$host}/storage/school/logo/${item.school1.logo}`"
-                      :ratio="1"
-                    >
-                      <template v-slot:error>
-                        <img :src="`${$host}/images/no-logo-1.png`" style="width: 100%; height: 100%;">
-                      </template>
-                    </q-img>
-                  </div>
-
-                  <div class="right">
-                    <q-img class="logo"
-                      :src="`${$host}/storage/school/logo/${item.school2.logo}`"
-                      :ratio="1"
-                    >
-                      <template v-slot:error>
-                        <img :src="`${$host}/images/no-logo-1.png`" style="width: 100%; height: 100%;">
-                      </template>
-                    </q-img>
-                  </div>
-
-                  <div class="top" v-if="loog !== null">
-                    <q-img class="logo"
-                      :src="`${$host}/storage/app/image/${logo}`"
-                      :ratio="1"
-                    >
-                      <template v-slot:error>
-                        <img :src="`${$host}/images/no-logo-1.png`" style="width: 100%; height: 100%;">
-                      </template>
-                    </q-img>
-                  </div>
-
-                  <div class="bottom" v-if="item.championship !== null">
-                    <q-img class="logo"
-                      :src="`${$host}/storage/championship/image/${item.championship.image}`"
-                      :ratio="1"
-                    >
-                      <template v-slot:error>
-                        <img :src="`${$host}/images/no-logo-1.png`" style="width: 100%; height: 100%;">
-                      </template>
-                    </q-img>
-                  </div>
-                </q-card-section>
-
-                <q-separator />
-
-                <q-card-section class="text-justify q-px-md bg-secondary text-accent text-bold">
-                  <span>
-                    Watch: {{ item.school1.name }} vs {{ item.school2.name }} - {{ scheduleTime(item.datetime) }} - {{ scheduleDate(item.datetime) }} -
-                  </span>
-                  <span class="capitalize" v-if="item.team_gender !== null">{{ item.team_gender }}&nbsp;</span>
-                  <span v-if="item.sport !== null">{{ item.sport.name }}</span>
-                  <span v-else-if="item.sport_type !== null">{{ item.sport_type.name }}</span>
-                  <span v-if="item.stadium !== null">
-                     - Live from {{ item.stadium.name }}
-                  </span>
-                </q-card-section>
-              </q-card>
-            </section>
-          </vue-horizontal>
+          <div v-if="pagination.recent.page < pagination.recent.total_page" class="text-center q-mt-lg">
+            <q-btn color="primary" @click="() => next('recent')" label="More" unelevated />
+          </div>
         </div>
 
         <div v-else class="text-center text-body1 text-bold q-mt-md">
@@ -161,76 +98,92 @@
 
       <div class="q-my-xl">
         <div class="mb-4 flex justify-between items-center">
-          <div class="text-h5 text-primary text-bold">Event This Week</div>
-          <q-btn v-if="event.this_week.length > 0" flat color="primary" label="See More" @click="toHome('this-week')" />
+          <div class="text-h5 text-primary text-bold">Last Post</div>
         </div>
 
-        <div v-if="event.this_week.length > 0">
-          <vue-horizontal responsive class="v-horizontal" :displacement="0.7" ref="horizontalThisWeek">
-            <section v-for="item in event.this_week" :key="item.id">
-              <q-card v-ripple class="event-card" @click="() => toDetail(item.id)">
-                <q-card-section class="q-py-lg schedule-team-logo">
-                  <div class="left">
-                    <q-img class="logo"
-                      :src="`${$host}/storage/school/logo/${item.school1.logo}`"
-                      :ratio="1"
-                    >
-                      <template v-slot:error>
-                        <img :src="`${$host}/images/no-logo-1.png`" style="width: 100%; height: 100%;">
-                      </template>
-                    </q-img>
+        <div v-if="event.have_played.length > 0" class="q-mt-md">
+          <div class="event-card-container">
+            <q-card v-for="item in event.have_played" :key="item.id" v-ripple class="event-card" @click="() => toDetail(item.id)">
+              <q-card-section class="q-py-lg schedule-team-logo">
+                <div class="left">
+                  <q-img class="logo"
+                    :src="`${$host}/storage/school/logo/${item.school1.logo}`"
+                    :ratio="1"
+                  >
+                    <template v-slot:error>
+                      <img :src="`${$host}/images/no-logo-1.png`" style="width: 100%; height: 100%;">
+                    </template>
+                  </q-img>
+                </div>
+
+                <div class="right">
+                  <q-img class="logo"
+                    :src="`${$host}/storage/school/logo/${item.school2.logo}`"
+                    :ratio="1"
+                  >
+                    <template v-slot:error>
+                      <img :src="`${$host}/images/no-logo-1.png`" style="width: 100%; height: 100%;">
+                    </template>
+                  </q-img>
+                </div>
+
+                <div class="top" v-if="logo !== null">
+                  <q-img class="logo"
+                    :src="`${$host}/storage/app/image/${logo}`"
+                    :ratio="1"
+                  >
+                    <template v-slot:error>
+                      <img :src="`${$host}/images/no-logo-1.png`" style="width: 100%; height: 100%;">
+                    </template>
+                  </q-img>
+                </div>
+
+                <div class="bottom" v-if="item.championship !== null">
+                  <q-img class="logo"
+                    :src="`${$host}/storage/championship/image/${item.championship.image}`"
+                    :ratio="1"
+                  >
+                    <template v-slot:error>
+                      <img :src="`${$host}/images/no-logo-1.png`" style="width: 100%; height: 100%;">
+                    </template>
+                  </q-img>
+                </div>
+              </q-card-section>
+
+              <q-separator />
+
+              <q-card-section class="text-justify q-px-md">
+                <div class="flex items-center justify-between">
+                  <div>
+                    <small>
+                      <q-icon name="calendar_month" />
+                      {{ scheduleDate(item.datetime) }}
+                    </small>
                   </div>
 
-                  <div class="right">
-                    <q-img class="logo"
-                      :src="`${$host}/storage/school/logo/${item.school2.logo}`"
-                      :ratio="1"
-                    >
-                      <template v-slot:error>
-                        <img :src="`${$host}/images/no-logo-1.png`" style="width: 100%; height: 100%;">
-                      </template>
-                    </q-img>
+                  <div>
+                    <small>
+                      <q-icon name="schedule" />
+                      {{ scheduleTime(item.datetime) }}
+                    </small>
                   </div>
+                </div>
+                <div class="text-body1 q-mt-sm">
+                  Watch: {{ item.school1.name }} vs {{ item.school2.name }} 
+                </div>
 
-                  <div class="top" v-if="loog !== null">
-                    <q-img class="logo"
-                      :src="`${$host}/storage/app/image/${logo}`"
-                      :ratio="1"
-                    >
-                      <template v-slot:error>
-                        <img :src="`${$host}/images/no-logo-1.png`" style="width: 100%; height: 100%;">
-                      </template>
-                    </q-img>
-                  </div>
+                <hr />
 
-                  <div class="bottom" v-if="item.championship !== null">
-                    <q-img class="logo"
-                      :src="`${$host}/storage/championship/image/${item.championship.image}`"
-                      :ratio="1"
-                    >
-                      <template v-slot:error>
-                        <img :src="`${$host}/images/no-logo-1.png`" style="width: 100%; height: 100%;">
-                      </template>
-                    </q-img>
-                  </div>
-                </q-card-section>
+                <div class="text-description">
+                  {{ item.description }}
+                </div>
+              </q-card-section>
+            </q-card>
+          </div>
 
-                <q-separator />
-
-                <q-card-section class="text-justify q-px-md bg-secondary text-accent text-bold">
-                  <span>
-                    Watch: {{ item.school1.name }} vs {{ item.school2.name }} - {{ scheduleTime(item.datetime) }} - {{ scheduleDate(item.datetime) }} -
-                  </span>
-                  <span class="capitalize" v-if="item.team_gender !== null">{{ item.team_gender }}&nbsp;</span>
-                  <span v-if="item.sport !== null">{{ item.sport.name }}</span>
-                  <span v-else-if="item.sport_type !== null">{{ item.sport_type.name }}</span>
-                  <span v-if="item.stadium !== null">
-                     - Live from {{ item.stadium.name }}
-                  </span>
-                </q-card-section>
-              </q-card>
-            </section>
-          </vue-horizontal>
+          <div v-if="pagination.have_played.page < pagination.have_played.total_page" class="text-center q-mt-lg">
+            <q-btn color="primary" @click="() => next('have-played')" label="More" unelevated />
+          </div>
         </div>
 
         <div v-else class="text-center text-body1 text-bold q-mt-md">
@@ -247,29 +200,21 @@ import moment from 'moment'
 import { useMeta } from 'quasar'
 
 import Helper from 'src/services/helper'
-import VueHorizontal from "vue-horizontal";
 
 export default {
-  components: {VueHorizontal},
-
   data: function () {
     return {
       loading: true,
       event: {
-        today: [],
-        this_week: [],
-        tomorrow: []
+        recent: [],
+        have_played: []
       },
       pagination: {
-        today: {
+        recent: {
           page: 1,
           total_page: 1
         },
-        this_week: {
-          page: 1,
-          total_page: 1
-        },
-        tomorrow: {
+        have_played: {
           page: 1,
           total_page: 1
         }
@@ -278,9 +223,8 @@ export default {
   },
 
   mounted: function () {
-    this.getEvent('today')
-    this.getEvent('this-week')
-    this.getEvent('tomorrow')
+    this.getEvent('recent')
+    this.getEvent('have-played')
 
     useMeta({
       title: 'News',
@@ -315,43 +259,49 @@ export default {
       }, 500)
     },
 
-    getEvent: function (type = 'today') {
+    next: function (type = 'recent') {
+      if (type === 'recent') {
+        this.pagination.recent.page++
+      } else if (type === 'have-played') {
+        this.pagination.have_played.page++
+      }
+
+      this.getEvent(type)
+    },
+
+    getEvent: function (type = 'recent') {
       Helper.loading(this)
 
       return new Promise((resolve, reject) => {
         let page
-        if (type === 'today') {
-          page = this.pagination.today.page
-        } else if (type === 'this-week') {
-          page = this.pagination.this_week.page
-        } else if (type === 'tomorrow') {
-          page = this.pagination.tomorrow.page
+        if (type === 'recent') {
+          page = this.pagination.recent.page
+        } else if (type === 'have-played') {
+          page = this.pagination.have_played.page
         }
 
         let endpoint = 'match-schedule/list'
         endpoint = Helper.generateURLParams(endpoint, 'page', page)
-        endpoint = Helper.generateURLParams(endpoint, 'limit', 10)
+        endpoint = Helper.generateURLParams(endpoint, 'limit', 1)
         endpoint = Helper.generateURLParams(endpoint, 'type', type)
 
         this.$api.get(endpoint).then((response) => {
           const { data, message, status } = response.data
 
           if (status) {
-            if (type === 'today') {
-              this.event.today = [...data.list]
-              this.pagination.today = { 
+            if (type === 'recent') {
+              const prev = [...this.event.recent]
+              this.event.recent = [...prev, ...data.list]
+
+              this.pagination.recent = { 
                 page: data.pagination.page,
                 total_page: data.pagination.total_page
               }
-            } else if (type === 'this-week') {
-              this.event.this_week = [...data.list]
-              this.pagination.this_week = { 
-                page: data.pagination.page,
-                total_page: data.pagination.total_page
-              }
-            } else if (type === 'tomorrow') {
-              this.event.tomorrow = [...data.list]
-              this.pagination.tomorrow = { 
+            } else if (type === 'have-played') {
+              const prev = [...this.event.have_played]
+              this.event.have_played = [...prev, ...data.list]
+
+              this.pagination.have_played = { 
                 page: data.pagination.page,
                 total_page: data.pagination.total_page
               }
@@ -376,27 +326,38 @@ export default {
     padding-left: 20px !important;
     padding-right: 20px !important;
   }
-}
 
-/* @media only screen and (max-width: 599px) {
   .event-card {
     width: 100% !important;
   }
-} */
+}
+
+.text-description {
+  overflow: hidden;
+   text-overflow: ellipsis;
+   display: -webkit-box;
+   -webkit-line-clamp: 3; /* number of lines to show */
+           line-clamp: 3; 
+   -webkit-box-orient: vertical;
+}
+
+.event-card-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 20px;
+}
 
 .event-card {
   cursor: pointer;
   width: 300px;
-  border-radius: 20px;
+  border-bottom-right-radius: 20px;
+  border-bottom-left-radius: 20px;
 }
 
 section {
   padding: 16px 24px;
-}
-
-.search-container {
-  max-width: 100%;
-  width: 400px;
 }
 
 .page {
@@ -409,14 +370,6 @@ section {
 .list-container {
   /* width: 600px; */
   max-width: 100%;
-}
-
-.card {
-  margin: auto;
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  justify-content: center;
 }
 
 .logo {
@@ -450,45 +403,45 @@ section {
   position: relative;
 
   .left {
-    position: absolute;
-    left: 20px;
-    width: 20%;
-    top: 0;
-    bottom: 0;
-    display: flex;
-    align-items: center;
-  }
+      position: absolute;
+      left: 20px;
+      width: 25%;
+      top: 0;
+      bottom: 0;
+      display: flex;
+      align-items: center;
+    }
 
-  .right {
-    position: absolute;
-    right: 20px;
-    width: 20%;
-    top: 0;
-    bottom: 0;
-    display: flex;
-    align-items: center;
-  }
+    .right {
+      position: absolute;
+      right: 20px;
+      width: 25%;
+      top: 0;
+      bottom: 0;
+      display: flex;
+      align-items: center;
+    }
 
-  .top {
-    position: absolute;
-    right: 0;
-    left: 0;
-    width: 10%;
-    top: 12px;
-    display: flex;
-    justify-content: center;
-    margin: 0 auto;
-  }
+    .top {
+      position: absolute;
+      right: 0;
+      left: 0;
+      width: 12%;
+      top: 12px;
+      display: flex;
+      justify-content: center;
+      margin: 0 auto;
+    }
 
-  .bottom {
-    position: absolute;
-    right: 0;
-    left: 0;
-    width: 10%;
-    bottom: 25px;
-    display: flex;
-    justify-content: center;
-    margin: 0 auto;
-  }
+    .bottom {
+      position: absolute;
+      right: 0;
+      left: 0;
+      width: 12%;
+      bottom: 25px;
+      display: flex;
+      justify-content: center;
+      margin: 0 auto;
+    }
 }
 </style>

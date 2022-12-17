@@ -191,6 +191,10 @@ class EventController extends Controller {
     })->get();
 
     $total = $model->count();
+
+    foreach ($event as $item) {
+      $item->image_link = asset("storage/event/image/{$item->image}");
+    }
     
     return response()->json([
       "status" => true,
@@ -296,6 +300,21 @@ class EventController extends Controller {
         "status" => false,
         "message" => $exception->getMessage()
       ]);
+    }
+  }
+
+  function schedulePreview (Request $request, $id) {
+    $model = Event::find($id);
+
+    if ($model) {
+      $model->image_link = asset("storage/event/image/{$model->image}");
+      $data = [
+        "data" => $model
+      ];
+
+      return view("event.schedule-preview", $data);
+    } else {
+      return abort(404);
     }
   }
 }

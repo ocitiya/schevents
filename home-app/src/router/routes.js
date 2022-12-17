@@ -13,7 +13,10 @@ const routes = [
       { path: 'news/:id', name: 'news.detail', component: () => import('pages/NewsDetailPage.vue') },
       { path: 'video', name: 'video', component: () => import('pages/VideoPage.vue') },
       { path: 'privacy-policy', name: 'privacy-policy', component: () => import('pages/PrivacyPolicyPage.vue') },
-      { path: 'video', name: 'video', component: () => import('pages/VideoPage.vue') },
+      { path: 'terms-of-use', name: 'terms-of-use', component: () => import('src/pages/TermsOfUsePage.vue') },
+      { path: 'ways-to-watch', name: 'ways-to-watch', component: () => import('src/pages/WaysToWatchPage.vue') },
+      { path: 'help-support', name: 'help-support', component: () => import('src/pages/HelpSupportPage.vue') },
+      { path: 'contact', name: 'contact', component: () => import('src/pages/ContactPage.vue') },
 
       // sub app
       { path: 'event', name: 'event', component: () => import('pages/EventPage.vue') },

@@ -58,13 +58,13 @@
           <div class="col-7">
             <div class="row">
               <div class="col-5">
-                <label for="name">Kejuaraan</label>
+                <label for="name">Kejuaraan *</label>
               </div>
               <div class="col-7">
-                <select name="championship_id" class="form-select select2" id="championship_id">
+                <select name="championship_id" class="form-select select2" id="championship_id" required>
                   <option selected value>Please select ...</option>
                   @foreach ($championships as $item)
-                    <option value="{{ $item->id }}">{{ $item->name }}</option>
+                    <option value="{{ $item->id }}">{{ $item->abbreviation }}</option>
                   @endforeach
                 </select>
               </div>
@@ -72,11 +72,11 @@
 
             <div class="row" id="federation-container">
               <div class="col-5">
-                <label for="name">Federasi *</label>
+                <label for="name">Federasi</label>
               </div>
               <div class="col-7">
                 <select name="federation_id" class="form-select select2" id="federation_id">
-                  <option selected value>N/A</option>
+                  <option selected value>Please select ...</option>
                   @foreach ($federations as $item)
                     <option value="{{ $item->id }}">{{ $item->abbreviation }}</option>
                   @endforeach
@@ -282,6 +282,15 @@
                     <option value="{{ $item->channel->id }}">{{ $item->channel->name }}</option>
                   @endforeach
                 </select>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-5">
+                <label for="description">Deskripsi</label>
+              </div>
+              <div class="col-7">
+                <textarea name="description" class="form-control" rows="4" id="description">{{ old('description', isset($data) ? $data->description : '') }}</textarea>
               </div>
             </div>
 

@@ -31,44 +31,31 @@
             <div v-for="item in data" :key="item.id">
               <q-infinite-scroll @load="loadMore">
                 <div class="card-event-container">
-                  <q-card class="event-card">
+                  <q-card class="event-card" clickable v-ripple @click="() => openPage(item.id)">
+                    <q-card-section class="event-logo"
+                    :style="{
+                      backgroundImage: `url(\'${item.image_link}\')`
+                    }">
+                    </q-card-section>
+
                     <q-card-section>
-                      <div class="flex flex-center q-my-lg">
-                        <q-img v-if="item.image !== null" class="logo"
-                          :src="`${$host}/storage/event/image/${item.image}`"
-                          :ratio="1"
-                        >
-                          <template v-slot:error>
-                            <img :src="`${$host}/images/no-logo-1.png`" style="width: 100%; height: 100%;">
-                          </template>
-                        </q-img>
-            
-                        <q-img v-else class="logo"
-                          :src="`${$host}/images/no-logo-1.png`"
-                          :ratio="1"
-                        />
+                      <div class="flex items-center justify-between">
+                        <div>
+                          <small>
+                            <q-icon name="calendar_month" />
+                            {{ scheduleDate(item.start_date) }}
+                          </small>
+                        </div>
+                      </div>
+                      <div class="text-body1 q-mt-sm">
+                        <b>{{ item.name }} </b>
                       </div>
 
-                      <div v-if="item.end_date !== null" class="">
-                        {{ parseDate(item.start_date) }} - {{ parseDate(item.end_date) }}
-                      </div>
+                      <hr />
 
-                      <div v-else class="">
-                        {{ parseDate(item.start_date) }}
+                      <div class="text-description">
+                        {{ item.description }}
                       </div>
-          
-                      <div class="">
-                        {{ item.name }}
-                      </div>
-
-                      <q-card-section class="text-center">
-                        <q-btn unelevated
-                          label="Join"
-                          color="black"
-                          :disable="item.offer === null"
-                          @click="e => openPage(item.offer.short_link)"
-                        />
-                      </q-card-section>
                     </q-card-section>
                   </q-card>
                 </div>
@@ -127,6 +114,20 @@ export default {
   },
 
   methods: {
+    scheduleDate: function (date) {
+      const formatDate = moment.utc(date).local().format('D MMMM Y')
+      return formatDate
+    },
+
+    scheduleTime: function (date) {
+      const formatTime = moment.utc(date).local().format('hh:mm')
+
+      const zone_name =  moment.tz.guess();
+      const timezone = moment.tz(zone_name).zoneAbbr() 
+
+      return `${formatTime} ${timezone}`
+    },
+
     onFilter: async function (filter) {
       this.filter.data = { ...filter }
       if (this.filter.data.date !== null) this.tab = 'all'
@@ -158,8 +159,10 @@ export default {
       done()
     },
 
-    openPage: function (link) {
-      window.open(link)
+    openPage: function (id) {
+      setTimeout(() => {
+        window.open(`${this.$host}/event-schedule/${id}`)
+      }, 300)
     },
 
     parseDate: function (date) {
@@ -209,17 +212,26 @@ export default {
 }
 </script>
 
-<style scoped>
-.logo {
-  text-align: center;
-  max-height: 75px;
-  max-width: 75px;
+<style scoped lang="scss">
+.text-description {
+  overflow: hidden;
+   text-overflow: ellipsis;
+   display: -webkit-box;
+   -webkit-line-clamp: 3; /* number of lines to show */
+           line-clamp: 3; 
+   -webkit-box-orient: vertical;
 }
 
 .event-card {
   cursor: pointer;
   width: 300px;
   max-width: 100%;
+
+  .event-logo {
+    aspect-ratio: 16/9;
+    background-size: cover;
+    position: relative;
+  }
 }
 
 .event-card.disabled {
