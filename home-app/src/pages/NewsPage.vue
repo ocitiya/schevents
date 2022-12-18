@@ -32,7 +32,7 @@
                   </q-img>
                 </div>
 
-                <div class="top" v-if="logo !== null">
+                <div class="bottom" v-if="logo !== null">
                   <q-img class="logo"
                     :src="`${$host}/storage/app/image/${logo}`"
                     :ratio="1"
@@ -43,7 +43,7 @@
                   </q-img>
                 </div>
 
-                <div class="bottom" v-if="item.championship !== null">
+                <div class="top" v-if="item.championship !== null">
                   <q-img class="logo"
                     :src="`${$host}/storage/championship/image/${item.championship.image}`"
                     :ratio="1"
@@ -127,7 +127,7 @@
                   </q-img>
                 </div>
 
-                <div class="top" v-if="logo !== null">
+                <div class="bottom" v-if="logo !== null">
                   <q-img class="logo"
                     :src="`${$host}/storage/app/image/${logo}`"
                     :ratio="1"
@@ -138,7 +138,7 @@
                   </q-img>
                 </div>
 
-                <div class="bottom" v-if="item.championship !== null">
+                <div class="top" v-if="item.championship !== null">
                   <q-img class="logo"
                     :src="`${$host}/storage/championship/image/${item.championship.image}`"
                     :ratio="1"
@@ -204,6 +204,7 @@ import Helper from 'src/services/helper'
 export default {
   data: function () {
     return {
+      logo: null,
       loading: true,
       event: {
         recent: [],
@@ -225,6 +226,7 @@ export default {
   mounted: function () {
     this.getEvent('recent')
     this.getEvent('have-played')
+    this.getAppData()
 
     useMeta({
       title: 'News',
@@ -232,6 +234,15 @@ export default {
   },
 
   methods: {
+    getAppData () {
+      this.$api.get('app/detail').then((response) => {
+        const { data, message, status } = response.data
+
+        // this.title = data.name
+        this.logo = data.logo
+      })
+    },
+
     toHome: function (type) {
       setTimeout(() => {
         this.$router.push({ name: 'schedule', query: { tab: type } })
@@ -282,7 +293,7 @@ export default {
 
         let endpoint = 'match-schedule/list'
         endpoint = Helper.generateURLParams(endpoint, 'page', page)
-        endpoint = Helper.generateURLParams(endpoint, 'limit', 1)
+        endpoint = Helper.generateURLParams(endpoint, 'limit', 10)
         endpoint = Helper.generateURLParams(endpoint, 'type', type)
 
         this.$api.get(endpoint).then((response) => {

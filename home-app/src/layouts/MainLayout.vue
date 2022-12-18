@@ -10,6 +10,10 @@
         />
 
         <q-toolbar-title>
+          <q-avatar class="q-mr-sm">
+            <img :src="`${$host}/storage/app/image/${logo}`"/>
+          </q-avatar>
+
           {{ title }}
           <span v-if="is_sub_module">
             {{ ` - ${sub_module_name}` }}

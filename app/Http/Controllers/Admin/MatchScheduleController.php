@@ -178,8 +178,10 @@ class MatchScheduleController extends Controller {
 
     $keywords = 
     $keywords = [
-      $school1->abbreviation,
-      $school2->abbreviation
+      $school1->name,
+      // $school1->abbreviation,
+      $school2->name,
+      // $school2->abbreviation
     ];
 
     if (empty($request->championship_id)) {
@@ -193,7 +195,7 @@ class MatchScheduleController extends Controller {
         array_push($keywords, "{$federation->abbreviation}{$sport->name}"); 
       }
     } else {
-      $championship = Championships::find($request->championship_id)->name;
+      $championship = Championships::find($request->championship_id)->abbreviation;
       array_push($keywords, $championship); 
     }
 
