@@ -14,14 +14,18 @@
 
   <style>
     body {
-      /* background-image: linear-gradient(to right bottom, #29415d, #194f7c, #1473b9, #0099fa); */
+      background-image: linear-gradient(to right bottom, #29415d, #194f7c, #1473b9, #0099fa);
     }
 
     .content {
       padding: 80px 30px;
-      /* color: white; */
+      color: white;
       height: 100vh;
       overflow: auto
+    }
+
+    .content a {
+      color: white;
     }
 
     .c2 {
@@ -50,7 +54,7 @@
     .card-score .section.team-logo .left {
       position: absolute;
       left: 20px;
-      width: 25%;
+      width: 20%;
       top: 0;
       bottom: 0;
       display: flex;
@@ -60,7 +64,7 @@
     .card-score .section.team-logo .right {
       position: absolute;
       right: 20px;
-      width: 25%;
+      width: 20%;
       top: 0;
       bottom: 0;
       display: flex;
@@ -94,7 +98,34 @@
       color: white;
       padding: 10px;
     }
+
+    .nav-link {
+      color: white;
+    }
+
+    .nav-link:hover {
+      color: white;
+    }
+
+    .center {
+      position: absolute;
+      right: 0;
+      left: 0;
+      top: 50%;
+      bottom: 0;
+      transform: translateY(-50%);
+      text-align: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
     
+    .text-vs {
+      /* -webkit-text-stroke-width: 1px;
+      -webkit-text-stroke-color: black; */
+      font-size: 1.5em;
+      font-weight: 700;
+    }
   </style>
 </head>
 <body>
@@ -108,12 +139,30 @@
       
       <div class="card-score">
         <div class="section team-logo" style="background-image: url('{{ $data->link_stream->image_link }}')">
+          <div class="center text-vs">
+            VS
+          </div>
+
           <div class="left">
-            <img src="{{ asset("storage/school/logo/{$data->school1->logo}") }}" width="100%">
+            <div>
+              <div>
+                <img src="{{ asset("storage/school/logo/{$data->school1->logo}") }}" width="100%">
+              </div>
+              <div class="text-center mt-2">
+                <b>{{ $data->school1->name }}</b>
+              </div>
+            </div>
           </div>
 
           <div class="right">
-            <img src="{{ asset("storage/school/logo/{$data->school2->logo}") }}" width="100%">
+            <div>
+              <div>
+                <img src="{{ asset("storage/school/logo/{$data->school2->logo}") }}" width="100%">
+              </div>
+              <div class="text-center mt-2">
+                <b>{{ $data->school2->name }}</b>
+              </div>
+            </div>
           </div>
 
           <div class="top">
