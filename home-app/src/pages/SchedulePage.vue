@@ -51,7 +51,7 @@
                         </q-img>
                       </div>
 
-                      <div class="text-bold text-white q-mt-xs">
+                      <div class="text-bold text-white q-mt-xs text-center">
                         {{ item.school1.name }}
                       </div>
                     </div>
@@ -70,7 +70,7 @@
                         </q-img>
                       </div>
 
-                      <div class="text-bold text-white q-mt-xs">
+                      <div class="text-bold text-white q-mt-xs text-center">
                         {{ item.school2.name }}
                       </div>
                     </div>
