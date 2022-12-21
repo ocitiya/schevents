@@ -10,26 +10,46 @@
           <div class="event-card-container">
             <q-card v-for="item in event.recent" :key="item.id" v-ripple class="event-card" @click="() => toDetail(item.id)">
               <q-card-section class="q-py-lg schedule-team-logo">
+                <div class="center text-vs text-white">
+                  VS
+                </div>
+
                 <div class="left">
-                  <q-img class="logo"
-                    :src="`${$host}/storage/school/logo/${item.school1.logo}`"
-                    :ratio="1"
-                  >
-                    <template v-slot:error>
-                      <img :src="`${$host}/images/no-logo-1.png`" style="width: 100%; height: 100%;">
-                    </template>
-                  </q-img>
+                  <div>
+                    <div>
+                      <q-img class="logo"
+                        :src="`${$host}/storage/school/logo/${item.school1.logo}`"
+                        :ratio="1"
+                      >
+                        <template v-slot:error>
+                          <img :src="`${$host}/images/no-logo-1.png`" style="width: 100%; height: 100%;">
+                        </template>
+                      </q-img>
+                    </div>
+
+                    <div class="text-bold text-white q-mt-xs">
+                      {{ item.school1.name }}
+                    </div>
+                  </div>
                 </div>
 
                 <div class="right">
-                  <q-img class="logo"
-                    :src="`${$host}/storage/school/logo/${item.school2.logo}`"
-                    :ratio="1"
-                  >
-                    <template v-slot:error>
-                      <img :src="`${$host}/images/no-logo-1.png`" style="width: 100%; height: 100%;">
-                    </template>
-                  </q-img>
+                  <div>
+                    <div>
+                      <q-img class="logo"
+                        :src="`${$host}/storage/school/logo/${item.school2.logo}`"
+                        :ratio="1"
+                      >
+                        <template v-slot:error>
+                          <img :src="`${$host}/images/no-logo-1.png`" style="width: 100%; height: 100%;">
+                        </template>
+                      </q-img>
+                    </div>
+
+                    <div class="text-bold text-white q-mt-xs">
+                      {{ item.school2.name }}
+                    </div>
+                  </div>
                 </div>
 
                 <div class="bottom" v-if="logo !== null">
@@ -105,26 +125,46 @@
           <div class="event-card-container">
             <q-card v-for="item in event.have_played" :key="item.id" v-ripple class="event-card" @click="() => toDetail(item.id)">
               <q-card-section class="q-py-lg schedule-team-logo">
+                <div class="center text-vs text-white">
+                  VS
+                </div>
+
                 <div class="left">
-                  <q-img class="logo"
-                    :src="`${$host}/storage/school/logo/${item.school1.logo}`"
-                    :ratio="1"
-                  >
-                    <template v-slot:error>
-                      <img :src="`${$host}/images/no-logo-1.png`" style="width: 100%; height: 100%;">
-                    </template>
-                  </q-img>
+                  <div>
+                    <div>
+                      <q-img class="logo"
+                        :src="`${$host}/storage/school/logo/${item.school1.logo}`"
+                        :ratio="1"
+                      >
+                        <template v-slot:error>
+                          <img :src="`${$host}/images/no-logo-1.png`" style="width: 100%; height: 100%;">
+                        </template>
+                      </q-img>
+                    </div>
+
+                    <div class="text-bold text-white q-mt-xs">
+                      {{ item.school1.name }}
+                    </div>
+                  </div>
                 </div>
 
                 <div class="right">
-                  <q-img class="logo"
-                    :src="`${$host}/storage/school/logo/${item.school2.logo}`"
-                    :ratio="1"
-                  >
-                    <template v-slot:error>
-                      <img :src="`${$host}/images/no-logo-1.png`" style="width: 100%; height: 100%;">
-                    </template>
-                  </q-img>
+                  <div>
+                    <div>
+                      <q-img class="logo"
+                        :src="`${$host}/storage/school/logo/${item.school2.logo}`"
+                        :ratio="1"
+                      >
+                        <template v-slot:error>
+                          <img :src="`${$host}/images/no-logo-1.png`" style="width: 100%; height: 100%;">
+                        </template>
+                      </q-img>
+                    </div>
+
+                    <div class="text-bold text-white q-mt-xs">
+                      {{ item.school2.name }}
+                    </div>
+                  </div>
                 </div>
 
                 <div class="bottom" v-if="logo !== null">
@@ -414,45 +454,65 @@ section {
   position: relative;
 
   .left {
-      position: absolute;
-      left: 20px;
-      width: 25%;
-      top: 0;
-      bottom: 0;
-      display: flex;
-      align-items: center;
-    }
+    position: absolute;
+    left: 20px;
+    width: 20%;
+    top: 0;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+  }
 
-    .right {
-      position: absolute;
-      right: 20px;
-      width: 25%;
-      top: 0;
-      bottom: 0;
-      display: flex;
-      align-items: center;
-    }
+  .right {
+    position: absolute;
+    right: 20px;
+    width: 20%;
+    top: 0;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+  }
 
-    .top {
-      position: absolute;
-      right: 0;
-      left: 0;
-      width: 12%;
-      top: 12px;
-      display: flex;
-      justify-content: center;
-      margin: 0 auto;
-    }
+  .top {
+    position: absolute;
+    right: 0;
+    left: 0;
+    width: 12%;
+    top: 12px;
+    display: flex;
+    justify-content: center;
+    margin: 0 auto;
+  }
 
-    .bottom {
-      position: absolute;
-      right: 0;
-      left: 0;
-      width: 12%;
-      bottom: 25px;
-      display: flex;
-      justify-content: center;
-      margin: 0 auto;
-    }
+  .bottom {
+    position: absolute;
+    right: 0;
+    left: 0;
+    width: 12%;
+    bottom: 25px;
+    display: flex;
+    justify-content: center;
+    margin: 0 auto;
+  }
+
+  .center {
+    position: absolute;
+    right: 0;
+    left: 0;
+    top: 50%;
+    bottom: 0;
+    transform: translateY(-50%);
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .text-vs {
+    /* -webkit-text-stroke-width: 1px;
+    -webkit-text-stroke-color: black; */
+    font-size: 1.5em;
+    font-weight: 700;
+  }
 }
 </style>
