@@ -240,7 +240,6 @@
                 <div class="bottom-left">
                   WWW.SCHSPORTS.COM
                 </div>
-
               </q-card-section>
 
               <q-separator />

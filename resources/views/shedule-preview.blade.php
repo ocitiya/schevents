@@ -51,46 +51,101 @@
       position: relative;
     }
 
+    .card-score .section.team-logo .top-right {
+      position: absolute;
+      right: 3%;
+      width: 8%;
+      top: 5%;
+      display: flex;
+      justify-content: center;
+      margin: 0 auto;
+    }
+
+    .card-score .section.team-logo .top-left {
+      position: absolute;
+      left: 3%;
+      top: 3%;
+      display: flex;
+      justify-content: center;
+      margin: 0 auto;
+      color: white;
+      font-size: 0.8em;
+      font-weight: 600;
+    }
+
     .card-score .section.team-logo .left {
       position: absolute;
-      left: 20px;
-      width: 20%;
+      left: 0;
+      width: 50%;
       top: 0;
       bottom: 0;
       display: flex;
       align-items: center;
+      justify-content: center;
+      padding-right: 13%;
     }
 
     .card-score .section.team-logo .right {
       position: absolute;
-      right: 20px;
-      width: 20%;
+      right: 0;
+      width: 50%;
       top: 0;
       bottom: 0;
       display: flex;
       align-items: center;
+      justify-content: center;
+      padding-left: 13%;
     }
 
     .card-score .section.team-logo .top {
       position: absolute;
       right: 0;
       left: 0;
-      width: 12%;
-      top: 7px;
+      top: 15%;
       display: flex;
       justify-content: center;
       margin: 0 auto;
+      color: white;
+      font-size: 0.7em;
+      font-weight: 600;
     }
 
     .card-score .section.team-logo .bottom {
       position: absolute;
       right: 0;
       left: 0;
-      width: 12%;
-      bottom: 25px;
+      bottom: 13%;
       display: flex;
       justify-content: center;
       margin: 0 auto;
+      color: white;
+      font-weight: 600;
+      font-size: 0.7em;
+    }
+
+    .card-score .section.team-logo .bottom-left {
+      position: absolute;
+      left: 3%;
+      bottom: 3%;
+      display: flex;
+      justify-content: center;
+      margin: 0 auto;
+      color: white;
+      font-size: 0.4em;
+      font-weight: 600;
+    }
+
+    .card-score .section.team-logo .center {
+      position: absolute;
+      right: 0;
+      left: 50%;
+      top: 50%;
+      bottom: 0;
+      transform: translate(-50%, -50%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 10%;
     }
 
     .card-score .section.footer {
@@ -138,15 +193,90 @@
       </b>
       
       <div class="card-score">
+        {{-- <div class="left">
+          <div class="full-width text-center">
+            <div>
+              <q-img class="logo"
+                :src="`${$host}/storage/school/logo/${item.school1.logo}`"
+                :ratio="1"
+                width="40%"
+              >
+                <template v-slot:error>
+                  <img :src="`${$host}/images/no-logo-1.png`" style="width: 100%; height: 100%;">
+                </template>
+              </q-img>
+            </div>
+
+            <div class="text-bold text-white text q-mt-xs text-center">
+              {{ item.school1.name }}
+            </div>
+          </div>
+        </div>
+
+        <div class="right">
+          <div class="full-width text-center">
+            <div>
+              <q-img class="logo"
+                :src="`${$host}/storage/school/logo/${item.school2.logo}`"
+                :ratio="1"
+                width="40%"
+              >
+                <template v-slot:error>
+                  <img :src="`${$host}/images/no-logo-1.png`" style="width: 100%; height: 100%;">
+                </template>
+              </q-img>
+            </div>
+
+            <div class="text-bold text-white text q-mt-xs text-center">
+              {{ item.school2.name }}
+            </div>
+          </div>
+        </div>
+
+        <div class="center" v-if="logo !== null">
+          <q-img class="logo"
+            :src="`${$host}/storage/app/image/${logo}`"
+            :ratio="1"
+          >
+            <template v-slot:error>
+              <img :src="`${$host}/images/no-logo-1.png`" style="width: 100%; height: 100%;">
+            </template>
+          </q-img>
+        </div> --}}
+
+        
+
+
+        
+
+        
+
+        
+
         <div class="section team-logo" style="background-image: url('{{ $data->link_stream->image_link }}')">
-          <div class="center text-vs">
-            VS
+          <div class="top-right">
+            <div>
+              <img src="{{ asset("storage/championship/image/{$data->championship->image}") }}" width="100%">
+            </div>
+          </div>
+
+          <div class="top-left">
+            @if (!empty($data->team_type))
+              {{ $data->team_type->name }}
+            @endif
+            &nbsp;
+            <span class="capitalize">
+              {{ $data->team_gender }}
+            </span>&nbsp;
+            <span>
+              {{ $data->sport->name }}
+            </span>
           </div>
 
           <div class="left">
             <div>
-              <div>
-                <img src="{{ asset("storage/school/logo/{$data->school1->logo}") }}" width="100%">
+              <div class="text-center">
+                <img src="{{ asset("storage/school/logo/{$data->school1->logo}") }}" width="40%">
               </div>
               <div class="text-center mt-2">
                 <b>{{ $data->school1->name }}</b>
@@ -156,8 +286,8 @@
 
           <div class="right">
             <div>
-              <div>
-                <img src="{{ asset("storage/school/logo/{$data->school2->logo}") }}" width="100%">
+              <div class="text-center">
+                <img src="{{ asset("storage/school/logo/{$data->school2->logo}") }}" width="40%">
               </div>
               <div class="text-center mt-2">
                 <b>{{ $data->school2->name }}</b>
@@ -165,18 +295,27 @@
             </div>
           </div>
 
+          <div class="center">
+            <img src="{{ asset("storage/app/image/{$app->logo}") }}" width="100%">
+          </div>
+
           <div class="top">
-            <img src="{{ asset("storage/championship/image/{$data->championship->image}") }}" width="100%">
+            <span class="date"></span>
           </div>
 
           <div class="bottom">
-            <img src="{{ asset("storage/app/image/{$app->logo}") }}" width="100%">
+            <span class="time"></span>
+          </div>
+
+          <div class="bottom-left">
+            WWW.SCHSPORTS.COM
           </div>
         </div>
+        
         <div class="section footer">
           Watch: {{ $data->school1->name }} vs {{ $data->school2->name }} - 
-          <span id="time"></span> - 
-          <span id="date"></span> - 
+          <span class="time"></span> - 
+          <span class="date"></span> - 
           {{ @$data->sport->name }} <span class="text-capitalize">{{ @$data->team_gender }}</span>
         </div>
       </div>
@@ -260,8 +399,11 @@
 
       date = datelocal.format('D MMM YYYY');
       time = datelocal.format('hh:mm') + ' ' + timezone;
-      document.querySelector('#date').innerHTML = date;
-      document.querySelector('#time').innerHTML = time;
+      const eld = document.querySelectorAll('.date');
+      const elt = document.querySelectorAll('.time');
+
+      eld.forEach(item => item.innerHTML = date);
+      elt.forEach(item => item.innerHTML = time);
 
       datetimeElem.innerHTML = `${formatDate} ${timezone}`;
 
