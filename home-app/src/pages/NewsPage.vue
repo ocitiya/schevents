@@ -9,17 +9,18 @@
         <div v-if="event.recent.length > 0" class="q-mt-md">
           <div class="event-card-container">
             <q-card v-for="item in event.recent" :key="item.id" v-ripple class="event-card" @click="() => toDetail(item.id)">
-              <q-card-section class="q-py-lg schedule-team-logo">
-                <div class="center text-vs text-white">
-                  VS
-                </div>
-
+              <q-card-section class="q-py-lg schedule-team-logo"
+                :style="{
+                  backgroundImage: 'url(\'' + $host + '/storage/link_stream/image/' + item.link_stream.image + '\')'
+                }"
+              >
                 <div class="left">
-                  <div>
+                  <div class="full-width text-center">
                     <div>
                       <q-img class="logo"
                         :src="`${$host}/storage/school/logo/${item.school1.logo}`"
                         :ratio="1"
+                        width="40%"
                       >
                         <template v-slot:error>
                           <img :src="`${$host}/images/no-logo-1.png`" style="width: 100%; height: 100%;">
@@ -27,18 +28,19 @@
                       </q-img>
                     </div>
 
-                    <div class="text-bold text-white q-mt-xs text-center">
+                    <div class="text-bold text-white text q-mt-xs text-center">
                       {{ item.school1.name }}
                     </div>
                   </div>
                 </div>
 
                 <div class="right">
-                  <div>
+                  <div class="full-width text-center">
                     <div>
                       <q-img class="logo"
                         :src="`${$host}/storage/school/logo/${item.school2.logo}`"
                         :ratio="1"
+                        width="40%"
                       >
                         <template v-slot:error>
                           <img :src="`${$host}/images/no-logo-1.png`" style="width: 100%; height: 100%;">
@@ -46,13 +48,13 @@
                       </q-img>
                     </div>
 
-                    <div class="text-bold text-white q-mt-xs text-center">
+                    <div class="text-bold text-white text q-mt-xs text-center">
                       {{ item.school2.name }}
                     </div>
                   </div>
                 </div>
 
-                <div class="bottom" v-if="logo !== null">
+                <div class="center" v-if="logo !== null">
                   <q-img class="logo"
                     :src="`${$host}/storage/app/image/${logo}`"
                     :ratio="1"
@@ -63,7 +65,19 @@
                   </q-img>
                 </div>
 
-                <div class="top" v-if="item.championship !== null">
+                <div class="top-left">
+                  <span v-if="item.team_type !== null">
+                    {{ item.team_type.name }}
+                  </span>&nbsp;
+                  <span class="capitalize">
+                    {{ item.team_gender }}
+                  </span>&nbsp;
+                  <span>
+                    {{ item.sport.name }}
+                  </span>
+                </div>
+
+                <div class="top-right" v-if="item.championship !== null">
                   <q-img class="logo"
                     :src="`${$host}/storage/championship/image/${item.championship.image}`"
                     :ratio="1"
@@ -72,6 +86,18 @@
                       <img :src="`${$host}/images/no-logo-1.png`" style="width: 100%; height: 100%;">
                     </template>
                   </q-img>
+                </div>
+
+                <div class="top">
+                  {{ scheduleDate(item.datetime) }}
+                </div>
+
+                <div class="bottom">
+                  {{ scheduleTime(item.datetime) }}
+                </div>
+
+                <div class="bottom-left">
+                  WWW.SCHSPORTS.COM
                 </div>
               </q-card-section>
 
@@ -124,17 +150,18 @@
         <div v-if="event.have_played.length > 0" class="q-mt-md">
           <div class="event-card-container">
             <q-card v-for="item in event.have_played" :key="item.id" v-ripple class="event-card" @click="() => toDetail(item.id)">
-              <q-card-section class="q-py-lg schedule-team-logo">
-                <div class="center text-vs text-white">
-                  VS
-                </div>
-
+              <q-card-section class="q-py-lg schedule-team-logo"
+                :style="{
+                  backgroundImage: 'url(\'' + $host + '/storage/link_stream/image/' + item.link_stream.image + '\')'
+                }"
+              >
                 <div class="left">
-                  <div>
+                  <div class="full-width text-center">
                     <div>
                       <q-img class="logo"
                         :src="`${$host}/storage/school/logo/${item.school1.logo}`"
                         :ratio="1"
+                        width="40%"
                       >
                         <template v-slot:error>
                           <img :src="`${$host}/images/no-logo-1.png`" style="width: 100%; height: 100%;">
@@ -142,18 +169,19 @@
                       </q-img>
                     </div>
 
-                    <div class="text-bold text-white q-mt-xs text-center">
+                    <div class="text-bold text-white text q-mt-xs text-center">
                       {{ item.school1.name }}
                     </div>
                   </div>
                 </div>
 
                 <div class="right">
-                  <div>
+                  <div class="full-width text-center">
                     <div>
                       <q-img class="logo"
                         :src="`${$host}/storage/school/logo/${item.school2.logo}`"
                         :ratio="1"
+                        width="40%"
                       >
                         <template v-slot:error>
                           <img :src="`${$host}/images/no-logo-1.png`" style="width: 100%; height: 100%;">
@@ -161,13 +189,13 @@
                       </q-img>
                     </div>
 
-                    <div class="text-bold text-white q-mt-xs text-center">
+                    <div class="text-bold text-white text q-mt-xs text-center">
                       {{ item.school2.name }}
                     </div>
                   </div>
                 </div>
 
-                <div class="bottom" v-if="logo !== null">
+                <div class="center" v-if="logo !== null">
                   <q-img class="logo"
                     :src="`${$host}/storage/app/image/${logo}`"
                     :ratio="1"
@@ -178,7 +206,19 @@
                   </q-img>
                 </div>
 
-                <div class="top" v-if="item.championship !== null">
+                <div class="top-left">
+                  <span v-if="item.team_type !== null">
+                    {{ item.team_type.name }}
+                  </span>&nbsp;
+                  <span class="capitalize">
+                    {{ item.team_gender }}
+                  </span>&nbsp;
+                  <span>
+                    {{ item.sport.name }}
+                  </span>
+                </div>
+
+                <div class="top-right" v-if="item.championship !== null">
                   <q-img class="logo"
                     :src="`${$host}/storage/championship/image/${item.championship.image}`"
                     :ratio="1"
@@ -188,6 +228,19 @@
                     </template>
                   </q-img>
                 </div>
+
+                <div class="top">
+                  {{ scheduleDate(item.datetime) }}
+                </div>
+
+                <div class="bottom">
+                  {{ scheduleTime(item.datetime) }}
+                </div>
+
+                <div class="bottom-left">
+                  WWW.SCHSPORTS.COM
+                </div>
+
               </q-card-section>
 
               <q-separator />
@@ -453,59 +506,101 @@ section {
   background-size: cover;
   position: relative;
 
+  .top-right {
+    position: absolute;
+    right: 3%;
+    width: 8%;
+    top: 5%;
+    display: flex;
+    justify-content: center;
+    margin: 0 auto;
+  }
+
+  .top-left {
+    position: absolute;
+    left: 3%;
+    top: 3%;
+    display: flex;
+    justify-content: center;
+    margin: 0 auto;
+    color: white;
+    font-size: 0.8em;
+    font-weight: 600;
+  }
+
   .left {
     position: absolute;
-    left: 20px;
-    width: 20%;
+    left: 0;
+    width: 50%;
     top: 0;
     bottom: 0;
     display: flex;
     align-items: center;
+    justify-content: center;
+    padding-right: 13%;
   }
 
   .right {
     position: absolute;
-    right: 20px;
-    width: 20%;
+    right: 0;
+    width: 50%;
     top: 0;
     bottom: 0;
     display: flex;
     align-items: center;
+    justify-content: center;
+    padding-left: 13%;
   }
 
   .top {
     position: absolute;
     right: 0;
     left: 0;
-    width: 12%;
-    top: 12px;
+    top: 15%;
     display: flex;
     justify-content: center;
     margin: 0 auto;
+    color: white;
+    font-size: 0.7em;
+    font-weight: 600;
   }
 
   .bottom {
     position: absolute;
     right: 0;
     left: 0;
-    width: 12%;
-    bottom: 25px;
+    bottom: 13%;
     display: flex;
     justify-content: center;
     margin: 0 auto;
+    color: white;
+    font-weight: 600;
+    font-size: 0.7em;
+  }
+
+  .bottom-left {
+    position: absolute;
+    left: 3%;
+    bottom: 3%;
+    display: flex;
+    justify-content: center;
+    margin: 0 auto;
+    color: white;
+    font-size: 0.4em;
+    font-weight: 600;
   }
 
   .center {
     position: absolute;
     right: 0;
-    left: 0;
+    left: 50%;
     top: 50%;
     bottom: 0;
-    transform: translateY(-50%);
-    text-align: center;
+    transform: translate(-50%, -50%);
     display: flex;
     align-items: center;
     justify-content: center;
+    width: 10%;
   }
 
   .text-vs {
