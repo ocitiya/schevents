@@ -193,67 +193,14 @@
       </b>
       
       <div class="card-score">
-        {{-- <div class="left">
-          <div class="full-width text-center">
-            <div>
-              <q-img class="logo"
-                :src="`${$host}/storage/school/logo/${item.school1.logo}`"
-                :ratio="1"
-                width="40%"
-              >
-                <template v-slot:error>
-                  <img :src="`${$host}/images/no-logo-1.png`" style="width: 100%; height: 100%;">
-                </template>
-              </q-img>
-            </div>
-
-            <div class="text-bold text-white text q-mt-xs text-center">
-              {{ item.school1.name }}
-            </div>
-          </div>
-        </div>
-
-        <div class="right">
-          <div class="full-width text-center">
-            <div>
-              <q-img class="logo"
-                :src="`${$host}/storage/school/logo/${item.school2.logo}`"
-                :ratio="1"
-                width="40%"
-              >
-                <template v-slot:error>
-                  <img :src="`${$host}/images/no-logo-1.png`" style="width: 100%; height: 100%;">
-                </template>
-              </q-img>
-            </div>
-
-            <div class="text-bold text-white text q-mt-xs text-center">
-              {{ item.school2.name }}
-            </div>
-          </div>
-        </div>
-
-        <div class="center" v-if="logo !== null">
-          <q-img class="logo"
-            :src="`${$host}/storage/app/image/${logo}`"
-            :ratio="1"
-          >
-            <template v-slot:error>
-              <img :src="`${$host}/images/no-logo-1.png`" style="width: 100%; height: 100%;">
-            </template>
-          </q-img>
-        </div> --}}
-
-        
-
-
-        
-
-        
-
-        
-
-        <div class="section team-logo" style="background-image: url('{{ $data->link_stream->image_link }}')">
+        <div
+          class="section team-logo"
+          style="
+            background-image: linear-gradient( rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5) ), url('{{ $data->link_stream->image_link }}');
+            color: white;
+            text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
+          "
+        >
           <div class="top-right">
             <div>
               <img src="{{ asset("storage/championship/image/{$data->championship->image}") }}" width="100%">
@@ -299,15 +246,15 @@
             <img src="{{ asset("storage/app/image/{$app->logo}") }}" width="100%">
           </div>
 
-          <div class="top">
+          <div class="top" style="top: 30%;">
             <span class="date"></span>
           </div>
 
-          <div class="bottom">
+          <div class="bottom" style="bottom: 30%;">
             <span class="time"></span>
           </div>
 
-          <div class="bottom-left">
+          <div class="bottom" style="bottom: 2%; font-size: 0.4em;">
             WWW.SCHSPORTS.COM
           </div>
         </div>

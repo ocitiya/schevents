@@ -11,7 +11,9 @@
             <q-card v-for="item in event.recent" :key="item.id" v-ripple class="event-card" @click="() => toDetail(item.id)">
               <q-card-section class="q-py-lg schedule-team-logo"
                 :style="{
-                  backgroundImage: 'url(\'' + $host + '/storage/link_stream/image/' + item.link_stream.image + '\')'
+                  backgroundImage: 'linear-gradient( rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5) ), url(\'' + $host + '/storage/link_stream/image/' + item.link_stream.image + '\')',
+                  color: 'white',
+                  textShadow: '-1px 0 black, 0 1px black, 1px 0 black, 0 -1px black'
                 }"
               >
                 <div class="left">
@@ -88,15 +90,15 @@
                   </q-img>
                 </div>
 
-                <div class="top">
+                <div class="top" style="top: 30%;">
                   {{ scheduleDate(item.datetime) }}
                 </div>
 
-                <div class="bottom">
+                <div class="bottom" style="bottom: 30%;">
                   {{ scheduleTime(item.datetime) }}
                 </div>
 
-                <div class="bottom-left">
+                <div class="bottom" style="bottom: 2%; font-size: 0.4em;">
                   WWW.SCHSPORTS.COM
                 </div>
               </q-card-section>
@@ -152,7 +154,9 @@
             <q-card v-for="item in event.have_played" :key="item.id" v-ripple class="event-card" @click="() => toDetail(item.id)">
               <q-card-section class="q-py-lg schedule-team-logo"
                 :style="{
-                  backgroundImage: 'url(\'' + $host + '/storage/link_stream/image/' + item.link_stream.image + '\')'
+                  backgroundImage: 'linear-gradient( rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5) ), url(\'' + $host + '/storage/link_stream/image/' + item.link_stream.image + '\')',
+                  color: 'white',
+                  textShadow: '-1px 0 black, 0 1px black, 1px 0 black, 0 -1px black'
                 }"
               >
                 <div class="left">
@@ -229,15 +233,15 @@
                   </q-img>
                 </div>
 
-                <div class="top">
+                <div class="top" style="top: 30%;">
                   {{ scheduleDate(item.datetime) }}
                 </div>
 
-                <div class="bottom">
+                <div class="bottom" style="bottom: 30%;">
                   {{ scheduleTime(item.datetime) }}
                 </div>
 
-                <div class="bottom-left">
+                <div class="bottom" style="bottom: 2%; font-size: 0.4em;">
                   WWW.SCHSPORTS.COM
                 </div>
               </q-card-section>
@@ -517,13 +521,13 @@ section {
 
   .top-left {
     position: absolute;
-    left: 3%;
-    top: 3%;
+    left: 5%;
+    top: 8%;
     display: flex;
     justify-content: center;
     margin: 0 auto;
     color: white;
-    font-size: 0.8em;
+    font-size: 0.9em;
     font-weight: 600;
   }
 
