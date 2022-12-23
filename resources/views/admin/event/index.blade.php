@@ -216,13 +216,29 @@
                 return data === null ? '-' : data.name;
               }
             },
-            {data: 'start_date', title: 'Tanggal Awal', name: 'start_date'},
-            {data: 'end_date', title: 'Tanggal Akhir', name: 'end_date', 
+            {data: 'start_date', title: 'Tanggal Awal', name: 'start_date', className: 'no-wrap', 
               "render": function ( data, type, row, meta ) {
-                return data || '-';
+                let date = moment(data).format('D MMM Y');
+                if (row.start_time !== null && row.start_time !== '') {
+                  date += `<br>${row.start_time}`;
+                }
+                return date;
               }
             },
-            {data: 'offer', title: 'Share', orderable: false, searchable: false, className: 'd-inline-flex',
+            {data: 'end_date', title: 'Tanggal Akhir', name: 'end_date', className: 'no-wrap', 
+              "render": function ( data, type, row, meta ) {
+                if (data !== null && data !== '') {
+                  let date = moment(data).format('D MMM Y');
+                  if (row.end_time !== null && row.end_time !== '') {
+                    date += `<br>${row.end_time}`;
+                  }
+                  return date;
+                } else {
+                  return '-';
+                }
+              }
+            },
+            {data: 'offer', title: 'Share', orderable: false, searchable: false, className: 'no-wrap',
               "render": function ( data, type, row, meta ) {
                 if (data === null) {
                   return '-';

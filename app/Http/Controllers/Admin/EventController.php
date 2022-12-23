@@ -11,6 +11,7 @@ use Illuminate\Database\QueryException;
 use Yajra\DataTables\Datatables;
 
 use App\Models\Event;
+use App\Models\LPTypes;
 use App\Models\OfferCampaign;
 use App\Models\OfferChannel;
 use Exception;
@@ -34,6 +35,7 @@ class EventController extends Controller {
 
   public function create (Request $request) {
     $data = [
+      "lp_types" => LPTypes::get(),
       "campaign" => OfferCampaign::get(),
       "channels" => OfferChannel::get()
     ];
@@ -45,7 +47,8 @@ class EventController extends Controller {
     $data = [
       "data" => Event::find($id),
       "campaign" => OfferCampaign::get(),
-      "channels" => OfferChannel::get()
+      "channels" => OfferChannel::get(),
+      "lp_types" => LPTypes::get()
     ];
 
     return view('admin.event.form', $data);
@@ -65,6 +68,7 @@ class EventController extends Controller {
       'campaign_id' => 'required|int',
       'banner_id' => 'required|int',
       'channel_id' => 'required|int',
+      'lp_type_id' => 'required|int',
       'start_date' => 'required|date',
       'end_date' => 'nullable|date',
       'description' => 'nullable|string|max:255',
@@ -115,8 +119,11 @@ class EventController extends Controller {
       $event->campaign_id = $request->campaign_id;
       $event->banner_id = $request->banner_id;
       $event->channel_id = $request->channel_id;
+      $event->lp_type_id = $request->lp_type_id;
       $event->start_date = $request->start_date;
+      $event->start_time = $request->start_time;
       $event->end_date = empty($request->end_date) ? $request->start_date : $request->end_date;
+      $event->end_time = empty($request->end_date) ? $request->start_time : $request->end_time;
       $event->description = $request->description;
       if ($request->hasFile('image')) $event->image = $filename;
       $event->save();

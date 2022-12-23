@@ -87,8 +87,7 @@ class MatchScheduleController extends Controller {
     $schedule = MatchSchedule::find($id);
     $dt = new DateTime($schedule->datetime);
     $schedule->date = $dt->format("Y-m-d");
-    $schedule->time_hour = $dt->format("H");
-    $schedule->time_minute = $dt->format("i");
+    $schedule->time = $dt->format("H:i");
 
     $data = [
       "data" => $schedule,
@@ -129,8 +128,7 @@ class MatchScheduleController extends Controller {
       'stadium' => 'nullable|uuid',
       'team_type_id' => 'uuid',
       'date' => 'required|date',
-      'time_hour' => 'required|min:0|max:59',
-      'time_minute' => 'required|min:0|max:23',
+      'time' => 'required',
       'lp_type_id' => 'nullable|int',
       'channel_id' => 'nullable|int',
       'description' => 'nullable|string'
@@ -173,7 +171,7 @@ class MatchScheduleController extends Controller {
 
     $level_of_education = implode(",", $level_of_education);
 
-    $datetime = "{$request->date} {$request->time_hour}:{$request->time_minute}";
+    $datetime = "{$request->date} {$request->time}";
     $sport = Sport::find($request->sport_id);
 
     $keywords = 

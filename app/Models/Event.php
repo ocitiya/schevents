@@ -38,4 +38,8 @@ class Event extends Model {
 			->where("channel_id", $this->channel_id)
 			->first();
 	}
+
+	public function lp_type () {
+		return $this->belongsTo(LPTypes::class);
+	}
 }

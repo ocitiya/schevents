@@ -63,6 +63,31 @@
               </div>
             </div>
 
+            @if (isset($data))
+              <div class="row">
+                <div class="col-5"></div>
+                <div class="col-7">
+                  <img src="{{"/storage/banner/image/{$data->image}" }}" style="width: 100%">
+                </div>
+              </div>
+            @endif
+
+            <div class="row">
+              <div class="col-5">
+                <label for="image">Gambar *</label>
+              </div>
+              <div class="col-7">
+                <input type="file" name="image" id="image" class="form-control" accept=".png, .jpg">
+                <div class="">
+                  @if (isset($data))
+                    <small>Masukkan gambar untuk mengganti gambar | File type: .jpg, .png</small><br><br>
+                  @else
+                    <small>File type: .jpg, .png</small><br><br>
+                  @endif
+                </div>
+              </div>
+            </div>
+
             <div class="form-button">
               <button id="submit" type="submit" class="btn btn-primary btn-sm unrounded">
                 Kirim&nbsp;
@@ -114,7 +139,7 @@
             }
           })
       }, 1000);
-    })
-  })
+    });
+  });
 </script>
 @endsection

@@ -40,7 +40,8 @@ class LPTypeController extends Controller {
 	public function store (Request $request) {
 		$isCreate = $request->id == null ? true : false;
 		$validation = [
-      'name' => 'required|string'
+      'name' => 'required|string',
+			'image' => 'nullable|file|mimes:jpg,png'
 		];
 
 		$validated = $request->validate($validation);
@@ -52,10 +53,38 @@ class LPTypeController extends Controller {
 		} else {
 			$lpType= LPTypes::find($request->id);
       $lpType->updated_by = Auth::id();
+
+			if ($request->hasFile('image')) {
+				$oldPath = storage_path('app/public/lp-type/image/').$lpType->image;
+				if (file_exists($oldPath) && is_file($oldPath)) {
+					unlink($oldPath);
+				}
+			}
+		}
+
+		if ($request->hasFile('image')) {
+			if(!Storage::exists("/public/lp-type/image")) Storage::makeDirectory("/public/lp-type/image");
+			$file = $request->file('image');
+
+			$filenameWithExt = $request->file('image')->getClientOriginalName();
+			$filename = pathinfo($filenameWithExt, PATHINFO_FILENAME);
+			$extension = $request->file('image')->getClientOriginalExtension();
+
+			$filename = $filename.'_'.time().'.'.$extension;
+			$path = storage_path('app/public/lp-type/image/').$filename;
+			$file->storeAs('public/lp-type/image', $filename);
+
+			// Resize image
+			$img = Image::make($file->getRealPath())
+				->resize(512, 512, function ($constraint) {
+					$constraint->aspectRatio();
+				})
+				->save($path, 80);
 		}
 		
 		try {
       $lpType->name = $request->name;
+			if ($request->hasFile('image')) $lpType->image = $filename;
 			$lpType->save();
 
 			return redirect()
@@ -63,6 +92,7 @@ class LPTypeController extends Controller {
 				->with('success', "Tipe LP {$request->name} berhasil dibuat");
 
 		} catch (QueryException $exception) {
+			unlink($path);
 			return redirect()->back()
 				->withErrors($exception->getMessage());
 		}
@@ -71,6 +101,9 @@ class LPTypeController extends Controller {
 	public function delete (Request $request) {
 		try {
 			$lpType= LPTypes::find($request->id);
+
+			$oldPath = storage_path('app/public/lp-type/image/').$lpType->image;
+      try { unlink($oldPath); } catch (Exception $e) {}
 			$lpType->delete();
 
 			session()->flash('message', "Tipe LP {$lpType->name} berhasil dihapus");

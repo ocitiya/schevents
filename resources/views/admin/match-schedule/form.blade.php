@@ -319,22 +319,10 @@
 
               <div class="row">
                 <div class="col-5">
-                  <label for="name">Waktu Pertandingan *</label>
+                  <label for="time">Waktu Pertandingan *</label>
                 </div>
-                <div class="col-3">
-                  <select name="time_hour" id="time_hour" class="form-select select2" required>
-                    @for ($i = 0; $i <= 23; $i++)
-                      <option value="{{ sprintf('%02d', $i) }}">{{ sprintf('%02d', $i) }}</option>
-                    @endfor
-                  </select>
-                </div>
-
-                <div class="col-3">
-                  <select name="time_minute" id="time_minute" class="form-select select2" required>
-                    @for ($i = 0; $i <= 59; $i++)
-                      <option value="{{ sprintf('%02d', $i) }}">{{ sprintf('%02d', $i) }}</option>
-                    @endfor
-                  </select>
+                <div class="col-7">
+                  <input type="time" name="time" id="time" class="form-control" value="{{ old('time', isset($data) ? $data->time : null) }}">
                 </div>
               </div>
             </div>
@@ -366,8 +354,6 @@
     const school2Selected = "<?php echo old('school2_id', isset($data) ? $data->school2_id : null) ?>";
     const teamTypeSelected = "<?php echo old('team_type_id', isset($data) ? $data->team_type_id : null) ?>";
     const teamGenderSelected = "<?php echo old('team_gender', isset($data) ? $data->team_gender : null) ?>";
-    const timeHourSelected = "<?php echo old('time_hour', isset($data) ? $data->time_hour : null) ?>";
-    const timeMinuteSelected = "<?php echo old('time_minute', isset($data) ? $data->time_minute : null) ?>";
     const matchSystemSelected = "<?php echo old('match_system', isset($data) ? $data->match_system : null) ?>";
     const matchSystem2Selected = "<?php echo old('match_system2', isset($data) ? $data->match_system2 : null) ?>";
     const stadiumSelected = "<?php echo old('stadium_id', isset($data) ? $data->stadium_id : null) ?>";
@@ -471,8 +457,6 @@
       $('#championship_id').val(championshipSelected).change();
       $('#federation_id').val(federationSelected).change();
       $('#team_gender').val(teamGenderSelected).change();
-      $('#time_hour').val(timeHourSelected).change();
-      $('#time_minute').val(timeMinuteSelected).change();
       $('#team_type_id').val(teamTypeSelected).change();
       $('#stadium_id').val(stadiumSelected).change();
       $('#channel_id').val(channelSelected).change();

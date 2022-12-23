@@ -81,6 +81,19 @@
           columns: [
             { data: 'DT_RowIndex', name: 'DT_RowIndex', title: 'No',  orderable: false, searchable: false },
             { data: 'name', name: 'name', title: 'Nama' },
+            {data: 'image', title: 'Gambar', name: 'image',
+              "render": function ( data, type, row, meta ) {
+                if (data === null) {
+                  return `
+                    <img src="/images/no-logo-1.png" style="width: 75px" class="mb-3">
+                  `
+                } else {
+                  return `
+                    <img src="/storage/lp-type/image/${data}" style="width: 75px" class="mb-3">
+                  `
+                }
+              }
+            },
             {data: 'id', title: 'Aksi', name: 'action', orderable: false, searchable: false,
               "render": function ( data, type, row, meta ) {
                 let updateRoute;

@@ -201,7 +201,9 @@
     is_create = !!parseInt(is_create)
 
     let movieTypeSelected = `<?php echo old('movie_type_id', isset($data) ? $data->movie_type_id : null) ?>`;
-    movieTypeSelected = JSON.parse(movieTypeSelected)
+    if (movieTypeSelected !== null && movieTypeSelected !== '') {
+      movieTypeSelected = JSON.parse(movieTypeSelected)
+    }
 
     document.addEventListener('DOMContentLoaded', async function () {
       if (!is_create) $('#submit').removeClass('disabled')
@@ -235,7 +237,14 @@
               }
             })
         }, 1000);
-      })
-    })
+      });
+
+      tinymce.init({
+        menubar: false,
+        selector: '#description',
+        plugins: 'anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount',
+        toolbar: 'undo redo bold italic underline align | strikethrough | blocks fontfamily fontsize | link image media table | lineheight | numlist bullist indent outdent | emoticons charmap | removeformat',
+      });
+    });
   </script>
 @endsection

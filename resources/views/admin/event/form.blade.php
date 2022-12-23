@@ -77,10 +77,28 @@
 
             <div class="row">
               <div class="col-5">
+                <label for="start_time">Jam Awal</label>
+              </div>
+              <div class="col-7">
+                <input type="time" name="start_time" id="start_time" class="form-control" value="{{ old('start_time', isset($data) ? $data->start_time : null) }}">
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-5">
                 <label for="end_date">Tanggal Akhir Event</label>
               </div>
               <div class="col-7">
                 <input type="date" name="end_date" id="end_date" class="form-control" value="{{ old('end_date', isset($data) ? $data->end_date : null) }}">
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-5">
+                <label for="end_time">Jam Akhir</label>
+              </div>
+              <div class="col-7">
+                <input type="time" name="end_time" id="end_time" class="form-control" value="{{ old('end_time', isset($data) ? $data->end_time : null) }}">
               </div>
             </div>
 
@@ -106,6 +124,20 @@
                 <select name="banner_id" class="form-select select2" id="banner_id" required>
                   <option disabled selected value>Please select ...</option>
                   {{-- Dynamic Data --}}
+                </select>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-5">
+                <label for="lp_type_id">Tipe LP *</label>
+              </div>
+              <div class="col-7">
+                <select name="lp_type_id" class="form-select select2" id="lp_type_id" required>
+                  <option disabled selected value>Please select ...</option>
+                  @foreach ($lp_types as $item)
+                    <option value="{{ $item->id }}">{{ $item->name }}</option>
+                  @endforeach
                 </select>
               </div>
             </div>
@@ -193,6 +225,7 @@
     const campaignSelected = "<?php echo old('campaign_id', isset($data) ? $data->campaign_id : null) ?>";
     const bannerSelected = "<?php echo old('banner_id', isset($data) ? $data->banner_id : null) ?>";
     const channelSelected = "<?php echo old('channel_id', isset($data) ? $data->channel_id : null) ?>";
+    const lpTypeSelected = "<?php echo old('lp_type_id', isset($data) ? $data->lp_type_id : null) ?>";
 
     const getList = (endpoint) => {
       return new Promise((resolve, reject) => {
@@ -216,9 +249,7 @@
 
       $('#offer-invalidate').hide();
 
-      if (!campaign_id || !banner_id || !channel_id) {
-        return false;
-      }
+      if (!campaign_id || !banner_id || !channel_id) return false;
 
       const formData = new FormData();
       formData.append('campaign_id', campaign_id);
@@ -262,6 +293,7 @@
       $('#campaign_id').val(campaignSelected).change();
       $('#banner_id').val(bannerSelected).change();
       $('#channel_id').val(channelSelected).change();
+      $('#lp_type_id').val(lpTypeSelected).change();
 
       let validationTimeout
       $('#name').on('keyup', function () {
@@ -291,7 +323,14 @@
               }
             });
         }, 1000);
-      })
-    })
+      });
+
+      tinymce.init({
+        menubar: false,
+        selector: '#description',
+        plugins: 'anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount',
+        toolbar: 'undo redo bold italic underline align | strikethrough | blocks fontfamily fontsize | link image media table | lineheight | numlist bullist indent outdent | emoticons charmap | removeformat',
+      });
+    });
   </script>
 @endsection
