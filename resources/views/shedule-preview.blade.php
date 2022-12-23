@@ -181,6 +181,10 @@
       font-size: 1.5em;
       font-weight: 700;
     }
+
+    .capitalize {
+      text-transform: capitalize;
+    }
   </style>
 </head>
 <body>
@@ -207,11 +211,11 @@
             </div>
           </div>
 
-          <div class="top-left">
+          <div class="top-left" style="font-size: 0.8em">
+            Live
             @if (!empty($data->team_type))
-              {{ $data->team_type->name }}
+              {{ $data->team_type->name }}&nbsp;
             @endif
-            &nbsp;
             <span class="capitalize">
               {{ $data->team_gender }}
             </span>&nbsp;
@@ -225,7 +229,7 @@
               <div class="text-center">
                 <img src="{{ asset("storage/school/logo/{$data->school1->logo}") }}" width="40%">
               </div>
-              <div class="text-center mt-2">
+              <div class="text-center mt-2" style="line-height: 1;">
                 <b>{{ $data->school1->name }}</b>
               </div>
             </div>
@@ -236,7 +240,7 @@
               <div class="text-center">
                 <img src="{{ asset("storage/school/logo/{$data->school2->logo}") }}" width="40%">
               </div>
-              <div class="text-center mt-2">
+              <div class="text-center mt-2" style="line-height: 1;">
                 <b>{{ $data->school2->name }}</b>
               </div>
             </div>
@@ -254,7 +258,7 @@
             <span class="time"></span>
           </div>
 
-          <div class="bottom" style="bottom: 2%; font-size: 0.4em;">
+          <div class="bottom" style="bottom: 2%; font-size: 0.6em; letter-spacing: 2px;">
             WWW.SCHSPORTS.COM
           </div>
         </div>

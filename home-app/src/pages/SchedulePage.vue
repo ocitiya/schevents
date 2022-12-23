@@ -50,7 +50,7 @@
                         </q-img>
                       </div>
 
-                      <div class="text-bold text-white text q-mt-xs text-center">
+                      <div class="text-bold text-white text q-mt-xs text-center text-caption" style="line-height: 1;">
                         {{ item.school1.name }}
                       </div>
                     </div>
@@ -70,7 +70,7 @@
                         </q-img>
                       </div>
 
-                      <div class="text-bold text-white text q-mt-xs text-center">
+                      <div class="text-bold text-white text q-mt-xs text-center text-caption" style="line-height: 1;">
                         {{ item.school2.name }}
                       </div>
                     </div>
@@ -88,6 +88,7 @@
                   </div>
 
                   <div class="top-left">
+                    Live&nbsp;
                     <span v-if="item.team_type !== null">
                       {{ item.team_type.name }}
                     </span>&nbsp;
@@ -118,7 +119,7 @@
                     {{ scheduleTime(item.datetime) }}
                   </div>
 
-                  <div class="bottom" style="bottom: 2%; font-size: 0.4em;">
+                  <div class="bottom text-caption" style="bottom: 2%; font-size: 0.6em; letter-spacing: 2px;">
                     WWW.SCHSPORTS.COM
                   </div>
 
