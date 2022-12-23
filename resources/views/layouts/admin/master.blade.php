@@ -2,6 +2,7 @@
   use App\Models\App;
   $app = App::first();
 @endphp
+<!DOCTYPE HTML>
 
 <html>
   <head>
@@ -67,6 +68,7 @@
     <script src="{{ asset('js/sweetalert.min.js') }}"></script>
     <script src="{{ asset('js/jquery.dataTables.min.js') }}"></script>
     <script src="{{ asset('js/dataTables.bootstrap4.min.js') }}"></script>
+    <script src="https://cdn.tiny.cloud/1/tj557gd1vjqw8h2jztj7m4itrs8a5ti6bcpi332bmuhazxr5/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
 
     <script>
       const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
@@ -135,7 +137,7 @@
         $('.select2').select2({
           theme: 'bootstrap-5'
         });
-      })
+      });
     </script>
     @yield('script')
   </body>

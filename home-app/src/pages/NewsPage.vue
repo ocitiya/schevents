@@ -127,9 +127,7 @@
 
                 <hr />
 
-                <div class="text-description">
-                  {{ item.description }}
-                </div>
+                <div class="text-description" v-html="item.description" />
               </q-card-section>
             </q-card>
           </div>
@@ -270,9 +268,7 @@
 
                 <hr />
 
-                <div class="text-description">
-                  {{ item.description }}
-                </div>
+                <div class="text-description" v-html="item.description" />
               </q-card-section>
             </q-card>
           </div>

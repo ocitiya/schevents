@@ -55,7 +55,7 @@
             <input type="hidden" name="is_national_team" value="true">  
           @endif
 
-          <div class="col-7">
+          <div class="col-9">
             <div class="row">
               <div class="col-5">
                 <label for="name">Kejuaraan *</label>
@@ -290,7 +290,7 @@
                 <label for="description">Deskripsi</label>
               </div>
               <div class="col-7">
-                <textarea name="description" class="form-control" rows="4" id="description">{{ old('description', isset($data) ? $data->description : '') }}</textarea>
+                <textarea name="description" class="form-control" id="description">{{ old('description', isset($data) ? $data->description : '') }}</textarea>
               </div>
             </div>
 
@@ -506,6 +506,13 @@
         $(this).val('');
         $('#datetime').val('');
       });
-    })
+
+      tinymce.init({
+        menubar: false,
+        selector: '#description',
+        plugins: 'anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount',
+        toolbar: 'undo redo bold italic underline align | strikethrough | blocks fontfamily fontsize | link image media table | lineheight | numlist bullist indent outdent | emoticons charmap | removeformat',
+      });
+    });
   </script>
 @endsection
