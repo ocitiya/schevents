@@ -734,4 +734,82 @@ class MatchScheduleController extends Controller {
       return abort(404);
     }
   }
+
+  function videoSchedulePreview (Request $request, $id) {
+    $model = MatchSchedule::with([
+      "county",
+      "sport" => function ($q) {
+        $q->withTrashed();
+      },
+      "school1" => function ($subQuery) {
+        return $subQuery->with(['county']);
+      },
+      "school2" => function ($subQuery) {
+        return $subQuery->with(['county']);
+      },
+      "team_type",
+      "sport_type" => function ($q) {
+        $q->withTrashed();
+      },
+      "championship"
+    ])
+      ->find($id);
+
+    if ($model) {
+      $model->federation = Federation::find($model->federation_id);
+
+      $title = "";
+      if (!empty($model->championship)) {
+        $title .= $model->championship->abbreviation;
+        $title .= " - ";
+      } else if (!empty($model->federation)) {
+        $title .= $model->federation->abbreviation;
+        $title .= " - ";
+      }
+
+      if (!empty($model->school1->municipality->name)) {
+        $title .= "{$model->school1->name} ({$model->school1->municipality->name}";
+      } else {
+        $title .= $model->school1->name;
+      }
+
+      $title .= " vs ";
+      if (!empty($model->school2->municipality->name)) {
+        $title .= "{$model->school2->name} ({$model->school2->municipality->name}";
+      } else {
+        $title .= $model->school2->name;
+      }
+
+      $sport = $this->sportName($model);
+      $team_type = empty($model->team_type) ? null : $model->team_type->name;
+      $description = "Watch online {$team_type} {$model->team_gender}";
+      if (!empty($sport)) $description .= " {$sport->name}";
+      
+      $team = "{$team_type} {$model->team_gender}";
+      if (!empty($sport)) $team .= " {$sport->name}";
+
+      $school1 = $model->school1->name;
+      $school2 = $model->school2->name;
+      $stream_url = $model->lpsport->short_link;
+      $championship = $this->championshipName($model);
+      
+      $data = [
+        "data" => $model,
+        "title" => $title,
+        "team_type" => $team_type,
+        "description" => $description,
+        "team" => $team,
+        "school1" => $school1,
+        "school2" => $school2,
+        "stream_url" => $stream_url,
+        "championship" => $championship,
+        "sport" => $sport,
+        "app" => App::first()
+      ];
+
+      return view("video-schedule-preview", $data);
+    } else {
+      return abort(404);
+    }
+  }
 }

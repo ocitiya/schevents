@@ -359,7 +359,7 @@ export default {
       setTimeout(() => {
         // this.$router.push({ name: 'news.detail', params: { id } })
         window.open(`${this.$host}/schedule/${id}`)
-      }, 500)
+      }, 300)
     },
 
     next: function (type = 'recent') {

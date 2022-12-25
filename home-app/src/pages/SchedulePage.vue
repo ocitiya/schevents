@@ -380,108 +380,108 @@ export default defineComponent({
     position: relative;
 
     .top-right {
-    position: absolute;
-    right: 3%;
-    width: 8%;
-    top: 5%;
-    display: flex;
-    justify-content: center;
-    margin: 0 auto;
-  }
+      position: absolute;
+      right: 3%;
+      width: 8%;
+      top: 5%;
+      display: flex;
+      justify-content: center;
+      margin: 0 auto;
+    }
 
-  .top-left {
-    position: absolute;
-    left: 5%;
-    top: 8%;
-    display: flex;
-    justify-content: center;
-    margin: 0 auto;
-    color: white;
-    font-size: 0.9em;
-    font-weight: 600;
-  }
+    .top-left {
+      position: absolute;
+      left: 5%;
+      top: 8%;
+      display: flex;
+      justify-content: center;
+      margin: 0 auto;
+      color: white;
+      font-size: 0.9em;
+      font-weight: 600;
+    }
 
-  .left {
-    position: absolute;
-    left: 0;
-    width: 50%;
-    top: 0;
-    bottom: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding-right: 13%;
-  }
+    .left {
+      position: absolute;
+      left: 0;
+      width: 50%;
+      top: 0;
+      bottom: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding-right: 13%;
+    }
 
-  .right {
-    position: absolute;
-    right: 0;
-    width: 50%;
-    top: 0;
-    bottom: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding-left: 13%;
-  }
+    .right {
+      position: absolute;
+      right: 0;
+      width: 50%;
+      top: 0;
+      bottom: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding-left: 13%;
+    }
 
-  .top {
-    position: absolute;
-    right: 0;
-    left: 0;
-    top: 15%;
-    display: flex;
-    justify-content: center;
-    margin: 0 auto;
-    color: white;
-    font-size: 0.7em;
-    font-weight: 600;
-  }
+    .top {
+      position: absolute;
+      right: 0;
+      left: 0;
+      top: 15%;
+      display: flex;
+      justify-content: center;
+      margin: 0 auto;
+      color: white;
+      font-size: 0.7em;
+      font-weight: 600;
+    }
 
-  .bottom {
-    position: absolute;
-    right: 0;
-    left: 0;
-    bottom: 13%;
-    display: flex;
-    justify-content: center;
-    margin: 0 auto;
-    color: white;
-    font-weight: 600;
-    font-size: 0.7em;
-  }
+    .bottom {
+      position: absolute;
+      right: 0;
+      left: 0;
+      bottom: 13%;
+      display: flex;
+      justify-content: center;
+      margin: 0 auto;
+      color: white;
+      font-weight: 600;
+      font-size: 0.7em;
+    }
 
-  .bottom-left {
-    position: absolute;
-    left: 3%;
-    bottom: 3%;
-    display: flex;
-    justify-content: center;
-    margin: 0 auto;
-    color: white;
-    font-size: 0.4em;
-    font-weight: 600;
-  }
+    .bottom-left {
+      position: absolute;
+      left: 3%;
+      bottom: 3%;
+      display: flex;
+      justify-content: center;
+      margin: 0 auto;
+      color: white;
+      font-size: 0.4em;
+      font-weight: 600;
+    }
 
-  .center {
-    position: absolute;
-    right: 0;
-    left: 50%;
-    top: 50%;
-    bottom: 0;
-    transform: translate(-50%, -50%);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 10%;
-  }
+    .center {
+      position: absolute;
+      right: 0;
+      left: 50%;
+      top: 50%;
+      bottom: 0;
+      transform: translate(-50%, -50%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 10%;
+    }
 
-  .text-vs {
-    /* -webkit-text-stroke-width: 1px;
-    -webkit-text-stroke-color: black; */
-    font-size: 1.5em;
-    font-weight: 700;
-  }
+    .text-vs {
+      /* -webkit-text-stroke-width: 1px;
+      -webkit-text-stroke-color: black; */
+      font-size: 1.5em;
+      font-weight: 700;
+    }
 
   // .text {
   //   font-size: 10%;

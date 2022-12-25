@@ -33,9 +33,45 @@
                 <div class="card-event-container">
                   <q-card class="event-card" clickable v-ripple @click="() => openPage(item.id)">
                     <q-card-section class="event-logo"
-                    :style="{
-                      backgroundImage: `url(\'${item.image_link}\')`
-                    }">
+                      :style="{
+                        backgroundImage: `linear-gradient( rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5) ), url(\'${item.image_link}\')`,
+                        color: 'white',
+                        textShadow: '-1px 0 black, 0 1px black, 1px 0 black, 0 -1px black'
+                      }">
+
+                      <div class="top">
+                        {{ item.name }}
+                      </div>
+
+                      <div class="center">
+                        <div v-if="item.start_time">
+                          <small>
+                            {{ item.start_time }}
+                          </small>
+                        </div>
+
+                        <div v-if="logo != null">
+                          <q-img class="logo"
+                            :src="`${$host}/storage/app/image/${logo}`"
+                            :ratio="1"
+                            width="35px"
+                          >
+                            <template v-slot:error>
+                              <img :src="`${$host}/images/no-logo-1.png`" style="width: 100%; height: 100%;">
+                            </template>
+                          </q-img>
+                        </div>
+
+                        <div>
+                          <small>
+                            {{ scheduleDate(item.start_date) }}
+                          </small>
+                        </div>
+                      </div>
+
+                      <div class="bottom text-caption" style="bottom: 2%; font-size: 0.6em; letter-spacing: 2px;">
+                        WWW.SCHSPORTS.COM
+                      </div>
                     </q-card-section>
 
                     <q-card-section>
@@ -46,6 +82,13 @@
                             {{ scheduleDate(item.start_date) }}
                           </small>
                         </div>
+
+                        <div v-if="item.start_time !== null">
+                          <small>
+                            {{ item.start_time }}
+                            <q-icon name="schedule" />
+                          </small>
+                        </div>
                       </div>
                       <div class="text-body1 q-mt-sm">
                         <b>{{ item.name }} </b>
@@ -53,9 +96,7 @@
 
                       <hr />
 
-                      <div class="text-description">
-                        {{ item.description }}
-                      </div>
+                      <div class="text-description" v-html="item.description"></div>
                     </q-card-section>
                   </q-card>
                 </div>
@@ -86,6 +127,7 @@ export default {
   components: { EventFilter },
   data: function () {
     return {
+      logo: null,
       loading: true,
       data: [],
       tab: 'upcoming',
@@ -110,10 +152,22 @@ export default {
       title: 'Event'
     })
 
+    this.getAppData()
     this.getEvents()
   },
 
   methods: {
+    getAppData () {
+      this.$api.get('app/detail').then((response) => {
+        const { data, message, status } = response.data
+
+        
+        // this.title = data.name
+        this.logo = data.logo
+        console.log(this.logo)
+      })
+    },
+
     scheduleDate: function (date) {
       const formatDate = moment.utc(date).local().format('D MMMM Y')
       return formatDate
@@ -231,6 +285,44 @@ export default {
     aspect-ratio: 16/9;
     background-size: cover;
     position: relative;
+    .top {
+      position: absolute;
+      right: 0;
+      left: 0;
+      top: 10%;
+      display: flex;
+      justify-content: center;
+      margin: 0 auto;
+      color: white;
+      font-size: 1em;
+      font-weight: 600;
+    }
+    .center {
+      position: absolute;
+      right: 0;
+      left: 50%;
+      top: 50%;
+      bottom: 0;
+      transform: translate(-50%, -50%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 7px;
+    }
+
+    .bottom {
+      position: absolute;
+      right: 0;
+      left: 0;
+      bottom: 5%;
+      display: flex;
+      justify-content: center;
+      margin: 0 auto;
+      color: white;
+      font-weight: 600;
+      font-size: 0.7em;
+    }
   }
 }
 

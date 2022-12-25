@@ -470,6 +470,7 @@ Route::middleware(['haveInstalled'])->group(function () {
   });
 
   Route::get("schedule/{id}", [MatchScheduleController::class, "schedulePreview"]);
+  Route::get("video-schedule/{id}", [MatchScheduleController::class, "videoSchedulePreview"]);
   Route::get("event-schedule/{id}", [EventController::class, "schedulePreview"]);
   Route::get("movie/schedule/{id}", [MovieScheduleController::class, "schedulePreview"]);
 
