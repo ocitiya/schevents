@@ -99,6 +99,14 @@
             </li>
           @endif
 
+          @if (inRole(["superadmin", "admin", "user"]))
+            <li class="{{ str_contains(Request::route()->getName(), 'admin.masterdata.athlete.index') ? 'active' : null }}">
+              <a
+                href="{{ route('admin.masterdata.athlete.index') }}"
+              >Atlet</a>
+            </li>
+          @endif
+
           @if (inRole(["superadmin"]))
             <li
               class="{{ str_contains(Request::route()->getName(), 'admin.masterdata.championship') ? 'active' : null }}"

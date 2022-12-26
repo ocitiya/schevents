@@ -21,6 +21,7 @@ use App\Http\Controllers\Admin\MatchScheduleController;
 use App\Http\Controllers\Admin\StadiumController;
 use App\Http\Controllers\Admin\TeamTypeController;
 use App\Http\Controllers\Admin\AssociationController;
+use App\Http\Controllers\Admin\AthleteController;
 use App\Http\Controllers\Admin\BannerController;
 use App\Http\Controllers\Admin\ChampionshipController;
 use App\Http\Controllers\Admin\EventController;
@@ -423,6 +424,16 @@ Route::middleware(['haveInstalled'])->group(function () {
   
           Route::post('/store', [TeamTypeController::class, 'store'])->name('store');
           Route::post('/delete', [TeamTypeController::class, 'delete'])->name('delete');
+        });
+
+        Route::group(['prefix' => 'athlete', 'as' => 'athlete.'], function () {
+          Route::get('/', [AthleteController::class, 'index'])->name('index');
+          Route::get('/create', [AthleteController::class, 'create'])->name('create');
+          Route::get('/update/{id}', [AthleteController::class, 'update'])->name('update');
+          Route::get('/detail/{id}', [AthleteController::class, 'detail'])->name('detail');
+  
+          Route::post('/store', [AthleteController::class, 'store'])->name('store');
+          Route::post('/delete', [AthleteController::class, 'delete'])->name('delete');
         });
   
         Route::group(['prefix' => 'association', 'as' => 'association.'], function () {

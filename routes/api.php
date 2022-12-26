@@ -17,6 +17,7 @@ use App\Http\Controllers\Admin\SportTypeController;
 use App\Http\Controllers\Admin\StadiumController;
 use App\Http\Controllers\Admin\TeamTypeController;
 use App\Http\Controllers\Admin\AssociationController;
+use App\Http\Controllers\Admin\AthleteController;
 use App\Http\Controllers\Admin\BannerController;
 use App\Http\Controllers\Admin\ChampionshipController;
 use App\Http\Controllers\Admin\EventController;
@@ -75,6 +76,10 @@ Route::get('/school/random', [SchoolController::class, 'random']);
 // /api/stadium
 Route::get('/stadium/list', [StadiumController::class, 'list']);
 Route::get('/stadium/listDatatable', [StadiumController::class, 'listDatatable']);
+
+// /api/athlete
+Route::get('/athlete/list', [AthleteController::class, 'list']);
+Route::get('/athlete/listDatatable', [AthleteController::class, 'listDatatable']);
 
 // /api/championship
 Route::get('/championship/list', [ChampionshipController::class, 'list']);

@@ -4,132 +4,134 @@
       Videos
     </div>
 
-    <div class="q-my-xl page">
-      <div v-if="videos.length > 0" class="q-gutter-md">
-        <q-card v-for="item in videos" :key="item.id" class="bg-white q-pa-md" bordered  @click="() => toDetail(item.id)">
-          <q-card-section class="q-py-lg schedule-team-logo"
-            :style="{
-              backgroundImage: 'linear-gradient( rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5) ), url(\'' + $host + '/storage/link_stream/image/' + item.link_stream.image + '\')',
-              color: 'white',
-              textShadow: '-1px 0 black, 0 1px black, 1px 0 black, 0 -1px black'
-            }"
-          >
-            <div class="left">
-              <div class="full-width text-center">
+    <div class="q-my-xl">
+      <div v-if="videos.length > 0">
+        <div class="flex q-gutter-md">
+          <q-card v-for="item in videos" :key="item.id" class="bg-white q-pa-md card" bordered  @click="() => toDetail(item.id)">
+            <q-card-section class="q-py-lg schedule-team-logo"
+              :style="{
+                backgroundImage: 'linear-gradient( rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5) ), url(\'' + $host + '/storage/link_stream/image/' + item.link_stream.image + '\')',
+                color: 'white',
+                textShadow: '-1px 0 black, 0 1px black, 1px 0 black, 0 -1px black'
+              }"
+            >
+              <div class="left">
+                <div class="full-width text-center">
+                  <div>
+                    <q-img class="logo"
+                      :src="`${$host}/storage/school/logo/${item.school1.logo}`"
+                      :ratio="1"
+                      width="40%"
+                    >
+                      <template v-slot:error>
+                        <img :src="`${$host}/images/no-logo-1.png`" style="width: 100%; height: 100%;">
+                      </template>
+                    </q-img>
+                  </div>
+  
+                  <div class="text-bold text-white text q-mt-xs text-center text-caption" style="line-height: 1;">
+                    {{ item.school1.name }}
+                  </div>
+                </div>
+              </div>
+  
+              <div class="right">
+                <div class="full-width text-center">
+                  <div>
+                    <q-img class="logo"
+                      :src="`${$host}/storage/school/logo/${item.school2.logo}`"
+                      :ratio="1"
+                      width="40%"
+                    >
+                      <template v-slot:error>
+                        <img :src="`${$host}/images/no-logo-1.png`" style="width: 100%; height: 100%;">
+                      </template>
+                    </q-img>
+                  </div>
+  
+                  <div class="text-bold text-white text q-mt-xs text-center text-caption" style="line-height: 1;">
+                    {{ item.school2.name }}
+                  </div>
+                </div>
+              </div>
+  
+              <div class="center" v-if="logo !== null">
+                <q-img class="logo"
+                  :src="`${$host}/storage/app/image/${logo}`"
+                  :ratio="1"
+                >
+                  <template v-slot:error>
+                    <img :src="`${$host}/images/no-logo-1.png`" style="width: 100%; height: 100%;">
+                  </template>
+                </q-img>
+              </div>
+  
+              <div class="top-left">
+                <span v-if="item.team_type !== null">
+                  {{ item.team_type.name }}
+                </span>&nbsp;
+                <span class="capitalize">
+                  {{ item.team_gender }}
+                </span>&nbsp;
+                <span>
+                  {{ item.sport.name }}
+                </span>
+              </div>
+  
+              <div class="top-right" v-if="item.championship !== null">
+                <q-img class="logo"
+                  :src="`${$host}/storage/championship/image/${item.championship.image}`"
+                  :ratio="1"
+                >
+                  <template v-slot:error>
+                    <img :src="`${$host}/images/no-logo-1.png`" style="width: 100%; height: 100%;">
+                  </template>
+                </q-img>
+              </div>
+  
+              <div class="top" style="top: 30%;">
+                {{ scheduleDate(item.datetime) }}
+              </div>
+  
+              <div class="bottom" style="bottom: 30%;">
+                {{ scheduleTime(item.datetime) }}
+              </div>
+  
+              <div class="bottom text-caption" style="bottom: 2%; font-size: 0.6em; letter-spacing: 2px;">
+                WWW.SCHSPORTS.COM
+              </div>
+            </q-card-section>
+  
+            <q-separator />
+  
+            <q-card-section class="text-justify q-px-md">
+              <div class="flex items-center justify-between">
                 <div>
-                  <q-img class="logo"
-                    :src="`${$host}/storage/school/logo/${item.school1.logo}`"
-                    :ratio="1"
-                    width="40%"
-                  >
-                    <template v-slot:error>
-                      <img :src="`${$host}/images/no-logo-1.png`" style="width: 100%; height: 100%;">
-                    </template>
-                  </q-img>
+                  <small>
+                    <q-icon name="calendar_month" />
+                    {{ scheduleDate(item.datetime) }}
+                  </small>
                 </div>
-
-                <div class="text-bold text-white text q-mt-xs text-center text-caption" style="line-height: 1;">
-                  {{ item.school1.name }}
-                </div>
-              </div>
-            </div>
-
-            <div class="right">
-              <div class="full-width text-center">
+  
                 <div>
-                  <q-img class="logo"
-                    :src="`${$host}/storage/school/logo/${item.school2.logo}`"
-                    :ratio="1"
-                    width="40%"
-                  >
-                    <template v-slot:error>
-                      <img :src="`${$host}/images/no-logo-1.png`" style="width: 100%; height: 100%;">
-                    </template>
-                  </q-img>
-                </div>
-
-                <div class="text-bold text-white text q-mt-xs text-center text-caption" style="line-height: 1;">
-                  {{ item.school2.name }}
+                  <small>
+                    <q-icon name="schedule" />
+                    {{ scheduleTime(item.datetime) }}
+                  </small>
                 </div>
               </div>
-            </div>
-
-            <div class="center" v-if="logo !== null">
-              <q-img class="logo"
-                :src="`${$host}/storage/app/image/${logo}`"
-                :ratio="1"
-              >
-                <template v-slot:error>
-                  <img :src="`${$host}/images/no-logo-1.png`" style="width: 100%; height: 100%;">
-                </template>
-              </q-img>
-            </div>
-
-            <div class="top-left">
-              <span v-if="item.team_type !== null">
-                {{ item.team_type.name }}
-              </span>&nbsp;
-              <span class="capitalize">
-                {{ item.team_gender }}
-              </span>&nbsp;
-              <span>
-                {{ item.sport.name }}
-              </span>
-            </div>
-
-            <div class="top-right" v-if="item.championship !== null">
-              <q-img class="logo"
-                :src="`${$host}/storage/championship/image/${item.championship.image}`"
-                :ratio="1"
-              >
-                <template v-slot:error>
-                  <img :src="`${$host}/images/no-logo-1.png`" style="width: 100%; height: 100%;">
-                </template>
-              </q-img>
-            </div>
-
-            <div class="top" style="top: 30%;">
-              {{ scheduleDate(item.datetime) }}
-            </div>
-
-            <div class="bottom" style="bottom: 30%;">
-              {{ scheduleTime(item.datetime) }}
-            </div>
-
-            <div class="bottom text-caption" style="bottom: 2%; font-size: 0.6em; letter-spacing: 2px;">
-              WWW.SCHSPORTS.COM
-            </div>
-          </q-card-section>
-
-          <q-separator />
-
-          <q-card-section class="text-justify q-px-md">
-            <div class="flex items-center justify-between">
-              <div>
-                <small>
-                  <q-icon name="calendar_month" />
-                  {{ scheduleDate(item.datetime) }}
-                </small>
+              <div class="text-body1 q-mt-sm">
+                Watch: {{ item.school1.name }} vs {{ item.school2.name }} 
               </div>
+  
+              <hr />
+  
+              <div class="text-description" v-html="item.description" />
+            </q-card-section>
+          </q-card>
+        </div>
 
-              <div>
-                <small>
-                  <q-icon name="schedule" />
-                  {{ scheduleTime(item.datetime) }}
-                </small>
-              </div>
-            </div>
-            <div class="text-body1 q-mt-sm">
-              Watch: {{ item.school1.name }} vs {{ item.school2.name }} 
-            </div>
-
-            <hr />
-
-            <div class="text-description" v-html="item.description" />
-          </q-card-section>
-        </q-card>
-
-        <div class="flex items-center justify-center" v-if="pagination.total_page > 1">
+        <div class="flex items-center justify-center" v-if="pagination.page < pagination.total_page">
           <q-btn class="" label="See More" color="primary" @click="nextPage" />
         </div>
       </div>
@@ -170,6 +172,11 @@ export default {
   },
 
   methods: {
+    nextPage: function () {
+      this.pagination.page++;
+      this.getData();
+    },
+
     toDetail: function (id) {
       setTimeout(() => {
         // this.$router.push({ name: 'news.detail', params: { id } })
@@ -242,6 +249,14 @@ export default {
     padding-left: 20px !important;
     padding-right: 20px !important;
   }
+
+  .card {
+    max-width: 100% !important;
+  }
+}
+
+.card {
+  max-width: 300px;
 }
 
 .page {
