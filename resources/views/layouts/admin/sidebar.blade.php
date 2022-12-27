@@ -190,6 +190,16 @@
       </li>
     @endif
 
+    @if(inRole(["superadmin", "admin", "user"]))
+      <li
+        class="{{ str_contains(Request::route()->getName(), 'admin.athlete-schedule.index') ? 'active' : null }}"
+      >
+        <a
+          href="{{ route('admin.athlete-schedule.index') }}"
+        >Jadwal Atlit</a>
+      </li>
+    @endif
+
     @if(inRole(["superadmin"]))
       <div class="menu-group">
         <div class="dropdown-group">

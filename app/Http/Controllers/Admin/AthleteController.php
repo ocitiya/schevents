@@ -159,17 +159,26 @@ class AthleteController extends Controller {
 	}
 
 	public function list (Request $request) {
+		$showAll = $request->has('showall') ? (boolean) $request->showall : false;
 		$page = $request->has('page') ? $request->page : 1;
 		if (empty($page)) $page = 1; 
 		$search = $request->has('search') ? $request->search : null;
+		$federationId = $request->has("federation_id") ? $request->federation_id : null;
 		$limit = 10;
 
-		$athlete = Athlete::when($search != null, function ($query) use ($search) {
+		$model = Athlete::when($search != null, function ($query) use ($search) {
 			$query->where('name', 'LIKE', '%'.$search.'%');
-		})
-		->take($limit)
-		->skip($page - 1)
-		->get();
+		})->when(!empty($federationId), function ($query) use ($federationId) {
+			$query->where("federation_id", $federationId);
+		});
+
+		$athlete = clone $model->when(!$showAll, function ($query) use ($limit, $page) {
+			$query->take($limit)->skip(($page - 1) * $limit);
+		})->get();
+
+
+		$total = clone $model;
+		$total = $model->count();
 
 		$total = Athlete::when($search != null, function ($query) use ($search) {
 			$query->where('name', 'LIKE', '%'.$search.'%');

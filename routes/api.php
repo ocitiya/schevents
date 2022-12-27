@@ -18,6 +18,7 @@ use App\Http\Controllers\Admin\StadiumController;
 use App\Http\Controllers\Admin\TeamTypeController;
 use App\Http\Controllers\Admin\AssociationController;
 use App\Http\Controllers\Admin\AthleteController;
+use App\Http\Controllers\Admin\AthleteScheduleController;
 use App\Http\Controllers\Admin\BannerController;
 use App\Http\Controllers\Admin\ChampionshipController;
 use App\Http\Controllers\Admin\EventController;
@@ -185,6 +186,10 @@ Route::get('/match-schedule/detail/{id}', [MatchScheduleController::class, 'deta
 Route::get('/match-schedule/news/list', [MatchScheduleController::class, 'newsList']);
 Route::get('/match-schedule/latest-video', [MatchScheduleController::class, 'latestVideoAPI']);
 Route::get('/match-schedule/scores', [MatchScheduleController::class, 'scoreAPI']);
+
+Route::get('/athlete-schedule/list', [AthleteScheduleController::class, 'list']);
+Route::post('/athlete-schedule/listDatatable', [AthleteScheduleController::class, 'listDatatable']);
+Route::get('/athlete-schedule/detail/{id}', [AthleteScheduleController::class, 'detailAPI']);
 
 Route::get('/banner/list', [BannerController::class, 'list']);
 Route::get('/banner/listDatatable', [BannerController::class, 'listDatatable']);

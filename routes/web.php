@@ -22,6 +22,7 @@ use App\Http\Controllers\Admin\StadiumController;
 use App\Http\Controllers\Admin\TeamTypeController;
 use App\Http\Controllers\Admin\AssociationController;
 use App\Http\Controllers\Admin\AthleteController;
+use App\Http\Controllers\Admin\AthleteScheduleController;
 use App\Http\Controllers\Admin\BannerController;
 use App\Http\Controllers\Admin\ChampionshipController;
 use App\Http\Controllers\Admin\EventController;
@@ -217,6 +218,26 @@ Route::middleware(['haveInstalled'])->group(function () {
         Route::post('/delete-all', [MatchScheduleController::class, 'deleteAll'])->name('delete-all');
   
         Route::get('/federation', [MatchScheduleController::class, 'indexFederation'])->name('federation.index');
+  
+        // Untuk Antar Kota
+        // Route::get('/incity', [MatchScheduleController::class, 'indexInCity'])->name('incity.index');
+        // Route::get('/incity/create', [MatchScheduleController::class, 'inCityCreate'])->name('incity.create');
+        // Route::get('/incity/update/{id}', [MatchScheduleController::class, 'inCityUpdate'])->name('incity.update');
+      });
+
+      // Athlete Schedule
+      // /admin/athlete-schedule
+      Route::group(['prefix' => 'athlete-schedule', 'as' => 'athlete-schedule.'], function () {
+        Route::get('/', [AthleteScheduleController::class, 'index'])->name('index');
+        Route::get('/create', [AthleteScheduleController::class, 'create'])->name('create');
+        Route::get('/update/{id}', [AthleteScheduleController::class, 'update'])->name('update');
+        Route::get('/detail/{id}', [AthleteScheduleController::class, 'detail'])->name('detail');
+  
+        Route::post('/store', [AthleteScheduleController::class, 'store'])->name('store');
+        Route::post('/delete', [AthleteScheduleController::class, 'delete'])->name('delete');
+        Route::post('/delete-all', [AthleteScheduleController::class, 'deleteAll'])->name('delete-all');
+  
+        // Route::get('/federation', [AthleteScheduleController::class, 'indexFederation'])->name('federation.index');
   
         // Untuk Antar Kota
         // Route::get('/incity', [MatchScheduleController::class, 'indexInCity'])->name('incity.index');

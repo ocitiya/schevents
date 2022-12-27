@@ -1,0 +1,761 @@
+<?php
+
+namespace App\Http\Controllers\Admin;
+
+use App\Http\Controllers\Controller;
+use App\Models\App;
+use App\Models\Athlete;
+use App\Models\AthleteSchedule;
+use App\Models\Championships;
+use Illuminate\Support\Str;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
+use Intervention\Image\Facades\Image;
+use Illuminate\Database\QueryException;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
+
+use Yajra\DataTables\Datatables;
+
+use DateTime;
+use Carbon\Carbon;
+
+use App\Models\MatchSchedule;
+use App\Models\SportType;
+use App\Models\Stadium;
+use App\Models\County;
+use App\Models\TeamType;
+use App\Models\Federation;
+use App\Models\LPSports;
+use App\Models\LPTypes;
+use App\Models\OfferChannel;
+use App\Models\Sport;
+use Exception;
+use Illuminate\Support\Facades\Session;
+
+class AthleteScheduleController extends Controller {
+  protected $now;
+  public function __construct(Request $request) {
+    if ($request->header('Timezone') != null) {
+      $this->now = Carbon::now($request->header('Timezone'))->setTimezone('UTC');
+    } else {
+      $this->now = Carbon::now();
+    }
+  }
+    
+  public function index (Request $request) {
+    $federation_id = $request->has('federation_id') ? $request->federation_id : null;
+
+    $data = [ "federation_id" => $federation_id ];
+    if ($federation_id != null) {
+      $federationName = Federation::find($federation_id)->name;
+      $data["federation_name"] = $federationName;
+    }
+
+    return view('admin.athlete-schedule.index', $data);
+  }
+
+  public function create (Request $request) {
+    $federation_id = $request->has('federation_id') ? $request->federation_id : null;
+
+    $data = [
+      "lp_sports" => LPSports::with(["channel", "type"])->get(),
+      "team_types" => TeamType::get(),
+      "federations" => Federation::get(),
+      "federation_id" => $federation_id,
+      "stadiums" => Stadium::get(),
+      "championships" => Championships::get(),
+      "sports" => Sport::get()
+    ];
+
+    return view('admin.athlete-schedule.form', $data);
+  }
+
+  public function update (Request $request, $id) {
+    $federation_id = $request->has('federation_id') ? $request->federation_id : null;
+
+    $schedule = AthleteSchedule::find($id);
+    $dt = new DateTime($schedule->datetime);
+    $schedule->date = $dt->format("Y-m-d");
+    $schedule->time = $dt->format("H:i");
+
+    $data = [
+      "data" => $schedule,
+      "lp_sports" => LPSports::with(["channel", "type"])->get(),
+      "team_types" => TeamType::get(),
+      "federations" => Federation::get(),
+      "federation_id" => $federation_id,
+      "stadiums" => Stadium::get(),
+      "championships" => Championships::get(),
+      "sports" => Sport::get()
+    ];
+
+    return view('admin.athlete-schedule.form', $data);
+  }
+
+  public function detail ($id) {
+    $schedule = AthleteSchedule::with(['athlete1', 'athlete2'])->find($id);
+    $schedule->sport_type = (object) DB::select("SELECT * FROM sport_types WHERE id = '{$schedule->sport_type_id}'")[0];
+    $data = [ "data" => $schedule ];
+
+    return view('admin.match-schedule.detail', $data);
+  }
+
+  public function store (Request $request) {
+    $validated = $request->validate([
+      'championship_id' => 'nullable|int',
+      'federation_id' => 'nullable|uuid',
+      'sport_id' => 'required|uuid',
+      'athlete1_id' => 'required|numeric',
+      'match_system' => 'in:home,away,neutral',
+      'athlete2_id' => 'required|numeric',
+      'match_system2' => 'in:home,away,neutral',
+      'team_gender' => 'in:boy,girl',
+      'stadium' => 'nullable|uuid',
+      'team_type_id' => 'uuid',
+      'date' => 'required|date',
+      'time' => 'required',
+      'lp_type_id' => 'nullable|int',
+      'channel_id' => 'nullable|int',
+      'description' => 'nullable|string'
+    ]);
+
+    $isCreate = $request->id == null ? true : false;
+
+    $schedule = null;
+    if ($isCreate) {
+      $schedule = new AthleteSchedule();
+      $schedule->created_by = Auth::id();
+    } else {
+      $schedule = AthleteSchedule::find($request->id);
+      $schedule->updated_by = Auth::id();
+    }
+
+    $athlete1 = Athlete::with(["county", "association"])->find($request->athlete1_id);
+    $athlete2 = Athlete::with(["county", "association"])->find($request->athlete2_id);
+    $team_type = TeamType::find($request->team_type_id);
+
+    $federation = null;
+    if (!empty($request->federation_id)) {
+      $federation = Federation::find($request->federation_id);
+    }
+
+    $datetime = "{$request->date} {$request->time}";
+    $sport = Sport::find($request->sport_id);
+
+    $keywords = 
+    $keywords = [
+      $athlete1->name,
+      $athlete2->name
+    ];
+
+    if (!empty($federation)) {
+      array_push($keywords, "{$federation->abbreviation}{$sport->name}"); 
+    }
+
+    array_push($keywords, $sport->name); 
+
+    $keywords = array_unique($keywords);
+    $keywords = implode(",", $keywords);
+
+    try {
+      $schedule->championship_id = $request->championship_id;
+      $schedule->federation_id = $request->federation_id;
+      $schedule->sport_id = $request->sport_id;
+      $schedule->athlete1_id = $request->athlete1_id;
+      $schedule->match_system = $request->match_system;
+      $schedule->athlete2_id = $request->athlete2_id;
+      $schedule->match_system2 = $request->match_system2;
+      $schedule->team_gender = $request->team_gender;
+      $schedule->stadium_id = $request->stadium_id;
+      $schedule->team_type_id = !empty($team_type) ? $team_type->id : null;
+      $schedule->datetime = $datetime;
+      $schedule->keywords = $keywords;
+      $schedule->lp_type_id = $request->lp_type_id;
+      $schedule->channel_id = $request->channel_id;
+      $schedule->description = $request->description;
+      $schedule->save();
+
+      return redirect()
+        ->route("admin.athlete-schedule.index")
+        ->with('success', 'Schedule successfully saved');
+    } catch (QueryException $exception) {
+      return redirect()->back()
+        ->withErrors($exception->getMessage());
+    }
+  }
+
+  public function delete (Request $request) {
+    $validated = $request->validate([
+      'id' => 'required|numeric'
+    ]);
+
+    try {
+      $athlete = AthleteSchedule::find($request->id);
+      $athlete->delete();
+
+      session()->flash('message', "Schedule successfully deleted");
+      return response()->json([
+        "status" => true,
+        "message" => null
+      ]);
+    } catch (QueryException $exception) {
+      return response()->json([
+        "status" => false,
+        "message" => $exception->getMessage()
+      ]);
+    }
+  }
+
+  public function deleteAll (Request $request) {
+    $validated = $request->validate([
+      'state' => 'required|in:have-played,last-week,old-data'
+    ]);
+
+    try {
+      $stateText = null;
+      if ($request->state == 'have-played') {
+        $stateText = 'sudah bermain';
+      } else if ($request->state == 'last-week') {
+        $stateText = 'minggu lalu';
+      } else if ($request->state == 'old-data') {
+        $stateText = 'data lama';
+      }
+      
+      $model = new AthleteSchedule();
+      $model = $this->_scheduleType($model, $request->state);
+
+      $model->delete();
+
+      session()->flash('message', "Schedule {$stateText} successfully deleted");
+      return response()->json([
+        "status" => true,
+        "message" => null
+      ]);
+    } catch (Exception $exception) {
+      return response()->json([
+        "status" => false,
+        "message" => $exception->getMessage()
+      ]);
+    }
+  }
+
+  public function latestVideoAPI (Request $request) {
+    $page = $request->has('page') ? $request->page : 1;
+    if (empty($page)) $page = 1; 
+    $limit = $request->has('limit') ? $request->limit : 10;
+
+    $model = Athlete::with([
+      "county",
+      "athlete1" => function ($subQuery) {
+        return $subQuery->with(['county']);
+      },
+      "athlete2" => function ($subQuery) {
+        return $subQuery->with(['county']);
+      },
+      "team_type",
+      "sport_type"
+    ]);
+
+    $date1 = Carbon::now();
+    $date2 = Carbon::now()->subDays(7);
+    $model = $model->orderBy('datetime')
+      ->orderBy('created_at', 'desc')
+      ->whereBetween('datetime', [$date2, $date1]);
+    
+    $model2 = $model;
+    $total = $model2->count();
+
+    $news = $model->take($limit)->skip(($page - 1) * $limit)->get();
+
+    return response()->json([
+      "status" => true,
+      "message" => null,
+      "data" => [
+        "list" => $news,
+        "pagination" => [
+          "total" => $total,
+          "page" => (int) $page,
+          "limit" => $limit,
+          "total_page" => ceil($total / $limit)
+        ]
+      ]
+    ]);
+  }
+
+  public function detailAPI ($id) {
+    $model = MatchSchedule::with([
+      "county",
+      "athlete1" => function ($subQuery) {
+        return $subQuery->with(['county']);
+      },
+      "athlete2" => function ($subQuery) {
+        return $subQuery->with(['county']);
+      },
+      "team_type",
+      "sport_type"
+    ])
+      ->find($id);
+
+    return response()->json([
+      "data" => $model,
+      "status" => true,
+      "message" => null
+    ]);
+  }
+
+  public function newsList (Request $request) {
+    $page = $request->has('page') ? $request->page : 1;
+    if (empty($page)) $page = 1; 
+    $limit = $request->has('limit') ? $request->limit : 30;
+
+    $model = AthleteSchedule::with([
+      "county",
+      "athlete1" => function ($subQuery) {
+        return $subQuery->with(['county']);
+      },
+      "athlete2" => function ($subQuery) {
+        return $subQuery->with(['county']);
+      },
+      "team_type",
+      "sport_type"
+    ]);
+
+    $type = $request->has('type') ? $request->type : "all";
+    $model = $this->_scheduleType($model, $type);
+
+    $total = clone($model)->count();
+    $news = clone($model)->take($limit)->skip(($page - 1) * $limit)->get();
+
+    return response()->json([
+      "status" => true,
+      "message" => null,
+      "data" => [
+        "list" => $news,
+        "pagination" => [
+          "total" => $total,
+          "page" => (int) $page,
+          "limit" => $limit,
+          "total_page" => ceil($total / $limit)
+        ]
+      ]
+    ]);
+  }
+
+  public function scoreAPI (Request $request) {
+    $page = $request->has('page') ? $request->page : 1;
+    if (empty($page)) $page = 1; 
+    $limit = $request->has('limit') ? $request->limit : 10;
+
+    $model = MatchSchedule::with([
+      "county",
+      "athlete1" => function ($subQuery) {
+        return $subQuery->with(['county']);
+      },
+      "athlete2" => function ($subQuery) {
+        return $subQuery->with(['county']);
+      },
+      "team_type"
+    ]);
+
+    $type = $request->has('type') ? $request->type : "have-played";
+
+    $model = $this->_scheduleType($model, $type);
+    $total = clone($model)->count();
+
+    $scores = clone($model)->take($limit)->skip(($page - 1) * $limit)->get();
+    foreach($scores as $item) {
+      $item->sport_type = (object) DB::select("SELECT * FROM sport_types WHERE id = '{$item->sport_type_id}'")[0];
+    }
+
+    $groups = [];
+    foreach ($scores as $item) {
+      // if ($item->sport_type == null) continue;
+      $groups[$item->sport_type->name][] = $item;
+    }
+
+    return response()->json([
+      "status" => true,
+      "message" => null,
+      "data" => [
+        "list" => $groups,
+        "pagination" => [
+          "total" => $total,
+          "page" => (int) $page,
+          "limit" => $limit,
+          "total_page" => ceil($total / $limit)
+        ]
+      ]
+    ]);
+  }
+
+  public function list (Request $request) {
+    $showAll = $request->has('showall') ? (boolean) $request->showall : false;
+    $athlete_id = $request->has('athlete_id') ? $request->athlete_id : null;
+    $federation_id = $request->has('federation_id') ? $request->federation_id : null;
+    $sport_id = $request->has('sport_id') ? $request->sport_id : null;
+    $champion_id = $request->has('champion_id') ? $request->champion_id : null;
+    $date = $request->has('date') ? $request->date : null;
+
+    $page = $request->has('page') ? $request->page : 1;
+    if (empty($page)) $page = 1; 
+    $limit = $request->has('limit') ? $request->limit : 10;
+
+    $type = $request->has('type') ? $request->type : "all";
+
+    $model = MatchSchedule::with([
+      "county",
+      "athlete1" => function ($subQuery) {
+        $subQuery->with(['county', 'municipality']);
+      },
+      "athlete2" => function ($subQuery) {
+        $subQuery->with(['county', 'municipality']);
+      },
+      "team_type",
+      "sport_type" => function ($subQuery) {
+        $subQuery->with(["sport"]);
+      },
+      "federation",
+      "stadium",
+      "championship",
+      "sport"
+    ]);
+
+    $model = $this->_scheduleType($model, $type);
+    $model = $model->when($athlete_id != null, function ($query) use ($athlete_id) {
+      return $query->where('athlete1_id', $athlete_id)
+        ->orWhere('athlete1', $athlete_id);
+    })->when($federation_id != null, function ($query) use ($federation_id) {
+      return $query->where('federation_id', $federation_id);
+    })->when($champion_id != null, function ($query) use ($champion_id) {
+      return $query->where('championship_id', $champion_id);
+    })->when($sport_id != null, function ($query) use ($sport_id) {
+      return $query
+        ->where("sport_type_id", $sport_id)
+        ->orWhere("sport_id", $sport_id);
+    })->when($date != null, function ($query) use ($date) {
+      return $query->whereDate('datetime', $date);
+    })
+      ->orderBy('datetime')
+      ->orderBy('created_at');
+
+    $total = clone($model);
+    $total = $total->count();
+
+    $schedule = $model->when(!$showAll, function ($query) use ($limit, $page) {
+      $query->take($limit)->skip(($page - 1) * $limit);
+    })->get();
+
+    return response()->json([
+      "status" => true,
+      "message" => null,
+      "data" => [
+        "list" => $schedule,
+        "pagination" => [
+          "total" => $total,
+          "page" => !$showAll ? (int) $page : -1,
+          "limit" => !$showAll ? $limit : -1,
+          "total_page" => !$showAll ? ceil($total / $limit) : 1
+        ]
+      ]
+    ]);
+  }
+
+  function cityMatchDatatable () {
+    $data = County::withCount('match')->get();
+    return Datatables::of($data)->make(true);
+  }
+
+  function listDatatable (Request $request) {
+    $state = $request->state;
+
+    $model = AthleteSchedule::with([
+      "athlete1" => function ($query) {
+        $query->with(["municipality", "county"]);
+      },
+      "athlete2" => function ($query) {
+        $query->with(["municipality", "county"]);
+      },
+      "sport",
+      "team_type",
+      "stadium",
+      "sport_type" => function ($q) {
+        $q->withTrashed()->with(["sport"]);
+      },
+      "createdBy" => function ($query) {
+        return $query->select("id", "username", "name");
+      },
+      "updatedBy" => function ($query) {
+        return $query->select("id", "username", "name");
+      },
+      "federation", "lp_type", "channel", "championship"
+    ])
+      ->when($request->federation_id != null, function ($query) use ($request) {
+        $query->where("federation_id", $request->federation_id);
+      })
+      ->when(Session::get("role") == "user", function ($q) {
+        $q->where("created_by", Auth::id());
+      });
+
+    $model = $this->_scheduleType($model, $state);
+    $model = $model->get();
+      
+    return Datatables::of($model)->make(true);
+  }
+
+  function listOnFederation (Request $request) {
+    $model = Federation::withCount("matchSchedule");
+    $model = $model->get();
+      
+    return Datatables::of($model)->make(true);
+  }
+
+  private function _scheduleType($model, $type) {
+    switch ($type) {
+      case "all":
+        return $model;
+
+      case "old-data":
+        $date = clone($this->now);
+        $date = $date->subDays(14);
+
+        return $model->whereDate('datetime', '<', $date);
+
+      case "last-week":
+        $date1 = clone($this->now);
+        $date1 = $date1->subDays(14);
+
+        $date2 = clone($this->now);
+        $date2 = $date2->subDays(7);
+
+        return $model->whereBetween('datetime', [$date1, $date2]);
+
+      case "have-played":
+        $date1 = clone($this->now);
+        $date1 = $date1->subHours(3);
+
+        $date2 = clone($this->now);
+        $date2 = $date2->subDays(7);
+
+        return $model->whereBetween('datetime', [$date2, $date1]);
+
+      case "live":
+        $date1 = clone($this->now);
+        $date1 = $date1->subHours(2);
+
+        $date2 = clone($this->now);
+        $date2 = $date2->addHours(3);
+
+        return $model->whereBetween('datetime', [$date1, $date2]);
+
+      case "today":
+        $date1 = clone($this->now);
+        $date1 = $date1->today();
+
+        // return $model->whereBetween('datetime', [$date2, $date1]);
+        return $model->whereDate('datetime', $date1);
+
+      case "tomorrow":
+        $date1 = clone($this->now);
+        $date1 = $date1->addDays(1);
+
+        return $model->whereDate('datetime', $date1);
+
+      case "this-week":
+        $date1 = clone($this->now);
+        $date1 = $date1->addDays(7);
+
+        $date2 = clone($this->now);
+        $date2 = $date2->addHours(12);
+
+        return $model->whereBetween('datetime', [$date2, $date1]);
+        
+      case "upcoming":
+        $date = clone($this->now);
+        $date = $date->addDays(7);
+
+        return $model->whereDate('datetime', '>', $date);
+
+      default:
+        return $model;
+    }
+  }
+
+  function sportName ($model) {
+    if (!empty($model->sport)) {
+      return $model->sport;
+    } else if (!empty($model->sport_type)) {
+      return $model->sport_type;
+    } else {
+      return null;
+    }
+  }
+
+  function championshipName ($model) {
+    if (!empty($model->championship)) {
+      $model->isFederation = false;
+      return $model->championship;
+    } else if (!empty($model->federation)) {
+      $model->isFederation = true;
+      return $model->federation;
+    } else {
+      return null;
+    }
+  }
+
+  function schedulePreview (Request $request, $id) {
+    $model = AthleteSchedule::with([
+      "county",
+      "sport" => function ($q) {
+        $q->withTrashed();
+      },
+      "athlete1" => function ($subQuery) {
+        return $subQuery->with(['county']);
+      },
+      "athlete2" => function ($subQuery) {
+        return $subQuery->with(['county']);
+      },
+      "team_type",
+      "sport_type" => function ($q) {
+        $q->withTrashed();
+      },
+      "championship"
+    ])
+      ->find($id);
+
+    if ($model) {
+      $model->federation = Federation::find($model->federation_id);
+
+      $title = "";
+      if (!empty($model->championship)) {
+        $title .= $model->championship->abbreviation;
+        $title .= " - ";
+      } else if (!empty($model->federation)) {
+        $title .= $model->federation->abbreviation;
+        $title .= " - ";
+      }
+
+      if (!empty($model->athlete1->municipality->name)) {
+        $title .= "{$model->athlete1->name} ({$model->athlete1->municipality->name}";
+      } else {
+        $title .= $model->athlete1->name;
+      }
+
+      $title .= " vs ";
+      if (!empty($model->athlete2->municipality->name)) {
+        $title .= "{$model->athlete2->name} ({$model->athlete2->municipality->name}";
+      } else {
+        $title .= $model->athlete2->name;
+      }
+
+      $sport = $this->sportName($model);
+      $team_type = empty($model->team_type) ? null : $model->team_type->name;
+      $description = "Watch online {$team_type} {$model->team_gender}";
+      if (!empty($sport)) $description .= " {$sport->name}";
+      
+      $team = "{$team_type} {$model->team_gender}";
+      if (!empty($sport)) $team .= " {$sport->name}";
+
+      $athlete1 = $model->athlete1->name;
+      $athlete2 = $model->athlete2->name;
+      $stream_url = $model->lpsport->short_link;
+      $championship = $this->championshipName($model);
+      
+      $data = [
+        "data" => $model,
+        "title" => $title,
+        "team_type" => $team_type,
+        "description" => $description,
+        "team" => $team,
+        "athlete1" => $athlete1,
+        "athlete2" => $athlete2,
+        "stream_url" => $stream_url,
+        "championship" => $championship,
+        "sport" => $sport,
+        "app" => App::first()
+      ];
+
+      return view("shedule-preview", $data);
+    } else {
+      return abort(404);
+    }
+  }
+
+  function videoSchedulePreview (Request $request, $id) {
+    $model = MatchSchedule::with([
+      "county",
+      "sport" => function ($q) {
+        $q->withTrashed();
+      },
+      "athlete1" => function ($subQuery) {
+        return $subQuery->with(['county']);
+      },
+      "athlete2" => function ($subQuery) {
+        return $subQuery->with(['county']);
+      },
+      "team_type",
+      "sport_type" => function ($q) {
+        $q->withTrashed();
+      },
+      "championship"
+    ])
+      ->find($id);
+
+    if ($model) {
+      $model->federation = Federation::find($model->federation_id);
+
+      $title = "";
+      if (!empty($model->championship)) {
+        $title .= $model->championship->abbreviation;
+        $title .= " - ";
+      } else if (!empty($model->federation)) {
+        $title .= $model->federation->abbreviation;
+        $title .= " - ";
+      }
+
+      if (!empty($model->athlete1->municipality->name)) {
+        $title .= "{$model->athlete1->name} ({$model->athlete1->municipality->name}";
+      } else {
+        $title .= $model->athlete1->name;
+      }
+
+      $title .= " vs ";
+      if (!empty($model->athlete2->municipality->name)) {
+        $title .= "{$model->athlete2->name} ({$model->athlete2->municipality->name}";
+      } else {
+        $title .= $model->athlete2->name;
+      }
+
+      $sport = $this->sportName($model);
+      $team_type = empty($model->team_type) ? null : $model->team_type->name;
+      $description = "Watch online {$team_type} {$model->team_gender}";
+      if (!empty($sport)) $description .= " {$sport->name}";
+      
+      $team = "{$team_type} {$model->team_gender}";
+      if (!empty($sport)) $team .= " {$sport->name}";
+
+      $athlete1 = $model->athlete1->name;
+      $athlete2 = $model->athlete2->name;
+      $stream_url = $model->lpsport->short_link;
+      $championship = $this->championshipName($model);
+      
+      $data = [
+        "data" => $model,
+        "title" => $title,
+        "team_type" => $team_type,
+        "description" => $description,
+        "team" => $team,
+        "athlete1" => $athlete1,
+        "athlete2" => $athlete2,
+        "stream_url" => $stream_url,
+        "championship" => $championship,
+        "sport" => $sport,
+        "app" => App::first()
+      ];
+
+      return view("video-schedule-preview", $data);
+    } else {
+      return abort(404);
+    }
+  }
+}
