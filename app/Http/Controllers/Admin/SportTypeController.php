@@ -101,7 +101,7 @@ class SportTypeController extends Controller {
 		}
 		
 		try {
-			$types->sport_id = ucwords($request->sport_id);
+			$types->sport_id = $request->sport_id;
 			$types->championship_id = $request->championship_id;
 			if ($request->hasFile('image')) $types->image = $filename;
 			$types->save();

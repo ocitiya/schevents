@@ -48,7 +48,7 @@
           <input type="hidden" name="id" value="{{ isset($data) ? $data->id : null }}">
 
           <div class="col-9">
-            {{-- <div class="row">
+            <div class="row">
               <div class="col-5">
                 <label for="name">Kejuaraan *</label>
               </div>
@@ -60,7 +60,7 @@
                   @endforeach
                 </select>
               </div>
-            </div> --}}
+            </div>
 
             <div class="row" id="federation-container">
               <div class="col-5">
@@ -217,7 +217,7 @@
               </div>
               <div class="col-7">
                 <select name="stadium_id" class="form-select select2" id="stadium_id">
-                  <option disabled selected value>Please select ...</option>
+                  <option selected value>Please select ...</option>
                   @foreach ($stadiums as $item)
                     <option value="{{ $item->id }}">{{ $item->name }}</option>
                   @endforeach
@@ -231,7 +231,7 @@
               </div>
               <div class="col-7">
                 <select name="team_gender" class="form-select select2" id="team_gender">
-                  <option disabled selected value>Please select ...</option>
+                  <option selected value>Please select ...</option>
                   <option value="boy">Laki-laki</option>
                   <option value="girl">Perempuan</option>
                 </select>
@@ -325,7 +325,7 @@
 
 @section('script')
   <script>
-    // const championshipSelected = "<?php echo old('championship_id', isset($data) ? $data->championship_id : null) ?>";
+    const championshipSelected = "<?php echo old('championship_id', isset($data) ? $data->championship_id : null) ?>";
     const federationSelected = "<?php echo old('federation_id', isset($data) ? $data->federation_id : $federation_id) ?>";
     const sportSelected = "<?php echo old('sport_id', isset($data) ? $data->sport_id : null) ?>";
     const athlete1Selected = "<?php echo old('athlete1_id', isset($data) ? $data->athlete1_id : null) ?>";
@@ -423,7 +423,7 @@
         validateLP();
       });
       
-      // $('#championship_id').val(championshipSelected).change();
+      $('#championship_id').val(championshipSelected).change();
       $('#federation_id').val(federationSelected).change();
       $('#team_gender').val(teamGenderSelected).change();
       $('#team_type_id').val(teamTypeSelected).change();

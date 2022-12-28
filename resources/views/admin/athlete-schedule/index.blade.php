@@ -374,7 +374,7 @@
 
                   let text = `GAMEDAY\n${championship}${gender}${sport} Live Streaming\n`;
                   text += `${row.athlete1.name} vs ${row.athlete2.name}\n`;
-                  text += `Watch Live:\n Link 1: ${row.lpsport.short_link}\nLink 2: https://live.schsports.com\n`;
+                  text += `Watch Live:\nLink 1: ${row.lpsport.short_link}\nLink 2: https://live.schsports.com\n`;
                   text += `Date: ${formatDate}\n`;
                   text += `Time: ${formatTime} ${timezone}\n`;
                   text += `Venue: ${stadium}\n\n`;
