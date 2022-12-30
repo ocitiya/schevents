@@ -477,8 +477,10 @@ class MatchScheduleController extends Controller {
 
     $model = $this->_scheduleType($model, $type);
     $model = $model->when($school_id != null, function ($query) use ($school_id) {
-      return $query->where('school1_id', $school_id)
+      $query->where(function ($q) use ($school_id) {
+        $q->where('school1_id', $school_id)
         ->orWhere('school2_id', $school_id);
+      });
     })->when($federation_id != null, function ($query) use ($federation_id) {
       return $query->where('federation_id', $federation_id);
     })->when($champion_id != null, function ($query) use ($champion_id) {

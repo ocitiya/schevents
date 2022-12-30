@@ -20,8 +20,6 @@ use Yajra\DataTables\Datatables;
 use DateTime;
 use Carbon\Carbon;
 
-use App\Models\MatchSchedule;
-use App\Models\SportType;
 use App\Models\Stadium;
 use App\Models\County;
 use App\Models\TeamType;
@@ -98,7 +96,7 @@ class AthleteScheduleController extends Controller {
     $schedule->sport_type = (object) DB::select("SELECT * FROM sport_types WHERE id = '{$schedule->sport_type_id}'")[0];
     $data = [ "data" => $schedule ];
 
-    return view('admin.match-schedule.detail', $data);
+    return view('admin.athlete-schedule.detail', $data);
   }
 
   public function store (Request $request) {
@@ -110,7 +108,7 @@ class AthleteScheduleController extends Controller {
       'match_system' => 'in:home,away,neutral',
       'athlete2_id' => 'required|numeric',
       'match_system2' => 'in:home,away,neutral',
-      'team_gender' => 'in:boy,girl',
+      'team_gender' => 'nullable|in:boy,girl',
       'stadium' => 'nullable|uuid',
       'team_type_id' => 'uuid',
       'date' => 'required|date',
@@ -284,7 +282,7 @@ class AthleteScheduleController extends Controller {
   }
 
   public function detailAPI ($id) {
-    $model = MatchSchedule::with([
+    $model = AthleteSchedule::with([
       "county",
       "athlete1" => function ($subQuery) {
         return $subQuery->with(['county']);
@@ -347,7 +345,7 @@ class AthleteScheduleController extends Controller {
     if (empty($page)) $page = 1; 
     $limit = $request->has('limit') ? $request->limit : 10;
 
-    $model = MatchSchedule::with([
+    $model = AthleteSchedule::with([
       "county",
       "athlete1" => function ($subQuery) {
         return $subQuery->with(['county']);
@@ -403,7 +401,7 @@ class AthleteScheduleController extends Controller {
 
     $type = $request->has('type') ? $request->type : "all";
 
-    $model = MatchSchedule::with([
+    $model = AthleteSchedule::with([
       "county",
       "athlete1" => function ($subQuery) {
         $subQuery->with(['county', 'municipality']);
@@ -423,16 +421,17 @@ class AthleteScheduleController extends Controller {
 
     $model = $this->_scheduleType($model, $type);
     $model = $model->when($athlete_id != null, function ($query) use ($athlete_id) {
-      return $query->where('athlete1_id', $athlete_id)
-        ->orWhere('athlete1', $athlete_id);
+      $query->where(function ($q) use ($athlete_id) {
+        $q->where('athlete1_id', $athlete_id)
+        ->orWhere('athlete2_id', $athlete_id);
+      });
     })->when($federation_id != null, function ($query) use ($federation_id) {
       return $query->where('federation_id', $federation_id);
     })->when($champion_id != null, function ($query) use ($champion_id) {
       return $query->where('championship_id', $champion_id);
     })->when($sport_id != null, function ($query) use ($sport_id) {
       return $query
-        ->where("sport_type_id", $sport_id)
-        ->orWhere("sport_id", $sport_id);
+        ->where("sport_id", $sport_id);
     })->when($date != null, function ($query) use ($date) {
       return $query->whereDate('datetime', $date);
     })
@@ -461,10 +460,10 @@ class AthleteScheduleController extends Controller {
     ]);
   }
 
-  function cityMatchDatatable () {
-    $data = County::withCount('match')->get();
-    return Datatables::of($data)->make(true);
-  }
+  // function cityMatchDatatable () {
+  //   $data = County::withCount('match')->get();
+  //   return Datatables::of($data)->make(true);
+  // }
 
   function listDatatable (Request $request) {
     $state = $request->state;
@@ -503,12 +502,12 @@ class AthleteScheduleController extends Controller {
     return Datatables::of($model)->make(true);
   }
 
-  function listOnFederation (Request $request) {
-    $model = Federation::withCount("matchSchedule");
-    $model = $model->get();
+  // function listOnFederation (Request $request) {
+  //   $model = Federation::withCount("athleteSchedule");
+  //   $model = $model->get();
       
-    return Datatables::of($model)->make(true);
-  }
+  //   return Datatables::of($model)->make(true);
+  // }
 
   private function _scheduleType($model, $type) {
     switch ($type) {
@@ -675,14 +674,14 @@ class AthleteScheduleController extends Controller {
         "app" => App::first()
       ];
 
-      return view("shedule-preview", $data);
+      return view("athlete-preview", $data);
     } else {
       return abort(404);
     }
   }
 
   function videoSchedulePreview (Request $request, $id) {
-    $model = MatchSchedule::with([
+    $model = AthleteSchedule::with([
       "county",
       "sport" => function ($q) {
         $q->withTrashed();

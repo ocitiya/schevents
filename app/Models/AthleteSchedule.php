@@ -29,11 +29,11 @@ class AthleteSchedule extends Model {
 	}
 
 	public function county () {
-		return $this->belongsTo(County::class)->withTrashed();
+		return $this->belongsTo(County::class, 'county_id');
 	}
 
 	public function county2 () {
-		return $this->belongsTo(County::class, 'county2_id')->withTrashed();
+		return $this->belongsTo(County::class, 'county2_id');
 	}
 
 	public function team_type () {
@@ -76,14 +76,14 @@ class AthleteSchedule extends Model {
 
 	public function getLinkStreamAttribute () {
 		if (empty($this->championship_id) || empty($this->sport_id)) {
-			return (object) ["image" => null];
+			return (object) ["image_link" => asset("images/bg-1.png")];
 		} else {
 			$linkStream = SportType::where("championship_id", $this->championship_id)
 				->where("sport_id", $this->sport_id)
 				->first();
 
 			if (!$linkStream) {
-				return (object) ["image" => null];
+				return (object) ["image_link" => asset("images/bg-1.png")];
 			} else {
 				$linkStream->image_link = asset("storage/link_stream/image/{$linkStream->image}");
 				return $linkStream;

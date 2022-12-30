@@ -22,8 +22,9 @@
 
         <q-tabs align="right" class="md" dense arrow-indicator>
           <q-route-tab :to="{ name: 'home' }" label="Home" icon="home" />
-          <q-route-tab :to="{ name: 'schedule' }" label="Schedule" icon="schedule" />
+          <q-route-tab :to="{ name: 'schedule-team' }" label="Schedule" icon="schedule" />
           <q-route-tab :to="{ name: 'club' }" label="Club" icon="groups" />
+          <q-route-tab :to="{ name: 'athlete' }" label="Athlete" icon="sports_handball" />
           <q-route-tab :to="{ name: 'news' }" label="News" icon="newspaper" />
           <q-route-tab :to="{ name: 'video' }" label="Videos" icon="videocam" />
           <!-- <q-route-tab :to="{ name: 'scores' }" label="Scores" icon="scoreboard" /> -->
@@ -165,12 +166,17 @@ const linksList = [
   {
     title: 'Schedule',
     icon: 'schedule',
-    link_name: 'schedule'
+    link_name: 'schedule-team'
   },
   {
     title: 'Club',
     icon: 'groups',
     link_name: 'club'
+  },
+  {
+    title: 'Athlete',
+    icon: 'sports_handball',
+    link_name: 'athlete'
   },
   {
     title: 'Events',

@@ -505,6 +505,7 @@ Route::middleware(['haveInstalled'])->group(function () {
   Route::get("video-schedule/{id}", [MatchScheduleController::class, "videoSchedulePreview"]);
   Route::get("event-schedule/{id}", [EventController::class, "schedulePreview"]);
   Route::get("movie/schedule/{id}", [MovieScheduleController::class, "schedulePreview"]);
+  Route::get("athlete/schedule/{id}", [AthleteScheduleController::class, "schedulePreview"]);
 
   Route::get('{any}', function () {
     return view('app');

@@ -8,12 +8,11 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
 use Intervention\Image\Facades\Image;
 
-use DataTables;
-
 use App\Models\Athlete;
 use App\Models\Country;
 use App\Models\Federation;
 use Exception;
+use Yajra\DataTables\Facades\DataTables;
 
 class AthleteController extends Controller {
 	public function index (Request $request) {
@@ -46,6 +45,14 @@ class AthleteController extends Controller {
 
 		return view('admin.athlete.detail', $data);
 	}
+
+	public function detailApi ($athlete_id) {
+    return response()->json([
+      "status" => true,
+      "message" => null,
+      "data" => Athlete::with(["county", "federation", "municipality"])->find($athlete_id)
+    ]);
+  }
 
 	public function store (Request $request) {
 		$isCreate = $request->id == null ? true : false;
@@ -131,9 +138,7 @@ class AthleteController extends Controller {
 	}
 
 	public function delete (Request $request) {
-		$validated = $request->validate([
-			'id' => 'required|numeric'
-		]);
+		$validated = $request->validate([ 'id' => 'required|numeric' ]);
 
 		try {
 			$athlete = Athlete::find($request->id);
@@ -205,4 +210,16 @@ class AthleteController extends Controller {
 			->get();
 		return DataTables::of($data)->make(true);
 	}
+
+	function random () {
+    $model = Athlete::inRandomOrder()->limit(30)
+      ->select("id", "name", "nickname", "name", "image")
+      ->get();
+
+    return response()->json([
+      "status" => true,
+      "message" => null,
+      "data" => $model
+    ]);
+  }
 }

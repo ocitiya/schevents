@@ -2,19 +2,19 @@
   <div class="q-px-md q-py-xl page bg-accent" style="min-height: inherit">
     <div>
       <div class="text-center text-h5 text-primary text-bold">
-        Club Menu
+        Athlete Menu
       </div>
   
       <div class="flex flex-center q-my-xl">
         <div class="search-container">
           <q-select filled use-input map-options emit-value
             v-model="search"
-            label="Search School"
+            label="Search Athlete"
             input-debounce="0"
-            :options="options.schools"
-            @filter="filterSchool"
+            :options="options.athletes"
+            @filter="filterAthlete"
             @update:model-value="getData"
-            ref="inputClub"
+            ref="inputAthlete"
           >
             <template v-slot:append>
               <q-icon name="search" />
@@ -39,8 +39,8 @@
           <q-card v-ripple class="event-card" @click="() => toMatchSchedule(data.id)">
             <q-card-section>
               <div class="flex flex-center">
-                <q-img v-if="data.logo !== null" class="logo"
-                  :src="`${$host}/storage/school/logo/${data.logo}`"
+                <q-img v-if="data.image !== null" class="logo"
+                  :src="`${$host}/storage/athlete/image/${data.image}`"
                   :ratio="1"
                 >
                   <template v-slot:error>
@@ -59,7 +59,12 @@
                   {{ data.name }}
                 </div>
                 <div>
-                  {{ data.municipality.name }}, {{ data.county.abbreviation }}
+                  <span v-if="data.municipality !== null">
+                    {{ data.municipality.name }}
+                  </span>
+                  <span v-if="data.county !== null">
+                    , {{ data.county.abbreviation }}
+                  </span>
                 </div>
               </div>
             </q-card-section>
@@ -74,23 +79,23 @@
       </div>
     </div>
 
-    <div class="club-list-r">
+    <div class="athlete-list-r">
       <div class="text-center text-h5 text-primary text-bold q-mt-xl">
-        Find Your Team Today and Follow Your Favorite Team
+        Find Your Athlete Today and Follow Your Favorite Athlete
       </div>
 
       <div class="q-my-lg">
         <!-- <div class="flex items-center q-gutter-lg q-pb-lg q-my-xl q-px-md" style="overflow-x: auto; flex-flow: row"> -->
           <Carousel :settings="settings" :breakpoints="breakpoints">
             <Slide
-              v-for="data in randomSchool"
+              v-for="data in randomAthletes"
               :key="data.id"
             >
               <div class="q-px-md">
                 <q-card class="q-mx-md">
                   <q-card-section>
-                    <q-img v-if="data.logo !== null" class="logo"
-                      :src="`${$host}/storage/school/logo/${data.logo}`"
+                    <q-img v-if="data.image !== null" class="logo"
+                      :src="`${$host}/storage/athlete/image/${data.image}`"
                       :ratio="1"
                       style="width: 200px; height: 200px"
                       fit="contain"
@@ -109,15 +114,15 @@
               </div>
             </Slide>
 
-            <navigation />
+            <!-- <navigation /> -->
             <pagination />
           </Carousel>
         <!-- </div> -->
       </div>
 
       <div class="flex flex-center">
-        <q-btn label="Find and Stream Your Favorite Team" unelevated color="primary" icon="search"
-          @click="toInputClub"
+        <q-btn label="Find and Stream Your Favorite Athlete" unelevated color="primary" icon="search"
+          @click="toInputAthlete"
         />
       </div>
     </div>
@@ -168,29 +173,29 @@ export default {
       data: {},
       slide: 0,
       options: {
-        schools: []
+        athletes: []
       },
       master: {
-        schools: []
+        athletes: []
       },
-      randomSchool: []
+      randomAthletes: []
     }
   },
   
   mounted: function () {
     useMeta({
-      title: 'Club'
+      title: 'Athlete'
     })
 
-    this.getRandomSchools()
+    this.getRandomAthletes()
   },
 
   methods: {
-    toInputClub: function () {
-      const inputClub = this.$refs.inputClub
-      inputClub.focus()
+    toInputAthlete: function () {
+      const inputAthlete = this.$refs.inputAthlete
+      inputAthlete.focus()
 
-      Helper.scrollToElement(inputClub.$el, 100)
+      Helper.scrollToElement(inputAthlete.$el, 100)
     },
 
     redirect: function (url) {
@@ -199,17 +204,17 @@ export default {
       }, 500)
     },
 
-    toMatchSchedule: function (school_id) {
+    toMatchSchedule: function (athlete_id) {
       setTimeout(() => {
         if (searchTimeout) clearTimeout(searchTimeout)
-        this.$router.push({ name: 'schedule-team', query: { school_id } })
+        this.$router.push({ name: 'schedule-athlete', query: { athlete_id } })
       }, 300)
     },
 
-    filterSchool: function (val, update) {
+    filterAthlete: function (val, update) {
       if (val.length <= 3) {
         update(() => {
-          this.options.schools = []
+          this.options.athletes = []
         })
         return
       }
@@ -218,16 +223,16 @@ export default {
         if (searchTimeout) clearTimeout(searchTimeout)
         searchTimeout = setTimeout(async () => {
           const needle = val.toLowerCase()
-          await this.getSchools(needle)
-          this.options.schools = this.master.schools.filter(v => v.label.toLowerCase().indexOf(needle) > -1)
+          await this.getAthletes(needle)
+          this.options.athletes = this.master.athletes.filter(v => v.label.toLowerCase().indexOf(needle) > -1)
         }, 500)
       })
     },
 
-    getSchools: function (search) {
+    getAthletes: function (search) {
       Helper.loading(this)
 
-      let endpoint = 'school/list'
+      let endpoint = 'athlete/list'
       endpoint = Helper.generateURLParams(endpoint, 'showall', true)
       endpoint = Helper.generateURLParams(endpoint, 'search', search)
 
@@ -236,17 +241,17 @@ export default {
           const { data, message, status } = response.data
 
           if (status) {
-            const schools = []
+            const athletes = []
             data.list.map(item => {
-              schools.push({
+              athletes.push({
                 label: item.name, 
                 value: item.id,
-                icon: `${this.$host}/storage/school/logo/${item.logo}`
+                icon: `${this.$host}/storage/athlete/image/${item.image}`
               })
             })
 
-            this.options.schools = [...schools]
-            this.master.schools = [...schools]
+            this.options.athletes = [...athletes]
+            this.master.athletes = [...athletes]
             Helper.loading(this, false)
 
             resolve()
@@ -257,15 +262,15 @@ export default {
       })
     },
 
-    getRandomSchools: function (search) {
-      const endpoint = 'school/random'
+    getRandomAthletes: function (search) {
+      const endpoint = 'athlete/random'
 
       return new Promise(resolve => {
         this.$api.get(endpoint).then((response) => {
           const { data, message, status } = response.data
 
           if (status) {
-            this.randomSchool = [...data]
+            this.randomAthletes = [...data]
             resolve()
           } else {
             reject()
@@ -274,11 +279,11 @@ export default {
       })
     },
 
-    getData: function (school_id) {
+    getData: function (athlete_id) {
       Helper.loading(this)
       
       return new Promise((resolve, reject) => {
-        const endpoint = `school/detail/${school_id}`
+        const endpoint = `athlete/detail/${athlete_id}`
         this.$api.get(endpoint).then((response) => {
           const { data, message, status } = response.data
 
@@ -298,7 +303,7 @@ export default {
 </script>
 
 <style scoped>
-.club-list-r {
+.athlete-list-r {
   padding-top: 100px;
   width: 1024px;
   max-width: 100%;

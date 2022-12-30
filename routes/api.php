@@ -81,6 +81,8 @@ Route::get('/stadium/listDatatable', [StadiumController::class, 'listDatatable']
 // /api/athlete
 Route::get('/athlete/list', [AthleteController::class, 'list']);
 Route::get('/athlete/listDatatable', [AthleteController::class, 'listDatatable']);
+Route::get('/athlete/random', [AthleteController::class, 'random']);
+Route::get('/athlete/detail/{athlete_id?}', [AthleteController::class, 'detailApi']);
 
 // /api/championship
 Route::get('/championship/list', [ChampionshipController::class, 'list']);

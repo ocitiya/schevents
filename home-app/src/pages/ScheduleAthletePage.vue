@@ -32,7 +32,7 @@
               <q-card v-for="item in schedules" :key="item.id" v-ripple class="event-card" @click="() => redirect(item.id)">
                 <q-card-section class="q-py-lg schedule-team-logo"
                   :style="{
-                    backgroundImage: 'linear-gradient( rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5) ), url(\'' + $host + '/storage/link_stream/image/' + item.link_stream.image + '\')',
+                    backgroundImage: 'linear-gradient( rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5) ), url(\'' + item.link_stream.image_link + '\')',
                     color: 'white',
                     textShadow: '-1px 0 black, 0 1px black, 1px 0 black, 0 -1px black'
                   }"
@@ -41,7 +41,7 @@
                     <div class="full-width text-center">
                       <div>
                         <q-img class="logo"
-                          :src="`${$host}/storage/school/logo/${item.school1.logo}`"
+                          :src="`${$host}/storage/athlete/image/${item.athlete1.image}`"
                           :ratio="1"
                           width="40%"
                         >
@@ -52,7 +52,7 @@
                       </div>
 
                       <div class="text-bold text-white text q-mt-xs text-center text-caption" style="line-height: 1;">
-                        {{ item.school1.name }}
+                        {{ item.athlete1.name }}
                       </div>
                     </div>
                   </div>
@@ -61,7 +61,7 @@
                     <div class="full-width text-center">
                       <div>
                         <q-img class="logo"
-                          :src="`${$host}/storage/school/logo/${item.school2.logo}`"
+                          :src="`${$host}/storage/athlete/image/${item.athlete2.image}`"
                           :ratio="1"
                           width="40%"
                         >
@@ -72,7 +72,7 @@
                       </div>
 
                       <div class="text-bold text-white text q-mt-xs text-center text-caption" style="line-height: 1;">
-                        {{ item.school2.name }}
+                        {{ item.athlete2.name }}
                       </div>
                     </div>
                   </div>
@@ -130,7 +130,7 @@
 
                 <q-card-section class="text-justify q-px-md bg-secondary text-accent text-bold">
                   <span>
-                    Watch: {{ item.school1.name }} vs {{ item.school2.name }} - {{ scheduleTime(item.datetime) }} - {{ scheduleDate(item.datetime) }} -
+                    Watch: {{ item.athlete1.name }} vs {{ item.athlete2.name }} - {{ scheduleTime(item.datetime) }} - {{ scheduleDate(item.datetime) }} -
                   </span>
                   <span class="capitalize" v-if="item.team_gender !== null">{{ item.team_gender }}&nbsp;</span>
                   <span v-if="item.sport !== null">{{ item.sport.name }}</span>
@@ -170,7 +170,7 @@
             <q-card v-for="item in videos" :key="item.id" class="bg-white q-pa-md event-card" bordered  @click="() => toDetail(item.id)">
               <q-card-section class="q-py-lg schedule-team-logo"
                 :style="{
-                  backgroundImage: 'linear-gradient( rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5) ), url(\'' + $host + '/storage/link_stream/image/' + item.link_stream.image + '\')',
+                  backgroundImage: 'linear-gradient( rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5) ), url(\'' + item.link_stream.image_link + '\')',
                   color: 'white',
                   textShadow: '-1px 0 black, 0 1px black, 1px 0 black, 0 -1px black'
                 }"
@@ -179,7 +179,7 @@
                   <div class="full-width text-center">
                     <div>
                       <q-img class="logo"
-                        :src="`${$host}/storage/school/logo/${item.school1.logo}`"
+                        :src="`${$host}/storage/athlete/image/${item.athlete1.image}`"
                         :ratio="1"
                         width="40%"
                       >
@@ -190,7 +190,7 @@
                     </div>
   
                     <div class="text-bold text-white text q-mt-xs text-center text-caption" style="line-height: 1;">
-                      {{ item.school1.name }}
+                      {{ item.athlete1.name }}
                     </div>
                   </div>
                 </div>
@@ -199,7 +199,7 @@
                   <div class="full-width text-center">
                     <div>
                       <q-img class="logo"
-                        :src="`${$host}/storage/school/logo/${item.school2.logo}`"
+                        :src="`${$host}/storage/athlete/logo/${item.athlete2.image}`"
                         :ratio="1"
                         width="40%"
                       >
@@ -210,7 +210,7 @@
                     </div>
   
                     <div class="text-bold text-white text q-mt-xs text-center text-caption" style="line-height: 1;">
-                      {{ item.school2.name }}
+                      {{ item.athlete2.name }}
                     </div>
                   </div>
                 </div>
@@ -281,7 +281,7 @@
                   </div>
                 </div>
                 <div class="text-body1 q-mt-sm">
-                  Watch: {{ item.school1.name }} vs {{ item.school2.name }} 
+                  Watch: {{ item.athlete1.name }} vs {{ item.athlete2.name }} 
                 </div>
   
                 <hr />
@@ -302,7 +302,7 @@
       </div>
     </div>
 
-    <match-filter :show="filter.dialog" @hide="hideFilterDialog" @filter="onFilter" />
+    <athlete-filter :show="filter.dialog" @hide="hideFilterDialog" @filter="onFilter" />
   </q-page>
 </template>
 
@@ -312,13 +312,13 @@ import 'moment-timezone'
 import moment from 'moment'
 import { useMeta } from 'quasar'
 
-import MatchFilter from 'src/components/MatchFilter.vue'
+import AthleteFilter from 'src/components/AthleteFilter.vue'
 import Helper from 'src/services/helper'
 
 export default defineComponent({
   name: 'IndexPage',
 
-  components: { MatchFilter },
+  components: { AthleteFilter },
 
   data: function () {
     return {
@@ -330,7 +330,7 @@ export default defineComponent({
       filter: {
         dialog: false,
         data: {
-          school_id: typeof this.$route.query.school_id !== 'undefined' ? this.$route.query.school_id : null,
+          athlete_id: typeof this.$route.query.athlete_id !== 'undefined' ? parseInt(this.$route.query.athlete_id) : null,
           champion_id: null,
           sport_id: null,
           date: null
@@ -360,8 +360,8 @@ export default defineComponent({
       Helper.scrollToElement(this.$refs.tab.$el)
     }
 
-    if (this.filter.data.school_id !== null) {
-      this.filter.data.school_id = this.filter.data.school_id
+    if (this.filter.data.athlete_id !== null) {
+      this.filter.data.athlete_id = this.filter.data.athlete_id
       this.onFilter(this.filter.data)
     } else {
       this.getSchedule()
@@ -392,7 +392,7 @@ export default defineComponent({
       return new Promise((resolve, reject) => {
         const page = this.pagination_video.page
 
-        let endpoint = 'match-schedule/list'
+        let endpoint = 'athlete-schedule/list'
         endpoint = Helper.generateURLParams(endpoint, 'page', page)
         endpoint = Helper.generateURLParams(endpoint, 'limit', 10)
         endpoint = Helper.generateURLParams(endpoint, 'type', type)
@@ -447,7 +447,7 @@ export default defineComponent({
 
     redirect: function (id) {
       setTimeout(() => {
-        window.open(`${this.$host}/schedule/${id}`)
+        window.open(`${this.$host}/athlete/schedule/${id}`)
       }, 300)
     },
 
@@ -486,7 +486,7 @@ export default defineComponent({
       return new Promise((resolve, reject) => {
         const page = this.pagination.page
 
-        let endpoint = 'match-schedule/list'
+        let endpoint = 'athlete-schedule/list'
         endpoint = Helper.generateURLParams(endpoint, 'page', page)
         endpoint = Helper.generateURLParams(endpoint, 'type', this.tab)
 
