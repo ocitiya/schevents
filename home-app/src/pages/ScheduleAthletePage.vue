@@ -1,11 +1,19 @@
 <template>
   <q-page>
-    <div class="text-right bg-secondary q-pr-md q-pt-lg">
+    <div class="text-right bg-secondary q-pr-md q-pt-lg q-gutter-x-sm">
+      <q-btn label="Club Schedule" unelevated color="primary" @click="$router.push({ name: 'schedule-team' })" />
+
       <q-btn label="filter" icon="filter_alt" unelevated color="primary"
         @click="showFilterDialog"
       >
         <q-badge v-if="has_filter" floating color="white" rounded />
       </q-btn>
+    </div>
+
+    <div class="bg-secondary q-pb-xl q-pt-md">
+      <div class="text-h5 text-center text-bold">
+        Athlete Schedule
+      </div>
     </div>
 
     <q-tabs
