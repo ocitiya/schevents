@@ -22,7 +22,12 @@
 
         <q-tabs align="right" class="md" dense arrow-indicator>
           <q-route-tab :to="{ name: 'home' }" label="Home" icon="home" />
-          <q-route-tab :to="{ name: 'schedule-team' }" label="Schedule" icon="schedule" />
+          <q-route-tab label="Schedule" icon="schedule">
+            <q-menu>
+              <q-route-tab :to="{ name: 'schedule-team' }" label="Club Schedule" />
+              <q-route-tab :to="{ name: 'schedule-athlete' }" label="Athlete Schedule" />
+            </q-menu>
+          </q-route-tab>
           <q-route-tab :to="{ name: 'club' }" label="Club" icon="groups" />
           <q-route-tab :to="{ name: 'athlete' }" label="Athlete" icon="sports_handball" />
           <q-route-tab :to="{ name: 'news' }" label="News" icon="newspaper" />
@@ -71,17 +76,119 @@
       class="text-white drawer-container bg-primary"
     >
       <q-list>
-        <q-item-label
-          header
-        >
+        <q-item-label header>
           Essential Links
         </q-item-label>
 
-        <EssentialLink
-          v-for="link in essentialLinks"
-          :key="link.title"
-          v-bind="link"
-        />
+        <q-item class="" clickable @click="() => changePage('home')">
+          <q-item-section avatar>
+            <q-icon name="home" />
+          </q-item-section>
+
+          <q-item-section>
+            <q-item-label>Home</q-item-label>
+          </q-item-section>
+        </q-item>
+
+        <q-expansion-item
+          expand-separator
+          icon="schedule"
+          label="Schedule"
+          :content-inset-level="1"
+        >
+          <q-item class="" clickable @click="() => changePage('schedule-team')">
+            <q-item-section>
+              <q-item-label>Club Schedule</q-item-label>
+            </q-item-section>
+          </q-item>
+
+          <q-item class="" clickable @click="() => changePage('schedule-athlete')">
+            <q-item-section>
+              <q-item-label>Athlete Schedule</q-item-label>
+            </q-item-section>
+          </q-item>
+
+        </q-expansion-item>
+
+        <q-item class="" clickable @click="() => changePage('club')">
+          <q-item-section avatar>
+            <q-icon name="groups" />
+          </q-item-section>
+
+          <q-item-section>
+            <q-item-label>Club</q-item-label>
+          </q-item-section>
+        </q-item>
+
+        <q-item class="" clickable @click="() => changePage('athlete')">
+          <q-item-section avatar>
+            <q-icon name="sports_handball" />
+          </q-item-section>
+
+          <q-item-section>
+            <q-item-label>Athlete</q-item-label>
+          </q-item-section>
+        </q-item>
+
+        <q-item class="" clickable @click="() => changePage('event')">
+          <q-item-section avatar>
+            <q-icon name="event" />
+          </q-item-section>
+
+          <q-item-section>
+            <q-item-label>Events</q-item-label>
+          </q-item-section>
+        </q-item>
+
+        <q-item class="" clickable @click="() => changePage('news')">
+          <q-item-section avatar>
+            <q-icon name="newspaper" />
+          </q-item-section>
+
+          <q-item-section>
+            <q-item-label>News</q-item-label>
+          </q-item-section>
+        </q-item>
+        
+        <q-item class="" clickable @click="() => changePage('video')">
+          <q-item-section avatar>
+            <q-icon name="videocam" />
+          </q-item-section>
+
+          <q-item-section>
+            <q-item-label>Videos</q-item-label>
+          </q-item-section>
+        </q-item>
+
+        <q-item class="" clickable @click="() => changePage('about')">
+          <q-item-section avatar>
+            <q-icon name="description" />
+          </q-item-section>
+
+          <q-item-section>
+            <q-item-label>About</q-item-label>
+          </q-item-section>
+        </q-item>
+
+        <q-item class="" clickable @click="() => changePage('contact')">
+          <q-item-section avatar>
+            <q-icon name="contacts" />
+          </q-item-section>
+
+          <q-item-section>
+            <q-item-label>Contact</q-item-label>
+          </q-item-section>
+        </q-item>
+
+        <q-item class="" clickable @click="() => changePage('help-support')">
+          <q-item-section avatar>
+            <q-icon name="contact_support" />
+          </q-item-section>
+
+          <q-item-section>
+            <q-item-label>Help</q-item-label>
+          </q-item-section>
+        </q-item>
       </q-list>
     </q-drawer>
 
@@ -154,76 +261,15 @@
 
 <script>
 import { defineComponent, ref } from 'vue'
-import EssentialLink from 'components/EssentialLink.vue'
 import moment from 'moment'
-
-const linksList = [
-  {
-    title: 'Home',
-    icon: 'home',
-    link_name: 'home'
-  },
-  {
-    title: 'Schedule',
-    icon: 'schedule',
-    link_name: 'schedule-team'
-  },
-  {
-    title: 'Club',
-    icon: 'groups',
-    link_name: 'club'
-  },
-  {
-    title: 'Athlete',
-    icon: 'sports_handball',
-    link_name: 'athlete'
-  },
-  {
-    title: 'Events',
-    icon: 'event',
-    link_name: 'event'
-  },
-  {
-    title: 'News',
-    icon: 'newspaper',
-    link_name: 'news'
-  },
-  {
-    title: 'Videos',
-    icon: 'videocam',
-    link_name: 'video'
-  },
-  // {
-  //   title: 'Scores',
-  //   icon: 'scoreboard',
-  //   link_name: 'scores'
-  // },
-  {
-    title: 'About',
-    icon: 'description',
-    link_name: 'about'
-  },
-  {
-    title: 'Contact',
-    icon: 'contacts',
-    link_name: 'contact'
-  },
-  {
-    title: 'Help',
-    icon: 'contact_support',
-    link_name: 'help-support'
-  }
-]
 
 export default defineComponent({
   name: 'MainLayout',
-  components: { EssentialLink },
 
   data: () => {
     return {
       title: null,
       logo: null,
-      essentialLinks: linksList,
       leftDrawerOpen: ref(false),
       contact_us: [],
       follow_us: [],
@@ -270,6 +316,10 @@ export default defineComponent({
   },
 
   methods: {
+    changePage: function (name) {
+      this.$router.push({ name })
+    },
+
     getContactUs: function () {
       return new Promise((resolve, reject) => {
 

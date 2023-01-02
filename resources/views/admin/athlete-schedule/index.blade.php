@@ -258,11 +258,7 @@
             {data: 'athlete1', title: 'Atlet 1', name: 'athlete1',
               "render": function ( data, type, row, meta ) {
                 if (data !== null) {
-                  if (data.county === null) {
-                    return data.name;
-                  } else {
-                    return `<b>${data.county.abbreviation}</b> <br/> ${data.name}`;
-                  }
+                  return data.name;
                 } else {
                   return 'Unknown Athlete';
                 }
@@ -271,11 +267,7 @@
             {data: 'athlete2', title: 'Atlet 2', name: 'athlete2',
               "render": function ( data, type, row, meta ) {
                 if (data !== null) {
-                  if (data.county === null) {
-                    return data.name;
-                  } else {
-                    return `<b>${data.county.abbreviation}</b> <br/> ${data.name}`;
-                  }
+                  return data.name;
                 } else {
                   return 'Unknown Athlete';
                 }
