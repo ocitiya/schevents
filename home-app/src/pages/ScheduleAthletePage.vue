@@ -1,8 +1,6 @@
 <template>
   <q-page>
     <div class="text-right bg-secondary q-pr-md q-pt-lg q-gutter-x-sm">
-      <q-btn label="Club Schedule" unelevated color="primary" @click="$router.push({ name: 'schedule-team' })" />
-
       <q-btn label="filter" icon="filter_alt" unelevated color="primary"
         @click="showFilterDialog"
       >
