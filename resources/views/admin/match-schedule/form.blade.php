@@ -147,13 +147,13 @@
               </div>
             </div>
 
-            @if (isset($_GET['sudah-bermain']) || isset($_GET['minggu-lalu']))
+            @if (isset($_GET['have-played']) || isset($_GET['last-week']) || isset($_GET['old-data']))
               <div class="row">
                 <div class="col-5">
                   <label for="score1">Skor 1</label>
                 </div>
                 <div class="col-7">
-                  <input type="number" name="score1" class="form-control" >
+                  <input type="number" name="score1" class="form-control" value="{{ old('score1', isset($data) ? $data->score1 : null) }}">
                 </div>
               </div>
             @endif
@@ -205,13 +205,13 @@
               </div>
             </div>
 
-            @if (isset($_GET['sudah-bermain']) || isset($_GET['minggu-lalu']))
+            @if (isset($_GET['have-played']) || isset($_GET['last-week']) || isset($_GET['old-data']))
               <div class="row">
                 <div class="col-5">
                   <label for="score2">Skor 2</label>
                 </div>
                 <div class="col-7">
-                  <input type="number" name="score2" class="form-control" >
+                  <input type="number" name="score2" class="form-control"  value="{{ old('score2', isset($data) ? $data->score2 : null) }}">
                 </div>
               </div>
             @endif
@@ -329,7 +329,11 @@
 
             <div class="form-button">
               <button type="submit" class="btn btn-primary btn-sm unrounded">
-                Buat Jadwal&nbsp;
+                @if(!isset($data))
+                  Buat Jadwal&nbsp;
+                @else
+                  Ubah Data&nbsp;
+                @endif
                 <i class="fa-solid fa-paper-plane"></i>
               </button>
             </div>

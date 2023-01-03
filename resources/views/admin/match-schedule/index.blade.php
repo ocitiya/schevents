@@ -281,20 +281,27 @@
           columns: [
             {data: 'school1', title: 'Club 1', name: 'school1',
               "render": function ( data, type, row, meta ) {
+                let text = '';
                 if (data !== null) {
                   if (row.is_national_team) {
                     if (data.abbreviation === null || data.abbreviation === '') {
-                      return data.name;
+                      text = data.name;
                     } else {
-                      return data.name;
+                      text = data.name;
                     }
                   } else {
                     if (data.county === null) {
-                      return data.name;
+                      text = data.name;
                     } else {
-                      return `<b>${data.county.abbreviation}</b> <br/> ${data.name}`;
+                      text = `<b>${data.county.abbreviation}</b> <br/> ${data.name}`;
                     }
                   }
+
+                  if (row.score1 !== null) {
+                    text += `<br>Skor: <b>${row.score1}</b>`
+                  }
+
+                  return text;
                 } else {
                   return 'Unknown Club';
                 }
@@ -302,20 +309,27 @@
             },
             {data: 'school2', title: 'Club 2', name: 'school2',
               "render": function ( data, type, row, meta ) {
+                let text = '';
                 if (data !== null) {
                   if (row.is_national_team) {
                     if (data.abbreviation === null || data.abbreviation === '') {
-                      return data.name;
+                      text = data.name;
                     } else {
-                      return data.name;
+                      text = data.name;
                     }
                   } else {
                     if (data.county === null) {
-                      return data.name;
+                      text = data.name;
                     } else {
-                      return `<b>${data.county.abbreviation}</b> <br/> ${data.name}`;
+                      text = `<b>${data.county.abbreviation}</b> <br/> ${data.name}`;
                     }
                   }
+
+                  if (row.score2 !== null) {
+                    text += `<br>Skor: <b>${row.score2}</b>`
+                  }
+
+                  return text;
                 } else {
                   return 'Unknown Club';
                 }
@@ -488,8 +502,13 @@
                   updateRoute += `?federation_id=${data.federation_id}`
                 }
 
-                if (getData('state') == 'have-played') {
-                  updateRoute += '&sudah-bermain'
+                const state = getData('state');
+                if (state == 'have-played') {
+                  updateRoute += '&have-played'
+                } else if (state == 'last-week') {
+                  updateRoute += '&last-week'
+                } else if (state == 'old-data') {
+                  updateRoute += '&old-data'
                 }
 
                 if (row.is_national_team == 1) {

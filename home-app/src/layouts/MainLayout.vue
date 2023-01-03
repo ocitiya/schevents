@@ -32,7 +32,7 @@
           <q-route-tab :to="{ name: 'athlete' }" label="Athlete" icon="sports_handball" />
           <q-route-tab :to="{ name: 'news' }" label="News" icon="newspaper" />
           <q-route-tab :to="{ name: 'video' }" label="Videos" icon="videocam" />
-          <!-- <q-route-tab :to="{ name: 'scores' }" label="Scores" icon="scoreboard" /> -->
+          <q-route-tab :to="{ name: 'scores' }" label="Scores" icon="scoreboard" />
           <q-route-tab :to="{ name: 'about' }" label="About" icon="description" />
 
           <div class="q-ml-md">
@@ -157,6 +157,16 @@
 
           <q-item-section>
             <q-item-label>Videos</q-item-label>
+          </q-item-section>
+        </q-item>
+
+        <q-item class="" clickable @click="() => changePage('scores')">
+          <q-item-section avatar>
+            <q-icon name="scoreboard" />
+          </q-item-section>
+
+          <q-item-section>
+            <q-item-label>Scores</q-item-label>
           </q-item-section>
         </q-item>
 
