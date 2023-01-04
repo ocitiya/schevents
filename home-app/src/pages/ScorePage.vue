@@ -14,9 +14,8 @@
       active-class="text-white"
       @update:model-value="() => getSchedule(1)"
     >
-      <q-tab name="have-played" label="Have Played" />
-      <q-tab name="last-week" label="Last Week" />
-      <q-tab name="old-data" label="Old Data" />
+      <q-tab name="have-played" label="Score Today" />
+      <q-tab name="last-week" label="This Week" />
     </q-tabs>
 
     <q-pull-to-refresh @refresh="refresh" v-if="tab !== 'highlight'">

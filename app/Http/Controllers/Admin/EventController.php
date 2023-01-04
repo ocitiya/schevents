@@ -264,8 +264,19 @@ class EventController extends Controller {
 
         return $model;
 
+      case "this-week":
+        $date1 = clone($this->now);
+        $date1 = $date1->addDays(7);
+
+        $date2 = clone($this->now);
+        $date2 = $date2->addHours(12);
+
+        return $model->whereBetween('start_date', [$date2, $date1])
+         ->whereBetween('end_date', [$date2, $date1]);
+
       case "upcoming":
         $date = clone($this->now);
+        $date = $date->addDays(7);
 
         $model->whereDate("start_date", ">", $date);
         return $model;

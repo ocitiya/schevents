@@ -29,6 +29,11 @@
           </button>
         </li>
         <li class="nav-item" role="presentation">
+          <button class="nav-link tab-item" type="button" role="tab" data-state="this-week">
+            Minggu Ini
+          </button>
+        </li>
+        <li class="nav-item" role="presentation">
           <button class="nav-link tab-item" type="button" role="tab" data-state="upcoming">
             Akan Datang
           </button>

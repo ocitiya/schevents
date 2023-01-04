@@ -23,6 +23,7 @@
           @update:model-value="() => getEvents(1)"
         >
           <q-tab name="upcoming" label="Upcoming" />
+          <q-tab name="this-week" label="This Week" />
           <q-tab name="live" label="Live" />
         </q-tabs>
 

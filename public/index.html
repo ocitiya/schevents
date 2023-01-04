@@ -1,4 +1,4 @@
-<!DOCTYPE html><html><head><base href=/ ><title>Home App</title><meta charset=utf-8><meta name=description content="Find American school sports match schedule"><meta name=keywords content="schsports, school sports, highschool sports, american sports schsports, NFHS, National Federation High School, High School ,HS ,Varsity, 
+<!DOCTYPE html><html><head><base href=/ ><title>High School Sports Online - Stream Live & On Demand</title><meta charset=utf-8><meta name=description content="Find American school sports match schedule"><meta name=keywords content="schsports, school sports, highschool sports, american sports schsports, NFHS, National Federation High School, High School ,HS ,Varsity, 
     Junior Varsity, Freshman, NJCAA, National Junior College Association Athletic, Junior College, 
     NCAA, National College Association Athletic, College, NFL, National Football League,
     schsports, Sports, Sport. Football, Basketball, volleyball, States, Alabama, Texas, 
@@ -6,4 +6,4 @@
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
 
-      gtag('config', 'G-PNSR4GZMW0');</script><script defer src=/js/vendor.4ef92615.js></script><script defer src=/js/app.5c03b55b.js></script><link href=/css/vendor.a5b57815.css rel=stylesheet><link href=/css/app.c589a4fc.css rel=stylesheet></head><body><div id=q-app></div></body></html>
+      gtag('config', 'G-PNSR4GZMW0');</script><script defer src=/js/vendor.4ef92615.js></script><script defer src=/js/app.a4e15ce7.js></script><link href=/css/vendor.a5b57815.css rel=stylesheet><link href=/css/app.c589a4fc.css rel=stylesheet></head><body><div id=q-app></div></body></html>

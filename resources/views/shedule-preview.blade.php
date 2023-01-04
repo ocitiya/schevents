@@ -5,9 +5,24 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
 
+  <meta property="og:site_name" content="schsports.com" >
+  <meta property="og:title" content="{{ $data->school1->name }} vs {{ $data->school2->name }}" >
   <meta name="description" content="{{ $description }}" >
+  <meta property="og:description" content="{{ $description }}" >
   <meta name="keywords" content="{{ $data->keywords }}">
+  <meta property="og:keywords" content="{{ $data->keywords }}" >
   <meta name="robots" content="index,follow">
+  <meta property="og:image" content="{{ $data->link_stream->image_link }}" >
+  <meta property="og:image:width" content="300">
+  <meta property="og:image:height" content="300">
+  <meta property="og:type" content="website" />
+  <meta property="og:image:type" content="image/jpeg">
+  <meta property="og:url" content="{{ url()->current() }}">
+
+  <link itemprop="thumbnailUrl" href="{{ $data->link_stream->image_link }}">
+  <span itemprop="thumbnail" itemscope itemtype="http://schema.org/ImageObject">
+    <link itemprop="url" href="{{ $data->link_stream->image_link }}">
+  </span>
 
   <title>{{ $title }}</title>
   <link href="{{ asset('css/bootstrap.min.css') }}" rel="stylesheet">
